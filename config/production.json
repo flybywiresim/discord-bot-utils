@@ -1,0 +1,125 @@
+{
+  "aircraftTypeList": {
+    "a32nx": "32:1044695612337168494",
+    "a380x": "38:1044695718348210177"
+  },
+  "channels": {
+    "A32NX_SUPPORT": "785976111875751956",
+    "FAQ": "751774575464939580",
+    "FLIGHT_SCHOOL": "887806920252076053",
+    "KNOWN_ISSUES": "771435594445226005",
+    "MOD_LOGS": "783996780181585921",
+    "ROLES": "751780817772216401",
+    "SCAM_REPORT_LOGS": "932687046315737149",
+    "TEAM": "846470774361161808",
+    "USER_LOGS": "779944761699729418",
+    "VIDEOS": "739224482945826946"
+  },
+  "colors": {
+    "FBW_CYAN": "0x00E0FE"
+  },
+  "commandPermission": {
+    "MANAGE_SERVER": "32"
+  },
+  "guildId": "738864299392630914",
+  "modLogExclude": [
+    "910632773117702185",
+    "856826179491594271",
+    "864492608163807302",
+    "1117793446497886309",
+    "1163130603219206194"
+  ],
+  "roleAssignmentIds": [
+    {
+      "group": "interestedIn",
+      "roles": [
+        {
+          "id": "INTERESTED_IN_PROGRAMMING",
+          "label": "Interested in Programming"
+        },
+        {
+          "id": "INTERESTED_IN_MODELLING",
+          "label": "Interested in Modelling/Design"
+        }
+      ]
+    },
+    {
+      "group": "mediaAnnouncements",
+      "roles": [
+        {
+          "id": "SERVER_ANNOUNCEMENT",
+          "label": "Server Announcements"
+        },
+        {
+          "id": "A32NX_RELEASES",
+          "label": "A32NX Releases"
+        },
+        {
+          "id": "PROGRESS",
+          "label": "Progress Updates"
+        },
+        {
+          "id": "MEDIA_ANNOUNCEMENTS",
+          "label": "Media Announcements (FBW Youtube)"
+        }
+      ]
+    }
+  ],
+  "roleGroups": {
+    "BOT": [
+      "ADMIN_TEAM",
+      "MODERATION_TEAM",
+      "BOT_DEVELOPER"
+    ],
+    "STAFF": [
+      "ADMIN_TEAM",
+      "MODERATION_TEAM"
+    ],
+    "SUPPORT": [
+      "ADMIN_TEAM",
+      "MODERATION_TEAM",
+      "DEVELOPMENT_TEAM",
+      "MEDIA_TEAM",
+      "COMMUNITY_SUPPORT"
+    ],
+    "TEAM": [
+      "ADMIN_TEAM",
+      "MODERATION_TEAM",
+      "DEVELOPMENT_TEAM",
+      "MEDIA_TEAM",
+      "FBW_EMERITUS"
+    ]
+  },
+  "roles": {
+    "A32NX_RELEASES": "748938423045193728",
+    "ADMIN_TEAM": "738864824305319936",
+    "BOT_DEVELOPER": "768888763929591818",
+    "COMMUNITY_SUPPORT": "870394933926830100",
+    "DEVELOPMENT_TEAM": "747571237475057815",
+    "FBW_EMERITUS": "878635657680027678",
+    "INTERESTED_IN_MODELLING": "739301752066801834",
+    "INTERESTED_IN_PROGRAMMING": "738865243681193994",
+    "MEDIA_ANNOUNCEMENTS": "779383764756594691",
+    "MEDIA_TEAM": "756972770214281346",
+    "MODERATION_TEAM": "739187150909866137",
+    "PROGRESS": "748938549516042281",
+    "SERVER_ANNOUNCEMENTS": "748938140701687969"
+  },
+  "threads": {
+    "BIRTHDAY_THREAD": "930923893206679573",
+    "COUNT_THREAD": "877049017102659654"
+  },
+  "units": {
+    "CELSIUS": "\u2103",
+    "DEGREES": "\u00B0"
+  },
+  "userLogExclude": [
+    "628400349979344919",
+    "910632773117702185",
+    "856826179491594271",
+    "864492608163807302",
+    "1117793446497886309",
+    "1163130603219206194",
+    "1163130801131634868"
+  ]
+}

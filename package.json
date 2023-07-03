@@ -1,0 +1,43 @@
+{
+  "name": "fbw-discord-bot",
+  "version": "1.0.0",
+  "description": "Moderation, utility and support bot for the FlyByWire Simulations Discord server",
+  "main": "./build/index.js",
+  "exports": "./build/index.js",
+  "scripts": {
+    "start": "node .",
+    "dev": "nodemon --config nodemon.json src/index.ts",
+    "build": "tsc",
+    "build:digitalocean": "npm ci --include=dev && npm run build",
+    "lint": "eslint src/**/**/*.ts",
+    "lint-fix": "eslint src/**/**/*.ts --fix"
+  },
+  "author": "FlyByWire Simulations",
+  "license": "AGPL-3.0",
+  "dependencies": {
+    "@hokify/agenda": "^6.0.0",
+    "@octokit/request": "^8.1.1",
+    "config": "^3.3.9",
+    "discord.js": "^14.11.0",
+    "moment": "^2.29.4",
+    "mongoose": "^8.0.3",
+    "node-fetch": "^2.6.10",
+    "winston": "^3.3.4"
+  },
+  "devDependencies": {
+    "@flybywiresim/eslint-config": "^0.1.0",
+    "@types/config": "^3.3.1",
+    "@types/node": "^18.0.0",
+    "@types/node-fetch": "^2.6.10",
+    "@typescript-eslint/eslint-plugin": "^6.18.0",
+    "@typescript-eslint/parser": "^6.18.0",
+    "dotenv": "^16.0.0",
+    "eslint": "^7.29.0",
+    "nodemon": "^3.0.2",
+    "ts-node": "^10.4.0",
+    "typescript": "^5.0.3"
+  },
+  "engines": {
+    "node": "18.x"
+  }
+}

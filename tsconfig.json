@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "target": "ES2020",               // Target ES2020 or later
+        "module": "CommonJS",             // Use CommonJS modules
+        "outDir": "./build",               // Output directory for compiled files
+        "rootDir": "./src",               // Source directory
+        "strict": true,                   // Enable strict type checking
+        "esModuleInterop": true,          // Enable import/export interoperability
+        "forceConsistentCasingInFileNames": true, // Enforce consistent file naming
+        "resolveJsonModule": true,       // Allow importing JSON files as modules
+        "lib": ["ES2020", "DOM"],         // Include necessary TypeScript typings
+        "types": ["node", "discord.js"],  // Include typings for Node.js and discord.js
+        "baseUrl": ".",                  // Base URL for module resolution
+    },
+    "include": ["src/**/*.ts"],        // Include TypeScript source files
+    "exclude": ["node_modules", "dist"] // Exclude files from compilation
+}
