@@ -21,7 +21,7 @@
     "discord.js": "^14.11.0",
     "moment": "^2.29.4",
     "mongoose": "^8.0.3",
-    "node-fetch": "^2.6.10",
+    "node-fetch": "^3.3.2",
     "winston": "^3.3.4"
   },
   "devDependencies": {
