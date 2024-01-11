@@ -93,7 +93,8 @@ export async function handleAddPrefixCommand(interaction: ChatInputCommandIntera
         await interaction.followUp({ embeds: [categoryNotFoundEmbed(category)], ephemeral: true });
         return;
     }
-    const { categoryId } = foundCategory;
+    const { id: categoryId } = foundCategory;
+    Logger.info(`categoryId: ${categoryId}`);
     const existingCommand = await PrefixCommand.findOne({ name });
 
     if (!existingCommand) {
@@ -115,7 +116,7 @@ export async function handleAddPrefixCommand(interaction: ChatInputCommandIntera
                 }
             }
         } catch (error) {
-            Logger.error(`Failed to add a prefix command category ${name}: ${error}`);
+            Logger.error(`Failed to add a prefix command ${name}: ${error}`);
             await interaction.followUp({ embeds: [failedEmbed(name)], ephemeral: true });
         }
     } else {

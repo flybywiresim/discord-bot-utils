@@ -91,14 +91,14 @@ export async function handleAddPrefixCommandChannelPermission(interaction: ChatI
         foundCommand = await PrefixCommand.find({ aliases: { $in: [command] } });
     }
     if (!foundCommand || foundCommand.length > 1) {
-        await interaction.reply({ embeds: [noCommandEmbed(command)], ephemeral: true });
+        await interaction.followUp({ embeds: [noCommandEmbed(command)], ephemeral: true });
         return;
     }
     const { id: commandId } = foundCommand[0];
 
     const foundChannel = interaction.guild.channels.resolve(channel);
     if (!foundChannel) {
-        await interaction.reply({ embeds: [noChannelEmbed(channel)], ephemeral: true });
+        await interaction.followUp({ embeds: [noChannelEmbed(channel)], ephemeral: true });
         return;
     }
     const { id: channelId } = foundChannel;

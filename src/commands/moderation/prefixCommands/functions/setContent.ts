@@ -91,11 +91,11 @@ export async function handleSetPrefixCommandContent(interaction: ChatInputComman
     }
 
     let foundCommand = await PrefixCommand.find({ name: command });
-    if (!foundCommand || foundCommand.length > 1) {
+    if (!foundCommand || foundCommand.length !== 1) {
         foundCommand = await PrefixCommand.find({ aliases: { $in: [command] } });
     }
-    if (!foundCommand || foundCommand.length > 1) {
-        await interaction.reply({ embeds: [noCommandEmbed(command)], ephemeral: true });
+    if (!foundCommand || foundCommand.length !== 1) {
+        await interaction.followUp({ embeds: [noCommandEmbed(command)], ephemeral: true });
         return;
     }
 
@@ -109,7 +109,7 @@ export async function handleSetPrefixCommandContent(interaction: ChatInputComman
         if (foundVersion && foundVersion.length === 1) {
             versionId = foundVersion[0].id;
         } else {
-            await interaction.reply({ embeds: [noVersionEmbed(version)], ephemeral: true });
+            await interaction.followUp({ embeds: [noVersionEmbed(version)], ephemeral: true });
             return;
         }
     }

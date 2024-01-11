@@ -32,6 +32,7 @@ import listRoleUsers from './moderation/listRoleUsers';
 import clearMessages from './moderation/clearMessages';
 import locate from './utils/locate/locate';
 import prefixCommands from './moderation/prefixCommands/prefixCommands';
+import prefixCommandPermissions from './moderation/prefixCommands/prefixCommandPermissions';
 
 const commandArray: SlashCommand[] = [
     ping,
@@ -67,6 +68,7 @@ const commandArray: SlashCommand[] = [
     clearMessages,
     locate,
     prefixCommands,
+    prefixCommandPermissions,
 ];
 
 export default commandArray;

@@ -83,7 +83,7 @@ export async function handleDeletePrefixCommandContent(interaction: ChatInputCom
     const existingContent = await PrefixCommandContent.findById(contentId);
 
     if (existingContent) {
-        const { commandId, versionId, title, content, image } = existingContent;
+        const { id: commandId, versionId, title, content, image } = existingContent;
         const foundCommand = await PrefixCommand.findById(commandId);
         if (!foundCommand) {
             return;

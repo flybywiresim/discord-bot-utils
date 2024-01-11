@@ -91,14 +91,14 @@ export async function handleAddPrefixCommandRolePermission(interaction: ChatInpu
         foundCommand = await PrefixCommand.find({ aliases: { $in: [command] } });
     }
     if (!foundCommand || foundCommand.length > 1) {
-        await interaction.reply({ embeds: [noCommandEmbed(command)], ephemeral: true });
+        await interaction.followUp({ embeds: [noCommandEmbed(command)], ephemeral: true });
         return;
     }
     const { id: commandId } = foundCommand[0];
 
     const foundRole = interaction.guild.roles.resolve(role);
     if (!foundRole) {
-        await interaction.reply({ embeds: [noRoleEmbed(role)], ephemeral: true });
+        await interaction.followUp({ embeds: [noRoleEmbed(role)], ephemeral: true });
         return;
     }
     const { id: roleId, name: roleName } = foundRole;
