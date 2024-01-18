@@ -19,7 +19,7 @@ export default event(Events.MessageUpdate, async (_, oldMessage, newMessage) => 
     if (userLogsChannel && !constantsConfig.userLogExclude.includes(oldMessage.author!.id)) {
         const messageUpdateEmbed = makeEmbed({
             color: Colors.Orange,
-            thumbnail: { url: `${imageBaseUrl}/moderation/message_updated.png` },
+            thumbnail: { url: `${imageBaseUrl}/moderation/message_edited.png` },
             author: {
                 name: oldMessage.author.tag,
                 iconURL: oldMessage.author.displayAvatarURL(),
