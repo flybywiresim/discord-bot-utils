@@ -22,7 +22,7 @@ export async function handleVatsimEvents(interaction: ChatInputCommandInteractio
             .then((res) => res.json())
             .then((res) => res.data)
             .then((res) => res.filter((event: { type: string; }) => event.type === 'Event'))
-            .then((res) => res.slice(0, 6));
+            .then((res) => res.slice(0, 5));
 
         const fields: EmbedField[] = eventsList.map((event: any) => {
             // eslint-disable-next-line camelcase
