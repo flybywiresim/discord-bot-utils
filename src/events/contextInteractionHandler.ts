@@ -1,4 +1,4 @@
-import { Color, ContextMenuCommand, event, Events, Reply } from '../lib';
+import { Color, ContextMenuCommand, event, Events, makeEmbed, Reply } from '../lib';
 import contextArray from '../commands/context';
 
 const contextMap = new Map<string, ContextMenuCommand>(
@@ -30,7 +30,15 @@ export default event(Events.InteractionCreate, async ({ log, client }, interacti
 
         await context.callback({ client, log, interaction });
     } catch (error) {
+        const errorEmbed = makeEmbed({
+            title: 'An error occurred while executing this context command.',
+            description: `${error}`,
+            color: Color.Error,
+        });
+
         log('[Context Error]', error);
+
+        await interaction.followUp({ embeds: [errorEmbed] });
 
         if (interaction.deferred || interaction.replied) {
             log('Interaction was already replied to or deferred, ignoring');

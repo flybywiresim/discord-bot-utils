@@ -1,4 +1,4 @@
-import { Color, SlashCommand, event, Events, Reply } from '../lib';
+import { Color, SlashCommand, event, Events, Reply, makeEmbed } from '../lib';
 import commandArray from '../commands';
 
 /* eslint-disable no-underscore-dangle */
@@ -58,7 +58,15 @@ export default event(Events.InteractionCreate, async ({ log, client }, interacti
 
         await command.callback({ client, log, interaction });
     } catch (error) {
+        const errorEmbed = makeEmbed({
+            title: 'An error occurred while executing this command.',
+            description: `${error}`,
+            color: Color.Error,
+        });
+
         log('[Command Error]', error);
+
+        await interaction.followUp({ embeds: [errorEmbed] });
 
         if (interaction.deferred || interaction.replied) {
             log('Interaction was already replied to or deferred, ignoring');
