@@ -1,11 +1,13 @@
 import { ApplicationCommandOptionType, ApplicationCommandType, CommandInteraction } from 'discord.js';
 import fs from 'fs';
-import { slashCommand, slashCommandStructure, Logger } from '../../lib';
+import { slashCommand, slashCommandStructure, Logger, constantsConfig } from '../../lib';
 
 const data = slashCommandStructure({
     name: 'generate_command_table',
     description: 'Generates the command table.',
     type: ApplicationCommandType.ChatInput,
+    default_member_permissions: constantsConfig.commandPermission.MANAGE_SERVER, //Overrides need to be added for admin, moderator bot developer and docs team roles
+    dm_permission: false,
 });
 
 export default slashCommand(data, async ({ interaction }: { interaction: CommandInteraction }) => {
