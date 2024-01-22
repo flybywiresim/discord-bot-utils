@@ -26,6 +26,7 @@ import count from './utils/count';
 import vatsim from './utils/vatsim/vatsim';
 import help from './utils/help';
 import docSearch from './utils/docSearch';
+import reportedIssues from './utils/reportedIssues';
 
 const commandArray: SlashCommand[] = [
     ping,
@@ -55,6 +56,7 @@ const commandArray: SlashCommand[] = [
     vatsim,
     help,
     docSearch,
+    reportedIssues,
 ];
 
 export default commandArray;
