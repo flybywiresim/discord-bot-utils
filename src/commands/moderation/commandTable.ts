@@ -1,5 +1,5 @@
 import { ApplicationCommandOptionType, ApplicationCommandType, CommandInteraction } from 'discord.js';
-import fs from 'fs';
+import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { slashCommand, slashCommandStructure, Logger, constantsConfig } from '../../lib';
 
 const data = slashCommandStructure({
@@ -75,12 +75,36 @@ export default slashCommand(data, async ({ interaction }: { interaction: Command
             table += `| ${name} | ${description} | ${subcommandDescription} |\n`;
         }
 
-        // Save the Markdown table to a file
-        const filePath = 'commands_table.md';
-        fs.writeFileSync(filePath, table);
+        // Upload the file to Cloudflare R2
+        const uploadParams = {
+            Bucket: process.env.CLOUDFLARE_BUCKET_NAME,
+            Key: 'utils/commands_table.md',
+            Body: table,
+        };
+
+        try {
+            const S3 = new S3Client({
+                region: 'auto',
+                endpoint: `https://${process.env.CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+                credentials: {
+                    accessKeyId: process.env.CLOUDFLARE_ACCESS_KEY_ID!,
+                    secretAccessKey: process.env.CLOUDFLARE_SECRET_ACCESS_KEY!,
+                },
+            });
+
+            const commandTableUpload = new PutObjectCommand(uploadParams);
+            await S3.send(commandTableUpload);
+            Logger.info('Successfully uploaded commands table to Cloudflare R2.');
+        } catch (error) {
+            Logger.error(error);
+            return interaction.reply({
+                content: 'An error occurred while uploading to Cloudflare R2.',
+                ephemeral: true,
+            });
+        }
 
         return interaction.reply({
-            content: `Markdown table has been saved to ${filePath}`,
+            content: 'Markdown table has been saved and uploaded to Cloudflare R2.',
             ephemeral: true,
         });
     } catch (error) {
@@ -89,6 +113,5 @@ export default slashCommand(data, async ({ interaction }: { interaction: Command
             content: 'An error occurred while generating the Markdown file.',
             ephemeral: true,
         });
-        // Handle errors appropriately
     }
 });
