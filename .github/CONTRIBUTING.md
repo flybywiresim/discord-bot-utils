@@ -45,7 +45,7 @@ You can find the pull request template [here](PULL_REQUEST_TEMPLATE.md).
 
 The `config` folder contains the configuration details for running the bot in the staging or production environment.
 
-The config contains different variables and settings which are used by the bot to reference channels, check permissions, use colors, etc. All these valies are defined based on the Discord server the bot will connect to and are unique to that server.
+The config contains different variables and settings which are used by the bot to reference channels, check permissions, use colors, etc. All these values are defined based on the Discord server the bot will connect to and are unique to that server.
 
 You can create your own config json file by copying one of the existing ones and updating the different constants/settings with your own values. This allows you to run the bot in your own environment without having to recompile it from the source.
 

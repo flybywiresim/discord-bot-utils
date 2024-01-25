@@ -27,6 +27,7 @@ import vatsim from './utils/vatsim/vatsim';
 import help from './utils/help';
 import docSearch from './utils/docSearch';
 import reportedIssues from './utils/reportedIssues';
+import commandTable from './moderation/commandTable';
 
 const commandArray: SlashCommand[] = [
     ping,
@@ -57,6 +58,7 @@ const commandArray: SlashCommand[] = [
     help,
     docSearch,
     reportedIssues,
+    commandTable,
 ];
 
 export default commandArray;
