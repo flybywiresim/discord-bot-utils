@@ -6,7 +6,7 @@ import contextArray from '../context/index';
 import { client } from '../../client';
 
 const data = slashCommandStructure({
-    name: 'deploy_commands',
+    name: 'deploy-commands',
     description: 'Deploy commands to the server or globally.',
     type: ApplicationCommandType.ChatInput,
     default_member_permissions: constantsConfig.commandPermission.MANAGE_SERVER, //Overrides need to be added for admin, moderator and bot developer roles

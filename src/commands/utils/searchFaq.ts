@@ -2,7 +2,7 @@ import { ApplicationCommandOptionType, ApplicationCommandType } from 'discord.js
 import { constantsConfig, slashCommand, slashCommandStructure, makeEmbed, FAQ, Logger } from '../../lib';
 
 const data = slashCommandStructure({
-    name: 'faq_search',
+    name: 'faq-search',
     description: 'Searches the FAQs.',
     type: ApplicationCommandType.ChatInput,
     options: [

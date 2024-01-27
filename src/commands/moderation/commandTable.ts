@@ -3,7 +3,7 @@ import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { slashCommand, slashCommandStructure, Logger, constantsConfig } from '../../lib';
 
 const data = slashCommandStructure({
-    name: 'generate_command_table',
+    name: 'generate-command-table',
     description: 'Generates the command table.',
     type: ApplicationCommandType.ChatInput,
     default_member_permissions: constantsConfig.commandPermission.MANAGE_SERVER, //Overrides need to be added for admin, moderator bot developer and docs team roles
