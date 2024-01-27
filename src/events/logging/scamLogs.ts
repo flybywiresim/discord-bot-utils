@@ -47,14 +47,14 @@ export default event(Events.MessageCreate, async ({ log }, msg) => {
         return;
     }
 
-    const scamReportLogs = msg.guild.channels.resolve(constantsConfig.channels.SCAM_REPORT_LOGS) as TextChannel | null;
-
-    if (!conn && scamReportLogs) {
-        await scamReportLogs.send({ embeds: [noConnEmbed] });
-        return;
-    }
-
     if (scamReportLogs && msg.content.toLowerCase().includes('@everyone') && !msg.author.bot) {
+        const scamReportLogs = msg.guild.channels.resolve(constantsConfig.channels.SCAM_REPORT_LOGS) as TextChannel | null;
+
+        if (!conn && scamReportLogs) {
+            await scamReportLogs.send({ embeds: [noConnEmbed] });
+            return;
+        }
+
         if (!(msg.channel instanceof DMChannel)) {
             let hasRole = false;
             try {
