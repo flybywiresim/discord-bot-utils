@@ -2,7 +2,7 @@ import { ApplicationCommandType } from 'discord.js';
 import { slashCommand, slashCommandStructure, makeEmbed } from '../../lib';
 
 const data = slashCommandStructure({
-    name: 'member_count',
+    name: 'member-count',
     description: 'Lists the current member count for the server.',
     type: ApplicationCommandType.ChatInput,
 });

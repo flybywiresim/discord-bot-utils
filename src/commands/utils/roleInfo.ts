@@ -2,7 +2,7 @@ import { ApplicationCommandOptionType, ApplicationCommandType } from 'discord.js
 import { slashCommand, slashCommandStructure, makeEmbed } from '../../lib';
 
 const data = slashCommandStructure({
-    name: 'role_info',
+    name: 'role-info',
     description: 'Lists the given role\'s amount of members.',
     type: ApplicationCommandType.ChatInput,
     options: [{

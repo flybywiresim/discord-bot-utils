@@ -3,7 +3,7 @@ import Filter from 'bad-words';
 import { slashCommand, slashCommandStructure, makeEmbed } from '../../lib';
 
 const data = slashCommandStructure({
-    name: 'doc_search',
+    name: 'doc-search',
     description: 'Searches the FlyByWire Documentation for a given query.',
     type: ApplicationCommandType.ChatInput,
     options: [{

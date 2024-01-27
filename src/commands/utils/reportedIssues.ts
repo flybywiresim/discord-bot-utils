@@ -3,7 +3,7 @@ import { JSDOM } from 'jsdom';
 import { Logger, makeEmbed, slashCommand, slashCommandStructure } from '../../lib';
 
 const data = slashCommandStructure({
-    name: 'reported_issues',
+    name: 'reported-issues',
     description: 'Provides a link to the reported issues page within docs.',
     type: ApplicationCommandType.ChatInput,
     options: [{

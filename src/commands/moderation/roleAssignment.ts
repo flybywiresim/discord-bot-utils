@@ -7,7 +7,7 @@ import {
 import { constantsConfig, makeEmbed, slashCommand, slashCommandStructure } from '../../lib';
 
 const data = slashCommandStructure({
-    name: 'role_assignment',
+    name: 'role-assignment',
     description: 'Configures and sends the role assignment embed.',
     type: ApplicationCommandType.ChatInput,
     default_member_permissions: constantsConfig.commandPermission.MANAGE_SERVER, //Overrides need to be added for admin and moderator

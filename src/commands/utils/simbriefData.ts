@@ -3,7 +3,7 @@ import moment from 'moment';
 import { slashCommand, makeEmbed, makeLines, slashCommandStructure } from '../../lib';
 
 const data = slashCommandStructure({
-    name: 'simbrief_data',
+    name: 'simbrief-data',
     description: 'Gets the simbrief data for the given flight number/pilotID.',
     type: ApplicationCommandType.ChatInput,
     options: [
@@ -20,7 +20,7 @@ const data = slashCommandStructure({
             }],
         },
         {
-            name: 'support_request',
+            name: 'support-request',
             description: 'Shows information on how to provide SimBrief data.',
             type: ApplicationCommandOptionType.Subcommand,
         },

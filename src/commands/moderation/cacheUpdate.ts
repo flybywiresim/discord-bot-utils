@@ -2,7 +2,7 @@ import { ApplicationCommandOptionType, ApplicationCommandType, Colors, EmbedFiel
 import { constantsConfig, slashCommand, slashCommandStructure, makeEmbed } from '../../lib';
 
 const data = slashCommandStructure({
-    name: 'cache_update',
+    name: 'cache-update',
     description: 'Updates the cache of the bot for a specific cache type.',
     type: ApplicationCommandType.ChatInput,
     default_member_permissions: constantsConfig.commandPermission.MANAGE_SERVER, //Overrides need to be added for admin, moderator and bot developer roles

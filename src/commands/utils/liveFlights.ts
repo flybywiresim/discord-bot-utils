@@ -2,7 +2,7 @@ import { ApplicationCommandType, Colors } from 'discord.js';
 import { slashCommand, slashCommandStructure, makeEmbed, Logger } from '../../lib';
 
 const data = slashCommandStructure({
-    name: 'live_flights',
+    name: 'live-flights',
     description: 'Get the current live flights for FlyByWire Simulations.',
     type: ApplicationCommandType.ChatInput,
 });

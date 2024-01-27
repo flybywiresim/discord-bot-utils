@@ -36,7 +36,7 @@ const data = slashCommandStructure({
             type: ApplicationCommandOptionType.Subcommand,
         },
         {
-            name: 'print_all',
+            name: 'print-all',
             description: 'Prints all FAQs.',
             type: ApplicationCommandOptionType.Subcommand,
         },
