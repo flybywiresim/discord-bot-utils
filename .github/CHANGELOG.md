@@ -2,6 +2,7 @@
 
 Update <small>_ January 2024</small>
 
+- fix: use - instead of _ in command names (27/01/2024)
 - feat: auto-generation of the command table (24/01/2024)
 - feat: migrate reportedIssues command (22/01/2024)
 - feat: docSearch command (22/01/2024)
