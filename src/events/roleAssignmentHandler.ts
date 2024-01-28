@@ -9,12 +9,17 @@ export default event(Events.InteractionCreate, async ({ log }, interaction) => {
     try {
         const roleButtonCustomIds = constantsConfig.roleAssignmentIds.flatMap((group) => group.roles.map((role) => role.id));
 
-        const { customId } = interaction;
+        const { customId, component, user } = interaction;
 
         // Check if the pressed button's custom ID is in the array of role-related custom IDs
         if (!roleButtonCustomIds.includes(customId)) {
-            Logger.info('Role Assignment: Custom ID not matched');
-            // If the custom ID doesn't match any role-related buttons, return early
+            const buttonLabel = component?.label;
+
+            if (buttonLabel) {
+                Logger.info(`Role Assignment: Custom ID not matched. Custom ID: ${customId}, Label: ${buttonLabel}, User: ${user.tag}, User ID: ${user.id}`);
+            } else {
+                Logger.info(`Role Assignment: Custom ID not matched. Custom ID: ${customId}, Label: null, User: ${user.tag}, User ID: ${user.id}`);
+            }
             return;
         }
 
