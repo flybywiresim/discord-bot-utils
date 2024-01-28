@@ -67,6 +67,8 @@ const cacheUpdateEmbedField = (moderator: string, cacheType: string, cacheSize: 
 ];
 
 export default slashCommand(data, async ({ interaction }) => {
+    await interaction.deferReply({ ephemeral: true });
+
     const modLogsChannel = interaction.guild.channels.resolve(constantsConfig.channels.MOD_LOGS) as TextChannel;
     let cacheSize: number | undefined;
     const start = new Date().getTime();
@@ -92,6 +94,17 @@ export default slashCommand(data, async ({ interaction }) => {
     const duration = ((new Date().getTime() - start) / 1000).toFixed(2);
 
     if (cacheSize !== undefined) {
+        await interaction.editReply({
+            embeds: [cacheUpdateEmbed(interaction.options.getSubcommand(),
+                cacheUpdateEmbedField(
+                    interaction.user.tag,
+                    interaction.options.getSubcommand(),
+                    cacheSize.toString(),
+                    duration,
+                ),
+                Colors.Green)],
+        });
+
         try {
             await modLogsChannel.send({
                 embeds: [cacheUpdateEmbed(interaction.options.getSubcommand(),
@@ -104,22 +117,7 @@ export default slashCommand(data, async ({ interaction }) => {
                     Colors.Green)],
             });
         } catch (error) {
-            await interaction.reply({
-                embeds: [noChannelEmbed(interaction.options.getSubcommand(), 'mod-log')],
-                ephemeral: true,
-            });
+            await interaction.followUp({ embeds: [noChannelEmbed(interaction.options.getSubcommand(), 'mod-log')] });
         }
-
-        await interaction.reply({
-            embeds: [cacheUpdateEmbed(interaction.options.getSubcommand(),
-                cacheUpdateEmbedField(
-                    interaction.user.tag,
-                    interaction.options.getSubcommand(),
-                    cacheSize.toString(),
-                    duration,
-                ),
-                Colors.Green)],
-            ephemeral: true,
-        });
     }
 });
