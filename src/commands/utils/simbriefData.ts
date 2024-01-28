@@ -67,7 +67,7 @@ const simbriefEmbed = (flightplan: any) => makeEmbed({
 });
 
 export default slashCommand(data, async ({ interaction }) => {
-    if (interaction.options.getSubcommand() === 'support_request') {
+    if (interaction.options.getSubcommand() === 'support-request') {
         return interaction.reply({ embeds: [simbriefdatarequestEmbed] });
     }
 

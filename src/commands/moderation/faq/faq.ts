@@ -72,7 +72,7 @@ export default slashCommand(data, async ({ interaction }) => {
     case 'list':
         await handleListFaq(interaction);
         break;
-    case 'print_all':
+    case 'print-all':
         await handlePrintAllFAQ(interaction);
         break;
 
