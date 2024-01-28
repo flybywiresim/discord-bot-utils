@@ -3,6 +3,11 @@
 Update <small>_ January 2024</small>
 
 - fix: defer interaction for cache update (28/01/2024)
+- fix: defer interaction on birthday list command (28/01/2024)
+- fix: handle errors if message doesn't exist for delete logs (28/01/2024)
+- fix: clearer logging for the role assignment handler (28/01/2024)
+- fix: interaction already replied in faq print-all (28/01/2024)
+- fix: ScamLog - Ignore messages entirely unless it has everyone (28/01/2024)
 - fix: command names (28/01/2024)
 - fix: ignore Dyno bot (27/01/2024)
 - fix: use - instead of _ in command names (27/01/2024)

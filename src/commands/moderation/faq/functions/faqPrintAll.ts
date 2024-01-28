@@ -33,8 +33,8 @@ export async function handlePrintAllFAQ(interaction: ChatInputCommandInteraction
         const faqs = await FAQ.find();
 
         if (faqs.length === 0) {
-            await interaction.reply('No FAQs found.');
-        } else if (interaction.channel) {
+            return interaction.followUp('No FAQs found.');
+        } if (interaction.channel) {
             await interaction.channel.send({ files: [FLIGHT_DECK_IMAGE_URL] });
 
             // Divide the FAQs into sets of 5
@@ -61,12 +61,12 @@ export async function handlePrintAllFAQ(interaction: ChatInputCommandInteraction
 
             await interaction.channel.send({ embeds: [linksEmbed] });
         } else {
-            await interaction.reply({ content: 'FAQs can only be printed in a text channel.', ephemeral: true });
+            return interaction.followUp({ content: 'FAQs can only be printed in a text channel.', ephemeral: true });
         }
     } catch (error) {
         Logger.error('Error fetching FAQs:', error);
-        await interaction.reply('An error occurred while fetching FAQs.');
+        return interaction.followUp('An error occurred while fetching FAQs.');
     }
 
-    await interaction.followUp({ content: 'FAQs printed successfully.', ephemeral: true });
+    return interaction.followUp({ content: 'FAQs printed successfully.', ephemeral: true });
 }
