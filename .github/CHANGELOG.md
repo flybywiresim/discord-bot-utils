@@ -2,6 +2,7 @@
 
 Update <small>_ January 2024</small>
 
+- fix: handle errors if message doesn't exist for delete logs (28/01/2024)
 - fix: command names (28/01/2024)
 - fix: ignore Dyno bot (27/01/2024)
 - fix: use - instead of _ in command names (27/01/2024)
