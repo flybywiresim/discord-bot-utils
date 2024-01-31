@@ -28,6 +28,7 @@ import help from './utils/help';
 import docSearch from './utils/docSearch';
 import reportedIssues from './utils/reportedIssues';
 import commandTable from './moderation/commandTable';
+import poll from './moderation/vote/vote';
 
 const commandArray: SlashCommand[] = [
     ping,
@@ -59,6 +60,7 @@ const commandArray: SlashCommand[] = [
     docSearch,
     reportedIssues,
     commandTable,
+    poll,
 ];
 
 export default commandArray;
