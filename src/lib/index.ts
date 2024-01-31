@@ -16,6 +16,7 @@ export * from './genericPagination';
 export * from './schemas/infractionSchema';
 export * from './schemas/faqSchema';
 export * from './schemas/birthdaySchema';
+export * from './schemas/pollSchema';
 
 //Scheduler Jobs
 export * from './schedulerJobs/autoDisableSlowMode';
