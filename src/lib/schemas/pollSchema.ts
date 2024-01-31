@@ -12,4 +12,4 @@ const pollSchema = new Schema({
     moderatorID: String,
 });
 
-export const Poll = mongoose.model('Birthday', pollSchema);
+export const Poll = mongoose.model('Poll', pollSchema);
