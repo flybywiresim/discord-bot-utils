@@ -2,6 +2,7 @@
 
 Update <small>_ February 2024</small>
 
+- fix: message edit and delete crash (01/02/2024)
 - feat: add heartbeat mechanism for monitoring (01/02/2024)
 
 Update <small>_ January 2024</small>
