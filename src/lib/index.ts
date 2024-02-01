@@ -19,3 +19,4 @@ export * from './schemas/birthdaySchema';
 
 //Scheduler Jobs
 export * from './schedulerJobs/autoDisableSlowMode';
+export * from './schedulerJobs/sendHeartbeat';
