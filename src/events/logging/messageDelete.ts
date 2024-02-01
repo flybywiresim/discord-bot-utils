@@ -50,7 +50,18 @@ export default event(Events.MessageDelete, async (_, msg) => {
                 }
             }
         }
-        const messageContent = messageComponents.join('\n');
+
+        const MAX_MESSAGE_LENGTH = 1024;
+
+        let messageContent = messageComponents.join('\n');
+
+        let deletedMessageFieldTitle = 'Deleted Message';
+
+        if (messageContent.length > MAX_MESSAGE_LENGTH) {
+            messageContent = `${messageComponents.join('\n').slice(0, MAX_MESSAGE_LENGTH - 3)}...`;
+            deletedMessageFieldTitle = 'Deleted Message (truncated)';
+        }
+
         const messageReference = msg.reference ? await msg.fetchReference() : null;
         const messageDeleteEmbed = makeEmbed({
             color: Colors.Red,
@@ -86,7 +97,7 @@ export default event(Events.MessageDelete, async (_, msg) => {
                     inline: false,
                 },
                 {
-                    name: 'Deleted Message',
+                    name: deletedMessageFieldTitle,
                     value: messageContent ? `${messageContent}` : CONTENT_NOT_AVAIL,
                     inline: false,
                 },
