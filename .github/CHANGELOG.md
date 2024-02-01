@@ -1,5 +1,9 @@
 ## Changelog
 
+Update <small>_ February 2024</small>
+
+- feat: add heartbeat mechanism for monitoring (01/02/2024)
+
 Update <small>_ January 2024</small>
 
 - fix: defer interaction for cache update (28/01/2024)
