@@ -30,8 +30,9 @@ const data = slashCommandStructure({
                     name: 'duration',
                     description: 'Please provide a duration, default: infinite.',
                     type: ApplicationCommandOptionType.Number,
-                    required: false,
+                    required: true,
                     choices: [
+                        { name: 'infinite', value: -1 },
                         { name: '5 minutes', value: 300000 },
                         { name: '15 minutes', value: 900000 },
                         { name: '30 minutes', value: 1800000 },
@@ -41,7 +42,6 @@ const data = slashCommandStructure({
                         { name: '1 day', value: 86400000 },
                         { name: '3 days', value: 259200000 },
                         { name: '1 week', value: 604800000 },
-                        { name: 'infinite', value: -1 },
                     ],
                 },
                 {
