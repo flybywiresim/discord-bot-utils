@@ -3,6 +3,8 @@ import { constantsConfig, getConn, makeEmbed, slashCommand, slashCommandStructur
 import { createPoll } from './functions/createPoll';
 import { deletePoll } from './functions/deletePoll';
 import { listPoll } from './functions/listPoll';
+import { setOptions } from './functions/setOptions';
+import { deleteOption } from './functions/deleteOptions';
 
 const data = slashCommandStructure({
     name: 'poll',
@@ -94,6 +96,7 @@ const data = slashCommandStructure({
                     description: 'Please provide the option number you wish to set.',
                     type: ApplicationCommandOptionType.Integer,
                     required: true,
+                    min_value: 1,
                 },
                 {
                     name: 'option_text',
@@ -190,11 +193,11 @@ export default slashCommand(data, async ({ interaction }) => {
     case 'list':
         await listPoll(interaction);
         break;
-    case 'set_options':
-        await interaction.reply({ content: 'Not implemented yet', ephemeral: true });
+    case 'set-options':
+        await setOptions(interaction);
         break;
-    case 'remove_options':
-        await interaction.reply({ content: 'Not implemented yet', ephemeral: true });
+    case 'remove-options':
+        await deleteOption(interaction);
         break;
     case 'preview':
         await interaction.reply({ content: 'Not implemented yet', ephemeral: true });

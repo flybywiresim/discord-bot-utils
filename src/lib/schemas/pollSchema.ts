@@ -6,9 +6,12 @@ const pollSchema = new Schema({
     duration: Number,
     abstainAllowed: Boolean,
     notify: String,
-    options: Map,
+    options: [{
+        number: Number,
+        value: String,
+        votes: [{ userID: String }],
+    }],
     isOpen: Boolean,
-    votes: Map,
     messageID: String,
     moderatorID: String,
 });
