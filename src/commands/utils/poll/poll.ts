@@ -1,6 +1,7 @@
 import { ApplicationCommandOptionType, ApplicationCommandType, Colors } from 'discord.js';
 import { constantsConfig, getConn, makeEmbed, slashCommand, slashCommandStructure } from '../../../lib';
 import { createPoll } from './functions/createPoll';
+import { deletePoll } from './functions/deletePoll';
 
 const data = slashCommandStructure({
     name: 'poll',
@@ -183,7 +184,7 @@ export default slashCommand(data, async ({ interaction }) => {
         await createPoll(interaction);
         break;
     case 'delete':
-        await interaction.reply({ content: 'Not implemented yet', ephemeral: true });
+        await deletePoll(interaction);
         break;
     case 'list':
         await interaction.reply({ content: 'Not implemented yet', ephemeral: true });
