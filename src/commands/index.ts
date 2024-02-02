@@ -28,7 +28,7 @@ import help from './utils/help';
 import docSearch from './utils/docSearch';
 import reportedIssues from './utils/reportedIssues';
 import commandTable from './moderation/commandTable';
-import poll from './moderation/vote/vote';
+import poll from './utils/poll/poll';
 
 const commandArray: SlashCommand[] = [
     ping,
