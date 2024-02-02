@@ -2,6 +2,7 @@ import { ApplicationCommandOptionType, ApplicationCommandType, Colors } from 'di
 import { constantsConfig, getConn, makeEmbed, slashCommand, slashCommandStructure } from '../../../lib';
 import { createPoll } from './functions/createPoll';
 import { deletePoll } from './functions/deletePoll';
+import { listPoll } from './functions/listPoll';
 
 const data = slashCommandStructure({
     name: 'poll',
@@ -187,7 +188,7 @@ export default slashCommand(data, async ({ interaction }) => {
         await deletePoll(interaction);
         break;
     case 'list':
-        await interaction.reply({ content: 'Not implemented yet', ephemeral: true });
+        await listPoll(interaction);
         break;
     case 'set_options':
         await interaction.reply({ content: 'Not implemented yet', ephemeral: true });
