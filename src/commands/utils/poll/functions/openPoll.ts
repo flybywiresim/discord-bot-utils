@@ -70,10 +70,11 @@ export async function openPoll(interaction: ChatInputCommandInteraction<'cached'
         }
 
         // Send the recreated poll embed
-        await pollChannel.send({ embeds: [pollEmbed] });
+        const pollMessage = await pollChannel.send({ embeds: [pollEmbed] });
 
         // Update the poll's isOpen property to true
         poll.isOpen = true;
+        poll.messageID = pollMessage.id;
         await poll.save();
 
         // Reply with a message indicating that the poll has been opened
