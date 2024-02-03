@@ -41,7 +41,7 @@ export async function previewPoll(interaction: ChatInputCommandInteraction<'cach
             ]),
             fields: [
                 {
-                    name: 'Will end in:',
+                    name: 'Will end at:',
                     value: 'This displays when the poll will end',
                 },
                 {

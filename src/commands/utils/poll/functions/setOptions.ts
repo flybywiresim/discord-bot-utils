@@ -36,7 +36,7 @@ export async function setOptions(interaction: ChatInputCommandInteraction<'cache
                     .setLabel('Confirm')
                     .setStyle(ButtonStyle.Primary),
                 new ButtonBuilder()
-                    .setCustomId('pollCcancel')
+                    .setCustomId('pollCancel')
                     .setLabel('Cancel')
                     .setStyle(ButtonStyle.Danger),
             );

@@ -5,6 +5,7 @@ const pollSchema = new Schema({
     title: String,
     description: String,
     duration: Number,
+    closingTime: Date,
     abstainAllowed: Boolean,
     notify: String,
     options: [{
@@ -15,6 +16,7 @@ const pollSchema = new Schema({
     isOpen: Boolean,
     messageID: String,
     moderatorID: String,
+    channelID: String,
 });
 
 export const Poll = mongoose.model('Poll', pollSchema);

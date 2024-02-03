@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction } from 'discord.js';
+import { ChatInputCommandInteraction, TextChannel } from 'discord.js';
 import mongoose from 'mongoose';
 import moment from 'moment/moment';
 import { Logger, makeEmbed, makeLines, Poll } from '../../../../lib';
@@ -27,18 +27,12 @@ export async function openPoll(interaction: ChatInputCommandInteraction<'cached'
             return;
         }
 
-        // Update the poll's isOpen property to true
-        poll.isOpen = true;
-        await poll.save();
-
-        // Reply with a message indicating that the poll has been opened
-        await interaction.reply({ content: `Poll "${poll.title}" has been opened.`, ephemeral: true });
-
         // Calculate the closing time, considering poll duration (in minutes)
         let closingTime = null;
         let formattedClosingTime = null;
         if (poll.duration !== undefined && poll.duration !== null && poll.duration !== -1) {
             closingTime = new Date(Date.now() + poll.duration);
+            poll.closingTime = closingTime;
             formattedClosingTime = moment(closingTime).utcOffset(0).format();
         }
 
@@ -54,12 +48,12 @@ export async function openPoll(interaction: ChatInputCommandInteraction<'cached'
             description: makeLines([
                 `${poll.description}`,
                 '',
-                'Options:',
+                '**Options:**',
                 ...poll.options.map((opt) => `Option ${opt.number}: ${opt.value}`),
             ]),
             fields: [
                 {
-                    name: 'Will end in:',
+                    name: 'Will end at:',
                     value: formattedClosingTime || 'Infinite', // Display 'Infinite' if no closing time
                 },
                 {
@@ -69,8 +63,21 @@ export async function openPoll(interaction: ChatInputCommandInteraction<'cached'
             ],
         });
 
+        const pollChannel = interaction.guild.channels.resolve(poll.channelID!) as TextChannel;
+
+        if (poll.notify && poll.notify.trim() !== '') {
+            await pollChannel.send({ content: poll.notify });
+        }
+
         // Send the recreated poll embed
-        await interaction.followUp({ embeds: [pollEmbed], ephemeral: true });
+        await pollChannel.send({ embeds: [pollEmbed] });
+
+        // Update the poll's isOpen property to true
+        poll.isOpen = true;
+        await poll.save();
+
+        // Reply with a message indicating that the poll has been opened
+        await interaction.reply({ content: `Poll "${poll.title}" has been opened.`, ephemeral: true });
     } catch (error) {
         Logger.error(error);
         await interaction.reply({
