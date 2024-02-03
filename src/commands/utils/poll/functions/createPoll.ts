@@ -46,6 +46,7 @@ const pollAddedEmbed = (moderator: User, title: string, description: string, dur
 export async function createPoll(interaction: ChatInputCommandInteraction<'cached'>) {
     const title = interaction.options.getString('title', true);
     const description = interaction.options.getString('description', true);
+    const channel = interaction.options.getChannel('channel', true);
     const duration = interaction.options.getNumber('duration', true);
     const abstainAllowed = interaction.options.getBoolean('abstain_allowed', false) || false;
     const notify = interaction.options.getString('notify', false) || 'none';
@@ -68,6 +69,7 @@ export async function createPoll(interaction: ChatInputCommandInteraction<'cache
             moderatorID: moderator.id,
             title,
             description,
+            channelID: channel.id,
             duration,
             abstainAllowed,
             notify,

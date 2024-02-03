@@ -6,6 +6,7 @@ import { listPoll } from './functions/listPoll';
 import { setOptions } from './functions/setOptions';
 import { deleteOption } from './functions/deleteOptions';
 import { previewPoll } from './functions/previewPoll';
+import { openPoll } from './functions/openPoll';
 
 const data = slashCommandStructure({
     name: 'poll',
@@ -29,6 +30,12 @@ const data = slashCommandStructure({
                     name: 'description',
                     description: 'Please provide a poll description.',
                     type: ApplicationCommandOptionType.String,
+                    required: true,
+                },
+                {
+                    name: 'channel',
+                    description: 'Please provide a channel to send the poll to.',
+                    type: ApplicationCommandOptionType.Channel,
                     required: true,
                 },
                 {
@@ -204,7 +211,7 @@ export default slashCommand(data, async ({ interaction }) => {
         await previewPoll(interaction);
         break;
     case 'open':
-        await interaction.reply({ content: 'Not implemented yet', ephemeral: true });
+        await openPoll(interaction);
         break;
     case 'close':
         await interaction.reply({ content: 'Not implemented yet', ephemeral: true });
