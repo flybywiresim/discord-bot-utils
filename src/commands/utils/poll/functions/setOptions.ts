@@ -32,11 +32,11 @@ export async function setOptions(interaction: ChatInputCommandInteraction<'cache
             // Add buttons for confirmation
             const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
                 new ButtonBuilder()
-                    .setCustomId('confirm')
+                    .setCustomId('pollConfirm')
                     .setLabel('Confirm')
                     .setStyle(ButtonStyle.Primary),
                 new ButtonBuilder()
-                    .setCustomId('cancel')
+                    .setCustomId('pollCcancel')
                     .setLabel('Cancel')
                     .setStyle(ButtonStyle.Danger),
             );
@@ -60,7 +60,7 @@ export async function setOptions(interaction: ChatInputCommandInteraction<'cache
                 buttonInteraction.deferUpdate();
 
                 // Check if the user confirmed
-                if (buttonInteraction.customId === 'confirm') {
+                if (buttonInteraction.customId === 'pollConfirm') {
                     // Proceed with shifting existing options down
                     poll.options.forEach((opt) => {
                         if (opt?.number && opt.number >= optionNumber) {
@@ -83,7 +83,7 @@ export async function setOptions(interaction: ChatInputCommandInteraction<'cache
                         content: `Option ${optionNumber}, ${option} added successfully and existing options renumbered.`,
                         ephemeral: true,
                     });
-                } else if (buttonInteraction.customId === 'cancel') {
+                } else if (buttonInteraction.customId === 'pollCancel') {
                     // User canceled, do nothing or provide appropriate response
                     await interaction.followUp({
                         content: 'Option addition canceled by user.',
