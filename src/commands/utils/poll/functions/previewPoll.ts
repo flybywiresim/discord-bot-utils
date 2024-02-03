@@ -22,7 +22,10 @@ export async function previewPoll(interaction: ChatInputCommandInteraction<'cach
 
         const moderator = await interaction.client.users.fetch(poll.moderatorID!);
 
-        const optionsDescription = poll.options.map((opt) => `Option ${opt.number}: ${opt.value}`).join('\n');
+        const optionsDescription = poll.options
+            .map((opt) => `Option ${opt.number}: ${opt.value}`)
+            .concat(poll.abstainAllowed ? 'Abstain: Allows you to abstain from voting' : [])
+            .join('\n');
 
         const previewEmbed = makeEmbed({
             author: {
@@ -33,7 +36,7 @@ export async function previewPoll(interaction: ChatInputCommandInteraction<'cach
             description: makeLines([
                 `${poll.description}`,
                 '',
-                'Options:',
+                '**Options:**',
                 optionsDescription,
             ]),
             fields: [
@@ -46,6 +49,8 @@ export async function previewPoll(interaction: ChatInputCommandInteraction<'cach
                     value: 'This displays the number of votes',
                 },
             ],
+            // eslint-disable-next-line no-underscore-dangle
+            footer: { text: `Poll ID: ${poll._id}` },
         });
 
         await interaction.reply({ embeds: [previewEmbed], ephemeral: true });
