@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction } from 'discord.js';
 import mongoose from 'mongoose';
-import { Logger, makeEmbed, Poll } from '../../../../lib';
+import { Logger, makeEmbed, makeLines, Poll } from '../../../../lib';
 
 export async function previewPoll(interaction: ChatInputCommandInteraction<'cached'>) {
     const pollID = interaction.options.getString('poll_id', true);
@@ -22,24 +22,7 @@ export async function previewPoll(interaction: ChatInputCommandInteraction<'cach
 
         const moderator = await interaction.client.users.fetch(poll.moderatorID!);
 
-        const fields = poll.options.map((opt) => ({
-            name: `Option ${opt.number}`,
-            value: opt.value?.toString() || 'No value set',
-            inline: false,
-        }));
-
-        fields.push(
-            {
-                name: 'Will end in',
-                value: 'This displays when the poll will end',
-                inline: false,
-            },
-            {
-                name: 'Number of votes',
-                value: 'This displays the number of votes',
-                inline: false,
-            },
-        );
+        const optionsDescription = poll.options.map((opt) => `Option ${opt.number}: ${opt.value}`).join('\n');
 
         const previewEmbed = makeEmbed({
             author: {
@@ -47,8 +30,22 @@ export async function previewPoll(interaction: ChatInputCommandInteraction<'cach
                 iconURL: moderator.displayAvatarURL(),
             },
             title: `Previewing Poll: ${poll.title}`,
-            description: `${poll.description}`,
-            fields,
+            description: makeLines([
+                `${poll.description}`,
+                '',
+                'Options:',
+                optionsDescription,
+            ]),
+            fields: [
+                {
+                    name: 'Will end in:',
+                    value: 'This displays when the poll will end',
+                },
+                {
+                    name: 'Total votes:',
+                    value: 'This displays the number of votes',
+                },
+            ],
         });
 
         await interaction.reply({ embeds: [previewEmbed], ephemeral: true });
