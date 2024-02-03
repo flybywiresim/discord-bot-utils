@@ -21,6 +21,11 @@ export async function deleteOption(interaction: ChatInputCommandInteraction<'cac
             return;
         }
 
+        if (poll.isOpen) {
+            await interaction.reply({ content: 'The poll is already open. You cannot modify options of an open poll.', ephemeral: true });
+            return;
+        }
+
         // Find the index of the option to delete
         const indexToDelete = poll.options.findIndex((opt) => opt.number === optionNumberToDelete);
 

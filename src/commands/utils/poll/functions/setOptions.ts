@@ -22,6 +22,11 @@ export async function setOptions(interaction: ChatInputCommandInteraction<'cache
             return;
         }
 
+        if (poll.isOpen) {
+            await interaction.reply({ content: 'The poll is already open. You cannot modify options of an open poll.', ephemeral: true });
+            return;
+        }
+
         if (poll.options.find((opt) => opt?.number === optionNumber)) {
             // If the specified option number already exists, ask for confirmation
             await interaction.reply({
