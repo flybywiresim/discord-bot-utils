@@ -9,6 +9,7 @@ import {
     Logger,
     processBirthdays,
     imageBaseUrl,
+    getScheduler,
 } from '../lib';
 import { deployCommands } from '../scripts/deployCommands';
 import commandArray from '../commands';
@@ -76,15 +77,33 @@ export default event(Events.ClientReady, async ({ log }, client) => {
     }
 
     // Set birthday handler
-
     const birthdayInterval = setInterval(processBirthdays, 1000 * 60 * 30, client);
-
     client.on('disconnect', () => {
         clearInterval(birthdayInterval);
     });
 
-    const botDevChannel = client.channels.resolve(constantsConfig.channels.MOD_LOGS) as TextChannel;
+    if (schedulerConnected && process.env.HEARTBEAT_URL && process.env.HEARTBEAT_INTERVAL) {
+        const scheduler = getScheduler();
+        if (scheduler) {
+            const heartbeatJobList = await scheduler.jobs({ name: 'sendHeartbeat' });
+            if (heartbeatJobList.length === 0) {
+                scheduler.every(`${process.env.HEARTBEAT_INTERVAL} seconds`, 'sendHeartbeat', { interval: process.env.HEARTBEAT_INTERVAL });
+                Logger.info(`Heartbeat job scheduled with interval ${process.env.HEARTBEAT_INTERVAL}`);
+            } else {
+                const heartbeatJob = heartbeatJobList[0];
+                const { interval } = heartbeatJob.attrs.data as { interval: string };
+                if (interval !== process.env.HEARTBEAT_INTERVAL) {
+                    await scheduler.cancel({ name: 'sendHeartbeat' });
+                    scheduler.every(`${process.env.HEARTBEAT_INTERVAL} seconds`, 'sendHeartbeat', { interval: process.env.HEARTBEAT_INTERVAL });
+                    Logger.info(`Heartbeat job rescheduled with new interval ${process.env.HEARTBEAT_INTERVAL}`);
+                } else {
+                    Logger.info('Heartbeat job already scheduled');
+                }
+            }
+        }
+    }
 
+    const botDevChannel = client.channels.resolve(constantsConfig.channels.MOD_LOGS) as TextChannel;
     if (botDevChannel) {
         const currentDate = new Date();
         const formattedDate = moment(currentDate)
