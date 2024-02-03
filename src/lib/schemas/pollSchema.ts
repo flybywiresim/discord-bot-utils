@@ -3,6 +3,7 @@ import mongoose, { Schema } from 'mongoose';
 const pollSchema = new Schema({
     guildID: String,
     title: String,
+    description: String,
     duration: Number,
     abstainAllowed: Boolean,
     notify: String,

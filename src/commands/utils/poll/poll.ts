@@ -5,6 +5,7 @@ import { deletePoll } from './functions/deletePoll';
 import { listPoll } from './functions/listPoll';
 import { setOptions } from './functions/setOptions';
 import { deleteOption } from './functions/deleteOptions';
+import { previewPoll } from './functions/previewPoll';
 
 const data = slashCommandStructure({
     name: 'poll',
@@ -200,7 +201,7 @@ export default slashCommand(data, async ({ interaction }) => {
         await deleteOption(interaction);
         break;
     case 'preview':
-        await interaction.reply({ content: 'Not implemented yet', ephemeral: true });
+        await previewPoll(interaction);
         break;
     case 'open':
         await interaction.reply({ content: 'Not implemented yet', ephemeral: true });
