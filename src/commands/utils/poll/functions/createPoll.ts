@@ -2,46 +2,50 @@ import { ChatInputCommandInteraction, Colors, TextChannel, User } from 'discord.
 import moment from 'moment';
 import { constantsConfig, durationInEnglish, Logger, makeEmbed, Poll } from '../../../../lib';
 
-const pollAddedEmbed = (moderator: User, title: string, description: string, duration: number, abstainAllowed: boolean, notify: string, formattedDate: string, insertedID: string) => makeEmbed({
-    author: {
-        name: `[Poll Added] ${moderator.tag}`,
-        iconURL: moderator.displayAvatarURL(),
-    },
-    fields: [
-        {
-            inline: false,
-            name: 'Poll Title',
-            value: title,
+const pollAddedEmbed = (moderator: User, title: string, description: string, duration: number, abstainAllowed: boolean, notify: string, formattedDate: string, insertedID: string) => {
+    const durationText = duration === -1 ? 'Infinite' : durationInEnglish(duration);
+
+    return makeEmbed({
+        author: {
+            name: `[Poll Added] ${moderator.tag}`,
+            iconURL: moderator.displayAvatarURL(),
         },
-        {
-            inline: false,
-            name: 'Poll Description',
-            value: description,
-        },
-        {
-            inline: false,
-            name: 'Poll Duration',
-            value: durationInEnglish(duration),
-        },
-        {
-            inline: false,
-            name: 'Abstain Allowed',
-            value: abstainAllowed.toString(),
-        },
-        {
-            inline: false,
-            name: 'Notify',
-            value: notify,
-        },
-        {
-            inline: false,
-            name: 'Poll ID',
-            value: insertedID,
-        },
-    ],
-    footer: { text: `Timestamp: ${formattedDate}` },
-    color: Colors.Green,
-});
+        fields: [
+            {
+                inline: false,
+                name: 'Poll Title',
+                value: title,
+            },
+            {
+                inline: false,
+                name: 'Poll Description',
+                value: description,
+            },
+            {
+                inline: false,
+                name: 'Poll Duration',
+                value: durationText,
+            },
+            {
+                inline: false,
+                name: 'Abstain Allowed',
+                value: abstainAllowed.toString(),
+            },
+            {
+                inline: false,
+                name: 'Notify',
+                value: notify,
+            },
+            {
+                inline: false,
+                name: 'Poll ID',
+                value: insertedID,
+            },
+        ],
+        footer: { text: `Timestamp: ${formattedDate}` },
+        color: Colors.Green,
+    });
+};
 
 export async function createPoll(interaction: ChatInputCommandInteraction<'cached'>) {
     const title = interaction.options.getString('title', true);
