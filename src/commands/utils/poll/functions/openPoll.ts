@@ -1,7 +1,13 @@
-import { ChatInputCommandInteraction, TextChannel } from 'discord.js';
+import { ChatInputCommandInteraction, Colors, TextChannel } from 'discord.js';
 import mongoose from 'mongoose';
 import moment from 'moment/moment';
-import { Logger, makeEmbed, makeLines, Poll } from '../../../../lib';
+import { Logger, makeEmbed, makeLines, Poll, getScheduler } from '../../../../lib';
+
+const noSchedulerEmbed = makeEmbed({
+    title: 'Poll - No scheduler',
+    description: 'Could not find an active scheduler. The Poll will not be created.',
+    color: Colors.Red,
+});
 
 export async function openPoll(interaction: ChatInputCommandInteraction<'cached'>) {
     const pollID = interaction.options.getString('poll_id', true);
@@ -67,6 +73,23 @@ export async function openPoll(interaction: ChatInputCommandInteraction<'cached'
 
         if (poll.notify && poll.notify.trim() !== '') {
             await pollChannel.send({ content: poll.notify });
+        }
+
+        const scheduler = getScheduler();
+        if (!scheduler) {
+            await interaction.reply({ embeds: [noSchedulerEmbed] });
+        }
+
+        try {
+            // eslint-disable-next-line no-underscore-dangle
+            if (scheduler) await scheduler.schedule(moment(closingTime).toDate(), 'closePoll', { pollID });
+        } catch (error) {
+            Logger.error(error);
+            await interaction.reply({
+                content: 'Could not schedule the poll to close, the poll will not be created. The error has been logged, please contact the bot team.',
+                ephemeral: true,
+            });
+            return;
         }
 
         // Send the recreated poll embed

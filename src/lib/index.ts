@@ -21,3 +21,4 @@ export * from './schemas/pollSchema';
 //Scheduler Jobs
 export * from './schedulerJobs/autoDisableSlowMode';
 export * from './schedulerJobs/sendHeartbeat';
+export * from './schedulerJobs/closePoll';
