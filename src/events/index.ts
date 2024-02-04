@@ -8,6 +8,7 @@ import contextInteractionHandler from './contextInteractionHandler';
 import roleAssignmentHandler from './roleAssignmentHandler';
 import messageDelete from './logging/messageDelete';
 import messageUpdate from './logging/messageUpdate';
+import pollHandler from './pollHandler';
 
 export default [
     ready,
@@ -18,4 +19,5 @@ export default [
     roleAssignmentHandler,
     messageDelete,
     messageUpdate,
+    pollHandler,
 ] as Event[];
