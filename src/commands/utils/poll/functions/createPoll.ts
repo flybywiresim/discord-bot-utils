@@ -52,8 +52,8 @@ export async function createPoll(interaction: ChatInputCommandInteraction<'cache
     const description = interaction.options.getString('description', true);
     const channel = interaction.options.getChannel('channel', true);
     const duration = interaction.options.getNumber('duration', true);
-    const abstainAllowed = interaction.options.getBoolean('abstain_allowed', false) || false;
-    const notify = interaction.options.getString('notify', false) || 'none';
+    const abstainAllowed = interaction.options.getBoolean('abstain_allowed', false) || true;
+    const notify = interaction.options.getString('notify', false);
 
     const moderator = interaction.user;
 
@@ -98,7 +98,7 @@ export async function createPoll(interaction: ChatInputCommandInteraction<'cache
     const insertedID = savedPoll._id.toHexString();
 
     try {
-        await modLogsChannel.send({ embeds: [pollAddedEmbed(moderator, title, description, duration, abstainAllowed, notify, formattedDate, insertedID)] });
+        await modLogsChannel.send({ embeds: [pollAddedEmbed(moderator, title, description, duration, abstainAllowed, notify ?? 'None', formattedDate, insertedID)] });
     } catch (error) {
         Logger.error(error);
         await interaction.reply({ content: 'Poll added successfully, but could not send mod log, error has been logged, please notify the bot team.', ephemeral: true });
