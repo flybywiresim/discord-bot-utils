@@ -33,13 +33,17 @@ export async function openPoll(interaction: ChatInputCommandInteraction<'cached'
         // If the poll duration is -1, the poll will be open indefinitely
         if (poll.duration !== undefined && poll.duration !== null && poll.duration !== -1) {
             closingTime = new Date(Date.now() + poll.duration);
-            poll.closingTime = closingTime;
             formattedClosingTime = moment(closingTime).utcOffset(0).format();
         }
 
         const optionButtons = createOptionButtons(poll);
 
         const moderator = await interaction.client.users.fetch(poll.moderatorID!);
+
+        const optionsDescription = poll.options
+            .map((opt) => `Option ${opt.number}: ${opt.value}`)
+            .concat(poll.abstainAllowed ? 'Abstain: Allows you to abstain from voting' : [])
+            .join('\n');
 
         // Recreate the poll embed with additional information
         const pollEmbed = makeEmbed({
@@ -52,7 +56,7 @@ export async function openPoll(interaction: ChatInputCommandInteraction<'cached'
                 `${poll.description}`,
                 '',
                 '**Options:**',
-                ...poll.options.map((opt) => `Option ${opt.number}: ${opt.value}`),
+                optionsDescription,
             ]),
             fields: [
                 {
@@ -76,12 +80,11 @@ export async function openPoll(interaction: ChatInputCommandInteraction<'cached'
             await pollChannel.send({ content: poll.notify });
         }
 
-        // Send the recreated poll embed
-        const pollMessage = await pollChannel.send({ embeds: [pollEmbed], components: [buttonRow] });
+        await pollChannel.send({ embeds: [pollEmbed], components: [buttonRow] });
 
         // Update the poll's isOpen property to true
         poll.isOpen = true;
-        poll.messageID = pollMessage.id;
+        poll.closingTime = formattedClosingTime;
         await poll.save();
 
         // Reply with a message indicating that the poll has been opened
@@ -107,7 +110,7 @@ function createOptionButtons(poll: any) {
     if (poll.abstainAllowed) {
         optionButtons.push(
             new ButtonBuilder()
-                .setCustomId(`poll_${pollID}_abstain`)
+                .setCustomId(`poll_${pollID}_-1`)
                 .setLabel('Abstain')
                 .setStyle(ButtonStyle.Secondary),
         );
