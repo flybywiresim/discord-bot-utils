@@ -1,5 +1,5 @@
 import { Agenda } from '@hokify/agenda';
-import { Logger, autoDisableSlowMode, sendHeartbeat, closePoll } from './index';
+import { Logger, autoDisableSlowMode, sendHeartbeat, autoClosePoll } from './index';
 
 let scheduler: Agenda;
 
@@ -17,7 +17,7 @@ export async function setupScheduler(name: string, url: string, callback = Logge
         await scheduler.start();
         scheduler.define('autoDisableSlowMode', autoDisableSlowMode);
         scheduler.define('sendHeartbeat', sendHeartbeat);
-        scheduler.define('closePoll', closePoll);
+        scheduler.define('closePoll', autoClosePoll);
         Logger.info('Scheduler set up');
     } catch (err) {
         callback(err);
