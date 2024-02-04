@@ -80,11 +80,12 @@ export async function openPoll(interaction: ChatInputCommandInteraction<'cached'
             await pollChannel.send({ content: poll.notify });
         }
 
-        await pollChannel.send({ embeds: [pollEmbed], components: [buttonRow] });
+        const pollMessage = await pollChannel.send({ embeds: [pollEmbed], components: [buttonRow] });
 
         // Update the poll's isOpen property to true
         poll.isOpen = true;
         poll.closingTime = formattedClosingTime;
+        poll.messageID = pollMessage.id;
         await poll.save();
 
         // Reply with a message indicating that the poll has been opened
