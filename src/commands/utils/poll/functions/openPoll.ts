@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, Colors, TextChannel } from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction, Colors, TextChannel } from 'discord.js';
 import mongoose from 'mongoose';
 import moment from 'moment/moment';
 import { Logger, makeEmbed, makeLines, Poll, getScheduler } from '../../../../lib';
@@ -36,11 +36,14 @@ export async function openPoll(interaction: ChatInputCommandInteraction<'cached'
         // Calculate the closing time, considering poll duration (in minutes)
         let closingTime = null;
         let formattedClosingTime = null;
+        // If the poll duration is -1, the poll will be open indefinitely
         if (poll.duration !== undefined && poll.duration !== null && poll.duration !== -1) {
             closingTime = new Date(Date.now() + poll.duration);
             poll.closingTime = closingTime;
             formattedClosingTime = moment(closingTime).utcOffset(0).format();
         }
+
+        const optionButtons = createOptionButtons(poll);
 
         const moderator = await interaction.client.users.fetch(poll.moderatorID!);
 
@@ -67,7 +70,11 @@ export async function openPoll(interaction: ChatInputCommandInteraction<'cached'
                     value: '0', // Initial value, you can update this dynamically as votes come in
                 },
             ],
+            // eslint-disable-next-line no-underscore-dangle
+            footer: { text: `Poll ID: ${poll._id}` },
         });
+
+        const buttonRow = new ActionRowBuilder<ButtonBuilder>().addComponents(optionButtons);
 
         const pollChannel = interaction.guild.channels.resolve(poll.channelID!) as TextChannel;
 
@@ -93,7 +100,7 @@ export async function openPoll(interaction: ChatInputCommandInteraction<'cached'
         }
 
         // Send the recreated poll embed
-        const pollMessage = await pollChannel.send({ embeds: [pollEmbed] });
+        const pollMessage = await pollChannel.send({ embeds: [pollEmbed], components: [buttonRow] });
 
         // Update the poll's isOpen property to true
         poll.isOpen = true;
@@ -109,4 +116,14 @@ export async function openPoll(interaction: ChatInputCommandInteraction<'cached'
             ephemeral: true,
         });
     }
+}
+
+function createOptionButtons(poll: any) {
+    // eslint-disable-next-line no-underscore-dangle
+    const pollID = poll._id.toString();
+
+    return poll.options.map((option: { number: any }) => new ButtonBuilder()
+        .setCustomId(`vote_${pollID}_${option.number}`)
+        .setLabel(`Option ${option.number}`)
+        .setStyle(ButtonStyle.Primary));
 }
