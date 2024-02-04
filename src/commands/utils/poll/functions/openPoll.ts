@@ -99,8 +99,19 @@ function createOptionButtons(poll: any) {
     // eslint-disable-next-line no-underscore-dangle
     const pollID = poll._id.toString();
 
-    return poll.options.map((option: { number: any }) => new ButtonBuilder()
-        .setCustomId(`vote_${pollID}_${option.number}`)
+    const optionButtons = poll.options.map((option: { number: any }) => new ButtonBuilder()
+        .setCustomId(`poll_${pollID}_${option.number}`)
         .setLabel(`Option ${option.number}`)
         .setStyle(ButtonStyle.Primary));
+
+    if (poll.abstainAllowed) {
+        optionButtons.push(
+            new ButtonBuilder()
+                .setCustomId(`poll_${pollID}_abstain`)
+                .setLabel('Abstain')
+                .setStyle(ButtonStyle.Secondary),
+        );
+    }
+
+    return optionButtons;
 }
