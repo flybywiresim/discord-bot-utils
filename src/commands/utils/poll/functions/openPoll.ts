@@ -38,6 +38,10 @@ export async function openPoll(interaction: ChatInputCommandInteraction<'cached'
 
         const optionButtons = createOptionButtons(poll);
 
+        const maxButtonsPerRow = 5;
+
+        const splitButtons = splitButtonsIntoRows(optionButtons, maxButtonsPerRow);
+
         const moderator = await interaction.client.users.fetch(poll.moderatorID!);
 
         const optionsDescription = poll.options
@@ -72,15 +76,23 @@ export async function openPoll(interaction: ChatInputCommandInteraction<'cached'
             footer: { text: `Poll ID: ${poll._id}` },
         });
 
-        const buttonRow = new ActionRowBuilder<ButtonBuilder>().addComponents(optionButtons);
-
         const pollChannel = interaction.guild.channels.resolve(poll.channelID!) as TextChannel;
 
         if (poll.notify && poll.notify.trim() !== '') {
             await pollChannel.send({ content: poll.notify });
         }
 
-        const pollMessage = await pollChannel.send({ embeds: [pollEmbed], components: [buttonRow] });
+        const pollEmbedWithRows = {
+            embeds: [pollEmbed],
+            components: [] as ActionRowBuilder<ButtonBuilder>[],
+        };
+
+        splitButtons.forEach((row) => {
+            const actionRow: ActionRowBuilder<ButtonBuilder> = new ActionRowBuilder<ButtonBuilder>().addComponents(...row);
+            pollEmbedWithRows.components.push(actionRow);
+        });
+
+        const pollMessage = await pollChannel.send(pollEmbedWithRows);
 
         // Update the poll's isOpen property to true
         poll.isOpen = true;
@@ -118,4 +130,24 @@ function createOptionButtons(poll: any) {
     }
 
     return optionButtons;
+}
+
+function splitButtonsIntoRows(buttons: ButtonBuilder[], maxButtonsPerRow: number): ButtonBuilder[][] {
+    const rows: ButtonBuilder[][] = [];
+    let currentRow: ButtonBuilder[] = [];
+
+    for (const button of buttons) {
+        currentRow.push(button);
+
+        if (currentRow.length === maxButtonsPerRow) {
+            rows.push([...currentRow]);
+            currentRow = [];
+        }
+    }
+
+    if (currentRow.length > 0) {
+        rows.push([...currentRow]);
+    }
+
+    return rows;
 }
