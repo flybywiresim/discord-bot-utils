@@ -81,7 +81,9 @@ export async function closePoll(interaction: ChatInputCommandInteraction<'cached
             footer: { text: `Poll ID: ${poll._id}` },
         });
 
-        const emptyButtonRow = new ActionRowBuilder<ButtonBuilder>().addComponents();
+        const emptyButtonRow = new ActionRowBuilder<ButtonBuilder>().addComponents(
+            new ButtonBuilder().setCustomId('vote_placeholder').setLabel('This poll has now closed').setDisabled(true),
+        );
 
         await pollMessage?.edit({ embeds: [closedPollEmbed], components: [emptyButtonRow] });
 
