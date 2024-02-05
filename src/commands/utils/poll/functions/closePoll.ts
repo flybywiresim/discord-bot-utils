@@ -1,4 +1,4 @@
-import { ActionRowBuilder, ButtonBuilder, ChatInputCommandInteraction, TextChannel } from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction, TextChannel } from 'discord.js';
 import mongoose from 'mongoose';
 import { constantsConfig, Logger, makeEmbed, makeLines, Poll } from '../../../../lib';
 
@@ -35,10 +35,6 @@ export async function closePoll(interaction: ChatInputCommandInteraction<'cached
             return;
         }
 
-        poll.isOpen = false;
-
-        await poll.save();
-
         // Fetch the poll message
 
         const pollChannel = interaction.guild?.channels.resolve(poll.channelID!) as TextChannel;
@@ -53,6 +49,10 @@ export async function closePoll(interaction: ChatInputCommandInteraction<'cached
             .concat(poll.abstainAllowed ? `Abstain: Allows you to abstain from voting - Votes: ${getVotesCount(-1, poll.votes)}` : [])
             .join('\n');
 
+        // Calculate the winning option
+
+        const winningOptions = calculateWinningOption(poll);
+
         const closedPollEmbed = makeEmbed({
             author: {
                 name: `${moderator.tag}`,
@@ -63,6 +63,12 @@ export async function closePoll(interaction: ChatInputCommandInteraction<'cached
                 '**This poll has been closed.**',
                 '',
                 `${poll.description}`,
+                '',
+                `Winning option: ${
+                    winningOptions !== null
+                        ? winningOptions.map((option) => `Option ${option}`).join(', ')
+                        : 'No winner'
+                }`,
                 '',
                 '**Options:**',
                 optionsDescription,
@@ -82,12 +88,20 @@ export async function closePoll(interaction: ChatInputCommandInteraction<'cached
         });
 
         const emptyButtonRow = new ActionRowBuilder<ButtonBuilder>().addComponents(
-            new ButtonBuilder().setCustomId('vote_placeholder').setLabel('This poll has now closed').setDisabled(true),
+            new ButtonBuilder()
+                .setCustomId('vote_placeholder')
+                .setLabel('This poll has now closed')
+                .setDisabled(true)
+                .setStyle(ButtonStyle.Secondary),
         );
 
         await pollMessage?.edit({ embeds: [closedPollEmbed], components: [emptyButtonRow] });
 
         await interaction.reply({ content: 'The poll has been closed.', ephemeral: true });
+
+        poll.isOpen = false;
+
+        await poll.save();
     } catch (error) {
         Logger.error(error);
         await interaction.reply({
@@ -104,4 +118,29 @@ function getVotesCount(optionNumber: number | null | undefined, votes: { userID?
     }
     // Count votes for a specific option
     return votes.filter((vote) => vote.optionNumber === optionNumber).length;
+}
+
+function calculateWinningOption(poll: any): number[] | null {
+    const voteCounts: Record<number, number> = {};
+
+    poll.votes.forEach((vote: any) => {
+        if (vote.optionNumber !== undefined) {
+            if (voteCounts[vote.optionNumber] === undefined) {
+                voteCounts[vote.optionNumber] = 1;
+            } else {
+                voteCounts[vote.optionNumber]++;
+            }
+        }
+    });
+
+    const maxVotes = Math.max(...Object.values(voteCounts));
+    const winningOptions: number[] = [];
+
+    for (const [option, count] of Object.entries(voteCounts)) {
+        if (count === maxVotes) {
+            winningOptions.push(Number(option));
+        }
+    }
+
+    return winningOptions.length > 0 ? winningOptions : null;
 }
