@@ -2,7 +2,7 @@ import { ChatInputCommandInteraction, Colors, TextChannel, User } from 'discord.
 import moment from 'moment';
 import { constantsConfig, durationInEnglish, Logger, makeEmbed, Poll } from '../../../../lib';
 
-const pollAddedEmbed = (pollCreator: User, title: string, description: string, duration: number, abstainAllowed: boolean, notify: string, formattedDate: string, insertedID: string) => {
+const pollAddedModLog = (pollCreator: User, title: string, description: string, duration: number, abstainAllowed: boolean, notify: string, formattedDate: string, insertedID: string) => {
     const durationText = duration === -1 ? 'Infinite' : durationInEnglish(duration);
 
     return makeEmbed({
@@ -11,6 +11,11 @@ const pollAddedEmbed = (pollCreator: User, title: string, description: string, d
             iconURL: pollCreator.displayAvatarURL(),
         },
         fields: [
+            {
+                inline: false,
+                name: 'Poll Creator',
+                value: `${pollCreator.tag}, ID: ${pollCreator.id}`,
+            },
             {
                 inline: false,
                 name: 'Poll Title',
@@ -48,6 +53,7 @@ const pollAddedEmbed = (pollCreator: User, title: string, description: string, d
 };
 
 export async function createPoll(interaction: ChatInputCommandInteraction<'cached'>) {
+    // Get the poll details from the interaction
     const title = interaction.options.getString('title', true);
     const description = interaction.options.getString('description', true);
     const channel = interaction.options.getChannel('channel', true);
@@ -55,6 +61,7 @@ export async function createPoll(interaction: ChatInputCommandInteraction<'cache
     const abstainAllowed = interaction.options.getBoolean('abstain_allowed', false) || true;
     const notify = interaction.options.getString('notify', false);
 
+    // Get the poll creator
     const pollCreator = interaction.user;
 
     const currentDate = new Date();
@@ -65,9 +72,11 @@ export async function createPoll(interaction: ChatInputCommandInteraction<'cache
 
     const modLogsChannel = interaction.guild.channels.resolve(constantsConfig.channels.MOD_LOGS) as TextChannel;
 
+    // Check if a poll with the same title already exists
     let pollData = await Poll.findOne({ title });
 
     if (!pollData) {
+        // Create a new poll
         pollData = new Poll({
             guildID,
             creatorID: pollCreator.id,
@@ -84,6 +93,8 @@ export async function createPoll(interaction: ChatInputCommandInteraction<'cache
         return;
     }
 
+    // Save the poll to the database
+
     let savedPoll;
 
     try {
@@ -94,16 +105,17 @@ export async function createPoll(interaction: ChatInputCommandInteraction<'cache
         return;
     }
 
+    // Get the poll ID
     // eslint-disable-next-line no-underscore-dangle
     const insertedID = savedPoll._id.toHexString();
 
     try {
-        await modLogsChannel.send({ embeds: [pollAddedEmbed(pollCreator, title, description, duration, abstainAllowed, notify ?? 'None', formattedDate, insertedID)] });
+        await modLogsChannel.send({ embeds: [pollAddedModLog(pollCreator, title, description, duration, abstainAllowed, notify ?? 'None', formattedDate, insertedID)] });
     } catch (error) {
         Logger.error(error);
         await interaction.reply({ content: 'Poll added successfully, but could not send mod log, error has been logged, please notify the bot team.', ephemeral: true });
         return;
     }
 
-    await interaction.reply({ content: `Poll added successfully. Poll ID: ${insertedID}`, ephemeral: true });
+    await interaction.reply({ content: `Poll added successfully. Please use the following Poll ID to add option, preview, open and close your poll: ${insertedID}`, ephemeral: true });
 }

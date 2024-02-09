@@ -1,8 +1,35 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction } from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction, TextChannel, User } from 'discord.js';
 import mongoose from 'mongoose';
-import { Logger, Poll } from '../../../../lib';
+import { constantsConfig, Logger, makeEmbed, Poll } from '../../../../lib';
+
+// @ts-ignore
+const setPollOptionModLog = (pollCreator: { tag: any; displayAvatarURL: () => any; id: any; }, commandExecutor: User, poll: any, optionNumber: number, option: string) => makeEmbed({
+    author: {
+        name: `${pollCreator.tag}`,
+        iconURL: pollCreator.displayAvatarURL(),
+    },
+    title: `[OPTION DELETED] Poll: ${poll.title}`,
+    fields: [
+        {
+            name: 'Command Executor',
+            value: `${commandExecutor.tag}, ID: ${commandExecutor.id}`,
+        },
+        {
+            name: 'Set Option',
+            value: optionNumber.toString(),
+        },
+        {
+            name: 'Set Option Content',
+            value: option,
+        },
+    ],
+    // eslint-disable-next-line no-underscore-dangle
+    footer: { text: `Poll ID: ${poll._id}` },
+});
 
 export async function setOptions(interaction: ChatInputCommandInteraction<'cached'>) {
+    const commandExecutor = interaction.user;
+
     const pollID = interaction.options.getString('poll_id', true);
     const optionNumber = interaction.options.getInteger('option_number', true);
     const option = interaction.options.getString('option_text', true);
@@ -21,6 +48,10 @@ export async function setOptions(interaction: ChatInputCommandInteraction<'cache
             await interaction.reply({ content: 'Poll not found.', ephemeral: true });
             return;
         }
+
+        const modLogsChannel = interaction.guild.channels.resolve(constantsConfig.channels.MOD_LOGS) as TextChannel;
+
+        const pollCreator = await interaction.client.users.fetch(poll.creatorID!);
 
         if (poll.isOpen) {
             await interaction.reply({ content: 'The poll is already open. You cannot modify options of an open poll.', ephemeral: true });
@@ -84,6 +115,13 @@ export async function setOptions(interaction: ChatInputCommandInteraction<'cache
 
                     await poll.save();
 
+                    try {
+                        await modLogsChannel.send({ embeds: [setPollOptionModLog(pollCreator, commandExecutor, poll, optionNumber, option)] });
+                    } catch (error) {
+                        Logger.error(error);
+                        await interaction.followUp({ content: `Poll option ${optionNumber} set and existing options renumbered, but could not send mod log, error has been logged, please notify the bot team.`, ephemeral: true });
+                    }
+
                     await interaction.followUp({
                         content: `Option ${optionNumber}, ${option} added successfully and existing options renumbered.`,
                         ephemeral: true,
@@ -132,6 +170,13 @@ export async function setOptions(interaction: ChatInputCommandInteraction<'cache
         poll.options.sort((a, b) => (a?.number || 0) - (b?.number || 0));
 
         await poll.save();
+
+        try {
+            await modLogsChannel.send({ embeds: [setPollOptionModLog(pollCreator, commandExecutor, poll, optionNumber, option)] });
+        } catch (error) {
+            Logger.error(error);
+            await interaction.reply({ content: `Poll option ${optionNumber} set, but could not send mod log, error has been logged, please notify the bot team.`, ephemeral: true });
+        }
 
         await interaction.reply({ content: `Option ${optionNumber}, ${option} added successfully.`, ephemeral: true });
     } catch (error) {

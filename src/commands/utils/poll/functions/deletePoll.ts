@@ -3,12 +3,22 @@ import moment from 'moment';
 import mongoose from 'mongoose';
 import { constantsConfig, Logger, makeEmbed, Poll } from '../../../../lib';
 
-const pollDeletedEmbed = (pollCreator: User, pollTitle: string, pollID: string, formattedDate: string) => makeEmbed({
+const pollDeletedModLog = (pollCreator: User, commandExecutor: User, pollTitle: string, pollID: string, formattedDate: string) => makeEmbed({
     author: {
         name: `[Poll Deleted] ${pollCreator.tag}`,
         iconURL: pollCreator.displayAvatarURL(),
     },
     fields: [
+        {
+            inline: false,
+            name: 'Poll Creator',
+            value: `${pollCreator.tag}, ID: ${pollCreator.id}`,
+        },
+        {
+            inline: false,
+            name: 'Command Executor',
+            value: `${commandExecutor.tag}, ID: ${commandExecutor.id}`,
+        },
         {
             inline: false,
             name: 'Poll Title',
@@ -25,6 +35,8 @@ const pollDeletedEmbed = (pollCreator: User, pollTitle: string, pollID: string, 
 });
 
 export async function deletePoll(interaction: ChatInputCommandInteraction<'cached'>) {
+    const commandExecutor = interaction.user;
+
     const pollID = interaction.options.getString('poll_id', true);
 
     const currentDate = new Date();
@@ -61,7 +73,7 @@ export async function deletePoll(interaction: ChatInputCommandInteraction<'cache
         }
 
         try {
-            await modLogsChannel.send({ embeds: [pollDeletedEmbed(pollCreator, pollTitle, pollID, formattedDate)] });
+            await modLogsChannel.send({ embeds: [pollDeletedModLog(pollCreator, commandExecutor, pollTitle, pollID, formattedDate)] });
         } catch (error) {
             Logger.error(error);
             await interaction.reply({ content: 'Poll deleted successfully, but could not send mod log, error has been logged, please notify the bot team.', ephemeral: true });

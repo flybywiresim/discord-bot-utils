@@ -4,6 +4,7 @@ import moment from 'moment/moment';
 import { Logger, makeEmbed, makeLines, Poll } from '../../../../lib';
 
 export async function openPoll(interaction: ChatInputCommandInteraction<'cached'>) {
+    // get the poll ID from the interaction and check if it's a valid ObjectId
     const pollID = interaction.options.getString('poll_id', true);
 
     const isValidObjectId = mongoose.Types.ObjectId.isValid(pollID);
@@ -14,6 +15,7 @@ export async function openPoll(interaction: ChatInputCommandInteraction<'cached'
     }
 
     try {
+        // Find the poll in the database
         const poll = await Poll.findOne({ _id: pollID });
 
         if (!poll) {

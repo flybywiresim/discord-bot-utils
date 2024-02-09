@@ -1,8 +1,34 @@
-import { ChatInputCommandInteraction } from 'discord.js';
+import { ChatInputCommandInteraction, TextChannel, User } from 'discord.js';
 import mongoose from 'mongoose';
-import { Logger, Poll } from '../../../../lib';
+import { constantsConfig, Logger, makeEmbed, Poll } from '../../../../lib';
+
+const deletePollOptionModLog = (pollCreator: { tag: any; displayAvatarURL: () => any; id: any; }, commandExecutor: User, poll: any) => makeEmbed({
+    author: {
+        name: `${pollCreator.tag}`,
+        iconURL: pollCreator.displayAvatarURL(),
+    },
+    title: `[OPTION DELETED] Poll: ${poll.title}`,
+    fields: [
+        {
+            name: 'Command Executor',
+            value: `${commandExecutor.tag}, ID: ${commandExecutor.id}`,
+        },
+        {
+            name: 'Deleted Option',
+            value: `${poll.options.number}`,
+        },
+        {
+            name: 'Deleted Option Content',
+            value: `${poll.options.value}`,
+        },
+    ],
+    // eslint-disable-next-line no-underscore-dangle
+    footer: { text: `Poll ID: ${poll._id}` },
+});
 
 export async function deleteOption(interaction: ChatInputCommandInteraction<'cached'>) {
+    const commandExecutor = interaction.user;
+
     const pollID = interaction.options.getString('poll_id', true);
     const optionNumberToDelete = interaction.options.getInteger('option_number', true);
 
@@ -44,6 +70,18 @@ export async function deleteOption(interaction: ChatInputCommandInteraction<'cac
 
         // Save the updated poll
         await poll.save();
+
+        const modLogsChannel = interaction.guild.channels.resolve(constantsConfig.channels.MOD_LOGS) as TextChannel;
+
+        const pollCreator = await interaction.client.users.fetch(poll.creatorID!);
+
+        try {
+            await modLogsChannel.send({ embeds: [deletePollOptionModLog(pollCreator, commandExecutor, poll)] });
+        } catch (error) {
+            Logger.error(error);
+            await interaction.reply({ content: `Poll option ${optionNumberToDelete} deleted, but could not send mod log, error has been logged, please notify the bot team.`, ephemeral: true });
+            return;
+        }
 
         await interaction.reply({ content: `Option ${optionNumberToDelete} deleted successfully. Remaining options renumbered.`, ephemeral: true });
     } catch (error) {
