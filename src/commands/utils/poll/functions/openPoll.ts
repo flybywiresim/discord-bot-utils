@@ -1,9 +1,41 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction, TextChannel } from 'discord.js';
 import mongoose from 'mongoose';
 import moment from 'moment/moment';
-import { Logger, makeEmbed, makeLines, Poll } from '../../../../lib';
+import { constantsConfig, Logger, makeEmbed, makeLines, Poll } from '../../../../lib';
+
+const pollOpenModLog = (pollCreator: { tag: any; displayAvatarURL: () => any; id: any; }, poll: any, optionsDescription: string, commandExecutor: { tag: any; id: any; }, formattedClosingTime: any) => makeEmbed({
+    author: {
+        name: `${pollCreator.tag}`,
+        iconURL: pollCreator.displayAvatarURL(),
+    },
+    title: `Poll: ${poll.title}`,
+    description: makeLines([
+        `${poll.description}`,
+        '',
+        '**Options:**',
+        optionsDescription,
+    ]),
+    fields: [
+        {
+            name: 'Poll creator:',
+            value: `${pollCreator.tag}, ID: ${pollCreator.id}`,
+        },
+        {
+            name: 'Command Executor',
+            value: `${commandExecutor.tag}, ID: ${commandExecutor.id}`,
+        },
+        {
+            name: 'Will end at:',
+            value: formattedClosingTime || 'Infinite', // Display 'Infinite' if no closing time
+        },
+    ],
+    // eslint-disable-next-line no-underscore-dangle
+    footer: { text: `Poll ID: ${poll._id}` },
+});
 
 export async function openPoll(interaction: ChatInputCommandInteraction<'cached'>) {
+    const commandExecutor = interaction.user;
+
     // get the poll ID from the interaction and check if it's a valid ObjectId
     const pollID = interaction.options.getString('poll_id', true);
 
@@ -101,6 +133,16 @@ export async function openPoll(interaction: ChatInputCommandInteraction<'cached'
         poll.closingTime = formattedClosingTime;
         poll.messageID = pollMessage.id;
         await poll.save();
+
+        const modLogsChannel = interaction.guild.channels.resolve(constantsConfig.channels.MOD_LOGS) as TextChannel;
+
+        try {
+            await modLogsChannel.send({ embeds: [pollOpenModLog(pollCreator, poll, optionsDescription, commandExecutor, formattedClosingTime)] });
+        } catch (error) {
+            Logger.error(error);
+            await interaction.reply({ content: 'Poll opened successfully, but could not send mod log, error has been logged, please notify the bot team.', ephemeral: true });
+            return;
+        }
 
         // Reply with a message indicating that the poll has been opened
         await interaction.reply({ content: `Poll "${poll.title}" has been opened.`, ephemeral: true });
