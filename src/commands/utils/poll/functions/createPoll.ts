@@ -2,13 +2,13 @@ import { ChatInputCommandInteraction, Colors, TextChannel, User } from 'discord.
 import moment from 'moment';
 import { constantsConfig, durationInEnglish, Logger, makeEmbed, Poll } from '../../../../lib';
 
-const pollAddedEmbed = (moderator: User, title: string, description: string, duration: number, abstainAllowed: boolean, notify: string, formattedDate: string, insertedID: string) => {
+const pollAddedEmbed = (pollCreator: User, title: string, description: string, duration: number, abstainAllowed: boolean, notify: string, formattedDate: string, insertedID: string) => {
     const durationText = duration === -1 ? 'Infinite' : durationInEnglish(duration);
 
     return makeEmbed({
         author: {
-            name: `[Poll Added] ${moderator.tag}`,
-            iconURL: moderator.displayAvatarURL(),
+            name: `[Poll Added] ${pollCreator.tag}`,
+            iconURL: pollCreator.displayAvatarURL(),
         },
         fields: [
             {
@@ -55,7 +55,7 @@ export async function createPoll(interaction: ChatInputCommandInteraction<'cache
     const abstainAllowed = interaction.options.getBoolean('abstain_allowed', false) || true;
     const notify = interaction.options.getString('notify', false);
 
-    const moderator = interaction.user;
+    const pollCreator = interaction.user;
 
     const currentDate = new Date();
 
@@ -70,7 +70,7 @@ export async function createPoll(interaction: ChatInputCommandInteraction<'cache
     if (!pollData) {
         pollData = new Poll({
             guildID,
-            moderatorID: moderator.id,
+            creatorID: pollCreator.id,
             title,
             description,
             channelID: channel.id,
@@ -98,7 +98,7 @@ export async function createPoll(interaction: ChatInputCommandInteraction<'cache
     const insertedID = savedPoll._id.toHexString();
 
     try {
-        await modLogsChannel.send({ embeds: [pollAddedEmbed(moderator, title, description, duration, abstainAllowed, notify ?? 'None', formattedDate, insertedID)] });
+        await modLogsChannel.send({ embeds: [pollAddedEmbed(pollCreator, title, description, duration, abstainAllowed, notify ?? 'None', formattedDate, insertedID)] });
     } catch (error) {
         Logger.error(error);
         await interaction.reply({ content: 'Poll added successfully, but could not send mod log, error has been logged, please notify the bot team.', ephemeral: true });

@@ -14,7 +14,7 @@ const pollSchema = new Schema({
     }],
     isOpen: Boolean,
     messageID: String,
-    moderatorID: String,
+    creatorID: String,
     channelID: String,
     votes: [{
         userID: String,

@@ -42,7 +42,7 @@ export async function openPoll(interaction: ChatInputCommandInteraction<'cached'
 
         const splitButtons = splitButtonsIntoRows(optionButtons, maxButtonsPerRow);
 
-        const moderator = await interaction.client.users.fetch(poll.moderatorID!);
+        const pollCreator = await interaction.client.users.fetch(poll.creatorID!);
 
         const optionsDescription = poll.options
             .map((opt) => `Option ${opt.number}: ${opt.value}`)
@@ -52,8 +52,8 @@ export async function openPoll(interaction: ChatInputCommandInteraction<'cached'
         // Recreate the poll embed with additional information
         const pollEmbed = makeEmbed({
             author: {
-                name: `${moderator.tag}`,
-                iconURL: moderator.displayAvatarURL(),
+                name: `${pollCreator.tag}`,
+                iconURL: pollCreator.displayAvatarURL(),
             },
             title: `Poll: ${poll.title}`,
             description: makeLines([

@@ -30,7 +30,7 @@ export async function closePoll(interaction: ChatInputCommandInteraction<'cached
         const moderatorRole = interaction.guild?.roles.cache.get(constantsConfig.roles.MODERATOR);
 
         //check if the user is the poll creator or has the moderator role
-        if (interaction.user.id !== poll.moderatorID && !interaction.member?.roles.cache.has(moderatorRole?.id!)) {
+        if (interaction.user.id !== poll.creatorID && !interaction.member?.roles.cache.has(moderatorRole?.id!)) {
             await interaction.reply({ content: 'You do not have permission to close this poll.', ephemeral: true });
             return;
         }
@@ -42,7 +42,7 @@ export async function closePoll(interaction: ChatInputCommandInteraction<'cached
 
         const totalVotes = poll.votes.length;
 
-        const moderator = await interaction.client.users.fetch(poll.moderatorID!);
+        const pollCreator = await interaction.client.users.fetch(poll.creatorID!);
 
         const optionsDescription = poll.options
             .map((opt) => `Option ${opt.number}: ${opt.value} - Votes: ${getVotesCount(opt.number, poll.votes)}`)
@@ -55,8 +55,8 @@ export async function closePoll(interaction: ChatInputCommandInteraction<'cached
 
         const closedPollEmbed = makeEmbed({
             author: {
-                name: `${moderator.tag}`,
-                iconURL: moderator.displayAvatarURL(),
+                name: `${pollCreator.tag}`,
+                iconURL: pollCreator.displayAvatarURL(),
             },
             title: `[CLOSED] Poll: ${poll.title}`,
             description: makeLines([

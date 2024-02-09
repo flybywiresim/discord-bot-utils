@@ -20,7 +20,7 @@ export async function previewPoll(interaction: ChatInputCommandInteraction<'cach
             return;
         }
 
-        const moderator = await interaction.client.users.fetch(poll.moderatorID!);
+        const pollCreator = await interaction.client.users.fetch(poll.creatorID!);
 
         const optionsDescription = poll.options
             .map((opt) => `Option ${opt.number}: ${opt.value}`)
@@ -29,8 +29,8 @@ export async function previewPoll(interaction: ChatInputCommandInteraction<'cach
 
         const previewEmbed = makeEmbed({
             author: {
-                name: `${moderator.tag}`,
-                iconURL: moderator.displayAvatarURL(),
+                name: `${pollCreator.tag}`,
+                iconURL: pollCreator.displayAvatarURL(),
             },
             title: `Previewing Poll: ${poll.title}`,
             description: makeLines([
