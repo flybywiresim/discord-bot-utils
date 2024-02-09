@@ -8,7 +8,7 @@ const setPollOptionModLog = (pollCreator: { tag: any; displayAvatarURL: () => an
         name: `${pollCreator.tag}`,
         iconURL: pollCreator.displayAvatarURL(),
     },
-    title: `[OPTION DELETED] Poll: ${poll.title}`,
+    title: `[OPTION SET] Poll: ${poll.title}`,
     fields: [
         {
             name: 'Command Executor',

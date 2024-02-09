@@ -9,13 +9,11 @@ const closedPollEmbed = (pollCreator: { tag: any; displayAvatarURL: () => any; }
     },
     title: `[CLOSED] Poll: ${poll.title}`,
     description: makeLines([
-        '**This poll has been closed.**',
-        '',
         `${poll.description}`,
         '',
         `Winning option: ${
             winningOptions !== null
-                ? winningOptions.map((option) => `Option ${option}`).join(', ')
+                ? winningOptions.map((option) => (option === -1 ? 'Abstain' : `Option ${option}`)).join(', ')
                 : 'No winner'
         }`,
         '',
@@ -47,7 +45,7 @@ const closedPollModLog = (pollCreator: { tag: any; displayAvatarURL: () => any; 
         '',
         `Winning option: ${
             winningOptions !== null
-                ? winningOptions.map((option) => `Option ${option}`).join(', ')
+                ? winningOptions.map((option) => (option === -1 ? 'Abstain' : `Option ${option}`)).join(', ')
                 : 'No winner'
         }`,
         '',
@@ -105,7 +103,7 @@ export async function closePoll(interaction: ChatInputCommandInteraction<'cached
         }
 
         // Check if a user is a moderator
-        const moderatorRole = interaction.guild?.roles.cache.get(constantsConfig.roles.MODERATOR);
+        const moderatorRole = interaction.guild?.roles.cache.get(constantsConfig.roles.MODERATION_TEAM);
 
         //check if the user is the poll creator or has the moderator role
         if (interaction.user.id !== poll.creatorID && !interaction.member?.roles.cache.has(moderatorRole?.id!)) {
