@@ -5,10 +5,9 @@ import scamLogs from './logging/scamLogs';
 import detectBan from './logging/detectBan';
 import slashCommandHandler from './slashCommandHandler';
 import contextInteractionHandler from './contextInteractionHandler';
-import roleAssignmentHandler from './roleAssignmentHandler';
 import messageDelete from './logging/messageDelete';
 import messageUpdate from './logging/messageUpdate';
-import pollHandler from './pollHandler';
+import buttonHandler from './buttonHandlers/buttonHandler';
 
 export default [
     ready,
@@ -16,8 +15,7 @@ export default [
     detectBan,
     slashCommandHandler,
     contextInteractionHandler,
-    roleAssignmentHandler,
     messageDelete,
     messageUpdate,
-    pollHandler,
+    buttonHandler,
 ] as Event[];

@@ -1,25 +1,7 @@
 import { ButtonInteraction } from 'discord.js';
-import { event, Events, Logger, makeEmbed, makeLines, Poll } from '../lib';
+import { Logger, makeEmbed, makeLines, Poll } from '../../../lib';
 
-export default event(Events.InteractionCreate, async ({ log }, interaction) => {
-    if (!interaction.isButton()) return;
-
-    log('Poll Handler: Button pressed');
-
-    try {
-        const [action, pollID, optionNumber] = interaction.customId.split('_');
-
-        if (action === 'poll' && pollID && optionNumber) {
-            await handleVote(interaction, pollID, optionNumber);
-        } else {
-            log('Poll Handler: Custom ID not matched, skipping...');
-        }
-    } catch (error) {
-        log('Poll Handler: Error handling button press', error);
-    }
-});
-
-async function handleVote(interaction: ButtonInteraction, pollID: string, optionNumber: string) {
+export async function handlePoll(interaction: ButtonInteraction, pollID: string, optionNumber: string) {
     try {
         const poll = await Poll.findOne({ _id: pollID });
 
@@ -52,7 +34,7 @@ async function handleVote(interaction: ButtonInteraction, pollID: string, option
         // Calculate the total votes based on the length of the votes array
         const totalVotes = poll.votes.length;
 
-        const moderator = await interaction.client.users.fetch(poll.moderatorID!);
+        const pollCreator = await interaction.client.users.fetch(poll.creatorID!);
 
         const optionsDescription = poll.options
             .map((opt) => `Option ${opt.number}: ${opt.value} - Votes: ${getVotesCount(opt.number, poll.votes)}`)
@@ -62,8 +44,8 @@ async function handleVote(interaction: ButtonInteraction, pollID: string, option
         // Update the original embed with the new vote information
         const updatedEmbed = makeEmbed({
             author: {
-                name: `${moderator.tag}`,
-                iconURL: moderator.displayAvatarURL(),
+                name: `${pollCreator.tag}`,
+                iconURL: pollCreator.displayAvatarURL(),
             },
             title: `Poll: ${poll.title}`,
             description: makeLines([
