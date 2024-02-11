@@ -46,7 +46,6 @@ const data = slashCommandStructure({
                     required: true,
                     choices: [
                         { name: 'infinite', value: -1 },
-                        { name: '15 seconds', value: 15000 },
                         { name: '5 minutes', value: 300000 },
                         { name: '15 minutes', value: 900000 },
                         { name: '30 minutes', value: 1800000 },
