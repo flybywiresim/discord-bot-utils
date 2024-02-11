@@ -80,6 +80,15 @@ export async function openPoll(interaction: ChatInputCommandInteraction<'cached'
             return;
         }
 
+        // Check if a user is a moderator
+        const moderatorRole = interaction.guild?.roles.cache.get(constantsConfig.roles.MODERATION_TEAM);
+
+        //check if the user is the poll creator or has the moderator role
+        if (interaction.user.id !== poll.creatorID && !interaction.member?.roles.cache.has(moderatorRole?.id!)) {
+            await interaction.reply({ content: 'You do not have permission to close this poll.', ephemeral: true });
+            return;
+        }
+
         // Calculate the closing time, considering poll duration (in minutes)
         let closingTime = null;
         let formattedClosingTime = null;
