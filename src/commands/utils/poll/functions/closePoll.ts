@@ -1,6 +1,13 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction, TextChannel } from 'discord.js';
+import {
+    ActionRowBuilder,
+    ButtonBuilder,
+    ButtonStyle,
+    ChatInputCommandInteraction,
+    Colors,
+    TextChannel,
+} from 'discord.js';
 import mongoose from 'mongoose';
-import { constantsConfig, Logger, makeEmbed, makeLines, Poll } from '../../../../lib';
+import { constantsConfig, getScheduler, Logger, makeEmbed, makeLines, Poll } from '../../../../lib';
 
 const closedPollEmbed = (pollCreator: { tag: any; displayAvatarURL: () => any; }, poll: any, winningOptions: any[] | null, optionsDescription: string, totalVotes: { toString: () => any; }) => makeEmbed({
     author: {
@@ -72,9 +79,21 @@ const closedPollModLog = (pollCreator: { tag: any; displayAvatarURL: () => any; 
     ],
     // eslint-disable-next-line no-underscore-dangle
     footer: { text: `Poll ID: ${poll._id}` },
+    color: Colors.Red,
+});
+
+const noSchedulerEmbed = makeEmbed({
+    title: 'Close Poll - No scheduler',
+    description: 'Could not find an active scheduler. I won\'t be able to cancel the auto closure of this poll.',
+    color: Colors.Red,
 });
 
 export async function closePoll(interaction: ChatInputCommandInteraction<'cached'>) {
+    const scheduler = getScheduler();
+    if (!scheduler) {
+        await interaction.reply({ embeds: [noSchedulerEmbed] });
+    }
+
     const commandExecutor = interaction.user;
 
     // get the poll ID from the interaction and check if it's a valid ObjectId
@@ -144,6 +163,11 @@ export async function closePoll(interaction: ChatInputCommandInteraction<'cached
         poll.isOpen = false;
 
         await poll.save();
+
+        if (scheduler) {
+            // eslint-disable-next-line no-underscore-dangle
+            await scheduler.cancel({ name: 'autoClosePoll', data: { pollID: poll._id } });
+        }
 
         try {
             await modLogsChannel.send({ embeds: [closedPollModLog(pollCreator, poll, winningOptions, optionsDescription, commandExecutor, totalVotes)] });

@@ -17,7 +17,7 @@ export async function setupScheduler(name: string, url: string, callback = Logge
         await scheduler.start();
         scheduler.define('autoDisableSlowMode', autoDisableSlowMode);
         scheduler.define('sendHeartbeat', sendHeartbeat);
-        scheduler.define('closePoll', autoClosePoll);
+        scheduler.define('autoClosePoll', autoClosePoll);
         Logger.info('Scheduler set up');
     } catch (err) {
         callback(err);

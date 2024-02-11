@@ -1,14 +1,21 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChatInputCommandInteraction, TextChannel } from 'discord.js';
+import {
+    ActionRowBuilder,
+    ButtonBuilder,
+    ButtonStyle,
+    ChatInputCommandInteraction,
+    Colors,
+    TextChannel,
+} from 'discord.js';
 import mongoose from 'mongoose';
 import moment from 'moment/moment';
-import { constantsConfig, Logger, makeEmbed, makeLines, Poll } from '../../../../lib';
+import { constantsConfig, getScheduler, Logger, makeEmbed, makeLines, Poll } from '../../../../lib';
 
 const pollOpenModLog = (pollCreator: { tag: any; displayAvatarURL: () => any; id: any; }, poll: any, optionsDescription: string, commandExecutor: { tag: any; id: any; }, formattedClosingTime: any) => makeEmbed({
     author: {
         name: `${pollCreator.tag}`,
         iconURL: pollCreator.displayAvatarURL(),
     },
-    title: `Poll: ${poll.title}`,
+    title: `[OPENED] Poll: ${poll.title}`,
     description: makeLines([
         `${poll.description}`,
         '',
@@ -31,9 +38,21 @@ const pollOpenModLog = (pollCreator: { tag: any; displayAvatarURL: () => any; id
     ],
     // eslint-disable-next-line no-underscore-dangle
     footer: { text: `Poll ID: ${poll._id}` },
+    color: Colors.Green,
+});
+
+const noSchedulerEmbed = makeEmbed({
+    title: 'Open Poll - No scheduler',
+    description: 'Could not find an active scheduler. No automatic poll closure can be scheduled.',
+    color: Colors.Red,
 });
 
 export async function openPoll(interaction: ChatInputCommandInteraction<'cached'>) {
+    const scheduler = getScheduler();
+    if (!scheduler) {
+        await interaction.reply({ embeds: [noSchedulerEmbed] });
+    }
+
     const commandExecutor = interaction.user;
 
     // get the poll ID from the interaction and check if it's a valid ObjectId
@@ -142,6 +161,16 @@ export async function openPoll(interaction: ChatInputCommandInteraction<'cached'
             Logger.error(error);
             await interaction.reply({ content: 'Poll opened successfully, but could not send mod log, error has been logged, please notify the bot team.', ephemeral: true });
             return;
+        }
+
+        if (scheduler) {
+            // eslint-disable-next-line no-underscore-dangle
+            await scheduler.cancel({ name: 'autoClosePoll', data: { pollID: poll._id } });
+            if (poll.duration !== undefined && poll.duration !== null && poll.duration !== -1) {
+                const executionDate = new Date(Date.now() + poll.duration);
+                // eslint-disable-next-line no-underscore-dangle
+                await scheduler.schedule(executionDate, 'autoClosePoll', { pollID: poll._id });
+            }
         }
 
         // Reply with a message indicating that the poll has been opened
