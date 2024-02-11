@@ -54,7 +54,7 @@ export default slashCommand(data, async ({ interaction }) => {
     roleAssignmentIds.forEach((group) => {
         group.roles.forEach((role) => {
             const button = new ButtonBuilder()
-                .setCustomId(role.id)
+                .setCustomId(`roleAssignment_${role.id}`)
                 .setLabel(role.label)
                 .setStyle(ButtonStyle.Primary);
 
