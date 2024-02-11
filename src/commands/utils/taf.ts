@@ -23,6 +23,8 @@ const noQueryEmbed = makeEmbed({
 });
 
 export default slashCommand(data, async ({ interaction }) => {
+    await interaction.deferReply();
+
     const tafToken = process.env.TAF_TOKEN;
 
     if (!tafToken) {
@@ -31,12 +33,14 @@ export default slashCommand(data, async ({ interaction }) => {
             description: 'Station token not found.',
             color: Colors.Red,
         });
-        return interaction.reply({ embeds: [noTokenEmbed] });
+        return interaction.editReply({ embeds: [noTokenEmbed] });
     }
 
     const icao = interaction.options.getString('icao');
 
-    if (!icao) return interaction.reply({ embeds: [noQueryEmbed], ephemeral: true });
+    if (!icao) {
+        return interaction.editReply({ embeds: [noQueryEmbed] });
+    }
 
     try {
         const tafReport: any = await fetch(`https://avwx.rest/api/taf/${icao}`, {
@@ -50,7 +54,7 @@ export default slashCommand(data, async ({ interaction }) => {
                 description: tafReport.error,
                 color: Colors.Red,
             });
-            return interaction.reply({ embeds: [invalidEmbed], ephemeral: true });
+            return interaction.editReply({ embeds: [invalidEmbed] });
         }
         const getClouds = (clouds: any) => {
             const retClouds = [];
@@ -85,7 +89,7 @@ export default slashCommand(data, async ({ interaction }) => {
             footer: { text: 'This TAF report is only a forecast, and may not accurately reflect weather in the simulator.' },
         });
 
-        return interaction.reply({ embeds: [tafEmbed] });
+        return interaction.editReply({ embeds: [tafEmbed] });
     } catch (error) {
         Logger.error('taf:', error);
         const fetchErrorEmbed = makeEmbed({
@@ -93,6 +97,6 @@ export default slashCommand(data, async ({ interaction }) => {
             description: 'There was an error fetching the TAF report. Please try again later.',
             color: Colors.Red,
         });
-        return interaction.reply({ embeds: [fetchErrorEmbed], ephemeral: true });
+        return interaction.editReply({ embeds: [fetchErrorEmbed] });
     }
 });

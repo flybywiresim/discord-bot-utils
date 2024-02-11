@@ -23,6 +23,8 @@ const noQueryEmbed = makeEmbed({
 });
 
 export default slashCommand(data, async ({ interaction }) => {
+    await interaction.deferReply();
+
     const stationToken = process.env.STATION_TOKEN;
 
     if (!stationToken) {
@@ -31,12 +33,12 @@ export default slashCommand(data, async ({ interaction }) => {
             description: 'Station token not found.',
             color: Colors.Red,
         });
-        return interaction.reply({ embeds: [noTokenEmbed] });
+        return interaction.editReply({ embeds: [noTokenEmbed] });
     }
 
     const icao = interaction.options.getString('icao');
 
-    if (!icao) return interaction.reply({ embeds: [noQueryEmbed], ephemeral: true });
+    if (!icao) return interaction.editReply({ embeds: [noQueryEmbed] });
 
     try {
         const stationReport: any = await fetch(`https://avwx.rest/api/station/${icao}`, {
@@ -50,7 +52,7 @@ export default slashCommand(data, async ({ interaction }) => {
                 description: stationReport.error,
                 color: Colors.Red,
             });
-            return interaction.reply({ embeds: [invalidEmbed], ephemeral: true });
+            return interaction.editReply({ embeds: [invalidEmbed] });
         }
 
         const runwayIdents = stationReport.runways.map((runways: any) => `**${runways.ident1}/${runways.ident2}:** `
@@ -78,7 +80,7 @@ export default slashCommand(data, async ({ interaction }) => {
             footer: { text: 'Due to limitations of the API, not all links may be up to date at all times.' },
         });
 
-        return interaction.reply({ embeds: [stationEmbed] });
+        return interaction.editReply({ embeds: [stationEmbed] });
     } catch (error) {
         Logger.error('station:', error);
         const fetchErrorEmbed = makeEmbed({
@@ -86,6 +88,6 @@ export default slashCommand(data, async ({ interaction }) => {
             description: 'There was an error fetching the station report. Please try again later.',
             color: Colors.Red,
         });
-        return interaction.reply({ embeds: [fetchErrorEmbed], ephemeral: true });
+        return interaction.editReply({ embeds: [fetchErrorEmbed] });
     }
 });
