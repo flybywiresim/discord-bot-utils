@@ -138,6 +138,7 @@ export async function autoClosePoll(job: Job) {
         );
 
         await pollMessage?.edit({ embeds: [closedPollEmbed(pollCreator, poll, winningOptions, optionsDescription, totalVotes)], components: [emptyButtonRow] });
+        await pollChannel.send({ content: `${pollCreator} Your poll has been closed, please see the results here: ${pollMessage.url}` });
 
         const modLogsChannel = client.channels.resolve(constantsConfig.channels.MOD_LOGS) as TextChannel;
 

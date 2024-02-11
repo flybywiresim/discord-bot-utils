@@ -157,6 +157,7 @@ export async function closePoll(interaction: ChatInputCommandInteraction<'cached
         );
 
         await pollMessage?.edit({ embeds: [closedPollEmbed(pollCreator, poll, winningOptions, optionsDescription, totalVotes)], components: [emptyButtonRow] });
+        await pollChannel.send({ content: `${pollCreator} Your poll has been closed, please see the results here: ${pollMessage.url}` });
 
         const modLogsChannel = interaction.guild.channels.resolve(constantsConfig.channels.MOD_LOGS) as TextChannel;
 
