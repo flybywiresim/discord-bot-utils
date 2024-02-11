@@ -149,7 +149,7 @@ export async function closePoll(interaction: ChatInputCommandInteraction<'cached
             await modLogsChannel.send({ embeds: [closedPollModLog(pollCreator, poll, winningOptions, optionsDescription, commandExecutor, totalVotes)] });
         } catch (error) {
             Logger.error(error);
-            await interaction.reply({ content: 'Poll added successfully, but could not send mod log, error has been logged, please notify the bot team.', ephemeral: true });
+            await interaction.reply({ content: 'Poll closed successfully, but could not send mod log, error has been logged, please notify the bot team.', ephemeral: true });
             return;
         }
 
