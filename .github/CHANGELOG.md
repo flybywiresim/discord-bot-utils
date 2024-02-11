@@ -3,6 +3,7 @@
 Update <small>_ February 2024</small>
 
 - fix: scamlog crash (11/02/2024)
+- fix: defer replies for metar, station and taf commands (03/02/2024)
 - fix: message edit and delete crash (01/02/2024)
 - feat: add heartbeat mechanism for monitoring (01/02/2024)
 

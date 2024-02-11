@@ -17,6 +17,8 @@ const data = slashCommandStructure({
 });
 
 export default slashCommand(data, async ({ interaction }) => {
+    await interaction.deferReply();
+
     const icao = interaction.options.getString('icao')!;
 
     const metarToken = process.env.METAR_TOKEN;
@@ -27,7 +29,7 @@ export default slashCommand(data, async ({ interaction }) => {
             description: 'Metar token not found.',
             color: Colors.Red,
         });
-        return interaction.reply({ embeds: [noTokenEmbed] });
+        return interaction.editReply({ embeds: [noTokenEmbed] });
     }
 
     try {
@@ -43,8 +45,7 @@ export default slashCommand(data, async ({ interaction }) => {
                 description: metarReport.error,
                 color: Colors.Red,
             });
-            await interaction.reply({ embeds: [invalidEmbed] });
-            return Promise.resolve();
+            return interaction.editReply({ embeds: [invalidEmbed] });
         }
         const metarEmbed = makeEmbed({
             title: `METAR Report | ${metarReport.station}`,
@@ -72,7 +73,7 @@ export default slashCommand(data, async ({ interaction }) => {
             footer: { text: 'This METAR report may not accurately reflect the weather in the simulator. However, it will always be similar to the current conditions present in the sim.' },
         });
 
-        await interaction.reply({ embeds: [metarEmbed] });
+        return interaction.editReply({ embeds: [metarEmbed] });
     } catch (e) {
         Logger.error('metar:', e);
         const fetchErrorEmbed = makeEmbed({
@@ -80,7 +81,6 @@ export default slashCommand(data, async ({ interaction }) => {
             description: 'There was an error fetching the METAR report. Please try again later.',
             color: Colors.Red,
         });
-        await interaction.reply({ embeds: [fetchErrorEmbed] });
+        return interaction.editReply({ embeds: [fetchErrorEmbed] });
     }
-    return Promise.resolve();
 });
