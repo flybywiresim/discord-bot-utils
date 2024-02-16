@@ -146,7 +146,7 @@ export default contextMenuCommand(data, async ({ interaction }) => {
 
         //Respond to the user once they have submitted the modal
         await modalSubmitInteraction.reply({
-            content: `Thank you for reporting the message from ${targetMessage.author.toString()}, the <@&${modRoleId}> has been notified.`,
+            content: `Thank you for reporting the message from ${targetMessage.author.toString()}, the <@&${modRoleId}> will review your report as soon as possible.`,
             ephemeral: true,
         });
 
@@ -166,7 +166,7 @@ export default contextMenuCommand(data, async ({ interaction }) => {
 
     if (constantsConfig.roleGroups.SUPPORT && constantsConfig.roleGroups.SUPPORT.some((role) => interaction.member.roles.cache.has(role))) {
         await interaction.followUp({
-            content: 'Do you want to ping the Moderation Team?',
+            content: `Is your report urgent and requires immediate attention from the <@&${modRoleId}>? If so please click yes and I will ping the <@&${modRoleId}>. If not, click no.`,
             components: [
                 {
                     type: 1,
