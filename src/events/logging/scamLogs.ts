@@ -1,16 +1,6 @@
 import { codeBlock, Colors, DMChannel, TextChannel } from 'discord.js';
 import mongoose from 'mongoose';
-import {
-    constantsConfig,
-    makeEmbed,
-    makeLines,
-    event,
-    Events,
-    getConn,
-    Infraction,
-    Logger,
-    imageBaseUrl,
-} from '../../lib';
+import { constantsConfig, makeEmbed, makeLines, event, Events, getConn, Infraction, Logger, imageBaseUrl } from '../../lib';
 
 const excludedRoles = [
     constantsConfig.roles.ADMIN_TEAM,
@@ -53,6 +43,17 @@ export default event(Events.MessageCreate, async ({ log }, msg) => {
             return;
         }
 
+        const MAX_MESSAGE_LENGTH = 1024;
+
+        let messageContent = msg.content.toString();
+
+        let messageContentFieldTitle = 'Message Content:';
+
+        if (messageContent.length > MAX_MESSAGE_LENGTH) {
+            messageContent = `${msg.content.slice(0, MAX_MESSAGE_LENGTH - 11)}...`;
+            messageContentFieldTitle = 'Message Content (truncated):';
+        }
+
         if (!(msg.channel instanceof DMChannel)) {
             let hasRole = false;
             try {
@@ -85,8 +86,8 @@ export default event(Events.MessageCreate, async ({ log }, msg) => {
                             value: `${msg.channel}`,
                         },
                         {
-                            name: 'Message Content:',
-                            value: codeBlock(msg.content.toString()),
+                            name: messageContentFieldTitle,
+                            value: codeBlock(messageContent),
                         },
                     ],
                 });
@@ -119,8 +120,8 @@ export default event(Events.MessageCreate, async ({ log }, msg) => {
                         value: `${msg.channel}`,
                     },
                     {
-                        name: 'Message Content:',
-                        value: codeBlock(msg.content.toString()),
+                        name: messageContentFieldTitle,
+                        value: codeBlock(messageContent),
                     },
                 ],
             });
