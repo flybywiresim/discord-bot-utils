@@ -5,7 +5,7 @@ const data = slashCommandStructure({
     name: 'list-role-users',
     description: 'Lists all users with a specific role.',
     type: ApplicationCommandType.ChatInput,
-    default_member_permissions: constantsConfig.commandPermission.MANAGE_SERVER, //Overrides need to be added for admin, moderator and bot developer roles
+    default_member_permissions: constantsConfig.commandPermission.MANAGE_SERVER, //Overrides need to be added for admin, moderator roles
     dm_permission: false,
     options: [
         {
