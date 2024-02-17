@@ -247,6 +247,12 @@ export default contextMenuCommand(data, async ({ interaction }) => {
                             label: 'Yes',
                             customId: 'shareReportYes',
                         },
+                        {
+                            type: 2,
+                            style: 4,
+                            label: 'No',
+                            customId: 'shareReportNo',
+                        },
                     ],
                 },
             ],
@@ -255,7 +261,7 @@ export default contextMenuCommand(data, async ({ interaction }) => {
 
         try {
             const shareReportButtonInteraction = await interaction.channel.awaitMessageComponent({
-                filter: (i) => i.customId === 'shareReportYes',
+                filter: (i) => i.customId === 'shareReportYes' || i.customId === 'shareReportNo',
                 time: 15000,
             });
 
@@ -274,14 +280,20 @@ export default contextMenuCommand(data, async ({ interaction }) => {
                 ],
             });
 
-            // Share the report in the mod alerts channel
-            await modAlertsChannel.send({ embeds: [sharedReportEmbed] });
+            if (shareReportButtonInteraction.customId === 'shareReportYes') {
+                await modAlertsChannel.send({ embeds: [sharedReportEmbed] });
+                await shareReportButtonInteraction.reply({
+                    content: `Your report has been submitted and shared in ${modAlertsChannel}.`,
+                    ephemeral: true,
+                });
+            }
 
-            // Respond to the user
-            await shareReportButtonInteraction.reply({
-                content: `Your report has been submitted and shared in ${modAlertsChannel}.`,
-                ephemeral: true,
-            });
+            if (shareReportButtonInteraction.customId === 'shareReportNo') {
+                await shareReportButtonInteraction.reply({
+                    content: `Your report has been submitted without sharing in ${modAlertsChannel}.`,
+                    ephemeral: true,
+                });
+            }
 
             await scamReportLogs.send({ content: `Reported message from ${targetMessage.author.toString()} has been shared in ${modAlertsChannel}.` });
         } catch (error) {
