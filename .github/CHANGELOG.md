@@ -2,6 +2,7 @@
 
 Update <small>_ February 2024</small>
 
+- feat: add feature to share report (17/02/2024)
 - fix: update wording in the report message feature (16/02/2024)
 - fix: scamlog crash (16/02/2024)
 - fix: defer replies for metar, station and taf commands (03/02/2024)
