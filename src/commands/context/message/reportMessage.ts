@@ -264,6 +264,10 @@ export default contextMenuCommand(data, async ({ interaction }) => {
                 description: `A message has been reported in ${interaction.channel}.`,
                 fields: [
                     {
+                        name: 'Link to Message',
+                        value: targetMessage.url,
+                    },
+                    {
                         name: 'Reported At',
                         value: formattedDate,
                     },
