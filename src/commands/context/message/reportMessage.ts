@@ -287,7 +287,7 @@ export default contextMenuCommand(data, async ({ interaction }) => {
         } catch (error) {
             Logger.error(error);
             await interaction.followUp({
-                content: `You did not choose to share in time. Your report has been submitted without sharing in ${modAlertsChannel}.`,
+                content: `Your report has been submitted without sharing in ${modAlertsChannel}.`,
                 ephemeral: true,
             });
         }
