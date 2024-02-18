@@ -2,6 +2,7 @@
 
 Update <small>_ February 2024</small>
 
+- fix: report message logging bug (18/02/2024)
 - feat: command to list users in a role (18/02/2024)
 - feat: add feature to share report (18/02/2024)
 - fix: update wording in the report message feature (16/02/2024)
