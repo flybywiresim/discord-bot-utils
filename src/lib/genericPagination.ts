@@ -1,4 +1,4 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, CommandInteraction, Interaction } from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, CommandInteraction, Interaction, InteractionResponse, Message } from 'discord.js';
 
 export async function sendPaginatedEmbed(interaction: CommandInteraction, embeds: any[]): Promise<void> {
     let currentPage = 0;
@@ -15,7 +15,12 @@ export async function sendPaginatedEmbed(interaction: CommandInteraction, embeds
 
     const buttonRow = new ActionRowBuilder<ButtonBuilder>().addComponents(prevButton, nextButton);
 
-    const message = await interaction.reply({ embeds: [embeds[currentPage]], components: [buttonRow] });
+    let message: Message<boolean> | InteractionResponse<boolean>;
+    if ((interaction.deferred || interaction.deferred) || (interaction.deferred && interaction.deferred)) {
+        message = await interaction.editReply({ embeds: [embeds[currentPage]], components: [buttonRow] });
+    } else {
+        message = await interaction.reply({ embeds: [embeds[currentPage]], components: [buttonRow] });
+    }
 
     const filter = (buttonInteraction: Interaction) => buttonInteraction.user.id === interaction.user.id;
     const collector = message.createMessageComponentCollector({ filter, time: 120000 });
