@@ -286,6 +286,7 @@ export default contextMenuCommand(data, async ({ interaction }) => {
                     content: `Your report has been submitted and shared in ${modAlertsChannel}.`,
                     ephemeral: true,
                 });
+                await scamReportLogs.send({ content: `Reported message from ${interaction.user.toString()} has been shared in ${modAlertsChannel}.` });
             }
 
             if (shareReportButtonInteraction.customId === 'shareReportNo') {
@@ -294,8 +295,6 @@ export default contextMenuCommand(data, async ({ interaction }) => {
                     ephemeral: true,
                 });
             }
-
-            await scamReportLogs.send({ content: `Reported message from ${targetMessage.author.toString()} has been shared in ${modAlertsChannel}.` });
         } catch (error) {
             Logger.error(error);
             await interaction.followUp({
