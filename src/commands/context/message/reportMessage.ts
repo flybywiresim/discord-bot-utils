@@ -15,7 +15,7 @@ const data = contextMenuCommandStructure({
     type: ApplicationCommandType.Message,
 });
 
-const messageEmbed = (targetMessage: any, interaction: ContextMenuCommandInteraction<'cached'>, messageContent: string, commentContent: string, formattedDate: string) => makeEmbed({
+const reportedMessageEmbed = (targetMessage: any, interaction: ContextMenuCommandInteraction<'cached'>, messageContent: string, commentContent: string, formattedDate: string) => makeEmbed({
     author: {
         name: `[REPORTED MESSAGE] ${targetMessage.author.tag}`,
         iconURL: targetMessage.author.displayAvatarURL(),
@@ -66,15 +66,7 @@ export default contextMenuCommand(data, async ({ interaction }) => {
 
     if (!scamReportLogs) {
         await interaction.reply({
-            content: 'Unable to find the mod logs channel. Please contact a Moderator.',
-            ephemeral: true,
-        });
-        return;
-    }
-
-    if (!interaction.channel) {
-        await interaction.reply({
-            content: 'Unable to find the target message.',
+            content: 'Unable to find the reporting channel. Please contact a Moderator.',
             ephemeral: true,
         });
         return;
@@ -82,7 +74,7 @@ export default contextMenuCommand(data, async ({ interaction }) => {
 
     const targetMessageId = interaction.targetId;
 
-    if (!targetMessageId) {
+    if (!interaction.channel || !targetMessageId) {
         await interaction.reply({
             content: 'Unable to find the target message.',
             ephemeral: true,
@@ -102,7 +94,11 @@ export default contextMenuCommand(data, async ({ interaction }) => {
 
     let messageContent;
     if (targetMessage.embeds.length === 0) {
-        messageContent = targetMessage.content;
+        if (targetMessage.content.length <= 1024) {
+            messageContent = targetMessage.content;
+        } else {
+            messageContent = 'Message is longer than 1024 characters. Please check the link below.';
+        }
     } else {
         messageContent = 'Message is an embed. Please check the link below.';
     }
@@ -110,19 +106,19 @@ export default contextMenuCommand(data, async ({ interaction }) => {
     //Create and send the modal
 
     const modal = new ModalBuilder({
-        customId: 'standardPriorityModal',
+        customId: 'reportMessageModal',
         title: 'Report a Message',
     });
 
-    const standardPriorityComments = new TextInputBuilder()
-        .setCustomId('standardPriorityComments')
+    const reportMessageComments = new TextInputBuilder()
+        .setCustomId('reportMessageComments')
         .setLabel('Comments')
         .setPlaceholder('Please provide any additional comments about your report here. You may leave this blank.')
         .setStyle(TextInputStyle.Paragraph)
         .setMaxLength(500)
         .setRequired(false);
 
-    const actionRow = new ActionRowBuilder<TextInputBuilder>().addComponents(standardPriorityComments);
+    const actionRow = new ActionRowBuilder<TextInputBuilder>().addComponents(reportMessageComments);
 
     modal.addComponents(actionRow);
 
@@ -133,7 +129,7 @@ export default contextMenuCommand(data, async ({ interaction }) => {
     const filter = (interaction: {
         customId: string;
         user: { id: any; };
-    }) => interaction.customId === 'standardPriorityModal' && interaction.user.id;
+    }) => interaction.customId === 'reportMessageModal' && interaction.user.id;
 
     let commentContent = 'No additional comments provided.';
 
@@ -150,7 +146,7 @@ export default contextMenuCommand(data, async ({ interaction }) => {
             ephemeral: true,
         });
 
-        commentContent = modalSubmitInteraction.fields.getTextInputValue('standardPriorityComments');
+        commentContent = modalSubmitInteraction.fields.getTextInputValue('reportMessageComments');
         commentContent = commentContent.trim() || 'No additional comments provided.';
     } catch (error) {
         //Handle the error if the user does not respond in time
@@ -191,14 +187,14 @@ export default contextMenuCommand(data, async ({ interaction }) => {
 
         try {
         // Handle the button interactions
-            const buttonInteraction = await interaction.channel.awaitMessageComponent({
+            const modPingButtonInteraction = await interaction.channel.awaitMessageComponent({
                 filter: (i) => i.customId === 'pingModerationTeamYes' || i.customId === 'pingModerationTeamNo',
                 time: 60000,
             });
 
             let pingModerationTeam = false;
 
-            if (buttonInteraction.customId === 'pingModerationTeamYes') {
+            if (modPingButtonInteraction.customId === 'pingModerationTeamYes') {
                 pingModerationTeam = true;
             }
 
@@ -215,7 +211,7 @@ export default contextMenuCommand(data, async ({ interaction }) => {
             }
 
             // Respond to the user
-            await buttonInteraction.reply({
+            await modPingButtonInteraction.reply({
                 content: responseMessage,
                 ephemeral: true,
             });
@@ -227,6 +223,86 @@ export default contextMenuCommand(data, async ({ interaction }) => {
                 ephemeral: true,
             });
         }
+
+        const modAlertsChannel = interaction.guild.channels.resolve(constantsConfig.channels.MOD_ALERTS) as TextChannel;
+
+        if (!modAlertsChannel) {
+            await interaction.followUp({
+                content: 'Unable to find the mod alerts channel. Please contact a Moderator.',
+                ephemeral: true,
+            });
+            await scamReportLogs.send({ embeds: [reportedMessageEmbed(targetMessage, interaction, messageContent, commentContent, formattedDate)] });
+            return;
+        }
+
+        await interaction.followUp({
+            content: `Would you like to share this report in ${modAlertsChannel}? If you do not respond in 15 seconds, I will assume you do not want to share this report.`,
+            components: [
+                {
+                    type: 1,
+                    components: [
+                        {
+                            type: 2,
+                            style: 3,
+                            label: 'Yes',
+                            customId: 'shareReportYes',
+                        },
+                        {
+                            type: 2,
+                            style: 4,
+                            label: 'No',
+                            customId: 'shareReportNo',
+                        },
+                    ],
+                },
+            ],
+            ephemeral: true,
+        });
+
+        try {
+            const shareReportButtonInteraction = await interaction.channel.awaitMessageComponent({
+                filter: (i) => i.customId === 'shareReportYes' || i.customId === 'shareReportNo',
+                time: 15000,
+            });
+
+            const sharedReportEmbed = makeEmbed({
+                title: '[REPORTED MESSAGE]',
+                description: `A message has been reported in ${interaction.channel}.`,
+                fields: [
+                    {
+                        name: 'Link to Message',
+                        value: targetMessage.url,
+                    },
+                    {
+                        name: 'Reported At',
+                        value: formattedDate,
+                    },
+                ],
+            });
+
+            if (shareReportButtonInteraction.customId === 'shareReportYes') {
+                await modAlertsChannel.send({ embeds: [sharedReportEmbed] });
+                await shareReportButtonInteraction.reply({
+                    content: `Your report has been submitted and shared in ${modAlertsChannel}.`,
+                    ephemeral: true,
+                });
+            }
+
+            if (shareReportButtonInteraction.customId === 'shareReportNo') {
+                await shareReportButtonInteraction.reply({
+                    content: `Your report has been submitted without sharing in ${modAlertsChannel}.`,
+                    ephemeral: true,
+                });
+            }
+
+            await scamReportLogs.send({ content: `Reported message from ${targetMessage.author.toString()} has been shared in ${modAlertsChannel}.` });
+        } catch (error) {
+            Logger.error(error);
+            await interaction.followUp({
+                content: `Your report has been submitted without sharing in ${modAlertsChannel}.`,
+                ephemeral: true,
+            });
+        }
     }
-    await scamReportLogs.send({ embeds: [messageEmbed(targetMessage, interaction, messageContent, commentContent, formattedDate)] });
+    await scamReportLogs.send({ embeds: [reportedMessageEmbed(targetMessage, interaction, messageContent, commentContent, formattedDate)] });
 });
