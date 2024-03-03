@@ -36,6 +36,7 @@ const prefixCommandContentSchema = new Schema({
     },
     content: String,
     image: String,
+    autoChannels: [String],
 });
 
 const prefixCommandChannelPermissionSchema = new Schema({
@@ -82,7 +83,4 @@ const prefixCommandSchema = new Schema({
 
 export const PrefixCommandCategory = mongoose.model('PrefixCommandCategory', prefixCommandCategorySchema);
 export const PrefixCommandVersion = mongoose.model('PrefixCommandVersion', prefixCommandVersionSchema);
-export const PrefixCommandContent = mongoose.model('PrefixCommandContent', prefixCommandContentSchema);
-export const PrefixCommandChannelPermission = mongoose.model('PrefixCommandChannelPermission', prefixCommandChannelPermissionSchema);
-export const PrefixCommandRolePermission = mongoose.model('PrefixCommandRolePermission', prefixCommandRolePermissionSchema);
 export const PrefixCommand = mongoose.model('PrefixCommand', prefixCommandSchema);

@@ -1,5 +1,5 @@
 import { APIEmbedField, ChatInputCommandInteraction, Colors } from 'discord.js';
-import { getConn, PrefixCommandChannelPermission, Logger, makeEmbed, PrefixCommand } from '../../../../lib';
+import { getConn, Logger, makeEmbed, PrefixCommand } from '../../../../lib';
 
 const noConnEmbed = makeEmbed({
     title: 'Prefix Commands - List Channel Permissions - No Connection',
@@ -44,8 +44,7 @@ export async function handleListPrefixCommandChannelPermissions(interaction: Cha
         return;
     }
     const [foundCommand] = foundCommands;
-    const { id: commandId } = foundCommand;
-    const foundChannelPermissions = await PrefixCommandChannelPermission.find({ commandId });
+    const foundChannelPermissions = foundCommand.channelPermissions;
 
     if (foundChannelPermissions) {
         const embedFields: APIEmbedField[] = [];

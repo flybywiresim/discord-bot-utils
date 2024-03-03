@@ -95,7 +95,7 @@ export async function handleDeletePrefixCommandContent(interaction: ChatInputCom
             versionName = foundVersion.name || '';
         }
         try {
-            await existingContent.deleteOne();
+            foundCommand.contents.id(contentId)?.deleteOne();
             await foundCommand.save();
             await interaction.followUp({ embeds: [successEmbed(`${commandName}`, `${versionName}`, `${contentId}`)], ephemeral: true });
             if (modLogsChannel) {

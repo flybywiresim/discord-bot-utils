@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, Colors, TextChannel, User } from 'discord.js';
-import { constantsConfig, getConn, PrefixCommandContent, PrefixCommandVersion, PrefixCommand, Logger, makeEmbed } from '../../../../lib';
+import { constantsConfig, getConn, PrefixCommandVersion, PrefixCommand, Logger, makeEmbed } from '../../../../lib';
 
 const noConnEmbed = makeEmbed({
     title: 'Prefix Commands - Set Content - No Connection',
@@ -126,20 +126,21 @@ export async function handleSetPrefixCommandContent(interaction: ChatInputComman
             return;
         }
     }
-    const contentData = new PrefixCommandContent({
+    const contentData = {
         versionId,
         title,
         content,
         image,
-    });
+    };
     foundCommand.contents.push(contentData);
 
     try {
         await foundCommand.save();
-        await interaction.followUp({ embeds: [successEmbed(command, version, contentData.id)], ephemeral: true });
+        const { id: contentId } = foundCommand.contents.find((c) => c.versionId === versionId)!;
+        await interaction.followUp({ embeds: [successEmbed(command, version, contentId)], ephemeral: true });
         if (modLogsChannel) {
             try {
-                await modLogsChannel.send({ embeds: [modLogEmbed(moderator, command, version, title, content, image, commandId, versionId, contentData.id)] });
+                await modLogsChannel.send({ embeds: [modLogEmbed(moderator, command, version, title, content, image, commandId, versionId, contentId)] });
             } catch (error) {
                 Logger.error(`Failed to post a message to the mod logs channel: ${error}`);
             }

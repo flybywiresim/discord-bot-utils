@@ -1,5 +1,5 @@
 import { APIEmbedField, ChatInputCommandInteraction, Colors } from 'discord.js';
-import { getConn, PrefixCommandRolePermission, Logger, makeEmbed, PrefixCommand } from '../../../../lib';
+import { getConn, Logger, makeEmbed, PrefixCommand } from '../../../../lib';
 
 const noConnEmbed = makeEmbed({
     title: 'Prefix Commands - List Role Permissions - No Connection',
@@ -44,8 +44,7 @@ export async function handleListPrefixCommandRolePermissions(interaction: ChatIn
         return;
     }
     const [foundCommand] = foundCommands;
-    const { id: commandId } = foundCommand;
-    const foundRolePermissions = await PrefixCommandRolePermission.find({ commandId });
+    const foundRolePermissions = foundCommand.rolePermissions;
 
     if (foundRolePermissions) {
         const embedFields: APIEmbedField[] = [];

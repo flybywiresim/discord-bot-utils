@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, Colors, TextChannel, User } from 'discord.js';
-import { constantsConfig, getConn, PrefixCommandChannelPermission, PrefixCommand, Logger, makeEmbed } from '../../../../lib';
+import { constantsConfig, getConn, PrefixCommand, Logger, makeEmbed } from '../../../../lib';
 
 const noConnEmbed = makeEmbed({
     title: 'Prefix Commands - Add Channel Permission - No Connection',
@@ -10,12 +10,6 @@ const noConnEmbed = makeEmbed({
 const noCommandEmbed = (command: string) => makeEmbed({
     title: 'Prefix Commands - Add Channel Permission - No Command',
     description: `Failed to add the prefix command channel permission for command ${command} as the command does not exist or there are more than one matching.`,
-    color: Colors.Red,
-});
-
-const noChannelEmbed = (channel: string) => makeEmbed({
-    title: 'Prefix Commands - Add Channel Permission - No Channel',
-    description: `Failed to add the prefix command channel permission for channel <#${channel}> as the channel does not exist.`,
     color: Colors.Red,
 });
 
@@ -76,7 +70,7 @@ export async function handleAddPrefixCommandChannelPermission(interaction: ChatI
     }
 
     const command = interaction.options.getString('command')!;
-    const channel = interaction.options.getString('channel')!;
+    const channel = interaction.options.getChannel('channel')!;
     const type = interaction.options.getString('type')!;
     const moderator = interaction.user;
 
@@ -86,45 +80,42 @@ export async function handleAddPrefixCommandChannelPermission(interaction: ChatI
         await interaction.followUp({ embeds: [noModLogs], ephemeral: true });
     }
 
-    let foundCommand = await PrefixCommand.find({ name: command });
-    if (!foundCommand || foundCommand.length > 1) {
-        foundCommand = await PrefixCommand.find({ aliases: { $in: [command] } });
+    let foundCommands = await PrefixCommand.find({ name: command });
+    if (!foundCommands || foundCommands.length > 1) {
+        foundCommands = await PrefixCommand.find({ aliases: { $in: [command] } });
     }
-    if (!foundCommand || foundCommand.length > 1) {
+    if (!foundCommands || foundCommands.length > 1) {
         await interaction.followUp({ embeds: [noCommandEmbed(command)], ephemeral: true });
         return;
     }
-    const { id: commandId } = foundCommand[0];
+    const [foundCommand] = foundCommands;
+    const { id: commandId } = foundCommand;
+    const { id: channelId, name: channelName } = channel;
 
-    const foundChannel = interaction.guild.channels.resolve(channel);
-    if (!foundChannel) {
-        await interaction.followUp({ embeds: [noChannelEmbed(channel)], ephemeral: true });
-        return;
-    }
-    const { id: channelId } = foundChannel;
-
-    const existingChannelPermission = await PrefixCommandChannelPermission.findOne({ commandId, channelId });
+    const existingChannelPermission = foundCommand.channelPermissions.find((channelPermission) => channelPermission.channelId === channelId);
     if (!existingChannelPermission) {
-        const newChannelPermission = new PrefixCommandChannelPermission({
+        const newChannelPermission = {
             commandId,
             channelId,
             type,
-        });
+        };
         try {
-            await newChannelPermission.save();
-            await interaction.followUp({ embeds: [successEmbed(command, channel, type, newChannelPermission.id)], ephemeral: true });
+            foundCommand.channelPermissions.push(newChannelPermission);
+            await foundCommand.save();
+            const { id: channelPermissionId } = foundCommand.channelPermissions.find((channelPermission) => channelPermission.channelId === channelId)!;
+            await interaction.followUp({ embeds: [successEmbed(command, channelName, type, channelPermissionId)], ephemeral: true });
             if (modLogsChannel) {
                 try {
-                    await modLogsChannel.send({ embeds: [modLogEmbed(moderator, command, channel, type, commandId, newChannelPermission.id)] });
+                    await modLogsChannel.send({ embeds: [modLogEmbed(moderator, command, channelName, type, commandId, channelPermissionId)] });
                 } catch (error) {
                     Logger.error(`Failed to post a message to the mod logs channel: ${error}`);
                 }
             }
         } catch (error) {
             Logger.error(`Failed to add ${type} prefix command channel permission for command ${command} and channel <#${channel}>: ${error}`);
-            await interaction.followUp({ embeds: [failedEmbed(command, channel, type)], ephemeral: true });
+            await interaction.followUp({ embeds: [failedEmbed(command, channelName, type)], ephemeral: true });
         }
     } else {
-        await interaction.followUp({ embeds: [alreadyExistsEmbed(command, channel)], ephemeral: true });
+        await interaction.followUp({ embeds: [alreadyExistsEmbed(command, channelName)], ephemeral: true });
     }
 }

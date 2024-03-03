@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, Colors, TextChannel, User } from 'discord.js';
-import { constantsConfig, getConn, PrefixCommandRolePermission, PrefixCommand, Logger, makeEmbed } from '../../../../lib';
+import { constantsConfig, getConn, PrefixCommand, Logger, makeEmbed } from '../../../../lib';
 
 const noConnEmbed = makeEmbed({
     title: 'Prefix Commands - Add Role Permission - No Connection',
@@ -10,12 +10,6 @@ const noConnEmbed = makeEmbed({
 const noCommandEmbed = (command: string) => makeEmbed({
     title: 'Prefix Commands - Add Role Permission - No Command',
     description: `Failed to add the prefix command role permission for command ${command} as the command does not exist or there are more than one matching.`,
-    color: Colors.Red,
-});
-
-const noRoleEmbed = (role: string) => makeEmbed({
-    title: 'Prefix Commands - Add Role Permission - No Role',
-    description: `Failed to add the prefix command role permission for role ${role} as the role does not exist.`,
     color: Colors.Red,
 });
 
@@ -76,7 +70,7 @@ export async function handleAddPrefixCommandRolePermission(interaction: ChatInpu
     }
 
     const command = interaction.options.getString('command')!;
-    const role = interaction.options.getString('role')!;
+    const role = interaction.options.getRole('role')!;
     const type = interaction.options.getString('type')!;
     const moderator = interaction.user;
 
@@ -86,36 +80,33 @@ export async function handleAddPrefixCommandRolePermission(interaction: ChatInpu
         await interaction.followUp({ embeds: [noModLogs], ephemeral: true });
     }
 
-    let foundCommand = await PrefixCommand.find({ name: command });
-    if (!foundCommand || foundCommand.length > 1) {
-        foundCommand = await PrefixCommand.find({ aliases: { $in: [command] } });
+    let foundCommands = await PrefixCommand.find({ name: command });
+    if (!foundCommands || foundCommands.length > 1) {
+        foundCommands = await PrefixCommand.find({ aliases: { $in: [command] } });
     }
-    if (!foundCommand || foundCommand.length > 1) {
+    if (!foundCommands || foundCommands.length > 1) {
         await interaction.followUp({ embeds: [noCommandEmbed(command)], ephemeral: true });
         return;
     }
-    const { id: commandId } = foundCommand[0];
+    const [foundCommand] = foundCommands;
+    const { id: commandId } = foundCommand;
+    const { id: roleId, name: roleName } = role;
 
-    const foundRole = interaction.guild.roles.resolve(role);
-    if (!foundRole) {
-        await interaction.followUp({ embeds: [noRoleEmbed(role)], ephemeral: true });
-        return;
-    }
-    const { id: roleId, name: roleName } = foundRole;
-
-    const existingRolePermission = await PrefixCommandRolePermission.findOne({ commandId, roleId });
+    const existingRolePermission = foundCommand.rolePermissions.find((rolePermission) => rolePermission.roleId === roleId);
     if (!existingRolePermission) {
-        const newRolePermission = new PrefixCommandRolePermission({
+        const newRolePermission = {
             commandId,
             roleId,
             type,
-        });
+        };
         try {
-            await newRolePermission.save();
-            await interaction.followUp({ embeds: [successEmbed(command, roleName, type, newRolePermission.id)], ephemeral: true });
+            foundCommand.rolePermissions.push(newRolePermission);
+            await foundCommand.save();
+            const { id: rolePermissionId } = foundCommand.rolePermissions.find((rolePermission) => rolePermission.roleId === roleId)!;
+            await interaction.followUp({ embeds: [successEmbed(command, roleName, type, rolePermissionId)], ephemeral: true });
             if (modLogsRole) {
                 try {
-                    await modLogsRole.send({ embeds: [modLogEmbed(moderator, command, roleName, type, commandId, newRolePermission.id)] });
+                    await modLogsRole.send({ embeds: [modLogEmbed(moderator, command, roleName, type, commandId, rolePermissionId)] });
                 } catch (error) {
                     Logger.error(`Failed to post a message to the mod logs role: ${error}`);
                 }

@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, Colors, TextChannel, User } from 'discord.js';
-import { constantsConfig, getConn, PrefixCommand, Logger, makeEmbed, PrefixCommandContent, PrefixCommandChannelPermission, PrefixCommandRolePermission } from '../../../../lib';
+import { constantsConfig, getConn, PrefixCommand, Logger, makeEmbed } from '../../../../lib';
 
 const noConnEmbed = makeEmbed({
     title: 'Prefix Commands - Delete Command - No Connection',
@@ -82,27 +82,6 @@ export async function handleDeletePrefixCommand(interaction: ChatInputCommandInt
         const { name, aliases, isEmbed, embedColor } = existingCommand;
         try {
             await existingCommand.deleteOne();
-            const foundContents = await PrefixCommandContent.find({ commandId });
-            if (foundContents) {
-                for (const content of foundContents) {
-                    // eslint-disable-next-line no-await-in-loop
-                    await content.deleteOne();
-                }
-            }
-            const foundChannelPermissions = await PrefixCommandChannelPermission.find({ commandId });
-            if (foundChannelPermissions) {
-                for (const channelPermission of foundChannelPermissions) {
-                    // eslint-disable-next-line no-await-in-loop
-                    await channelPermission.deleteOne();
-                }
-            }
-            const foundRolePermissions = await PrefixCommandRolePermission.find({ commandId });
-            if (foundRolePermissions) {
-                for (const rolePermission of foundRolePermissions) {
-                    // eslint-disable-next-line no-await-in-loop
-                    await rolePermission.deleteOne();
-                }
-            }
             await interaction.followUp({ embeds: [successEmbed(name || '', commandId)], ephemeral: true });
             if (modLogsChannel) {
                 try {

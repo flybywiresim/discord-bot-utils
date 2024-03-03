@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, Colors, TextChannel, User } from 'discord.js';
-import { constantsConfig, getConn, PrefixCommandRolePermission, PrefixCommand, Logger, makeEmbed } from '../../../../lib';
+import { constantsConfig, getConn, PrefixCommand, Logger, makeEmbed } from '../../../../lib';
 
 const noConnEmbed = makeEmbed({
     title: 'Prefix Commands - Remove Role Permission - No Connection',
@@ -10,12 +10,6 @@ const noConnEmbed = makeEmbed({
 const noCommandEmbed = (command: string) => makeEmbed({
     title: 'Prefix Commands - Remove Role Permission - No Command',
     description: `Failed to remove the prefix command role permission for command ${command} as the command does not exist or there are more than one matching.`,
-    color: Colors.Red,
-});
-
-const noRoleEmbed = (role: string) => makeEmbed({
-    title: 'Prefix Commands - Remove Role Permission - No Role',
-    description: `Failed to remove the prefix command role permission for role ${role} as the role does not exist.`,
     color: Colors.Red,
 });
 
@@ -76,7 +70,7 @@ export async function handleRemovePrefixCommandRolePermission(interaction: ChatI
     }
 
     const command = interaction.options.getString('command')!;
-    const role = interaction.options.getString('role')!;
+    const role = interaction.options.getRole('role')!;
     const moderator = interaction.user;
 
     //Check if the mod logs role exists
@@ -85,28 +79,24 @@ export async function handleRemovePrefixCommandRolePermission(interaction: ChatI
         await interaction.followUp({ embeds: [noModLogs], ephemeral: true });
     }
 
-    let foundCommand = await PrefixCommand.find({ name: command });
-    if (!foundCommand || foundCommand.length > 1) {
-        foundCommand = await PrefixCommand.find({ aliases: { $in: [command] } });
+    let foundCommands = await PrefixCommand.find({ name: command });
+    if (!foundCommands || foundCommands.length > 1) {
+        foundCommands = await PrefixCommand.find({ aliases: { $in: [command] } });
     }
-    if (!foundCommand || foundCommand.length > 1) {
+    if (!foundCommands || foundCommands.length > 1) {
         await interaction.followUp({ embeds: [noCommandEmbed(command)], ephemeral: true });
         return;
     }
-    const { id: commandId } = foundCommand[0];
+    const [foundCommand] = foundCommands;
+    const { id: commandId } = foundCommand;
+    const { id: roleId, name: roleName } = role;
 
-    const foundRole = interaction.guild.roles.resolve(role);
-    if (!foundRole) {
-        await interaction.followUp({ embeds: [noRoleEmbed(role)], ephemeral: true });
-        return;
-    }
-    const { id: roleId, name: roleName } = foundRole;
-
-    const existingRolePermission = await PrefixCommandRolePermission.findOne({ commandId, roleId });
+    const existingRolePermission = foundCommand.rolePermissions.find((rolePermission) => rolePermission.roleId === roleId);
     if (existingRolePermission) {
         const { id: rolePermissionId, type } = existingRolePermission;
         try {
-            await existingRolePermission.deleteOne();
+            foundCommand.rolePermissions.id(rolePermissionId)?.deleteOne();
+            await foundCommand.save();
             await interaction.followUp({ embeds: [successEmbed(command, roleName, type, rolePermissionId)], ephemeral: true });
             if (modLogsRole) {
                 try {
