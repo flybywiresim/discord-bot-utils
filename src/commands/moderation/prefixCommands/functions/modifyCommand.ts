@@ -88,20 +88,19 @@ export async function handleModifyPrefixCommand(interaction: ChatInputCommandInt
         return;
     }
 
-    let categoryId = '';
+    let foundCategory;
     if (category !== '') {
-        const [foundCategory] = await PrefixCommandCategory.find({ name: category });
+        [foundCategory] = await PrefixCommandCategory.find({ name: category });
         if (!foundCategory) {
             await interaction.followUp({ embeds: [categoryNotFoundEmbed(category)], ephemeral: true });
             return;
         }
-        ({ id: categoryId } = foundCategory);
     }
     const existingCommand = await PrefixCommand.findById(commandId);
 
     if (existingCommand) {
         existingCommand.name = name || existingCommand.name;
-        existingCommand.categoryId = categoryId || existingCommand.categoryId;
+        existingCommand.categoryId = foundCategory?.id || existingCommand.categoryId;
         existingCommand.aliases = aliases.length > 0 ? aliases : existingCommand.aliases;
         existingCommand.isEmbed = isEmbed !== null ? isEmbed : existingCommand.isEmbed;
         existingCommand.embedColor = embedColor || existingCommand.embedColor;

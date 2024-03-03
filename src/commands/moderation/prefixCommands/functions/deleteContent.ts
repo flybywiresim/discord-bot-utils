@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, Colors, TextChannel, User } from 'discord.js';
-import { constantsConfig, getConn, PrefixCommandContent, Logger, makeEmbed, PrefixCommand, PrefixCommandVersion } from '../../../../lib';
+import { constantsConfig, getConn, Logger, makeEmbed, PrefixCommand, PrefixCommandVersion } from '../../../../lib';
 
 const noConnEmbed = makeEmbed({
     title: 'Prefix Commands - Delete Content - No Connection',
@@ -80,14 +80,11 @@ export async function handleDeletePrefixCommandContent(interaction: ChatInputCom
         await interaction.followUp({ embeds: [noModLogs], ephemeral: true });
     }
 
-    const existingContent = await PrefixCommandContent.findById(contentId);
+    const foundCommand = await PrefixCommand.findOne({ 'contents._id': contentId });
+    const existingContent = foundCommand?.contents.id(contentId) || null;
 
-    if (existingContent) {
-        const { id: commandId, versionId, title, content, image } = existingContent;
-        const foundCommand = await PrefixCommand.findById(commandId);
-        if (!foundCommand) {
-            return;
-        }
+    if (foundCommand && existingContent) {
+        const { versionId, title, content, image } = existingContent;
         const { name: commandName } = foundCommand;
         let versionName = '';
         if (versionId !== 'GENERIC') {
@@ -99,10 +96,11 @@ export async function handleDeletePrefixCommandContent(interaction: ChatInputCom
         }
         try {
             await existingContent.deleteOne();
+            await foundCommand.save();
             await interaction.followUp({ embeds: [successEmbed(`${commandName}`, `${versionName}`, `${contentId}`)], ephemeral: true });
             if (modLogsChannel) {
                 try {
-                    await modLogsChannel.send({ embeds: [modLogEmbed(moderator, `${commandName}`, `${versionName}`, `${title}`, `${content}`, `${image}`, `${commandId}`, `${versionId}`, `${contentId}`)] });
+                    await modLogsChannel.send({ embeds: [modLogEmbed(moderator, `${commandName}`, `${versionName}`, `${title}`, `${content}`, `${image}`, `${foundCommand.id}`, `${versionId}`, `${contentId}`)] });
                 } catch (error) {
                     Logger.error(`Failed to post a message to the mod logs channel: ${error}`);
                 }

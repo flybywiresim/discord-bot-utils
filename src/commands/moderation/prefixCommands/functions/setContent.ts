@@ -90,46 +90,56 @@ export async function handleSetPrefixCommandContent(interaction: ChatInputComman
         await interaction.followUp({ embeds: [noModLogs], ephemeral: true });
     }
 
-    let foundCommand = await PrefixCommand.find({ name: command });
-    if (!foundCommand || foundCommand.length !== 1) {
-        foundCommand = await PrefixCommand.find({ aliases: { $in: [command] } });
+    let foundCommands = await PrefixCommand.find({ name: command });
+    if (!foundCommands || foundCommands.length !== 1) {
+        foundCommands = await PrefixCommand.find({ aliases: { $in: [command] } });
     }
-    if (!foundCommand || foundCommand.length !== 1) {
+    if (!foundCommands || foundCommands.length !== 1) {
         await interaction.followUp({ embeds: [noCommandEmbed(command)], ephemeral: true });
         return;
     }
 
-    const { id: commandId } = foundCommand[0];
+    const foundCommand = foundCommands[0];
+    const { id: commandId } = foundCommand;
     let versionId = '';
-    let foundVersion = null;
+    let foundVersions = null;
     if (version === 'GENERIC' || version === 'generic') {
         versionId = 'GENERIC';
     } else {
-        foundVersion = await PrefixCommandVersion.find({ name: version });
-        if (foundVersion && foundVersion.length === 1) {
-            versionId = foundVersion[0].id;
+        foundVersions = await PrefixCommandVersion.find({ name: version });
+        if (foundVersions && foundVersions.length === 1) {
+            versionId = foundVersions[0].id;
         } else {
             await interaction.followUp({ embeds: [noVersionEmbed(version)], ephemeral: true });
             return;
         }
     }
 
-    let foundContent = await PrefixCommandContent.findOne({ commandId, versionId });
-    if (!foundContent) {
-        foundContent = new PrefixCommandContent();
-        foundContent.commandId = commandId;
-        foundContent.versionId = versionId;
+    const foundContent = foundCommand.contents.find((c) => c.versionId === versionId);
+    if (foundContent) {
+        const foundData = foundCommand.contents.id(foundContent.id);
+        try {
+            await foundData?.deleteOne();
+        } catch (error) {
+            Logger.error(`Failed to delete existing content for prefix command ${command} and version ${version}: ${error}`);
+            await interaction.followUp({ embeds: [failedEmbed(command, version)], ephemeral: true });
+            return;
+        }
     }
-    foundContent.title = title;
-    foundContent.content = content;
-    foundContent.image = image;
+    const contentData = new PrefixCommandContent({
+        versionId,
+        title,
+        content,
+        image,
+    });
+    foundCommand.contents.push(contentData);
 
     try {
-        await foundContent.save();
-        await interaction.followUp({ embeds: [successEmbed(command, version, foundContent.id)], ephemeral: true });
+        await foundCommand.save();
+        await interaction.followUp({ embeds: [successEmbed(command, version, contentData.id)], ephemeral: true });
         if (modLogsChannel) {
             try {
-                await modLogsChannel.send({ embeds: [modLogEmbed(moderator, command, version, title, content, image, commandId, versionId, foundContent.id)] });
+                await modLogsChannel.send({ embeds: [modLogEmbed(moderator, command, version, title, content, image, commandId, versionId, contentData.id)] });
             } catch (error) {
                 Logger.error(`Failed to post a message to the mod logs channel: ${error}`);
             }

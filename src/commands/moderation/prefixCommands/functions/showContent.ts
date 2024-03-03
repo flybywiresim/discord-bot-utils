@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, Colors } from 'discord.js';
-import { getConn, PrefixCommandContent, PrefixCommandVersion, PrefixCommand, Logger, makeEmbed } from '../../../../lib';
+import { getConn, PrefixCommandVersion, PrefixCommand, Logger, makeEmbed } from '../../../../lib';
 
 const noConnEmbed = makeEmbed({
     title: 'Prefix Commands - Show Content - No Connection',
@@ -60,16 +60,17 @@ export async function handleShowPrefixCommandContent(interaction: ChatInputComma
 
     const command = interaction.options.getString('command') || '';
     const version = interaction.options.getString('version') || '';
-    let foundCommand = await PrefixCommand.find({ name: command });
-    if (!foundCommand || foundCommand.length > 1) {
-        foundCommand = await PrefixCommand.find({ aliases: { $in: [command] } });
+    let foundCommands = await PrefixCommand.find({ name: command });
+    if (!foundCommands || foundCommands.length > 1) {
+        foundCommands = await PrefixCommand.find({ aliases: { $in: [command] } });
     }
-    if (!foundCommand || foundCommand.length > 1) {
+    if (!foundCommands || foundCommands.length > 1) {
         await interaction.reply({ embeds: [noCommandEmbed(command)], ephemeral: true });
         return;
     }
 
-    const { id: commandId } = foundCommand[0];
+    const [foundCommand] = foundCommands;
+    const { id: commandId } = foundCommand;
     let versionId = '';
     if (version === 'GENERIC' || version === 'generic') {
         versionId = 'GENERIC';
@@ -84,7 +85,7 @@ export async function handleShowPrefixCommandContent(interaction: ChatInputComma
         }
     }
 
-    const foundContent = await PrefixCommandContent.findOne({ commandId, versionId });
+    const foundContent = foundCommand.contents.find((content) => content.versionId === versionId);
     if (!foundContent) {
         await interaction.reply({ embeds: [noContentEmbed(command, version)], ephemeral: true });
         return;
