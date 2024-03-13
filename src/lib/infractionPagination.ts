@@ -1,6 +1,6 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Interaction, CommandInteraction } from 'discord.js';
 
-export async function sendPaginatedInfractionEmbeds(interaction: CommandInteraction, user:string, embeds: any[]): Promise<void> {
+export async function sendPaginatedInfractionEmbeds(interaction: CommandInteraction, user:string, embeds: any[], infractionsLengths: { warnsLength: string; timeoutsLength: string; scamLogsLength: string; bansLength: string; unbansLength: string; notesLength: string; }): Promise<void> {
     let currentPage = 0;
 
     const aboutButton = new ButtonBuilder()
@@ -10,32 +10,32 @@ export async function sendPaginatedInfractionEmbeds(interaction: CommandInteract
 
     const warnButton = new ButtonBuilder()
         .setCustomId('warns')
-        .setLabel('Warns')
+        .setLabel(`Warns (${infractionsLengths.warnsLength})`)
         .setStyle(ButtonStyle.Primary);
 
     const timeoutButton = new ButtonBuilder()
         .setCustomId('timeouts')
-        .setLabel('Timeouts')
+        .setLabel(`Timeouts (${infractionsLengths.timeoutsLength})`)
         .setStyle(ButtonStyle.Primary);
 
     const scamLogButton = new ButtonBuilder()
         .setCustomId('scamlog')
-        .setLabel('Scam Logs')
+        .setLabel(`Scam Logs (${infractionsLengths.scamLogsLength})`)
         .setStyle(ButtonStyle.Primary);
 
     const banButton = new ButtonBuilder()
         .setCustomId('bans')
-        .setLabel('Bans')
+        .setLabel(`Bans (${infractionsLengths.bansLength})`)
         .setStyle(ButtonStyle.Primary);
 
     const unbanButton = new ButtonBuilder()
         .setCustomId('unbans')
-        .setLabel('Unbans')
+        .setLabel(`Unbans (${infractionsLengths.unbansLength})`)
         .setStyle(ButtonStyle.Primary);
 
     const noteButton = new ButtonBuilder()
         .setCustomId('notes')
-        .setLabel('Notes')
+        .setLabel(`Notes (${infractionsLengths.notesLength})`)
         .setStyle(ButtonStyle.Primary);
 
     const buttonRow1 = new ActionRowBuilder<ButtonBuilder>().addComponents(aboutButton, warnButton, timeoutButton);

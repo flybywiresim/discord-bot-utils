@@ -1,5 +1,9 @@
 ## Changelog
 
+Update <small>_ March 2024</small>
+
+- feat: add infractions counts to buttons in list infractions command (13/03/2024)
+
 Update <small>_ February 2024</small>
 
 - fix: report message logging bug (18/02/2024)
