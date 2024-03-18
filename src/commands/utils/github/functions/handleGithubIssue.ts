@@ -25,9 +25,9 @@ export async function handleGithubIssue(interaction: ChatInputCommandInteraction
 
     if (repoName) {
         try {
-            const response = await request('GET /repos/flybywiresim/{repo}/issues/{pull_number}', {
+            const response = await request('GET /repos/flybywiresim/{repo}/issues/{issue_number}', {
                 repo: repoName,
-                pull_number: cleanedIssueNumber,
+                issue_number: cleanedIssueNumber,
             });
             return interaction.reply(response.data.html_url);
         } catch {
