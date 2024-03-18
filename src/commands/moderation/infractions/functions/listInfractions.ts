@@ -54,6 +54,15 @@ export async function handleListInfraction(interaction: CommandInteraction, user
         const unbanInfractions = user.infractions.filter((infraction) => infraction.infractionType === 'Unban');
         const userNotes = user.infractions.filter((infraction) => infraction.infractionType === 'Note');
 
+        const infractionsLengths = {
+            warnsLength: warnInfractions.length.toString(),
+            timeoutsLength: timeoutInfractions.length.toString(),
+            scamLogsLength: scamLogInfractions.length.toString(),
+            bansLength: banInfractions.length.toString(),
+            unbansLength: unbanInfractions.length.toString(),
+            notesLength: userNotes.length.toString(),
+        };
+
         // Warns
 
         const warnFields: { name: string; value: string }[] = [];
@@ -340,32 +349,32 @@ export async function handleListInfraction(interaction: CommandInteraction, user
                 },
                 {
                     name: 'Warns',
-                    value: warnInfractions.length.toString(),
+                    value: infractionsLengths.warnsLength,
                     inline: true,
                 },
                 {
                     name: 'Timeouts',
-                    value: timeoutInfractions.length.toString(),
+                    value: infractionsLengths.timeoutsLength,
                     inline: true,
                 },
                 {
                     name: 'Scam Log Entries',
-                    value: scamLogInfractions.length.toString(),
+                    value: infractionsLengths.scamLogsLength,
                     inline: true,
                 },
                 {
                     name: 'Bans',
-                    value: banInfractions.length.toString(),
+                    value: infractionsLengths.bansLength,
                     inline: true,
                 },
                 {
                     name: 'Unbans',
-                    value: unbanInfractions.length.toString(),
+                    value: infractionsLengths.unbansLength,
                     inline: true,
                 },
                 {
                     name: 'Notes',
-                    value: userNotes.length.toString(),
+                    value: infractionsLengths.notesLength,
                     inline: true,
                 },
             ],
@@ -377,7 +386,7 @@ export async function handleListInfraction(interaction: CommandInteraction, user
         const embeds = [aboutEmbed, warnsEmbed, timeoutsEmbed, scamLogEmbed, banEmbed, unbanEmbed, userNoteEmbed];
         await interaction.deferReply({ ephemeral });
 
-        await sendPaginatedInfractionEmbeds(interaction, interaction.user.id, embeds);
+        await sendPaginatedInfractionEmbeds(interaction, interaction.user.id, embeds, infractionsLengths);
     } catch (error) {
         //Error handling - User is no longer on discord (Or ID doesn't exist)
 
