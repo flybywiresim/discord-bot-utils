@@ -17,9 +17,11 @@ const data = slashCommandStructure({
 const dateFormat = 'HH:mm (LT)';
 
 export default slashCommand(data, async ({ interaction }) => {
-    const utcOffset = interaction.options.getString('offset') ?? '0';
+    let utcOffset = interaction.options.getString('offset') ?? '0';
 
-    const numericOffset = Number(utcOffset);
+    utcOffset = utcOffset.replace(/^[+-]+/, (match) => match[0]);
+    const numericOffset = parseInt(utcOffset);
+    const sign = utcOffset.startsWith('-') ? '-' : '+';
 
     if (Number.isNaN(numericOffset)
         || numericOffset < -12
@@ -35,5 +37,7 @@ export default slashCommand(data, async ({ interaction }) => {
         return interaction.reply({ embeds: [invalidEmbed], ephemeral: true });
     }
 
-    return interaction.reply({ content: `It is ${moment().utc().add(utcOffset, 'hours').format(dateFormat)} in that timezone (UTC${numericOffset >= 0 ? '+' : ''}${utcOffset}).` });
+    const formattedOffset = `${sign}${Math.abs(numericOffset)}`;
+
+    return interaction.reply({ content: `It is ${moment().utc().add(utcOffset, 'hours').format(dateFormat)} in that timezone (UTC${formattedOffset}).` });
 });
