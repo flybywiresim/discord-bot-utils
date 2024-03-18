@@ -90,7 +90,7 @@ const HELP_EMBED = makeEmbed({
         },
         {
             name: 'Flight School',
-            value: `We've opened our <#${constantsConfig.channels.FLIGHT_SCHOOL}> channel for any questions you have pertaining to the the operation of the A32NX or general questions about flying an aircraft in the simulator.`,
+            value: `We've opened our <#${constantsConfig.channels.FLIGHT_SCHOOL}> channel for any questions you have pertaining to the operation of the A32NX in the simulator.`,
         },
 
     ],
