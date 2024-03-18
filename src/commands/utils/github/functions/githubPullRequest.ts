@@ -2,7 +2,7 @@ import { ChatInputCommandInteraction, Colors } from 'discord.js';
 import { request } from '@octokit/request';
 import { makeEmbed } from '../../../../lib';
 
-const syntaxHelp = '\nSyntax:\nA32NX repo: `/github pr <id>`\nAny FBW repo: `/github pr <repo> <id>`';
+const syntaxHelp = '\nSyntax:\nAircraft repo: `/github pr <id>`\nAny FBW repo: `/github pr <repo> <id>`';
 
 const noQueryEmbed = makeEmbed({
     title: 'PR Error | Missing Query',
