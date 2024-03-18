@@ -2,6 +2,7 @@
 
 Update <small>_ March 2024</small>
 
+- fix: content change in welcome command (18/03/2024)
 - fix: multiple plus symbols in zulu command (18/03/2024)
 - feat: add infractions counts to buttons in list infractions command (18/03/2024)
 
