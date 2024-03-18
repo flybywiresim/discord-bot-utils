@@ -12,7 +12,7 @@ const noQueryEmbed = makeEmbed({
 
 const invalidEmbed = makeEmbed({
     title: 'Issue Error | Invalid',
-    description: `Something went wrong! Did you provide the correct repo/PR id?${syntaxHelp}`,
+    description: `Something went wrong! Did you provide the correct repo/Issue id?${syntaxHelp}`,
     color: Colors.Red,
 });
 export async function handleGithubIssue(interaction: ChatInputCommandInteraction<'cached'>) {
