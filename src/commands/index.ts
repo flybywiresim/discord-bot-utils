@@ -5,7 +5,7 @@ import avatar from './utils/avatar';
 import liveFlights from './utils/liveFlights';
 import memberCount from './utils/memberCount';
 import metar from './utils/metar';
-import pullRequest from './utils/pullRequest';
+import github from './utils/github/github';
 import roleInfo from './utils/roleInfo';
 import simbriefData from './utils/simbriefData';
 import station from './utils/station';
@@ -37,7 +37,7 @@ const commandArray: SlashCommand[] = [
     liveFlights,
     memberCount,
     metar,
-    pullRequest,
+    github,
     roleInfo,
     simbriefData,
     station,

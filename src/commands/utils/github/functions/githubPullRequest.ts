@@ -1,29 +1,8 @@
-import { ApplicationCommandOptionType, ApplicationCommandType, Colors } from 'discord.js';
+import { ChatInputCommandInteraction, Colors } from 'discord.js';
 import { request } from '@octokit/request';
-import { slashCommand, slashCommandStructure, makeEmbed } from '../../lib';
+import { makeEmbed } from '../../../../lib';
 
-const syntaxHelp = '\nSyntax:\nA32NX repo: `/pr <id>`\nAny FBW repo: `/pr <repo> <id>`';
-
-const data = slashCommandStructure({
-    name: 'pr',
-    description: 'Retrieves the link of the provided GitHub pull request.',
-    type: ApplicationCommandType.ChatInput,
-    options: [{
-        name: 'pr_number',
-        description: 'Please provide the pull request number.',
-        type: ApplicationCommandOptionType.String,
-        max_length: 100,
-        required: true,
-    },
-    {
-        name: 'repo',
-        description: 'Please provide the repo name.',
-        type: ApplicationCommandOptionType.String,
-        max_length: 100,
-        required: false,
-    },
-    ],
-});
+const syntaxHelp = '\nSyntax:\nAircraft repo: `/github pr <id>`\nAny FBW repo: `/github pr <repo> <id>`';
 
 const noQueryEmbed = makeEmbed({
     title: 'PR Error | Missing Query',
@@ -36,8 +15,7 @@ const invalidEmbed = makeEmbed({
     description: `Something went wrong! Did you provide the correct repo/PR id?${syntaxHelp}`,
     color: Colors.Red,
 });
-
-export default slashCommand(data, async ({ interaction }) => {
+export async function handleGithubPullRequest(interaction: ChatInputCommandInteraction<'cached'>) {
     const prNumber = interaction.options.getString('pr_number');
     const repoName = interaction.options.getString('repo');
 
@@ -63,4 +41,4 @@ export default slashCommand(data, async ({ interaction }) => {
             return interaction.reply({ embeds: [invalidEmbed] });
         }
     }
-});
+}
