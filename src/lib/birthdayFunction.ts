@@ -68,7 +68,8 @@ export async function processBirthdays(client: Client) {
     // Send birthday messages
 
     for (const birthday of birthdays) {
-        const user = guild.members.resolve(birthday.userID!);
+        // eslint-disable-next-line no-await-in-loop
+        const user = await guild.members.fetch(birthday.userID!);
         // If the user is not found, we can't mention them
         if (!user) {
             continue;
