@@ -2,6 +2,7 @@
 
 Update <small>_ March 2024</small>
 
+- feat: migrate bithday handler to scheduler job (24/09/2024)
 - fix: birthday handler user caching issue (23/03/2024)
 - feat: adds github issue command (18/03/2024)
 - fix: content change in welcome command (18/03/2024)
