@@ -1,22 +1,37 @@
-import { Client, Colors, Guild, TextChannel } from 'discord.js';
-import { constantsConfig, Birthday, getConn, Logger, makeEmbed } from './index';
+import { Job } from '@hokify/agenda';
+import { Colors, Guild, TextChannel, ThreadChannel } from 'discord.js';
+import { Logger, getScheduler, constantsConfig, getConn, Birthday, makeEmbed, imageBaseUrl } from '../index';
+import { client } from '../../client';
 
 const gifs: string[] = [
-    'https://c.tenor.com/rngI-iARtUsAAAAC/happy-birthday.gif',
-    'https://c.tenor.com/VMC8fNKdQrcAAAAd/happy-birthday-bon-anniversaire.gif',
-    'https://c.tenor.com/ZVG_H1ebQ88AAAAC/hbd-happy.gif',
-    'https://c.tenor.com/xRSLl2b1NtkAAAAd/happy-birthday-wish.gif',
-    'https://c.tenor.com/2v8fJf67VTkAAAAC/holiday-classics-elf.gif',
-    'https://c.tenor.com/WcaloX5M08oAAAAC/kingsqueedgybot-meme.gif',
-    'https://c.tenor.com/UwRRdD3mCQ0AAAAC/love-sis.gif',
-    'https://c.tenor.com/5_VwBuyzBaAAAAAd/scream-happy-birthday.gif',
-    'https://c.tenor.com/PZckaksfSQIAAAAC/lets-party.gif',
-    'https://c.tenor.com/7fg9ogkiEmgAAAAC/happy-birthday-celebrating.gif',
-    'https://c.tenor.com/dfL34nBDOrcAAAAC/happy-birthday.gif',
-    'https://c.tenor.com/BiEt0CS2YLUAAAAd/happy-birthday-birthday.gif',
+    `${imageBaseUrl}/birthday/bubbles.gif`,
+    `${imageBaseUrl}/birthday/carrey.gif`,
+    `${imageBaseUrl}/birthday/cat.gif`,
+    `${imageBaseUrl}/birthday/cat_2.gif`,
+    `${imageBaseUrl}/birthday/cat_3.gif`,
+    `${imageBaseUrl}/birthday/dance.gif`,
+    `${imageBaseUrl}/birthday/dog.gif`,
+    `${imageBaseUrl}/birthday/dog_2.gif`,
+    `${imageBaseUrl}/birthday/dwight.gif`,
+    `${imageBaseUrl}/birthday/elf.gif`,
+    `${imageBaseUrl}/birthday/snoop.gif`,
+    `${imageBaseUrl}/birthday/yoda.gif`,
 ];
 
-export async function processBirthdays(client: Client) {
+export async function postBirthdays(job: Job) {
+    const scheduler = getScheduler();
+    if (!scheduler) {
+        Logger.error('Failed to get scheduler instance');
+        return;
+    }
+
+    // eslint-disable-next-line no-underscore-dangle
+    const matchingJobs = await scheduler.jobs({ _id: job.attrs._id });
+    if (matchingJobs.length !== 1) {
+        Logger.debug('Job has been deleted already, skipping execution.');
+        return;
+    }
+
     const guild = client.guilds.resolve(constantsConfig.guildId) as Guild | null;
     if (!guild) {
         Logger.error('BirthdayHandler - Guild not found.');
@@ -32,7 +47,7 @@ export async function processBirthdays(client: Client) {
     // Get all threads (archived included)
 
     await channel.threads.fetch({ archived: {} });
-    const thread = channel.threads.cache.find((t) => t.id === constantsConfig.threads.BIRTHDAY_THREAD);
+    const thread = channel.threads.cache.find((t) => t.id === constantsConfig.threads.BIRTHDAY_THREAD) as ThreadChannel | null;
     if (!thread) {
         Logger.error('Birthday handler - Thread not found');
         return;
@@ -68,22 +83,29 @@ export async function processBirthdays(client: Client) {
     // Send birthday messages
 
     for (const birthday of birthdays) {
-        // eslint-disable-next-line no-await-in-loop
-        const user = await guild.members.fetch(birthday.userID!);
-        // If the user is not found, we can't mention them
+        let user;
+        try {
+            // eslint-disable-next-line no-await-in-loop
+            user = await guild.members.fetch(birthday.userID!);
+        } catch (error) {
+            Logger.error('BirthdayHandler - Failed to fetch user', error);
+        }
+
         if (!user) {
             continue;
         }
+
+        const gif = gifs[Math.floor(Math.random() * gifs.length)];
 
         // Happy birthday!
         const birthdayEmbed = makeEmbed({
             title: 'Happy Birthday!',
             description: `${user.displayName}'s birthday is today!`,
             color: Colors.Green,
-            image: { url: gifs[Math.floor(Math.random() * gifs.length)] },
+            image: { url: gif },
         });
 
-        //Update birthday to next year
+        // Update birthday to next year
         const nextBirthdayDatetime = new Date(Date.UTC(currentDate.getUTCFullYear() + 1, birthday.month! - 1, birthday.day!));
         nextBirthdayDatetime.setUTCHours(10 - birthday.timezone!);
         birthday.utcDatetime = nextBirthdayDatetime;
@@ -94,6 +116,13 @@ export async function processBirthdays(client: Client) {
         }
 
         // Send the birthday message
-        thread.send({ content: user.toString(), embeds: [birthdayEmbed] });
+        try {
+            thread.send({
+                content: user.toString(),
+                embeds: [birthdayEmbed],
+            });
+        } catch (error) {
+            Logger.error('BirthdayHandler - Failed to send birthday message', error);
+        }
     }
 }
