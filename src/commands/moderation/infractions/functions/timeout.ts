@@ -1,7 +1,7 @@
 import { ChatInputCommandInteraction, Colors, Guild, TextChannel, User } from 'discord.js';
 import moment from 'moment';
 import mongoose from 'mongoose';
-import { constantsConfig, durationInEnglish, getConn, Infraction, Logger, makeEmbed } from '../../../../lib';
+import { constantsConfig, durationInEnglish, getConn, Infraction, Logger, makeEmbed, makeLines } from '../../../../lib';
 
 const noConnEmbed = makeEmbed({
     title: 'Timeout - No Connection',
@@ -9,9 +9,13 @@ const noConnEmbed = makeEmbed({
     color: Colors.Red,
 });
 
-const failedTimeoutEmbed = (discordUser: User) => makeEmbed({
+const failedTimeoutEmbed = (discordUser: User, error: any) => makeEmbed({
     title: 'Timeout - Failed',
-    description: `Failed to timeout ${discordUser.toString()}`,
+    description: makeLines([
+        `Failed to timeout ${discordUser.toString()}`,
+        '',
+        error,
+    ]),
     color: Colors.Red,
 });
 
@@ -92,6 +96,12 @@ const logFailed = makeEmbed({
     color: Colors.Red,
 });
 
+const communicationNotDisabledEmbed = (discordUser: User) => makeEmbed({
+    title: 'Timeout - Communication not disabled',
+    description: `Bot has not detected that ${discordUser.toString()} has disabled communication. Timeout may have failed.`,
+    color: Colors.Red,
+});
+
 export async function handleTimeoutInfraction(interaction: ChatInputCommandInteraction<'cached'>) {
     await interaction.deferReply({ ephemeral: true });
 
@@ -119,7 +129,7 @@ export async function handleTimeoutInfraction(interaction: ChatInputCommandInter
     try {
         await discordUser.timeout(timeoutDuration, timeoutReason);
     } catch (error) {
-        await interaction.editReply({ embeds: [failedTimeoutEmbed(discordUser.user)] });
+        await interaction.editReply({ embeds: [failedTimeoutEmbed(discordUser.user, error)] });
         return;
     }
 
@@ -177,6 +187,6 @@ export async function handleTimeoutInfraction(interaction: ChatInputCommandInter
             Logger.error(error);
         }
     } else {
-        await interaction.followUp({ embeds: [failedTimeoutEmbed(discordUser.user)], ephemeral: true });
+        await interaction.followUp({ embeds: [communicationNotDisabledEmbed(discordUser.user)], ephemeral: true });
     }
 }
