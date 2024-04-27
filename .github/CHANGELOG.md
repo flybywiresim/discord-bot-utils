@@ -1,5 +1,9 @@
 ## Changelog
 
+Update <small>_ April 2024</small>
+
+- fix: clarify errors in timeout command (27/04/2024)
+
 Update <small>_ March 2024</small>
 
 - fix: birthday handler user caching issue (23/03/2024)
