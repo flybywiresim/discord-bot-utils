@@ -130,6 +130,7 @@ export async function handleTimeoutInfraction(interaction: ChatInputCommandInter
         await discordUser.timeout(timeoutDuration, timeoutReason);
     } catch (error) {
         await interaction.editReply({ embeds: [failedTimeoutEmbed(discordUser.user, error)] });
+        Logger.error(error)
         return;
     }
 
