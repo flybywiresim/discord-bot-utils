@@ -98,7 +98,7 @@ const logFailed = makeEmbed({
 
 const communicationNotDisabledEmbed = (discordUser: User) => makeEmbed({
     title: 'Timeout - Communication not disabled',
-    description: `Bot has not detected that ${discordUser.toString()} has disabled communication. Timeout may have failed.`,
+    description: `Bot has not detected that ${discordUser.toString()} was successfully timed out. Timeout may have failed.`,
     color: Colors.Red,
 });
 
