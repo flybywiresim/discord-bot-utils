@@ -2,7 +2,7 @@
 
 Update <small>_ April 2024</small>
 
-- fix: adds mod alerts to the config requirements (07/04/2024)
+- fix: adds mod alerts to the config requirements (30/04/2024)
 
 Update <small>_ March 2024</small>
 
