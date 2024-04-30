@@ -30,6 +30,7 @@ interface Config {
         FAQ: string,
         FLIGHT_SCHOOL: string,
         KNOWN_ISSUES: string,
+        MOD_ALERTS: string,
         MOD_LOGS: string,
         ROLES: string,
         SCAM_REPORT_LOGS: string,

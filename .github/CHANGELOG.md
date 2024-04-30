@@ -2,7 +2,8 @@
 
 Update <small>_ April 2024</small>
 
-- fix: clarify errors in timeout command (27/04/2024)
+- fix: clarify errors in timeout command (30/04/2024)
+- fix: adds mod alerts to the config requirements (30/04/2024)
 
 Update <small>_ March 2024</small>
 
