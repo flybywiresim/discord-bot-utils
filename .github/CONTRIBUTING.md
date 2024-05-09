@@ -55,28 +55,16 @@ The config system uses the great [node-config](https://github.com/node-config/no
 
 This library will load a file from the `config` folder, based on an environment variable. It can read several types of files, including json, yaml, properties, toml, xml and more. For this bot, the standard is JSON, but nothing stops you from using your own format during development.
 
-As a best practice, it is bad to load a configuration based of the `NODE_ENV` environment variable: `NODE_ENV` has an impact on more than the config, and using custom values for it, could impact the behavior of `node` itself.
+### Setting up the config
 
-Therefore, this project strongly suggests the use of the `NODE_CONFIG_ENV` environment variable to load the config. This will not impact anything other than the configuration being loaded and will not change the behaviour of `node` itself.
-
-The typical value of the `NODE_CONFIG_ENV` environment variable would be:
-
-- `staging` - to load the `config/staging.json` config file, for the staging bot, connecting to the staging server
-- `production` - to load the `config/production.json` config file, for the production bot, connecting to the production server
-- `CUSTOM_VALUE` - to load the `config/CUSTOM_VALUE.json` (or another supported extension) config file, for a custom environment
-
-The last example can be used when you have your own development discord server and you want to load your custom config file into the bot.
+1. Create a file named `dev.json` at [../config/](../config/).
+2. Copy the contents of [../config/staging.json](../config/staging.json).
+3. Change the `guildId` field to your server's ID.
+4. Change the channel and role IDs to your own IDs (optional).
+5. In your `.env` file set `NODE_CONFIG_ENV` to `dev`.
 
 > [!IMPORTANT]
-> As the config file gets loaded at the very beginning of the process, you can **not** rely on the `.env` file to load the `NODE_CONFIG_ENV` environment variable. You must set it in your environment yourself, before starting the bot!
-
-Set the environment variable before running the bot through whatever means you are comfortable with, in a development shell environment, this can be done as follows:
-
-
-```
-$ export NODE_CONFIG_ENV=my-dev-config
-$ npm run dev
-```
+> THIS NOTE SHOULD CONTAIN INSTRUCTIONS ON HOW TO INCORPORATE NEW CODE INTO THE OFFICIAL CONFIGS
 
 ## Setting up the Bot
 
