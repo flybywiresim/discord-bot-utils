@@ -1,10 +1,6 @@
 import botConfig from 'config';
-import dotenv from 'dotenv';
 import { exit } from 'process';
 import { Logger } from './logger';
-
-// Loading any .env file that might contain information not already in the regular environment variables
-dotenv.config();
 
 // imageBaseUrl - Below takes the IMAGE_BASE_URL entry from the `env` and strips the trailing `/` if present
 const originalBaseUrl = `${process.env.IMAGE_BASE_URL}`;
