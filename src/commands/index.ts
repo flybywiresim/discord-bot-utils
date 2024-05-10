@@ -29,6 +29,7 @@ import docSearch from './utils/docSearch';
 import reportedIssues from './utils/reportedIssues';
 import commandTable from './moderation/commandTable';
 import listRoleUsers from './moderation/listRoleUsers';
+import locate from './utils/locate/locate';
 
 const commandArray: SlashCommand[] = [
     ping,
@@ -61,6 +62,7 @@ const commandArray: SlashCommand[] = [
     reportedIssues,
     commandTable,
     listRoleUsers,
+    locate,
 ];
 
 export default commandArray;
