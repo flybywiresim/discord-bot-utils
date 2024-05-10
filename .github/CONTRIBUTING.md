@@ -147,9 +147,6 @@ If your command requires environment variables please add them to the `.env.exam
 2. You can do this manually or using the command line by typing `cp .env.example .env`.
 3. Fill out the `.env` file with your environment variables.
 
-> [!NOTE]
-> Don't use the `.env` file to configure the `NODE_CONFIG_ENV` value, while useful to store an expected value, the actual config gets loaded before the `.env` file gets loaed. Check the section on config files in this document for more details.
-
 ### Ban Appeal Form
 
 A ban appeal form is sent to a user when they are banned. The URL for the form is stored as an environment variable, `BAN_APPEAL_URL`. For testing, you could set to a URL like `https://flybywiresim.com/`.
