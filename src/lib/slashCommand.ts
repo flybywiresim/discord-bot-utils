@@ -1,5 +1,6 @@
-import type { Awaitable, Client, ChatInputCommandInteraction, SlashCommandBuilder, SlashCommandSubcommandsOnlyBuilder, RESTPostAPIApplicationCommandsJSONBody } from 'discord.js';
+import type { Awaitable, Client, ChatInputCommandInteraction, SlashCommandBuilder, SlashCommandSubcommandsOnlyBuilder, RESTPostAPIApplicationCommandsJSONBody, AutocompleteInteraction } from 'discord.js';
 import { LogMethods } from './index';
+import { AutocompleteCallback } from './autocomplete';
 
 /// Props that will be passed through the command callback.
 export interface SlashCommandProps {
@@ -8,6 +9,7 @@ export interface SlashCommandProps {
     log: LogMethods,
 }
 export type SlashCommandCallback = (props: SlashCommandProps) => Awaitable<unknown>;
+export type SlashCommandAutocompleteCallback = (interaction: AutocompleteInteraction<'cached'>) => Awaitable<unknown>;
 
 /// Command structure for slash commands
 export type SlashCommandStructure =
@@ -20,6 +22,7 @@ export type SlashCommandStructure =
 export interface SlashCommand {
     meta: SlashCommandStructure,
     callback: SlashCommandCallback,
+    autocompleteCallback?: AutocompleteCallback,
 }
 
 /// Function to provide data for slash commands
@@ -28,6 +31,6 @@ export function slashCommandStructure(data: RESTPostAPIApplicationCommandsJSONBo
 }
 
 /// Creates command structure
-export function slashCommand(meta: SlashCommandStructure, callback: SlashCommandCallback): SlashCommand {
-    return { meta, callback };
+export function slashCommand(meta: SlashCommandStructure, callback: SlashCommandCallback, autocompleteCallback?: AutocompleteCallback): SlashCommand {
+    return { meta, callback, autocompleteCallback };
 }
