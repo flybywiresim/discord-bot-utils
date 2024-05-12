@@ -1,8 +1,10 @@
 import { ApplicationCommandOptionChoiceData, ApplicationCommandOptionType, ApplicationCommandType } from 'discord.js';
 import { Panel } from './panels/panel';
 import { a32nxPanels } from './panels/a32nx/a32nx-panels';
-import { makeEmbed, slashCommand, slashCommandStructure } from '../../../lib';
+import { slashCommand, slashCommandStructure } from '../../../lib';
 import { AutocompleteCallback } from '../../../lib/autocomplete';
+import { filterSeachResults } from './functions/filterSearchResults';
+import { handleCommand } from './functions/handleCommand';
 
 const a32nxPanelMap: Map<string, Panel> = new Map();
 for (const panel of a32nxPanels) {
@@ -13,48 +15,38 @@ for (const panel of a32nxPanels) {
 
 const data = slashCommandStructure({
     name: 'locate',
-    description: 'Locate any switch or panel on the flightdeck.',
+    description: 'Locate any switch or panel on the flightdecks of our aircraft.',
     type: ApplicationCommandType.ChatInput,
     options: [
         {
-            name: 'target',
-            description: 'Specify the component to locate',
-            type: ApplicationCommandOptionType.String,
-            autocomplete: true,
-            required: true,
-        },
-        {
-            name: 'aircraft',
-            description: 'Specify the aircraft to locate the component for.',
-            type: ApplicationCommandOptionType.String,
-            choices: [
+            name: 'a32nx',
+            description: 'Locate any switch or panel on the A32NX flightdeck.',
+            type: ApplicationCommandOptionType.Subcommand,
+            options: [
                 {
-                    name: 'A32NX',
-                    value: 'A32NX',
+                    name: 'target',
+                    description: 'Specify the component to locate.',
+                    type: ApplicationCommandOptionType.String,
+                    autocomplete: true,
+                    required: true,
                 },
-                // Add A380X here
             ],
         },
     ],
 });
 
-const formatEmbedDescription = (panel: Panel) => `${panel.description} \n\nFor more information please refer to our [docs](${panel.docsUrl}).`;
-
 const autocompleteCallback: AutocompleteCallback = ({ interaction }) => {
+    const subcommand = interaction.options.getSubcommand();
     const target = interaction.options.getString('target')!;
 
     // If target is empty, trigger 'no values match your query' UI state in discord client.
     if (target.length < 1) return interaction.respond([]);
 
-    // Filter search results
-    const filteredTargets = Array.from(a32nxPanelMap.keys()).filter((current) => current.toLowerCase().startsWith(target.toLowerCase()));
-
-    // Sort
-    filteredTargets.sort((a, b) => a.indexOf(target) - b.indexOf(target));
-
-    const choices: ApplicationCommandOptionChoiceData<string | number>[] = [];
-    for (let i = 0; i < Math.min(filteredTargets.length, 26); i++) {
-        choices.push({ name: filteredTargets[i], value: filteredTargets[i] });
+    let choices: ApplicationCommandOptionChoiceData<string | number>[];
+    if (subcommand === 'a32nx') {
+        choices = filterSeachResults(target, a32nxPanelMap);
+    } else {
+        return interaction.respond([]);
     }
 
     return interaction.respond(choices);
@@ -63,23 +55,17 @@ const autocompleteCallback: AutocompleteCallback = ({ interaction }) => {
 export default slashCommand(data, async ({ interaction }) => {
     await interaction.deferReply({ ephemeral: true });
 
-    const aircraft = interaction.options.getString('aircraft') ?? 'A32NX';
-    const target = interaction.options.getString('target');
+    const subcommand = interaction.options.getSubcommand();
 
-    if (!aircraft) return interaction.editReply({ content: `Received invalid aircraft: ${aircraft}.` });
-    if (!target) return interaction.editReply({ content: `Received invalid target: ${target}` });
-
-    let panel: Panel;
-    if (aircraft === 'A32NX') {
-        if (!Array.from(a32nxPanelMap.keys()).includes(target)) {
-            return interaction.editReply({ content: `Invalid target: ${target}` });
-        }
-
-        panel = a32nxPanelMap.get(target)!;
-    } else {
-        return interaction.editReply({ content: `Invalid aircraft! ${aircraft}` });
+    switch (subcommand) {
+    case 'a32nx':
+        await handleCommand(interaction, a32nxPanelMap);
+        break;
+    /* case 'a380x':
+        await handleCommand(interaction, a380xPanelMap);
+        break;
+    */
+    default:
+        await interaction.reply({ content: 'Unknown subcommand', ephemeral: true });
     }
-
-    const locateEmbed = makeEmbed({ title: panel.name, description: formatEmbedDescription(panel) });
-    return interaction.editReply({ embeds: [locateEmbed] });
 }, autocompleteCallback);
