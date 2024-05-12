@@ -237,6 +237,16 @@ export default slashCommand(data, async ({ interaction }) => {
 });
 ```
 
+### Autocomplete
+
+An autocomplete callback function of type [`AutocompleteCallback`](../src/lib/autocomplete.ts) can be passed to `slashCommand()` as a third argument.
+
+> [!NOTE]
+> In order for autocomplete to work, you have to set the `autocomplete` flag of your command option to true.
+
+> [!IMPORTANT]
+> Autocomplete choices are not enforced by the Discord client so make sure you handle invalid user input!
+
 ## Command Permissions
 
 By default, all commands can be used by anyone, everywhere.
