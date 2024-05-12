@@ -1,4 +1,4 @@
-import { Color, SlashCommand, event, Events, makeEmbed } from '../lib';
+import { SlashCommand, event, Events } from '../lib';
 import commandArray from '../commands';
 
 /* eslint-disable no-underscore-dangle */
