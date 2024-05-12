@@ -1,5 +1,5 @@
 import { AutocompleteInteraction, Awaitable, Client } from 'discord.js';
-import { LogMethods } from './events';
+import { LogMethods } from './index';
 
 /// Props that will be passed through the autocomplete callback.
 export interface AutocompleteProps {
