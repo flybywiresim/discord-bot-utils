@@ -1,7 +1,8 @@
-import { ApplicationCommandOptionType, ApplicationCommandType } from 'discord.js';
+import { ApplicationCommandOptionChoiceData, ApplicationCommandOptionType, ApplicationCommandType } from 'discord.js';
 import { Panel } from './panels/panel';
 import { a32nxPanels } from './panels/a32nx/a32nx-panels';
 import { makeEmbed, slashCommand, slashCommandStructure } from '../../../lib';
+import { AutocompleteCallback } from '../../../lib/autocomplete';
 
 const a32nxPanelMap: Map<string, Panel> = new Map();
 for (const panel of a32nxPanels) {
@@ -19,6 +20,7 @@ const data = slashCommandStructure({
             name: 'target',
             description: 'Specify the component to locate',
             type: ApplicationCommandOptionType.String,
+            autocomplete: true,
             required: true,
         },
         {
@@ -36,9 +38,34 @@ const data = slashCommandStructure({
     ],
 });
 
-const formatEmbedDescription = (panel: Panel) => `${panel.description} 
-    
-    For more information please refer to our [docs](${panel.docsUrl}).`;
+const formatEmbedDescription = (panel: Panel) => `${panel.description} \n\nFor more information please refer to our [docs](${panel.docsUrl}).`;
+
+const autocompleteCallback: AutocompleteCallback = ({ interaction, log }) => {
+    const target = interaction.options.getString('target')!;
+
+    if (target.length < 1) return interaction.respond([]);
+
+    console.log('TARGET:', target);
+
+    const filteredTargets = Array.from(a32nxPanelMap.keys()).filter((current) => current.toLowerCase().includes(target.toLowerCase()));
+
+    console.log('FILTERED TARGET:', filteredTargets);
+
+    // Sort
+    filteredTargets.sort((a, b) => a.indexOf(target) - b.indexOf(target));
+
+    console.log('SORTED TARGETS:', filteredTargets);
+
+    const choices: ApplicationCommandOptionChoiceData<string | number>[] = [];
+    for (let i = 0; i < Math.min(filteredTargets.length, 6); i++) {
+        console.log('CURRENT CHOICE:', filteredTargets[i]);
+        choices.push({ name: filteredTargets[i], value: filteredTargets[i] });
+    }
+
+    console.log('CHOICES:', choices);
+
+    return interaction.respond(choices);
+};
 
 export default slashCommand(data, async ({ interaction }) => {
     await interaction.deferReply({ ephemeral: true });
@@ -62,4 +89,4 @@ export default slashCommand(data, async ({ interaction }) => {
 
     const locateEmbed = makeEmbed({ title: panel.name, description: formatEmbedDescription(panel) });
     return interaction.editReply({ embeds: [locateEmbed] });
-});
+}, autocompleteCallback);
