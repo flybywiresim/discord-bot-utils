@@ -53,7 +53,7 @@ const autocompleteCallback: AutocompleteCallback = ({ interaction }) => {
 };
 
 export default slashCommand(data, async ({ interaction }) => {
-    await interaction.deferReply({ ephemeral: true });
+    await interaction.deferReply();
 
     const subcommand = interaction.options.getSubcommand();
 
