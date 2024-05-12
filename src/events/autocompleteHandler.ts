@@ -38,14 +38,6 @@ export default event(Events.InteractionCreate, async ({ log, client }, interacti
 
         await command.autocompleteCallback({ client, log, interaction });
     } catch (error) {
-        const errorEmbed = makeEmbed({
-            title: 'An error occurred while trying to auto-complete.',
-            description: `${error}`,
-            color: Color.Error,
-        });
-
         log('[Autocomplete Error]', error);
-
-        await interaction.channel?.send({ embeds: [errorEmbed] });
     }
 });
