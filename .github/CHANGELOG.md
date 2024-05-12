@@ -1,5 +1,9 @@
 ## Changelog
 
+Update <small>_ May 2024</small>
+
+- feat: add support for autocomplete (12/05/2024)
+
 Update <small>_ April 2024</small>
 
 - fix: clarify errors in timeout command (30/04/2024)
