@@ -40,43 +40,22 @@ const data = slashCommandStructure({
 
 const formatEmbedDescription = (panel: Panel) => `${panel.description} \n\nFor more information please refer to our [docs](${panel.docsUrl}).`;
 
-const formatAutocompleteNames = (value: string) => {
-    const parsed = value.split('-');
-
-    const formatted: string[] = [];
-    for (const current of parsed) {
-        const capitalized = current[0].toUpperCase() + current.substring(1);
-        formatted.push(capitalized);
-    }
-
-    return formatted.join(' ');
-};
-
 const autocompleteCallback: AutocompleteCallback = ({ interaction }) => {
     const target = interaction.options.getString('target')!;
 
     // If target is empty, trigger 'no values match your query' UI state in discord client.
     if (target.length < 1) return interaction.respond([]);
 
-    console.log('TARGET:', target);
-
     // Filter search results
     const filteredTargets = Array.from(a32nxPanelMap.keys()).filter((current) => current.toLowerCase().startsWith(target.toLowerCase()));
-
-    console.log('FILTERED TARGET:', filteredTargets);
 
     // Sort
     filteredTargets.sort((a, b) => a.indexOf(target) - b.indexOf(target));
 
-    console.log('SORTED TARGETS:', filteredTargets);
-
     const choices: ApplicationCommandOptionChoiceData<string | number>[] = [];
     for (let i = 0; i < Math.min(filteredTargets.length, 26); i++) {
-        console.log('CURRENT CHOICE:', filteredTargets[i]);
-        choices.push({ name: formatAutocompleteNames(filteredTargets[i]), value: filteredTargets[i] });
+        choices.push({ name: filteredTargets[i], value: filteredTargets[i] });
     }
-
-    console.log('CHOICES:', choices);
 
     return interaction.respond(choices);
 };
