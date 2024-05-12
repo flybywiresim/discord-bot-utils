@@ -1,6 +1,6 @@
 import type { Awaitable, Client, ChatInputCommandInteraction, SlashCommandBuilder, SlashCommandSubcommandsOnlyBuilder, RESTPostAPIApplicationCommandsJSONBody } from 'discord.js';
 import { LogMethods } from './index';
-import { AutocompleteCallback } from './autocomplete';
+import { AutocompleteCallback } from './index';
 
 /// Props that will be passed through the command callback.
 export interface SlashCommandProps {
