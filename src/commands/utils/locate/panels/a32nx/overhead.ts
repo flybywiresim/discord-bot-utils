@@ -6,7 +6,7 @@ const OVHD_BASE_URL = 'https://docs.flybywiresim.com/pilots-corner/a32nx-briefin
 const OVHD_AFT_BASE_URL = 'https://docs.flybywiresim.com/pilots-corner/a32nx-briefing/flight-deck/ovhd-aft';
 
 export const wiperPanel: Panel = {
-    name: 'Wiper Panel',
+    name: 'A32NX - Wiper Panel',
     description: 'Each windshield is provided with two-speed electric wipers that are controlled by individual WIPER selectors. A rain repellent system is installed, but is deactivated by some airlines.',
     docsUrl: `${OVHD_BASE_URL}/wipers/`,
     imagePath: '',
@@ -22,7 +22,7 @@ export const wiperPanel: Panel = {
 };
 
 export const callsPanel: Panel = {
-    name: 'Calls Panel',
+    name: 'A32NX - Calls Panel',
     description: 'The calls panel allows the cockpit to initiate calls to the flight attendants via the cabin interphone system, and the ground crew via the flight interphone system.',
     docsUrl: `${OVHD_BASE_URL}/calls/`,
     imagePath: '',
@@ -33,7 +33,7 @@ export const callsPanel: Panel = {
 };
 
 export const oxyPanel: Panel = {
-    name: 'Oxygen Panel',
+    name: 'A32NX - Oxygen Panel',
     description: 'The oxygen panel allows the crew to control the various oxygen systems of the aircraft.',
     docsUrl: `${OVHD_BASE_URL}/oxygen/`,
     imagePath: '',
@@ -45,7 +45,7 @@ export const oxyPanel: Panel = {
 };
 
 export const cvrPanel: Panel = {
-    name: 'Voice Recorder Panel',
+    name: 'A32NX - Voice Recorder Panel',
     description: 'The voice recorder panel consist of cockpit voice recorder (CVR) and digital flight data recorder (DFDR) controls.',
     docsUrl: `${OVHD_BASE_URL}/voice-recorder/`,
     imagePath: '',
@@ -61,7 +61,7 @@ export const cvrPanel: Panel = {
 };
 
 export const gpwsPanel: Panel = {
-    name: 'GPWS Panel',
+    name: 'A32NX - GPWS Panel',
     description: 'The GPWS panel controls the GPWS and EGPWS system.',
     docsUrl: `${OVHD_BASE_URL}/gpws/`,
     imagePath: '',
@@ -77,7 +77,7 @@ export const gpwsPanel: Panel = {
 };
 
 export const emerElecPwrPanel: Panel = {
-    name: 'Emergency Electric Power Panel',
+    name: 'A32NX - Emergency Electric Power Panel',
     description: INOP_MSG,
     docsUrl: `${OVHD_BASE_URL}/emergency-electric/`,
     imagePath: '',
@@ -91,7 +91,7 @@ export const emerElecPwrPanel: Panel = {
 };
 
 export const evacPanel: Panel = {
-    name: 'Evacuation Panel',
+    name: 'A32NX - Evacuation Panel',
     description: 'The emergency evacuation signal system alerts the flight attendants to evacuate the passenger cabin.',
     docsUrl: `${OVHD_BASE_URL}/evacuation/`,
     imagePath: '',
@@ -105,7 +105,7 @@ export const evacPanel: Panel = {
 };
 
 export const fltCtlPanel: Panel = {
-    name: 'Flight Control Panel',
+    name: 'A32NX - Flight Control Panel',
     description: 'The Flight Control panels are used by the crew to control the various flight control computers.',
     docsUrl: `${OVHD_BASE_URL}/flight-control-computer/`,
     imagePath: '',
@@ -119,7 +119,7 @@ export const fltCtlPanel: Panel = {
 };
 
 export const adirsPanel: Panel = {
-    name: 'ADIRS Panel',
+    name: 'A32NX - ADIRS Panel',
     description: "The Air Data Inertial Reference System (ADIRS) computes the aircraft's position, speed, altitude, attitude, and air data for the displays, flight management guidance system, flight controls, engine controls, and other systems.",
     docsUrl: `${OVHD_BASE_URL}/adirs/`,
     imagePath: '',
@@ -133,7 +133,7 @@ export const adirsPanel: Panel = {
 };
 
 export const paVideoPanel: Panel = {
-    name: 'PA and Cockpit Video Panel',
+    name: 'A32NX - PA and Cockpit Video Panel',
     description: 'Please read our documentation on this panel for more information.',
     docsUrl: `${OVHD_BASE_URL}/pa-cockpit-video/`,
     imagePath: '',
@@ -146,7 +146,7 @@ export const paVideoPanel: Panel = {
 };
 
 export const extLtPanel: Panel = {
-    name: 'Exterior Lighting Panel',
+    name: 'A32NX - Exterior Lighting Panel',
     description: 'The Exterior Lighting panel is used by the crew to control the various exterior lights of the aircraft.',
     docsUrl: `${OVHD_BASE_URL}/ext-lt/`,
     imagePath: '',
@@ -170,7 +170,7 @@ export const extLtPanel: Panel = {
 };
 
 export const apuPanel: Panel = {
-    name: 'APU Panel',
+    name: 'A32NX - APU Panel',
     description: 'The Auxiliary Power Unit (APU) is a small jet engine in the back of the A320neo which supplies the aircraft with pneumatic and electrical power.',
     docsUrl: `${OVHD_BASE_URL}/apu/`,
     imagePath: '',
@@ -183,7 +183,7 @@ export const apuPanel: Panel = {
 };
 
 export const signsPanel: Panel = {
-    name: 'Signs Panel',
+    name: 'A32NX - Signs Panel',
     description: 'The Signs panel is used by the crew to control the seatbelt, no smoking/no portable devices signs and emergency exit lights in the cabin.',
     docsUrl: `${OVHD_BASE_URL}/signs/`,
     imagePath: '',
@@ -198,7 +198,7 @@ export const signsPanel: Panel = {
 };
 
 export const intLtPanel: Panel = {
-    name: 'Internal Lights Panel',
+    name: 'A32NX - Internal Lights Panel',
     description: 'The Internal Lights Panel is used by the crew to control various lights inside the cockpit.',
     docsUrl: `${OVHD_BASE_URL}/int-lt/`,
     imagePath: '',
@@ -214,7 +214,7 @@ export const intLtPanel: Panel = {
 };
 
 export const antiIcePanel: Panel = {
-    name: 'Anti Ice Panel',
+    name: 'A32NX - Anti Ice Panel',
     description: 'The ice protection system allows unrestricted operation of the aircraft in icing conditions.',
     docsUrl: `${OVHD_BASE_URL}/anti-ice/`,
     imagePath: '',
@@ -229,7 +229,7 @@ export const antiIcePanel: Panel = {
 };
 
 export const cabinPressPanel: Panel = {
-    name: 'Cabin Pressurization Panel',
+    name: 'A32NX - Cabin Pressurization Panel',
     description: 'The cabin pressurization system controls the pressurization of the cabin to allow crew and passengers to fly comfortably without the usage of oxygen masks and negative impact of too low pressure at high altitude.',
     docsUrl: `${OVHD_BASE_URL}/cab-press/`,
     imagePath: '',
@@ -246,7 +246,7 @@ export const cabinPressPanel: Panel = {
 };
 
 export const airCondPanel: Panel = {
-    name: 'Air Condition Control Panel',
+    name: 'A32NX - Air Condition Control Panel',
     description: 'The air conditioning system operation is fully automatic and refreshes air constantly and maintains the temperature in the aircraft.',
     docsUrl: `${OVHD_BASE_URL}/ac/`,
     imagePath: '',
@@ -271,7 +271,7 @@ export const airCondPanel: Panel = {
 };
 
 export const elecPanel: Panel = {
-    name: 'Electrical System Panel',
+    name: 'A32NX - Electrical System Panel',
     description: "The Electical System panel is used by the crew to control the aircraft's electrical system. The A320neo's electrical system is automatic for most normal operations. There is only very little crew interaction or input required.",
     docsUrl: `${OVHD_BASE_URL}/elec/`,
     imagePath: '',
@@ -298,7 +298,7 @@ export const elecPanel: Panel = {
 };
 
 export const fuelPanel: Panel = {
-    name: 'Fuel Control Panel',
+    name: 'A32NX - Fuel Control Panel',
     description: "The Fuel Control Panel is used by the crew to control the aircraft's fuel system.",
     docsUrl: `${OVHD_BASE_URL}/fuel/`,
     imagePath: '',
@@ -313,7 +313,7 @@ export const fuelPanel: Panel = {
 };
 
 export const hydPanel: Panel = {
-    name: 'Hydraulics Control Panel',
+    name: 'A32NX - Hydraulics Control Panel',
     description: 'The aircraft has three fully independent hydraulic systems: Green, Yellow, Blue.',
     docsUrl: `${OVHD_BASE_URL}/hyd/`,
     imagePath: '',
@@ -333,7 +333,7 @@ export const hydPanel: Panel = {
 };
 
 export const firePanel: Panel = {
-    name: 'Fire Control Panel',
+    name: 'A32NX - Fire Control Panel',
     description: "The Fire Control panel is used by the crew to control the aircraft's fire and smoke detection systems.",
     docsUrl: `${OVHD_BASE_URL}/fire/`,
     imagePath: '',
@@ -346,7 +346,7 @@ export const firePanel: Panel = {
 };
 
 export const engManStartN1ModePanel: Panel = {
-    name: 'Engine Manual Start and N1 Mode Panel',
+    name: 'A32NX - Engine Manual Start and N1 Mode Panel',
     description: INOP_MSG,
     docsUrl: `${OVHD_BASE_URL}/eng-man/`,
     imagePath: '',
@@ -358,7 +358,7 @@ export const engManStartN1ModePanel: Panel = {
 };
 
 export const ventilationPanel: Panel = {
-    name: 'Ventilation Panel',
+    name: 'A32NX - Ventilation Panel',
     description: "The Ventilation panel is used by the crew to control the aircraft's ventilation system.",
     docsUrl: `${OVHD_BASE_URL}/vent/`,
     imagePath: '',
@@ -371,7 +371,7 @@ export const ventilationPanel: Panel = {
 };
 
 export const cargoSmokePanel: Panel = {
-    name: 'Cargo Smoke Panel',
+    name: 'A32NX - Cargo Smoke Panel',
     description: 'The forward and aft cargo compartments are equipped with smoke detection systems, which alert the crew and close isolation valves to the cargo compartment.',
     docsUrl: `${OVHD_BASE_URL}/cargo-smoke/`,
     imagePath: '',
@@ -382,7 +382,7 @@ export const cargoSmokePanel: Panel = {
 };
 
 export const cargoVentPanel: Panel = {
-    name: 'Cargo Vent Panel',
+    name: 'A32NX - Cargo Vent Panel',
     description: 'An extraction fan draws air from forward cargo or aft cargo, and exhausts it overboard. Air from the cabin replaces the exhausted air, thus ventilating the cargo compartments.',
     docsUrl: `${OVHD_BASE_URL}/cargo-vent/`,
     imagePath: '',
@@ -394,7 +394,7 @@ export const cargoVentPanel: Panel = {
 };
 
 export const thirdACP: Panel = {
-    name: '3rd Audio Control Panel',
+    name: 'A32NX - 3rd Audio Control Panel',
     description: INOP_MSG,
     docsUrl: `${OVHD_BASE_URL}/3rd-acp/`,
     imagePath: '',
@@ -405,7 +405,7 @@ export const thirdACP: Panel = {
 };
 
 export const readingLightsJumpSeats: Panel = {
-    name: 'Reading Lights Jump Seats',
+    name: 'A32NX - Reading Lights Jump Seats',
     description: 'Additional lighting for the two jump seats behind the pilots.',
     docsUrl: `${OVHD_AFT_BASE_URL}/reading-light/`,
     imagePath: '',
@@ -415,7 +415,7 @@ export const readingLightsJumpSeats: Panel = {
 };
 
 export const cockpitDoorIndicatorPanel: Panel = {
-    name: 'Cockpit Door Panel',
+    name: 'A32NX - Cockpit Door Panel',
     description: INOP_MSG,
     docsUrl: `${OVHD_AFT_BASE_URL}/cockpit-door/#description`,
     imagePath: '',
@@ -425,7 +425,7 @@ export const cockpitDoorIndicatorPanel: Panel = {
 };
 
 export const eltPanel: Panel = {
-    name: 'ELT Panel',
+    name: 'A32NX - ELT Panel',
     description: 'The Emergency Locator Transmitter is mounted in the back of the aircraft, and is designed to be triggered upon impact or may be manually activated using the remote switch and control panel indicator in the cockpit.',
     docsUrl: `${OVHD_AFT_BASE_URL}/elt/`,
     imagePath: '',
@@ -436,7 +436,7 @@ export const eltPanel: Panel = {
 };
 
 export const pedestalLightPanel: Panel = {
-    name: 'Pedestal Light and Audio 3 Switch',
+    name: 'A32NX - Pedestal Light and Audio 3 Switch',
     description: 'The Pedestal Light Panel houses the pedestal light as well as the ACP 3 XFRD selector.',
     docsUrl: `${OVHD_AFT_BASE_URL}/pedestal-light/`,
     imagePath: '',
@@ -447,7 +447,7 @@ export const pedestalLightPanel: Panel = {
 };
 
 export const emerCbPanel: Panel = {
-    name: 'Emergency Circuit Breaker Panel',
+    name: 'A32NX - Emergency Circuit Breaker Panel',
     description: INOP_MSG,
     docsUrl: `${OVHD_AFT_BASE_URL}/circuit/`,
     imagePath: '',
@@ -458,7 +458,7 @@ export const emerCbPanel: Panel = {
 };
 
 export const rearBackCbPanel: Panel = {
-    name: 'Rear Back Circuit Breaker Panel',
+    name: 'A32NX - Rear Back Circuit Breaker Panel',
     description: INOP_MSG,
     docsUrl: `${OVHD_AFT_BASE_URL}/circuit/`,
     imagePath: '',
@@ -469,7 +469,7 @@ export const rearBackCbPanel: Panel = {
 };
 
 export const fmsLoadPanel: Panel = {
-    name: 'FMS Load Panel',
+    name: 'A32NX - FMS Load Panel',
     description: INOP_MSG,
     docsUrl: `${OVHD_AFT_BASE_URL}/fms-load/`,
     imagePath: '',
@@ -479,7 +479,7 @@ export const fmsLoadPanel: Panel = {
 };
 
 export const maintenancePanel: Panel = {
-    name: 'Maintenance Panel',
+    name: 'A32NX - Maintenance Panel',
     description: 'The maintenance panel is mostly used by the maintenance crew.',
     docsUrl: `${OVHD_AFT_BASE_URL}/maintenance/`,
     imagePath: '',
