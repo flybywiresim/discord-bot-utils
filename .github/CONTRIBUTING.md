@@ -47,7 +47,7 @@ The `config` folder contains the configuration details for running the bot in th
 
 The config contains different variables and settings which are used by the bot to reference channels, check permissions, use colors, etc. All these values are defined based on the Discord server the bot will connect to and are unique to that server.
 
-You can create your own config json file by copying one of the existing ones and updating the different constants/settings with your own values. This allows you to run the bot in your own environment without having to recompile it from the source.
+You need to create your own config json file by copying one of the existing ones and updating the different constants/settings with your own values. This allows you to run the bot in your own environment without having to recompile it from the source. See [Setting up the config](#setting-up-the-config) for more information.
 
 ### How to use a config
 
@@ -57,14 +57,18 @@ This library will load a file from the `config` folder, based on an environment 
 
 ### Setting up the config
 
-1. Create a file named `dev.json` at [../config/](../config/).
+1. Create a file named `development.json` at [../config/](../config/).
 2. Copy the contents of [../config/staging.json](../config/staging.json).
-3. Change the `guildId` field to your server's ID.
-4. Change the channel and role IDs to your own IDs (optional).
-5. In your `.env` file set `NODE_CONFIG_ENV` to `dev`.
+3. In your `.env` file set `NODE_CONFIG_ENV` to `development`.
+4. Change the `guildId` field to your server's ID.
+5. Update the channel and role IDs to those in your server.
+6. Add your own user ID and that of your test bot to `modLogsExclude`.
 
-> [!IMPORTANT]
-> THIS NOTE SHOULD CONTAIN INSTRUCTIONS ON HOW TO INCORPORATE NEW CODE INTO THE OFFICIAL CONFIGS
+> [!WARNING]
+> Not updating the IDs will produce unexpected behavior!
+
+> [!NOTE]
+> If your feature requires a permanent addition to the config where you do not know the correct ID, leave a note on your PR and a team member will handle it.
 
 ## Setting up the Bot
 
@@ -100,6 +104,9 @@ We recommend running your bot with the development node environment. Set `NODE_E
 ### Running the Bot for the first time and deploying commands
 
 When running the bot for the first time, it is important to set `DEPLOY=true` in your `.env`. This will ensure that commands are registered with Discord. Once the bot has been run once, you can set `DEPLOY=false` to prevent the bot from re-deploying commands every time it starts.
+
+> [!IMPORTANT]
+> There is a daily limit on command creation, so make sure you set `DEPLOY` to false after the first launch!
 
 If you need to re-deploy commands after making changes, you can run the `/deploy-command` command in Discord.
 
