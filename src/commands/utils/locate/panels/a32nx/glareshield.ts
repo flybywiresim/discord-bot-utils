@@ -78,3 +78,16 @@ export const fcuPanel: Panel = {
         'fpa-knob',
     ],
 };
+
+export const lightKnobsPanel: Panel = {
+    name: 'A32NX - Light Knobs Panel',
+    description: 'The four knobs under the glareshield are used to control brightness of various lights on the flight deck. (Check the docs for more information)',
+    docsUrl: `${GLARESHIELD_BASE_URL}/light-knobs/`,
+    flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
+    imagePath: '',
+    identifiers: [
+        'table-light-knob',
+        'integral-glareshield-lighting-knob',
+        'fcu-brightness-knob',
+    ],
+};
