@@ -5,7 +5,6 @@ const FRONT_BASE_URL = DOCS_BASE_URLS.a32nx.front;
 
 export const instrumentLightingPanel: Panel = {
     name: 'A32NX - Instrument Lighting Control Panel',
-    description: 'These additional EFIS Controls help manage and adjust the main displays of the pilots.',
     docsUrl: `${FRONT_BASE_URL}/ilcp/`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: '',
@@ -22,7 +21,6 @@ export const instrumentLightingPanel: Panel = {
 
 export const pfd: Panel = {
     name: 'A32NX - Primary Flight Display (PFD)',
-    description: 'The PFD is the main aviation instrument for the pilots.',
     docsUrl: `${FRONT_BASE_URL}/pfd`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: '',
@@ -45,7 +43,6 @@ export const pfd: Panel = {
 
 export const nd: Panel = {
     name: 'A32NX - Navigation Display (ND)',
-    description: 'The ND is one of the main instruments for navigation in flight.',
     docsUrl: `${FRONT_BASE_URL}/nd`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: '',
@@ -60,7 +57,6 @@ export const nd: Panel = {
 
 export const isis: Panel = {
     name: 'A32NX - Integrated Standby Instrument System (ISIS)',
-    description: 'The ISIS is the back-up instrument for the PFD.',
     docsUrl: `${FRONT_BASE_URL}/isis`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: '',
@@ -73,7 +69,6 @@ export const isis: Panel = {
 
 export const dcdu: Panel = {
     name: 'A32NX - Datalink Ctl and Display Unit (DCDU)',
-    description: 'The Datalink Ctl and Display Unit (DCDU) is used by the pilots to communicate with Air Traffic Control (ATC) by the means of text messages instead of voice radio.',
     docsUrl: `${FRONT_BASE_URL}/dcdu`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: '',
@@ -87,7 +82,6 @@ export const dcdu: Panel = {
 
 export const ewd: Panel = {
     name: 'A32NX - Engine and Warning Display (E/WD) (Upper ECAM)',
-    description: '',
     docsUrl: `${FRONT_BASE_URL}/upper-ecam`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: '',
@@ -101,7 +95,6 @@ export const ewd: Panel = {
 
 export const sd: Panel = {
     name: 'A32NX - System Display (SD) (Lower ECAM)',
-    description: '',
     docsUrl: `${FRONT_BASE_URL}/lower-ecam`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: '',
@@ -119,7 +112,6 @@ export const sd: Panel = {
 
 export const autobrakeAndGearPanel: Panel = {
     name: 'A32NX - Autobrake and Gear Indications',
-    description: '',
     docsUrl: `${FRONT_BASE_URL}/autobrake-gear`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: '',
@@ -136,7 +128,6 @@ export const autobrakeAndGearPanel: Panel = {
 
 export const clockPanel: Panel = {
     name: 'A32NX - Clock',
-    description: '',
     docsUrl: `${FRONT_BASE_URL}/clock`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: '',
@@ -148,7 +139,6 @@ export const clockPanel: Panel = {
 
 export const accuPressPanel: Panel = {
     name: 'A32NX - Accumulator Pressure Indicator',
-    description: '',
     docsUrl: `${FRONT_BASE_URL}/accu`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: '',

@@ -11,7 +11,7 @@ const invalidTargetEmbed = makeEmbed({
 const locateEmbed = (panel: Panel) => makeEmbed({
     title: panel.name,
     url: panel.docsUrl,
-    description: `${panel.description} \n\nFor more information please refer to our docs:\n1. [Panel Documentation](${panel.docsUrl})\n2. [Flight Deck Overview](${panel.flightDeckUrl})`,
+    description: `Learn more about the panel and the fligth deck:\n* [Panel Documentation](${panel.docsUrl})\n* [Flight Deck Overview](${panel.flightDeckUrl})`,
     // image: {}
     footer: { text: 'Tip: Click the image to view in full size' },
 });

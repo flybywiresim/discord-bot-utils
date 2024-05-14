@@ -5,7 +5,6 @@ const GLARESHIELD_BASE_URL = DOCS_BASE_URLS.a32nx.glareshield;
 
 export const warningPanel: Panel = {
     name: 'A32NX - Warning Panel',
-    description: 'This panel houses various notification and alarm indicators including the Master Warning and Master Caution buttons.',
     docsUrl: `${GLARESHIELD_BASE_URL}/warning/`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: '',
@@ -22,7 +21,6 @@ export const warningPanel: Panel = {
 
 export const efisPanel: Panel = {
     name: 'A32NX - EFIS Panel',
-    description: 'This panel controls the desired ND modes, the QNH setting as well as the flight directors and glideslope scales.',
     docsUrl: `${GLARESHIELD_BASE_URL}/efis_control/`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: '',
@@ -54,7 +52,6 @@ export const efisPanel: Panel = {
 
 export const fcuPanel: Panel = {
     name: 'A32NX - Flight Control Unit (FCU)',
-    description: 'The FCU provides short-term interface between the Flight Management and Guidance Computer (FMGC).',
     docsUrl: `${GLARESHIELD_BASE_URL}/fcu/`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: '',
@@ -81,7 +78,6 @@ export const fcuPanel: Panel = {
 
 export const lightKnobsPanel: Panel = {
     name: 'A32NX - Light Knobs Panel',
-    description: 'The four knobs under the glareshield are used to control brightness of various lights on the flight deck. (Check the docs for more information)',
     docsUrl: `${GLARESHIELD_BASE_URL}/light-knobs/`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: '',
