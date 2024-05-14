@@ -193,6 +193,8 @@ export const aidsDfdrPanel: Panel = {
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: '',
     identifiers: [
+        'ped-flood-lt-knob',
+        'pedestal-flood-light-knob',
         'aids-button',
         'dfdr-button',
     ],
