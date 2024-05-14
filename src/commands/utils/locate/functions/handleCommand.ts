@@ -12,7 +12,7 @@ const locateEmbed = (panel: Panel) => makeEmbed({
     title: panel.name,
     url: panel.docsUrl,
     description: `Learn more about the panel and the fligth deck:\n* [Panel Documentation](${panel.docsUrl})\n* [Flight Deck Overview](${panel.flightDeckUrl})`,
-    // image: {}
+    image: { url: panel.imagePath },
     footer: { text: 'Tip: Click the image to view in full size' },
 });
 
@@ -25,8 +25,6 @@ export const handleCommand = async (interaction: ChatInputCommandInteraction<'ca
         return interaction.editReply({ embeds: [invalidTargetEmbed] });
     }
     const panel = panelMap.get(target)!;
-
-    console.log('DOCS:', panel.docsUrl);
 
     return interaction.editReply({ embeds: [locateEmbed(panel)] });
 };
