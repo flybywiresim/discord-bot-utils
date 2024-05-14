@@ -248,7 +248,7 @@ const autocompleteCallback: AutocompleteCallback = ({ interaction }) => {
         {
             name: 'Display Name',
             value: 'Value that is actually sent to your bot.'
-        }
+        },
     ];
 
     // If you can't autocomplete anything respond with an empty array.
