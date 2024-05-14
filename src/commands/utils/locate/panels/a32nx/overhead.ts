@@ -5,7 +5,8 @@ const OVHD_BASE_URL = DOCS_BASE_URLS.a32nx.overhead;
 const OVHD_AFT_BASE_URL = DOCS_BASE_URLS.a32nx.aftOverhead;
 
 export const wiperPanel: Panel = {
-    name: 'A32NX - Wiper Panel',
+    name: 'Wiper Panel',
+    title: 'FlyByWire A32NX | Wiper Panel',
     docsUrl: `${OVHD_BASE_URL}/wipers/`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: '',
@@ -22,7 +23,8 @@ export const wiperPanel: Panel = {
 };
 
 export const callsPanel: Panel = {
-    name: 'A32NX - Calls Panel',
+    name: 'Calls Panel',
+    title: 'FlyByWire A32NX | Calls Panel',
     docsUrl: `${OVHD_BASE_URL}/calls/`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: '',
@@ -34,7 +36,8 @@ export const callsPanel: Panel = {
 };
 
 export const oxyPanel: Panel = {
-    name: 'A32NX - Oxygen Panel',
+    name: 'Oxygen Panel',
+    title: 'FlyByWire A32NX | Oxygen Panel',
     docsUrl: `${OVHD_BASE_URL}/oxygen/`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: '',
@@ -47,7 +50,8 @@ export const oxyPanel: Panel = {
 };
 
 export const cvrPanel: Panel = {
-    name: 'A32NX - Voice Recorder Panel',
+    name: 'RCDR Panel',
+    title: 'FlyByWire A32NX | Voice Recorder Panel',
     docsUrl: `${OVHD_BASE_URL}/voice-recorder/`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: '',
@@ -64,7 +68,8 @@ export const cvrPanel: Panel = {
 };
 
 export const gpwsPanel: Panel = {
-    name: 'A32NX - GPWS Panel',
+    name: 'GPWS Panel',
+    title: 'FlyByWire A32NX | GPWS Panel',
     docsUrl: `${OVHD_BASE_URL}/gpws/`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: '',
@@ -81,11 +86,13 @@ export const gpwsPanel: Panel = {
 };
 
 export const emerElecPwrPanel: Panel = {
-    name: 'A32NX - Emergency Electric Power Panel',
+    name: 'EMER ELEC PWR Panel',
+    title: 'FlyByWire A32NX | Emergency Electric Power Panel',
     docsUrl: `${OVHD_BASE_URL}/emergency-electric/`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: '',
     identifiers: [
+        'emergency-electrical-panel',
         'emer-elec-panel',
         'emer-elec',
         'emer-elec-pwr',
@@ -96,7 +103,8 @@ export const emerElecPwrPanel: Panel = {
 };
 
 export const evacPanel: Panel = {
-    name: 'A32NX - Evacuation Panel',
+    name: 'EVAC Panel',
+    title: 'FlyByWire A32NX | Evacuation Panel',
     docsUrl: `${OVHD_BASE_URL}/evacuation/`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: '',
@@ -111,7 +119,8 @@ export const evacPanel: Panel = {
 };
 
 export const fltCtlPanel: Panel = {
-    name: 'A32NX - Flight Control Panel',
+    name: 'FLT CLT Panel',
+    title: 'FlyByWire A32NX | Flight Control Panel',
     docsUrl: `${OVHD_BASE_URL}/flight-control-computer/`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: '',
@@ -125,7 +134,8 @@ export const fltCtlPanel: Panel = {
 };
 
 export const adirsPanel: Panel = {
-    name: 'A32NX - ADIRS Panel',
+    name: 'ADIRS Panel',
+    title: 'FlyByWire A32NX | ADIRS Panel',
     docsUrl: `${OVHD_BASE_URL}/adirs/`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: '',
@@ -140,7 +150,8 @@ export const adirsPanel: Panel = {
 };
 
 export const paVideoPanel: Panel = {
-    name: 'A32NX - PA and Cockpit Video Panel',
+    name: 'PA and Cockpit Video Panel',
+    title: 'FlyByWire A32NX | PA and Cockpit Video Panel',
     docsUrl: `${OVHD_BASE_URL}/pa-cockpit-video/`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: '',
@@ -153,7 +164,8 @@ export const paVideoPanel: Panel = {
 };
 
 export const extLtPanel: Panel = {
-    name: 'A32NX - Exterior Lighting Panel',
+    name: 'EXT LT Panel',
+    title: 'FlyByWire A32NX | Exterior Lighting Panel',
     docsUrl: `${OVHD_BASE_URL}/ext-lt/`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: '',
@@ -178,7 +190,8 @@ export const extLtPanel: Panel = {
 };
 
 export const apuPanel: Panel = {
-    name: 'A32NX - APU Panel',
+    name: 'APU Panel',
+    title: 'FlyByWire A32NX | APU Panel',
     docsUrl: `${OVHD_BASE_URL}/apu/`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: '',
@@ -192,7 +205,8 @@ export const apuPanel: Panel = {
 };
 
 export const signsPanel: Panel = {
-    name: 'A32NX - Signs Panel',
+    name: 'Signs Panel',
+    title: 'FlyByWire A32NX | Signs Panel',
     docsUrl: `${OVHD_BASE_URL}/signs/`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: '',
@@ -208,7 +222,8 @@ export const signsPanel: Panel = {
 };
 
 export const intLtPanel: Panel = {
-    name: 'A32NX - Internal Lights Panel',
+    name: 'INT LT Panel',
+    title: 'FlyByWire A32NX | Internal Lights Panel',
     docsUrl: `${OVHD_BASE_URL}/int-lt/`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: '',
@@ -225,7 +240,8 @@ export const intLtPanel: Panel = {
 };
 
 export const antiIcePanel: Panel = {
-    name: 'A32NX - Anti Ice Panel',
+    name: 'Anti Ice Panel',
+    title: 'FlyByWire A32NX | Anti Ice Panel',
     docsUrl: `${OVHD_BASE_URL}/anti-ice/`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: '',
@@ -241,7 +257,8 @@ export const antiIcePanel: Panel = {
 };
 
 export const cabinPressPanel: Panel = {
-    name: 'A32NX - Cabin Pressurization Panel',
+    name: 'CABIN PRESS Panel',
+    title: 'FlyByWire A32NX | Cabin Pressurization Panel',
     docsUrl: `${OVHD_BASE_URL}/cab-press/`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: '',
@@ -259,7 +276,8 @@ export const cabinPressPanel: Panel = {
 };
 
 export const airCondPanel: Panel = {
-    name: 'A32NX - Air Condition Control Panel',
+    name: 'AIR COND Panel',
+    title: 'FlyByWire A32NX | Air Condition Control Panel',
     docsUrl: `${OVHD_BASE_URL}/ac/`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: '',
@@ -285,7 +303,8 @@ export const airCondPanel: Panel = {
 };
 
 export const elecPanel: Panel = {
-    name: 'A32NX - Electrical System Panel',
+    name: 'ELEC Panel',
+    title: 'FlyByWire A32NX | Electrical System Panel',
     docsUrl: `${OVHD_BASE_URL}/elec/`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: '',
@@ -312,7 +331,8 @@ export const elecPanel: Panel = {
 };
 
 export const fuelPanel: Panel = {
-    name: 'A32NX - Fuel Control Panel',
+    name: 'FUEL Panel',
+    title: 'FlyByWire A32NX | Fuel Control Panel',
     docsUrl: `${OVHD_BASE_URL}/fuel/`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: '',
@@ -327,7 +347,8 @@ export const fuelPanel: Panel = {
 };
 
 export const hydPanel: Panel = {
-    name: 'A32NX - Hydraulics Control Panel',
+    name: 'HYD Panel',
+    title: 'FlyByWire A32NX | Hydraulics Control Panel',
     docsUrl: `${OVHD_BASE_URL}/hyd/`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: '',
@@ -347,7 +368,8 @@ export const hydPanel: Panel = {
 };
 
 export const firePanel: Panel = {
-    name: 'A32NX - Fire Control Panel',
+    name: 'FIRE Panel',
+    title: 'FlyByWire A32NX | Fire Control Panel',
     docsUrl: `${OVHD_BASE_URL}/fire/`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: '',
@@ -361,19 +383,20 @@ export const firePanel: Panel = {
 };
 
 export const engManStartN1ModePanel: Panel = {
-    name: 'A32NX - Engine Manual Start and N1 Mode Panel',
+    name: 'ENG MAN START Panel',
+    title: 'FlyByWire A32NX | Engine Manual Start Panel',
     docsUrl: `${OVHD_BASE_URL}/eng-man/`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: '',
     identifiers: [
         'manual-engine-start',
         'eng-man-start-switch',
-        'eng-n1-mode-switch',
     ],
 };
 
 export const ventilationPanel: Panel = {
-    name: 'A32NX - Ventilation Panel',
+    name: 'Ventilation Panel',
+    title: 'FlyByWire A32NX | Ventilation Panel',
     docsUrl: `${OVHD_BASE_URL}/vent/`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: '',
@@ -386,7 +409,8 @@ export const ventilationPanel: Panel = {
 };
 
 export const cargoSmokePanel: Panel = {
-    name: 'A32NX - Cargo Smoke Panel',
+    name: 'CARGO SMOKE Panel',
+    title: 'FlyByWire A32NX | Cargo Smoke Panel',
     docsUrl: `${OVHD_BASE_URL}/cargo-smoke/`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: '',
@@ -397,7 +421,8 @@ export const cargoSmokePanel: Panel = {
 };
 
 export const cargoVentPanel: Panel = {
-    name: 'A32NX - Cargo Vent Panel',
+    name: 'CARGO VENT Panel',
+    title: 'FlyByWire A32NX | Cargo Vent Panel',
     docsUrl: `${OVHD_BASE_URL}/cargo-vent/`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: '',
@@ -409,7 +434,8 @@ export const cargoVentPanel: Panel = {
 };
 
 export const thirdACP: Panel = {
-    name: 'A32NX - 3rd Audio Control Panel',
+    name: '3rd ACP',
+    title: 'FlyByWire A32NX | 3rd Audio Control Panel',
     docsUrl: `${OVHD_BASE_URL}/3rd-acp/`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: '',
@@ -420,7 +446,8 @@ export const thirdACP: Panel = {
 };
 
 export const readingLightsJumpSeats: Panel = {
-    name: 'A32NX - Reading Lights Jump Seats',
+    name: 'Jump Seats Reading Light Panel',
+    title: 'FlyByWire A32NX | Reading Lights Jump Seats',
     docsUrl: `${OVHD_AFT_BASE_URL}/reading-light/`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: '',
@@ -430,7 +457,8 @@ export const readingLightsJumpSeats: Panel = {
 };
 
 export const cockpitDoorIndicatorPanel: Panel = {
-    name: 'A32NX - Cockpit Door Panel',
+    name: 'CKPT DOOR CONT Panel',
+    title: 'FlyByWire A32NX | Cockpit Door Panel',
     docsUrl: `${OVHD_AFT_BASE_URL}/cockpit-door/#description`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: '',
@@ -440,7 +468,8 @@ export const cockpitDoorIndicatorPanel: Panel = {
 };
 
 export const eltPanel: Panel = {
-    name: 'A32NX - ELT Panel',
+    name: 'ELT Panel',
+    title: 'FlyByWire A32NX | ELT Panel',
     docsUrl: `${OVHD_AFT_BASE_URL}/elt/`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: '',
@@ -452,7 +481,8 @@ export const eltPanel: Panel = {
 };
 
 export const pedestalLightPanel: Panel = {
-    name: 'A32NX - Pedestal Light and Audio 3 Switch',
+    name: 'Pedestal Light Panel',
+    title: 'FlyByWire A32NX | Pedestal Light and Audio 3 Switch',
     docsUrl: `${OVHD_AFT_BASE_URL}/pedestal-light/`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: '',
@@ -464,7 +494,8 @@ export const pedestalLightPanel: Panel = {
 };
 
 export const emerCbPanel: Panel = {
-    name: 'A32NX - Emergency Circuit Breaker Panel',
+    name: 'EMER CB Panel',
+    title: 'FlyByWire A32NX | Emergency Circuit Breaker Panel',
     docsUrl: `${OVHD_AFT_BASE_URL}/circuit/`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: '',
@@ -475,7 +506,8 @@ export const emerCbPanel: Panel = {
 };
 
 export const rearBackCbPanel: Panel = {
-    name: 'A32NX - Rear Back Circuit Breaker Panel',
+    name: 'Rear CB Panel',
+    title: 'FlyByWire A32NX | Rear Back Circuit Breaker Panel',
     docsUrl: `${OVHD_AFT_BASE_URL}/circuit/`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: '',
@@ -486,7 +518,8 @@ export const rearBackCbPanel: Panel = {
 };
 
 export const fmsLoadPanel: Panel = {
-    name: 'A32NX - FMS Load Panel',
+    name: 'FMS LOAD Panel',
+    title: 'FlyByWire A32NX | FMS Load Panel',
     docsUrl: `${OVHD_AFT_BASE_URL}/fms-load/`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: '',
@@ -496,7 +529,8 @@ export const fmsLoadPanel: Panel = {
 };
 
 export const maintenancePanel: Panel = {
-    name: 'A32NX - Maintenance Panel',
+    name: 'Maintenance Panel',
+    title: 'FlyByWire A32NX | Maintenance Panel',
     docsUrl: `${OVHD_AFT_BASE_URL}/maintenance/`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: '',
