@@ -9,5 +9,6 @@ export const DOCS_BASE_URLS = {
         flightdeck: 'https://docs.flybywiresim.com/pilots-corner/a32nx-briefing/flight-deck/',
         overhead: `${A32NX_DOCS_BASE_URL}/ovhd`,
         aftOverhead: `${A32NX_DOCS_BASE_URL}/ovhd-aft`,
+        glareshield: `${A32NX_DOCS_BASE_URL}/glareshield`,
     },
 };

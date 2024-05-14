@@ -1,4 +1,5 @@
 import { Panel } from '../panel';
+import { efisPanel, fcuPanel, warningPanel } from './glareshield';
 import { antiIcePanel, adirsPanel, apuPanel, callsPanel, cvrPanel, emerElecPwrPanel, evacPanel, extLtPanel, fltCtlPanel, gpwsPanel, intLtPanel, oxyPanel, paVideoPanel, signsPanel, wiperPanel, cabinPressPanel, airCondPanel, elecPanel, fuelPanel, hydPanel, firePanel, engManStartN1ModePanel, ventilationPanel, cargoSmokePanel, cargoVentPanel, thirdACP, readingLightsJumpSeats, cockpitDoorIndicatorPanel, eltPanel, pedestalLightPanel, emerCbPanel, rearBackCbPanel, fmsLoadPanel, maintenancePanel } from './overhead';
 
 export const a32nxPanels: Panel[] = [
@@ -36,4 +37,7 @@ export const a32nxPanels: Panel[] = [
     rearBackCbPanel,
     fmsLoadPanel,
     maintenancePanel,
+    warningPanel,
+    efisPanel,
+    fcuPanel,
 ]; // TODO: import all panels
