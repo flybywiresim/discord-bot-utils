@@ -10,7 +10,8 @@ const invalidTargetEmbed = makeEmbed({
 
 const locateEmbed = (panel: Panel) => makeEmbed({
     title: panel.name,
-    description: `${panel.description} \n\nFor more information please refer to our [docs](${panel.docsUrl}).`,
+    url: panel.docsUrl,
+    description: `${panel.description} \n\nFor more information please refer to our docs:\n1. [Panel Documentation](${panel.docsUrl})\n2. [Flight Deck Overview](${panel.flightDeckUrl})`,
     // image: {}
     footer: { text: 'Tip: Click the image to view in full size' },
 });
@@ -24,6 +25,8 @@ export const handleCommand = async (interaction: ChatInputCommandInteraction<'ca
         return interaction.editReply({ embeds: [invalidTargetEmbed] });
     }
     const panel = panelMap.get(target)!;
+
+    console.log('DOCS:', panel.docsUrl);
 
     return interaction.editReply({ embeds: [locateEmbed(panel)] });
 };

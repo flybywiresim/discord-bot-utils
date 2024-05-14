@@ -15,12 +15,12 @@ for (const panel of a32nxPanels) {
 
 const data = slashCommandStructure({
     name: 'locate',
-    description: 'Locate any switch or panel on the flightdecks of our aircraft.',
+    description: 'Locate any switch or panel on the flight decks of our aircraft.',
     type: ApplicationCommandType.ChatInput,
     options: [
         {
             name: 'a32nx',
-            description: 'Locate any switch or panel on the A32NX flightdeck.',
+            description: 'Locate any switch or panel on the A32NX flight deck.',
             type: ApplicationCommandOptionType.Subcommand,
             options: [
                 {
@@ -66,6 +66,6 @@ export default slashCommand(data, async ({ interaction }) => {
         break;
     */
     default:
-        await interaction.reply({ content: 'Unknown subcommand', ephemeral: true });
+        await interaction.editReply({ content: 'Unknown subcommand' });
     }
 }, autocompleteCallback);
