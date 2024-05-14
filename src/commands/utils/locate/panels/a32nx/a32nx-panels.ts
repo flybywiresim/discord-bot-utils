@@ -2,6 +2,7 @@ import { Panel } from '../panel';
 import { accuPressPanel, autobrakeAndGearPanel, clockPanel, dcdu, ewd, instrumentLightingPanel, isis, nd, pfd, sd } from './front-panel';
 import { efisPanel, fcuPanel, lightKnobsPanel, warningPanel } from './glareshield';
 import { antiIcePanel, adirsPanel, apuPanel, callsPanel, cvrPanel, emerElecPwrPanel, evacPanel, extLtPanel, fltCtlPanel, gpwsPanel, intLtPanel, oxyPanel, paVideoPanel, signsPanel, wiperPanel, cabinPressPanel, airCondPanel, elecPanel, fuelPanel, hydPanel, firePanel, engManStartN1ModePanel, ventilationPanel, cargoSmokePanel, cargoVentPanel, thirdACP, readingLightsJumpSeats, cockpitDoorIndicatorPanel, eltPanel, pedestalLightPanel, emerCbPanel, rearBackCbPanel, fmsLoadPanel, maintenancePanel } from './overhead';
+import { aidsDfdrPanel, atcTcasPanel, captPedestalLightingPanel, cockpitDoorPanel, console, ecamControlPanel, engPanel, flaps, gravityGearExtensionPanel, mcdu, parkBrkPanel, printer, rmpAcpPanel, rudderTrim, speedBrake, switchingPanel, thrLvrPitchTrim, wxPanel } from './pedestal';
 
 export const a32nxPanels: Panel[] = [
     // OVERHEAD
@@ -57,4 +58,24 @@ export const a32nxPanels: Panel[] = [
     autobrakeAndGearPanel,
     clockPanel,
     accuPressPanel,
+
+    // PEDESTAL
+    console,
+    mcdu,
+    rmpAcpPanel,
+    captPedestalLightingPanel,
+    wxPanel,
+    speedBrake,
+    cockpitDoorPanel,
+    switchingPanel,
+    ecamControlPanel,
+    thrLvrPitchTrim,
+    engPanel,
+    rudderTrim,
+    parkBrkPanel,
+    gravityGearExtensionPanel,
+    aidsDfdrPanel,
+    atcTcasPanel,
+    flaps,
+    printer,
 ]; // TODO: import all panels

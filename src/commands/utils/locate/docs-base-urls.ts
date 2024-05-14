@@ -11,5 +11,6 @@ export const DOCS_BASE_URLS = {
         aftOverhead: `${A32NX_DOCS_BASE_URL}/ovhd-aft`,
         glareshield: `${A32NX_DOCS_BASE_URL}/glareshield`,
         front: `${A32NX_DOCS_BASE_URL}/front`,
+        pedestal: `${A32NX_DOCS_BASE_URL}/pedestal`,
     },
 };
