@@ -78,4 +78,4 @@ export const a32nxPanels: Panel[] = [
     atcTcasPanel,
     flaps,
     printer,
-]; // TODO: import all panels
+];
