@@ -253,7 +253,7 @@ const autocompleteCallback: AutocompleteCallback = ({ interaction }) => {
 
     // If you can't autocomplete anything respond with an empty array.
     return interaction.respond(choices);
-}
+};
 
 export default slashCommand(data, async ({ interaction }) => {
     const msg = interaction.options.getString('message') ?? 'Pong 🏓';
