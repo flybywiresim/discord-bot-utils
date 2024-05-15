@@ -209,6 +209,8 @@ export const aidsDfdrPanel: Panel = {
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: `${PEDESTAL_IMAGE_BASE_URL}/aids_dfdr.png`,
     identifiers: [
+        'aids',
+        'dfdr',
         'ped-flood-lt-knob',
         'pedestal-flood-light-knob',
         'aids-button',
