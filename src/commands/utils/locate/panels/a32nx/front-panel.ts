@@ -125,6 +125,7 @@ export const autobrakeAndGearPanel: Panel = {
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: `${FRONT_IMAGE_BASE_URL}/autobrake_gear.png`,
     identifiers: [
+        'gear',
         'ldg-gear-indicator',
         'brk-fan-switch',
         'brake-fan-switch',
