@@ -11,11 +11,13 @@ export const warningPanel: Panel = {
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: `${GLARESHIELD_IMAGE_BASE_URL}/warning.png`,
     identifiers: [
+        'warning',
         'warning-panel',
         'atc-msg',
         'autoland-warning-light',
         'master-caution',
         'master-warning',
+        'chrono',
         'chrono-button',
         'sidestick-priority-indicator',
     ],
@@ -28,6 +30,7 @@ export const efisPanel: Panel = {
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: `${GLARESHIELD_IMAGE_BASE_URL}/efis.png`,
     identifiers: [
+        'efis',
         'efis-panel',
         'qnh',
         'fd',

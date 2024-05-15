@@ -11,6 +11,7 @@ export const instrumentLightingPanel: Panel = {
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: `${FRONT_IMAGE_BASE_URL}/instrument_lighting.png`,
     identifiers: [
+        'instrument-brightness',
         'instrument-lighting-panel',
         'gpws-gs-button',
         'pfd-brightness-knob',
@@ -93,6 +94,7 @@ export const ewd: Panel = {
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: `${FRONT_IMAGE_BASE_URL}/ewd.png`,
     identifiers: [
+        'ecam-upper',
         'upper-ecam',
         'ewd',
         'engine-and-warning-display',
@@ -110,6 +112,7 @@ export const sd: Panel = {
         'sd',
         'system-display',
         'lower-ecam',
+        'ecam-lower',
         'tat-display',
         'sat-display',
         'isa-display',

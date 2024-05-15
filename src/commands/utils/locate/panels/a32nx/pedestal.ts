@@ -13,6 +13,7 @@ export const console: Panel = {
     identifiers: [
         'console',
         'sidestick',
+        'side-stick',
         'ap-disc-button',
         'autopilot-disconnect-button',
         'tiller',
@@ -56,7 +57,7 @@ export const captPedestalLightingPanel: Panel = {
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: `${PEDESTAL_IMAGE_BASE_URL}/capt_pedestal_lt.png`,
     identifiers: [
-        'pedestal-lighting-panel-captain',
+        'captain-pedestal-lighting-panel',
     ],
 };
 
@@ -67,6 +68,7 @@ export const wxPanel: Panel = {
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: `${PEDESTAL_IMAGE_BASE_URL}/wx_radar.png`,
     identifiers: [
+        'wx',
         'weather-radar',
         'wx-radar',
         'pws',
@@ -95,6 +97,7 @@ export const cockpitDoorPanel: Panel = {
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: `${PEDESTAL_IMAGE_BASE_URL}/cockpit_door.png`,
     identifiers: [
+        'cockpit-door',
         'cockpit-door-panel',
         'cockpit-door-switch',
         'cockpit-door-video-button',
@@ -108,6 +111,7 @@ export const switchingPanel: Panel = {
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: `${PEDESTAL_IMAGE_BASE_URL}/switching.png`,
     identifiers: [
+        'switching',
         'switching-panel',
         'att-hdg-selector',
         'air-data-selector',
@@ -123,6 +127,7 @@ export const ecamControlPanel: Panel = {
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: `${PEDESTAL_IMAGE_BASE_URL}/ecam_ctl.png`,
     identifiers: [
+        'ecam-control',
         'upper-ecam-display-brightness',
         'lower-ecam-display-brightness',
         'ecam-to-config',
@@ -162,6 +167,7 @@ export const engPanel: Panel = {
     imagePath: `${PEDESTAL_IMAGE_BASE_URL}/eng.png`,
     identifiers: [
         'engine-panel',
+        'engine-master',
         'engine-master-switches',
         'eng-mode-selector',
         'engine-mode-selector',
@@ -225,6 +231,7 @@ export const atcTcasPanel: Panel = {
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: `${PEDESTAL_IMAGE_BASE_URL}/atc_tcas.png`,
     identifiers: [
+        'xpdr',
         'atc-tcas-panel',
         'transponder',
         'tcas',

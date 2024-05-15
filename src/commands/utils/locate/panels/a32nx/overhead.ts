@@ -17,6 +17,7 @@ export const wiperPanel: Panel = {
         'wiper-panel',
         'wiper',
         'wipers',
+        'rain',
         'rain-repellent',
         'repellent',
         'rplnt',
@@ -45,6 +46,7 @@ export const oxyPanel: Panel = {
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: `${OVHD_IMAGE_BASE_URL}/oxygen.png`,
     identifiers: [
+        'oxy',
         'oxygen-panel',
         'oxygen',
         'mask-man-on-switch',
@@ -128,6 +130,7 @@ export const fltCtlPanel: Panel = {
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: `${OVHD_IMAGE_BASE_URL}/flt_ctl.png`,
     identifiers: [
+        'flight-controls',
         'flight-control-panel',
         'flt-ctl',
         'elac',
@@ -232,6 +235,7 @@ export const intLtPanel: Panel = {
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: `${OVHD_IMAGE_BASE_URL}/int_lt.png`,
     identifiers: [
+        'int-lt',
         'int-lt-panel',
         'dome-light',
         'overhead-integrated-light',
@@ -250,6 +254,7 @@ export const antiIcePanel: Panel = {
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: `${OVHD_IMAGE_BASE_URL}/anti_ice.png`,
     identifiers: [
+        'icing',
         'anti-ice-panel',
         'anti-ice',
         'window-heat',
@@ -267,6 +272,7 @@ export const cabinPressPanel: Panel = {
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: `${OVHD_IMAGE_BASE_URL}/cabin_press.png`,
     identifiers: [
+        'cabin-press',
         'cabin-press-panel',
         'pressurization',
         'cabin-pressure',
@@ -286,6 +292,7 @@ export const airCondPanel: Panel = {
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: `${OVHD_IMAGE_BASE_URL}/air_cond.png`,
     identifiers: [
+        'air-cond',
         'air-cond-panel',
         'ac-panel',
         'air-cond-panel',
@@ -313,6 +320,7 @@ export const elecPanel: Panel = {
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: `${OVHD_IMAGE_BASE_URL}/elec.png`,
     identifiers: [
+        'elec',
         'elec-panel',
         'electrical-panel',
         'generators',
@@ -341,6 +349,7 @@ export const fuelPanel: Panel = {
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: `${OVHD_IMAGE_BASE_URL}/fuel.png`,
     identifiers: [
+        'fuel',
         'fuel-panel',
         'fuel-pumps',
         'x-feed',
@@ -391,8 +400,9 @@ export const engManStartN1ModePanel: Panel = {
     title: 'FlyByWire A32NX | Engine Manual Start Panel',
     docsUrl: `${OVHD_DOCS_BASE_URL}/eng-man/`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
-    imagePath: `${OVHD_IMAGE_BASE_URL}eng_n1.png`,
+    imagePath: `${OVHD_IMAGE_BASE_URL}/eng_n1.png`,
     identifiers: [
+        'eng-n1',
         'manual-engine-start',
         'eng-man-start-switch',
     ],
@@ -405,6 +415,7 @@ export const ventilationPanel: Panel = {
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: `${OVHD_IMAGE_BASE_URL}/ventilation.png`,
     identifiers: [
+        'vent',
         'ventilation-panel',
         'cabin-fans',
         'blower-switch',
@@ -444,6 +455,7 @@ export const thirdACP: Panel = {
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: `${OVHD_IMAGE_BASE_URL}/acp_3.png`,
     identifiers: [
+        'acp3',
         '3rd-acp',
         '3rd-audio-control-panel',
     ],
@@ -456,6 +468,7 @@ export const readingLightsJumpSeats: Panel = {
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: `${OVHD_AFT_IMAGE_BASE_URL}/jump_seat_reading_lt.png`,
     identifiers: [
+        'reading-lights-jump-seat',
         'jump-seat-reading-lights',
     ],
 };
@@ -467,6 +480,7 @@ export const cockpitDoorIndicatorPanel: Panel = {
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: `${OVHD_AFT_IMAGE_BASE_URL}/ckpt_door_cont.png`,
     identifiers: [
+        'cockpit-door-cont',
         'cockpit-door-indicator-panel',
     ],
 };
@@ -527,6 +541,7 @@ export const maintenancePanel: Panel = {
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
     imagePath: `${OVHD_AFT_IMAGE_BASE_URL}/maintenance.png`,
     identifiers: [
+        'maintenance',
         'maintenance-panel',
         'fadec-ground-power-switch',
         'blue-pump-override-switch',
