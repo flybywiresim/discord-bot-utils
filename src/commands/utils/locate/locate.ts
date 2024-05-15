@@ -13,6 +13,13 @@ for (const panel of a32nxPanels) {
     }
 }
 
+/* const a380xPanelMap: Map<string, Panel> = new Map();
+for (const panel of a380xPanel) {
+    for (const identifier of panel.identifiers) {
+        a380xPanelMap.set(identifier, panel);
+    }
+} */
+
 const data = slashCommandStructure({
     name: 'locate',
     description: 'Locate any switch or panel on the flight decks of our aircraft.',
@@ -32,6 +39,20 @@ const data = slashCommandStructure({
                 },
             ],
         },
+        /* {
+            name: 'a380x',
+            description: 'Locate any switch or panel on the A380X flight deck.',
+            type: ApplicationCommandOptionType.Subcommand,
+            options: [
+                {
+                    name: 'target',
+                    description: 'Specify the component to locate.',
+                    type: ApplicationCommandOptionType.String,
+                    autocomplete: true,
+                    required: true,
+                },
+            ],
+        }, */
     ],
 });
 
@@ -46,9 +67,14 @@ const autocompleteCallback: AutocompleteCallback = ({ interaction }) => {
     const cleanTarget = target.replace(/\s/g, '-');
 
     let choices: ApplicationCommandOptionChoiceData<string | number>[];
-    if (subcommand === 'a32nx') {
+    switch (subcommand) {
+    case 'a32nx':
         choices = filterSearchResults(cleanTarget, a32nxPanelMap);
-    } else {
+        break;
+    /* case 'a380x':
+        choices = filterSearchResults(cleanTarget, a380xPanelMap);
+        break; */
+    default:
         return interaction.respond([]);
     }
 
