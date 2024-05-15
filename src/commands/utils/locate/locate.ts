@@ -42,9 +42,12 @@ const autocompleteCallback: AutocompleteCallback = ({ interaction }) => {
     // If target is empty, trigger 'no values match your query' UI state in discord client.
     if (target.length < 1) return interaction.respond([]);
 
+    // Replace whitespace characters with a hyphen.
+    const cleanTarget = target.replace(/\s/g, '-');
+
     let choices: ApplicationCommandOptionChoiceData<string | number>[];
     if (subcommand === 'a32nx') {
-        choices = filterSearchResults(target, a32nxPanelMap);
+        choices = filterSearchResults(cleanTarget, a32nxPanelMap);
     } else {
         return interaction.respond([]);
     }

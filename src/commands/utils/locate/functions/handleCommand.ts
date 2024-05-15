@@ -21,10 +21,13 @@ export const handleCommand = async (interaction: ChatInputCommandInteraction<'ca
 
     if (!target) return interaction.editReply({ content: 'Please provide a switch, system or panel that you want to locate.' });
 
-    if (!Array.from(panelMap.keys()).includes(target)) {
+    // Replace whitespace characters with a hyphen.
+    const cleanTarget = target.replace(/\s/g, '-');
+
+    if (!Array.from(panelMap.keys()).includes(cleanTarget)) {
         return interaction.editReply({ embeds: [invalidTargetEmbed] });
     }
-    const panel = panelMap.get(target)!;
+    const panel = panelMap.get(cleanTarget)!;
 
     return interaction.editReply({ embeds: [locateEmbed(panel)] });
 };
