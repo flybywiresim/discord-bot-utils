@@ -1,14 +1,15 @@
-import { DOCS_BASE_URLS } from '../../docs-base-urls';
+import { DOCS_BASE_URLS, IMAGE_BASE_URLS } from '../../base-urls';
 import { Panel } from '../panel';
 
-const GLARESHIELD_BASE_URL = DOCS_BASE_URLS.a32nx.glareshield;
+const GLARESHIELD_DOCS_BASE_URL = DOCS_BASE_URLS.a32nx.glareshield;
+const GLARESHIELD_IMAGE_BASE_URL = IMAGE_BASE_URLS.a32nx.glareshield;
 
 export const warningPanel: Panel = {
     name: 'Warning Panel',
     title: 'FlyByWire A32NX | Warning Panel',
-    docsUrl: `${GLARESHIELD_BASE_URL}/warning/`,
+    docsUrl: `${GLARESHIELD_DOCS_BASE_URL}/warning/`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
-    imagePath: '',
+    imagePath: `${GLARESHIELD_IMAGE_BASE_URL}/warning.png`,
     identifiers: [
         'warning-panel',
         'atc-msg',
@@ -23,9 +24,9 @@ export const warningPanel: Panel = {
 export const efisPanel: Panel = {
     name: 'EFIS',
     title: 'FlyByWire A32NX | EFIS Panel',
-    docsUrl: `${GLARESHIELD_BASE_URL}/efis_control/`,
+    docsUrl: `${GLARESHIELD_DOCS_BASE_URL}/efis_control/`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
-    imagePath: '',
+    imagePath: `${GLARESHIELD_IMAGE_BASE_URL}/efis.png`,
     identifiers: [
         'efis-panel',
         'qnh',
@@ -55,9 +56,9 @@ export const efisPanel: Panel = {
 export const fcuPanel: Panel = {
     name: 'FCU',
     title: 'FlyByWire A32NX | Flight Control Unit (FCU)',
-    docsUrl: `${GLARESHIELD_BASE_URL}/fcu/`,
+    docsUrl: `${GLARESHIELD_DOCS_BASE_URL}/fcu/`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
-    imagePath: '',
+    imagePath: `${GLARESHIELD_IMAGE_BASE_URL}/fcu.png`,
     identifiers: [
         'fcu',
         'flight-control-unit',
@@ -82,9 +83,9 @@ export const fcuPanel: Panel = {
 export const lightKnobsPanel: Panel = {
     name: 'Lighting Knobs Panel',
     title: 'FlyByWire A32NX | Light Knobs Panel',
-    docsUrl: `${GLARESHIELD_BASE_URL}/light-knobs/`,
+    docsUrl: `${GLARESHIELD_DOCS_BASE_URL}/light-knobs/`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
-    imagePath: '',
+    imagePath: `${GLARESHIELD_IMAGE_BASE_URL}/light-knobs.png`,
     identifiers: [
         'table-light-knob',
         'integral-glareshield-lighting-knob',

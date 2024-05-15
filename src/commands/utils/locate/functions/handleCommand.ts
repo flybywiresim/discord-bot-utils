@@ -12,7 +12,7 @@ const locateEmbed = (panel: Panel) => makeEmbed({
     title: panel.title,
     url: panel.docsUrl,
     description: `Learn more about the ${panel.name} and the fligth deck:\n* [${panel.name} Documentation](${panel.docsUrl})\n* [Flight Deck Overview](${panel.flightDeckUrl})`,
-    // image: { url: panel.imagePath },
+    image: { url: panel.imagePath },
     footer: { text: 'Tip: Click the image to view in full size' },
 });
 
