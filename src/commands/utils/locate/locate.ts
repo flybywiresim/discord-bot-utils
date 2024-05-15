@@ -3,7 +3,7 @@ import { Panel } from './panels/panel';
 import { a32nxPanels } from './panels/a32nx/a32nx-panels';
 import { slashCommand, slashCommandStructure } from '../../../lib';
 import { AutocompleteCallback } from '../../../lib/autocomplete';
-import { filterSeachResults } from './functions/filterSearchResults';
+import { filterSearchResults } from './functions/filterSearchResults';
 import { handleCommand } from './functions/handleCommand';
 
 const a32nxPanelMap: Map<string, Panel> = new Map();
@@ -44,7 +44,7 @@ const autocompleteCallback: AutocompleteCallback = ({ interaction }) => {
 
     let choices: ApplicationCommandOptionChoiceData<string | number>[];
     if (subcommand === 'a32nx') {
-        choices = filterSeachResults(target, a32nxPanelMap);
+        choices = filterSearchResults(target, a32nxPanelMap);
     } else {
         return interaction.respond([]);
     }
