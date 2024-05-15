@@ -2,6 +2,12 @@ import { ChatInputCommandInteraction, Colors } from 'discord.js';
 import { Panel } from '../panels/panel';
 import { makeEmbed } from '../../../../lib';
 
+const emptyTargetEmbed = makeEmbed({
+    title: 'Locate - Empty target',
+    description: 'Please provide a switch, system or panel that you want to locate.',
+    color: Colors.Red,
+});
+
 const invalidTargetEmbed = makeEmbed({
     title: 'Locate - Invalid target',
     description: 'The target you provided is invalid. Please type your search query and choose one from the list.',
@@ -19,7 +25,7 @@ const locateEmbed = (panel: Panel) => makeEmbed({
 export const handleCommand = async (interaction: ChatInputCommandInteraction<'cached'>, panelMap: Map<string, Panel>) => {
     const target = interaction.options.getString('target');
 
-    if (!target) return interaction.editReply({ content: 'Please provide a switch, system or panel that you want to locate.' });
+    if (!target) return interaction.editReply({ embeds: [emptyTargetEmbed] });
 
     // Replace whitespace characters with a hyphen.
     const cleanTarget = target.replace(/\s/g, '-');
