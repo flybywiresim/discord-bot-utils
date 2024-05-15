@@ -160,6 +160,7 @@ export const paVideoPanel: Panel = {
     imagePath: `${OVHD_IMAGE_BASE_URL}/pa_video.png`,
     identifiers: [
         'pa-panel',
+        'video',
         'cockpit-video-panel',
         'cockpit-door-video',
         'cockpit-door-video-switch',
