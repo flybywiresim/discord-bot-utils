@@ -9,7 +9,7 @@ export const instrumentLightingPanel: Panel = {
     title: 'FlyByWire A32NX | Instrument Lighting Control Panel',
     docsUrl: `${FRONT_DOCS_BASE_URL}/ilcp/`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
-    imagePath: `${FRONT_IMAGES_BASE_URL}/instrument-lighting.png`,
+    imagePath: `${FRONT_IMAGES_BASE_URL}/instrument_lighting.png`,
     identifiers: [
         'instrument-lighting-panel',
         'gpws-gs-button',
@@ -123,7 +123,7 @@ export const autobrakeAndGearPanel: Panel = {
     title: 'FlyByWire A32NX | Autobrake and Gear Indications',
     docsUrl: `${FRONT_DOCS_BASE_URL}/autobrake-gear`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
-    imagePath: `${FRONT_IMAGES_BASE_URL}/autobrake-gear.png`,
+    imagePath: `${FRONT_IMAGES_BASE_URL}/autobrake_gear.png`,
     identifiers: [
         'ldg-gear-indicator',
         'brk-fan-switch',
@@ -152,7 +152,7 @@ export const accuPressPanel: Panel = {
     title: 'FlyByWire A32NX | Accumulator Pressure Indicator',
     docsUrl: `${FRONT_DOCS_BASE_URL}/accu`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
-    imagePath: `${FRONT_IMAGES_BASE_URL}/accu-press.png`,
+    imagePath: `${FRONT_IMAGES_BASE_URL}/accu_press.png`,
     identifiers: [
         'accu-press',
         'accumulator-pressure-indicator',

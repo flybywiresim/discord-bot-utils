@@ -85,7 +85,7 @@ export const lightKnobsPanel: Panel = {
     title: 'FlyByWire A32NX | Light Knobs Panel',
     docsUrl: `${GLARESHIELD_DOCS_BASE_URL}/light-knobs/`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
-    imagePath: `${GLARESHIELD_IMAGE_BASE_URL}/light-knobs.png`,
+    imagePath: `${GLARESHIELD_IMAGE_BASE_URL}/light_knobs.png`,
     identifiers: [
         'table-light-knob',
         'integral-glareshield-lighting-knob',

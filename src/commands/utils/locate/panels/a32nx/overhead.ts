@@ -93,7 +93,7 @@ export const emerElecPwrPanel: Panel = {
     title: 'FlyByWire A32NX | Emergency Electric Power Panel',
     docsUrl: `${OVHD_DOCS_BASE_URL}/emergency-electric/`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
-    imagePath: `${OVHD_IMAGE_BASE_URL}/emer-elect-pwr.png`,
+    imagePath: `${OVHD_IMAGE_BASE_URL}/emer_elect_pwr.png`,
     identifiers: [
         'emergency-electrical-panel',
         'emer-elec-panel',
@@ -247,7 +247,7 @@ export const antiIcePanel: Panel = {
     title: 'FlyByWire A32NX | Anti Ice Panel',
     docsUrl: `${OVHD_DOCS_BASE_URL}/anti-ice/`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
-    imagePath: `${OVHD_IMAGE_BASE_URL}/anit_ice.png`,
+    imagePath: `${OVHD_IMAGE_BASE_URL}/anti_ice.png`,
     identifiers: [
         'anti-ice-panel',
         'anti-ice',
