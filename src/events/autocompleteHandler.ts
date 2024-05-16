@@ -1,8 +1,6 @@
 import { SlashCommand, event, Events } from '../lib';
 import commandArray from '../commands';
 
-/* eslint-disable no-underscore-dangle */
-
 const commandMap = new Map<string, SlashCommand>();
 
 for (const cmd of commandArray) {
