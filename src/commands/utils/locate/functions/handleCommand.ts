@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction, Colors } from 'discord.js';
 import { Panel } from '../panels/panel';
-import { makeEmbed } from '../../../../lib';
+import { makeEmbed, makeLines } from '../../../../lib';
 
 const emptyTargetEmbed = makeEmbed({
     title: 'Locate - Empty target',
@@ -17,12 +17,16 @@ const invalidTargetEmbed = makeEmbed({
 const locateEmbed = (panel: Panel) => makeEmbed({
     title: panel.title,
     url: panel.docsUrl,
-    description: `Learn more about the ${panel.name} and the flight deck:\n* [${panel.name} Documentation](${panel.docsUrl})\n* [Flight Deck Overview](${panel.flightDeckUrl})`,
+    description: makeLines([
+        `Learn more about the ${panel.name} and the flight deck:`,
+        `* [${panel.name} Documentation](${panel.docsUrl})`,
+        `* [Flight Deck Overview](${panel.flightDeckUrl})`,
+    ]),
     image: { url: panel.imageUrl },
     footer: { text: 'Tip: Click the image to view in full size' },
 });
 
-export const handleCommand = async (interaction: ChatInputCommandInteraction<'cached'>, panelMap: Map<string, Panel>) => {
+export async function handleCommand(interaction: ChatInputCommandInteraction<'cached'>, panelMap: Map<string, Panel>) {
     const target = interaction.options.getString('target');
 
     if (!target) return interaction.editReply({ embeds: [emptyTargetEmbed] });
@@ -36,4 +40,4 @@ export const handleCommand = async (interaction: ChatInputCommandInteraction<'ca
     const panel = panelMap.get(cleanTarget)!;
 
     return interaction.editReply({ embeds: [locateEmbed(panel)] });
-};
+}

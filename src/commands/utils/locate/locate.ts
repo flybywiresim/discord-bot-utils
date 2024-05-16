@@ -1,8 +1,7 @@
 import { ApplicationCommandOptionChoiceData, ApplicationCommandOptionType, ApplicationCommandType } from 'discord.js';
 import { Panel } from './panels/panel';
 import { a32nxPanels } from './panels/a32nx/a32nx-panels';
-import { slashCommand, slashCommandStructure } from '../../../lib';
-import { AutocompleteCallback } from '../../../lib/autocomplete';
+import { slashCommand, slashCommandStructure, AutocompleteCallback } from '../../../lib';
 import { filterSearchResults } from './functions/filterSearchResults';
 import { handleCommand } from './functions/handleCommand';
 
@@ -66,7 +65,7 @@ const autocompleteCallback: AutocompleteCallback = ({ interaction }) => {
     // Replace whitespace characters with a hyphen.
     const cleanTarget = target.replace(/\s/g, '-');
 
-    let choices: ApplicationCommandOptionChoiceData<string | number>[];
+    let choices: ApplicationCommandOptionChoiceData<string>[];
     switch (subcommand) {
     case 'a32nx':
         choices = filterSearchResults(cleanTarget, a32nxPanelMap);

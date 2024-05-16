@@ -1,14 +1,14 @@
-import { DOCS_BASE_URLS, IMAGE_BASE_URLS } from '../../base-urls';
+import { LOCATE_DOCS_BASE_URLS, LOCATE_IMAGE_BASE_URLS } from '../../base-urls';
 import { Panel } from '../panel';
 
-const FRONT_DOCS_BASE_URL = DOCS_BASE_URLS.a32nx.front;
-const FRONT_IMAGE_BASE_URL = IMAGE_BASE_URLS.a32nx.front;
+const FRONT_DOCS_BASE_URL = LOCATE_DOCS_BASE_URLS.a32nx.front;
+const FRONT_IMAGE_BASE_URL = LOCATE_IMAGE_BASE_URLS.a32nx.front;
 
 export const instrumentLightingPanel: Panel = {
     name: 'Instrument Lighting Control Panel',
     title: 'FlyByWire A32NX | Instrument Lighting Control Panel',
     docsUrl: `${FRONT_DOCS_BASE_URL}/ilcp/`,
-    flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
+    flightDeckUrl: LOCATE_DOCS_BASE_URLS.a32nx.flightdeck,
     imageUrl: `${FRONT_IMAGE_BASE_URL}/instrument_lighting.png`,
     identifiers: [
         'instrument-brightness',
@@ -26,7 +26,7 @@ export const pfd: Panel = {
     name: 'PFD',
     title: 'FlyByWire A32NX | Primary Flight Display (PFD)',
     docsUrl: `${FRONT_DOCS_BASE_URL}/pfd`,
-    flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
+    flightDeckUrl: LOCATE_DOCS_BASE_URLS.a32nx.flightdeck,
     imageUrl: `${FRONT_IMAGE_BASE_URL}/pfd.png`,
     identifiers: [
         'pfd',
@@ -49,7 +49,7 @@ export const nd: Panel = {
     name: 'ND',
     title: 'FlyByWire A32NX | Navigation Display (ND)',
     docsUrl: `${FRONT_DOCS_BASE_URL}/nd`,
-    flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
+    flightDeckUrl: LOCATE_DOCS_BASE_URLS.a32nx.flightdeck,
     imageUrl: `${FRONT_IMAGE_BASE_URL}/nd.png`,
     identifiers: [
         'nd',
@@ -64,7 +64,7 @@ export const isis: Panel = {
     name: 'ISIS',
     title: 'FlyByWire A32NX | Integrated Standby Instrument System (ISIS)',
     docsUrl: `${FRONT_DOCS_BASE_URL}/isis`,
-    flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
+    flightDeckUrl: LOCATE_DOCS_BASE_URLS.a32nx.flightdeck,
     imageUrl: `${FRONT_IMAGE_BASE_URL}/isis.png`,
     identifiers: [
         'isis',
@@ -77,7 +77,7 @@ export const dcdu: Panel = {
     name: 'DCDU',
     title: 'FlyByWire A32NX | Datalink Ctl and Display Unit (DCDU)',
     docsUrl: `${FRONT_DOCS_BASE_URL}/dcdu`,
-    flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
+    flightDeckUrl: LOCATE_DOCS_BASE_URLS.a32nx.flightdeck,
     imageUrl: `${FRONT_IMAGE_BASE_URL}/dcdu.png`,
     identifiers: [
         'dcdu',
@@ -90,7 +90,7 @@ export const ewd: Panel = {
     name: 'E/WD',
     title: 'FlyByWire A32NX | Engine and Warning Display (E/WD) (Upper ECAM)',
     docsUrl: `${FRONT_DOCS_BASE_URL}/upper-ecam`,
-    flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
+    flightDeckUrl: LOCATE_DOCS_BASE_URLS.a32nx.flightdeck,
     imageUrl: `${FRONT_IMAGE_BASE_URL}/ewd.png`,
     identifiers: [
         'ecam-upper',
@@ -105,7 +105,7 @@ export const sd: Panel = {
     name: 'SD',
     title: 'FlyByWire A32NX | System Display (SD) (Lower ECAM)',
     docsUrl: `${FRONT_DOCS_BASE_URL}/lower-ecam`,
-    flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
+    flightDeckUrl: LOCATE_DOCS_BASE_URLS.a32nx.flightdeck,
     imageUrl: `${FRONT_IMAGE_BASE_URL}/sd.png`,
     identifiers: [
         'sd',
@@ -124,7 +124,7 @@ export const autobrakeAndGearPanel: Panel = {
     name: 'Autobrake and Gear Indicator',
     title: 'FlyByWire A32NX | Autobrake and Gear Indications',
     docsUrl: `${FRONT_DOCS_BASE_URL}/autobrake-gear`,
-    flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
+    flightDeckUrl: LOCATE_DOCS_BASE_URLS.a32nx.flightdeck,
     imageUrl: `${FRONT_IMAGE_BASE_URL}/autobrake_gear.png`,
     identifiers: [
         'gear',
@@ -142,7 +142,7 @@ export const clockPanel: Panel = {
     name: 'Clock Panel',
     title: 'FlyByWire A32NX | Clock',
     docsUrl: `${FRONT_DOCS_BASE_URL}/clock`,
-    flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
+    flightDeckUrl: LOCATE_DOCS_BASE_URLS.a32nx.flightdeck,
     imageUrl: `${FRONT_IMAGE_BASE_URL}/clock.png`,
     identifiers: [
         'clock',
@@ -154,7 +154,7 @@ export const accuPressPanel: Panel = {
     name: 'Accumulator Pressure Indicator',
     title: 'FlyByWire A32NX | Accumulator Pressure Indicator',
     docsUrl: `${FRONT_DOCS_BASE_URL}/accu`,
-    flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
+    flightDeckUrl: LOCATE_DOCS_BASE_URLS.a32nx.flightdeck,
     imageUrl: `${FRONT_IMAGE_BASE_URL}/accu_press.png`,
     identifiers: [
         'accu-press',

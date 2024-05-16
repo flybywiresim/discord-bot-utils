@@ -18,7 +18,7 @@ export const filterSearchResults = (query: string, source: Map<string, Panel>) =
     });
 
     // Limit the number of returned targets to 25. (Discord limitation)
-    const choices: ApplicationCommandOptionChoiceData<string | number>[] = [];
+    const choices: ApplicationCommandOptionChoiceData<string>[] = [];
     for (let i = 0; i < filteredTargets.length && i < 25; i++) {
         choices.push({ name: filteredTargets[i], value: filteredTargets[i] });
     }
