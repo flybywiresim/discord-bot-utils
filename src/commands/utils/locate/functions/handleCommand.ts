@@ -32,7 +32,7 @@ export async function handleCommand(interaction: ChatInputCommandInteraction<'ca
     if (!target) return interaction.editReply({ embeds: [emptyTargetEmbed] });
 
     // Replace whitespace characters with a hyphen.
-    const cleanTarget = target.replace(/\s/g, '-');
+    const cleanTarget = target.replace(/\s+/g, '-');
 
     if (!Array.from(panelMap.keys()).includes(cleanTarget)) {
         return interaction.editReply({ embeds: [invalidTargetEmbed] });

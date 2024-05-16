@@ -63,7 +63,7 @@ const autocompleteCallback: AutocompleteCallback = ({ interaction }) => {
     if (target.length < 1) return interaction.respond([]);
 
     // Replace whitespace characters with a hyphen.
-    const cleanTarget = target.replace(/\s/g, '-');
+    const cleanTarget = target.replace(/\s+/g, '-');
 
     let choices: ApplicationCommandOptionChoiceData<string>[];
     switch (subcommand) {
