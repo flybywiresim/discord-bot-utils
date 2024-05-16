@@ -1,6 +1,7 @@
 import { ChatInputCommandInteraction, Colors } from 'discord.js';
 import { Panel } from '../panels/panel';
 import { makeEmbed, makeLines } from '../../../../lib';
+import { cleanTargetQuery } from './cleanTargetQuery';
 
 const emptyTargetEmbed = makeEmbed({
     title: 'Locate - Empty target',
@@ -32,7 +33,7 @@ export async function handleCommand(interaction: ChatInputCommandInteraction<'ca
     if (!target) return interaction.editReply({ embeds: [emptyTargetEmbed] });
 
     // Replace whitespace characters with a hyphen.
-    const cleanTarget = target.replace(/\s+/g, '-');
+    const cleanTarget = cleanTargetQuery(target);
 
     if (!Array.from(panelMap.keys()).includes(cleanTarget)) {
         return interaction.editReply({ embeds: [invalidTargetEmbed] });

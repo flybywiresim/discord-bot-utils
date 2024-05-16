@@ -4,6 +4,7 @@ import { a32nxPanels } from './panels/a32nx/a32nx-panels';
 import { slashCommand, slashCommandStructure, AutocompleteCallback } from '../../../lib';
 import { filterSearchResults } from './functions/filterSearchResults';
 import { handleCommand } from './functions/handleCommand';
+import { cleanTargetQuery } from './functions/cleanTargetQuery';
 
 const a32nxPanelMap: Map<string, Panel> = new Map();
 for (const panel of a32nxPanels) {
@@ -63,7 +64,7 @@ const autocompleteCallback: AutocompleteCallback = ({ interaction }) => {
     if (target.length < 1) return interaction.respond([]);
 
     // Replace whitespace characters with a hyphen.
-    const cleanTarget = target.replace(/\s+/g, '-');
+    const cleanTarget = cleanTargetQuery(target);
 
     let choices: ApplicationCommandOptionChoiceData<string>[];
     switch (subcommand) {
