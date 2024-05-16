@@ -73,7 +73,8 @@ const autocompleteCallback: AutocompleteCallback = ({ interaction }) => {
         break;
     /* case 'a380x':
         choices = filterSearchResults(cleanTarget, a380xPanelMap);
-        break; */
+        break;
+    */
     default:
         return interaction.respond([]);
     }

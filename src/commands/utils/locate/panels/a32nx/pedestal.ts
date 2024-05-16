@@ -9,7 +9,7 @@ export const console: Panel = {
     title: 'FlyByWire A32NX | Console',
     docsUrl: `${PEDESTAL_DOCS_BASE_URL}/console`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
-    imagePath: `${PEDESTAL_IMAGE_BASE_URL}/console.png`,
+    imageUrl: `${PEDESTAL_IMAGE_BASE_URL}/console.png`,
     identifiers: [
         'console',
         'sidestick',
@@ -26,7 +26,7 @@ export const mcdu: Panel = {
     title: 'FlyByWire A32NX | Multipurpose Control & Display Unit (MCDU)',
     docsUrl: `${PEDESTAL_DOCS_BASE_URL}/mcdu`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
-    imagePath: `${PEDESTAL_IMAGE_BASE_URL}/mcdu.png`,
+    imageUrl: `${PEDESTAL_IMAGE_BASE_URL}/mcdu.png`,
     identifiers: [
         'fms',
         'cdu',
@@ -40,7 +40,7 @@ export const rmpAcpPanel: Panel = {
     title: 'FlyByWire A32NX | Radio Management and Audio Control Panel',
     docsUrl: `${PEDESTAL_DOCS_BASE_URL}/rmp`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
-    imagePath: `${PEDESTAL_IMAGE_BASE_URL}/rmp_acp.png`,
+    imageUrl: `${PEDESTAL_IMAGE_BASE_URL}/rmp_acp.png`,
     identifiers: [
         'rmp',
         'radio-management-panel',
@@ -55,7 +55,7 @@ export const captPedestalLightingPanel: Panel = {
     title: 'FlyByWire A32NX | Pedestal Lighting Panel (Captain Side)',
     docsUrl: `${PEDESTAL_DOCS_BASE_URL}/lighting-capt`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
-    imagePath: `${PEDESTAL_IMAGE_BASE_URL}/capt_pedestal_lt.png`,
+    imageUrl: `${PEDESTAL_IMAGE_BASE_URL}/capt_pedestal_lt.png`,
     identifiers: [
         'captain-pedestal-lighting-panel',
     ],
@@ -66,7 +66,7 @@ export const wxPanel: Panel = {
     title: 'Weather Radar Panel',
     docsUrl: `${PEDESTAL_DOCS_BASE_URL}/radar`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
-    imagePath: `${PEDESTAL_IMAGE_BASE_URL}/wx_radar.png`,
+    imageUrl: `${PEDESTAL_IMAGE_BASE_URL}/wx_radar.png`,
     identifiers: [
         'wx',
         'weather-radar',
@@ -81,7 +81,7 @@ export const speedBrake: Panel = {
     title: 'FlyByWire A32NX | Speed Brake',
     docsUrl: `${PEDESTAL_DOCS_BASE_URL}/speedbrake`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
-    imagePath: `${PEDESTAL_IMAGE_BASE_URL}/spd_brk.png`,
+    imageUrl: `${PEDESTAL_IMAGE_BASE_URL}/spd_brk.png`,
     identifiers: [
         'speed-brake',
         'spd-brk',
@@ -95,7 +95,7 @@ export const cockpitDoorPanel: Panel = {
     title: 'FlyByWire A32NX | Cockpit Door Panel',
     docsUrl: `${PEDESTAL_DOCS_BASE_URL}/cockpit-door`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
-    imagePath: `${PEDESTAL_IMAGE_BASE_URL}/cockpit_door.png`,
+    imageUrl: `${PEDESTAL_IMAGE_BASE_URL}/cockpit_door.png`,
     identifiers: [
         'cockpit-door',
         'cockpit-door-panel',
@@ -109,7 +109,7 @@ export const switchingPanel: Panel = {
     title: 'FlyByWire A32NX | Switching Panel',
     docsUrl: `${PEDESTAL_DOCS_BASE_URL}/switching`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
-    imagePath: `${PEDESTAL_IMAGE_BASE_URL}/switching.png`,
+    imageUrl: `${PEDESTAL_IMAGE_BASE_URL}/switching.png`,
     identifiers: [
         'switching',
         'switching-panel',
@@ -125,7 +125,7 @@ export const ecamControlPanel: Panel = {
     title: 'FlyByWire A32NX | ECAM Control Panel',
     docsUrl: `${PEDESTAL_DOCS_BASE_URL}/ecam-control`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
-    imagePath: `${PEDESTAL_IMAGE_BASE_URL}/ecam_ctl.png`,
+    imageUrl: `${PEDESTAL_IMAGE_BASE_URL}/ecam_ctl.png`,
     identifiers: [
         'ecam-control',
         'upper-ecam-display-brightness',
@@ -143,7 +143,7 @@ export const thrLvrPitchTrim: Panel = {
     title: 'FlyByWire A32NX | Thrust Lever and Pitch Trim Column',
     docsUrl: `${PEDESTAL_DOCS_BASE_URL}/thrust-pitch-trim`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
-    imagePath: `${PEDESTAL_IMAGE_BASE_URL}/thr_lvrs_pitch_trim.png`,
+    imageUrl: `${PEDESTAL_IMAGE_BASE_URL}/thr_lvrs_pitch_trim.png`,
     identifiers: [
         'thr-lvr',
         'thrust-levers',
@@ -164,7 +164,7 @@ export const engPanel: Panel = {
     title: 'FlyByWire A32NX | Engine Panel',
     docsUrl: `${PEDESTAL_DOCS_BASE_URL}/engine`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
-    imagePath: `${PEDESTAL_IMAGE_BASE_URL}/eng.png`,
+    imageUrl: `${PEDESTAL_IMAGE_BASE_URL}/eng.png`,
     identifiers: [
         'engine-panel',
         'engine-master',
@@ -179,7 +179,7 @@ export const rudderTrim: Panel = {
     title: 'FlyByWire A32NX | Rudder Trim Panel',
     docsUrl: `${PEDESTAL_DOCS_BASE_URL}/rudder-trim`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
-    imagePath: `${PEDESTAL_IMAGE_BASE_URL}/rudder_trim.png`,
+    imageUrl: `${PEDESTAL_IMAGE_BASE_URL}/rudder_trim.png`,
     identifiers: [
         'rudder-trim',
     ],
@@ -190,7 +190,7 @@ export const parkBrkPanel: Panel = {
     title: 'FlyByWire A32NX | Parking Brake Panel',
     docsUrl: `${PEDESTAL_DOCS_BASE_URL}/parking-brake`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
-    imagePath: `${PEDESTAL_IMAGE_BASE_URL}/park_brk.png`,
+    imageUrl: `${PEDESTAL_IMAGE_BASE_URL}/park_brk.png`,
     identifiers: [
         'parking-brake',
         'park-brk',
@@ -202,7 +202,7 @@ export const gravityGearExtensionPanel: Panel = {
     title: 'FlyByWire A32NX | Emergency Gravity Gear Extension Panel',
     docsUrl: `${PEDESTAL_DOCS_BASE_URL}/gravity-gear-ext`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
-    imagePath: `${PEDESTAL_IMAGE_BASE_URL}/gravity_gear_extn.png`,
+    imageUrl: `${PEDESTAL_IMAGE_BASE_URL}/gravity_gear_extn.png`,
     identifiers: [
         'gravity-gear-extension',
     ],
@@ -213,7 +213,7 @@ export const aidsDfdrPanel: Panel = {
     title: 'FlyByWire A32NX | AIDS, DFDR  Panel',
     docsUrl: `${PEDESTAL_DOCS_BASE_URL}/lighting-aids-dfdr`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
-    imagePath: `${PEDESTAL_IMAGE_BASE_URL}/aids_dfdr.png`,
+    imageUrl: `${PEDESTAL_IMAGE_BASE_URL}/aids_dfdr.png`,
     identifiers: [
         'aids',
         'dfdr',
@@ -229,7 +229,7 @@ export const atcTcasPanel: Panel = {
     title: 'FlyByWire A32NX | ATC TCAS Panel',
     docsUrl: `${PEDESTAL_DOCS_BASE_URL}/atc-tcas`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
-    imagePath: `${PEDESTAL_IMAGE_BASE_URL}/atc_tcas.png`,
+    imageUrl: `${PEDESTAL_IMAGE_BASE_URL}/atc_tcas.png`,
     identifiers: [
         'xpdr',
         'atc-tcas-panel',
@@ -244,7 +244,7 @@ export const flaps: Panel = {
     title: 'FlyByWire A32NX | Flaps',
     docsUrl: `${PEDESTAL_DOCS_BASE_URL}/flaps`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
-    imagePath: `${PEDESTAL_IMAGE_BASE_URL}/flaps.png`,
+    imageUrl: `${PEDESTAL_IMAGE_BASE_URL}/flaps.png`,
     identifiers: [
         'flaps',
     ],
@@ -255,7 +255,7 @@ export const printer: Panel = {
     title: 'FlyByWire A32NX | Printer',
     docsUrl: `${PEDESTAL_DOCS_BASE_URL}/printer`,
     flightDeckUrl: DOCS_BASE_URLS.a32nx.flightdeck,
-    imagePath: `${PEDESTAL_IMAGE_BASE_URL}/printer.png`,
+    imageUrl: `${PEDESTAL_IMAGE_BASE_URL}/printer.png`,
     identifiers: [
         'printer',
     ],

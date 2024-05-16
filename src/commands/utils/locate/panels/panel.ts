@@ -1,11 +1,11 @@
 export interface Panel {
     /**
-     * The name of the Panel. This should be able to be used in sentences.
+     * The name of the Panel. This should be usable in sentences.
      */
     name: string;
 
     /**
-     * The title of the Panel. - Will be used as the embed title.
+     * The title of the Panel. -> Used as the embed title.
      */
     title: string;
 
@@ -15,14 +15,14 @@ export interface Panel {
     docsUrl: string;
 
     /**
-     * The URL to documentation of the flight this panel belongs to.
+     * The URL to documentation of the flight deck this panel belongs to.
      */
     flightDeckUrl: string;
 
     /**
-     * The path to the image that shows the location of this panel.
+     * The URL to the image that shows the location of this panel.
      */
-    imagePath: string;
+    imageUrl: string;
 
     /**
      * The search queries that lead to this panel.
