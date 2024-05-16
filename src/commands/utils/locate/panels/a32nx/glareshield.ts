@@ -13,7 +13,7 @@ export const warningPanel: Panel = {
     identifiers: [
         'warning',
         'warning-panel',
-        'atc-msg',
+        'atc-msg-button',
         'autoland-warning-light',
         'master-caution',
         'master-warning',
