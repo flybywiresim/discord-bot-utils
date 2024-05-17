@@ -28,7 +28,7 @@ export async function handleListFaq(interaction: ChatInputCommandInteraction<'ca
                 return new Promise((resolve) => {
                     resolve(`I can't find the moderator, here is the stored ID: ${currentFaq.moderatorID}`);
                 });
-            } /* Return new promise that resolves the moderator id*/));
+            }));
         const moderatorUsers = await Promise.all(moderatorPromises);
 
         for (let i = 0; i < faqs.length; i++) {
