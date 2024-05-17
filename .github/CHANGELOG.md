@@ -2,6 +2,7 @@
 
 Update <small>_ May 2024</small>
 
+- fix: lint workflow failing silently (17/05/2024)
 - chore: fix eol issues on Windows (17/05/2024)
 
 Update <small>_ April 2024</small>
