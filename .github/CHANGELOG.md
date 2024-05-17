@@ -2,7 +2,7 @@
 
 Update <small>_ May 2024</small>
 
-- chore: fix eol issues on Windows
+- chore: fix eol issues on Windows (17/05/2024)
 
 Update <small>_ April 2024</small>
 
