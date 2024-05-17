@@ -9,8 +9,8 @@
     "dev": "nodemon --config nodemon.json src/index.ts",
     "build": "tsc",
     "build:digitalocean": "npm ci --include=dev && npm run build",
-    "lint": "eslint \"src/**/**/*.ts\"",
-    "lint-fix": "eslint \"src/**/**/*.ts\" --fix"
+    "lint": "eslint src/**/**/*.ts",
+    "lint-fix": "eslint src/**/**/*.ts --fix"
   },
   "author": "FlyByWire Simulations",
   "license": "AGPL-3.0",
