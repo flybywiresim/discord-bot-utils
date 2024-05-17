@@ -23,6 +23,7 @@ export async function handleListFaq(interaction: ChatInputCommandInteraction<'ca
         const faqFields: { name: string; value: string; }[] = [];
 
         const moderatorPromises = faqs.map((currentFaq) => interaction.client.users.fetch(currentFaq.moderatorID!)
+            // Added for better readability
             // eslint-disable-next-line arrow-body-style
             .catch(() => {
                 return new Promise((resolve) => {
