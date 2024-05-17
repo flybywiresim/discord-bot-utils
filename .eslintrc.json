@@ -30,6 +30,7 @@
     ],
     // overrides airbnb, use sparingly
     "rules": {
+        "linebreak-style": "off",
         "object-curly-newline": ["error", { "multiline": true }],
         "max-len": "off",
         "spaced-comment": "off"
