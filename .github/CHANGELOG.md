@@ -2,7 +2,7 @@
 
 Update <small>_ May 2024</small>
 
-- feat: add support for autocomplete (CHANGE DATE)
+- feat: add support for autocomplete (22/05/2024)
 - fix: lint workflow failing silently (18/05/2024)
 - chore: fix eol issues on Windows (17/05/2024)
 
