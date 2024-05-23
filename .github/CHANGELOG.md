@@ -2,6 +2,7 @@
 
 Update <small>_ May 2024</small>
 
+- feat: migrate birthday handler to scheduler job (23/05/2024)
 - chore: load .env before config (23/05/2024)
 - fix: lint workflow failing silently (18/05/2024)
 - chore: fix eol issues on Windows (17/05/2024)
