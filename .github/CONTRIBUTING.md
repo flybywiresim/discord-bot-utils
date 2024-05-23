@@ -199,11 +199,23 @@ If you need help creating a command, you may find it useful to copy an existing 
 
 ## Example Slash Commands
 
+### Autocomplete
+
+An autocomplete callback function of type [`AutocompleteCallback`](../src/lib/autocomplete.ts) can be passed to `slashCommand()` as a third argument.
+
+> [!NOTE]
+> In order for autocomplete to work, you have to set the `autocomplete` flag of your command option to true.
+
+> [!IMPORTANT]
+> Autocomplete choices are not enforced by the Discord client so make sure you handle invalid user input!
+
+---
+
 The basic structure of such a command looks similar to this example:
 
 ```ts
 import { ApplicationCommandOptionType, ApplicationCommandType } from 'discord.js';
-import { slashCommand, slashCommandStructure, makeEmbed } from '../../lib';
+import { slashCommand, slashCommandStructure, AutocompleteCallback, makeEmbed } from '../../lib';
 
 const data = slashCommandStructure({
     name: 'ping',
@@ -217,8 +229,23 @@ const data = slashCommandStructure({
         type: ApplicationCommandOptionType.String,
         max_length: 100,
         required: false,
+        autocomplete: true, // Optional - This is only required if you plan on using autocomplete for your command.
     }],
 });
+
+// Optional - This is only required if you plan on using autocomplete for your command.
+const autocompleteCallback: AutocompleteCallback = ({ interaction }) => {
+    // Autocomplete logic goes here
+    const choices = [
+        {
+            name: 'Display Name',
+            value: 'Value that is actually sent to your bot.'
+        },
+    ];
+
+    // If you can't autocomplete anything respond with an empty array.
+    return interaction.respond(choices);
+};
 
 export default slashCommand(data, async ({ interaction }) => {
     const msg = interaction.options.getString('message') ?? 'Pong 🏓';
@@ -226,7 +253,7 @@ export default slashCommand(data, async ({ interaction }) => {
     const pongEmbed = makeEmbed({ description: msg });
 
     return interaction.reply({ embeds: [pongEmbed] });
-});
+}, autocompleteCallback); // Optional - This is only required if you plan on using autocomplete for your command.
 ```
 
 ## Command Permissions

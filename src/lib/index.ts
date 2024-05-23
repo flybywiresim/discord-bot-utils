@@ -10,6 +10,7 @@ export * from './replies';
 export * from './contextMenuCommand';
 export * from './durationInEnglish';
 export * from './genericPagination';
+export * from './autocomplete';
 
 //Schemas
 export * from './schemas/infractionSchema';
