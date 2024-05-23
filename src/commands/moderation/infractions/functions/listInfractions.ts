@@ -63,32 +63,44 @@ export async function handleListInfraction(interaction: CommandInteraction, user
             notesLength: userNotes.length.toString(),
         };
 
+        type InfractionArray = typeof warnInfractions
+            | typeof timeoutInfractions
+            | typeof scamLogInfractions
+            | typeof banInfractions
+            | typeof unbanInfractions
+            | typeof userNotes;
+
+        const fetchModerators = (infractions: InfractionArray) => {
+            const moderatorPromises = infractions.map((infraction) => interaction.client.users.fetch(infraction.moderatorID!)
+                // Disabled for readability
+                // eslint-disable-next-line arrow-body-style
+                .catch(() => {
+                    return new Promise((resolve) => {
+                        resolve(`I can't find the moderator, here is the stored ID: ${infraction.moderatorID}`);
+                    });
+                }));
+
+            return Promise.all(moderatorPromises);
+        };
+
         // Warns
-
         const warnFields: { name: string; value: string }[] = [];
-        for (const infraction of warnInfractions) {
-            const index = warnInfractions.indexOf(infraction);
-            let moderatorUser;
-            try {
-                const moderator = await interaction.client.users.fetch(infraction.moderatorID!);
-                moderatorUser = moderator.toString();
-            } catch (error) {
-                moderatorUser = `I can't find the moderator, here is the stored ID ${infraction.moderatorID}`;
-            }
+        const warnModeratorUsers = await fetchModerators(warnInfractions);
 
-            const formattedDate: string = moment(infraction.date)
+        for (let i = 0; i < warnInfractions.length; i++) {
+            const formattedDate: string = moment(warnInfractions[i].date)
                 .utcOffset(0)
                 .format();
 
             warnFields.push(
                 {
-                    name: `Warn #${index + 1}`,
+                    name: `Warn #${i + 1}`,
                     value:
-                        `**Type:** ${infraction.infractionType}\n`
-                        + `**Moderator:** ${moderatorUser}\n`
-                        + `**Reason:** ${infraction.reason}\n`
+                        `**Type:** ${warnInfractions[i].infractionType}\n`
+                        + `**Moderator:** ${warnModeratorUsers[i]}\n`
+                        + `**Reason:** ${warnInfractions[i].reason}\n`
                         + `**Date:** ${formattedDate}\n`
-                        + `**Infraction ID:** ${infraction.infractionID}`,
+                        + `**Infraction ID:** ${warnInfractions[i].infractionID}`,
                 },
                 {
                     name: '',
@@ -108,32 +120,24 @@ export async function handleListInfraction(interaction: CommandInteraction, user
         });
 
         //Timeouts
-
         const timeoutFields: { name: string; value: string }[] = [];
-        for (const infraction of timeoutInfractions) {
-            const index = timeoutInfractions.indexOf(infraction);
-            let moderatorUser;
-            try {
-                const moderator = await interaction.client.users.fetch(infraction.moderatorID!);
-                moderatorUser = moderator.toString();
-            } catch (error) {
-                moderatorUser = `I can't find the moderator, here is the stored ID ${infraction.moderatorID}`;
-            }
+        const timeoutModeratorUsers = await fetchModerators(timeoutInfractions);
 
-            const formattedDate: string = moment(infraction.date)
+        for (let i = 0; i < timeoutInfractions.length; i++) {
+            const formattedDate: string = moment(timeoutInfractions[i].date)
                 .utcOffset(0)
                 .format();
 
             timeoutFields.push(
                 {
-                    name: `Timeout #${index + 1}`,
+                    name: `Timeout #${i + 1}`,
                     value:
-                        `**Type:** ${infraction.infractionType}\n`
-                        + `**Moderator:** ${moderatorUser}\n`
-                        + `**Reason:** ${infraction.reason}\n`
-                        + `**Duration:** ${infraction.duration !== undefined ? infraction.duration : 'No duration specified, this user was timed out before the bot upgrade!'}\n`
+                        `**Type:** ${timeoutInfractions[i].infractionType}\n`
+                        + `**Moderator:** ${timeoutModeratorUsers[i]}\n`
+                        + `**Reason:** ${timeoutInfractions[i].reason}\n`
+                        + `**Duration:** ${timeoutInfractions[i].duration !== undefined ? timeoutInfractions[i].duration : 'No duration specified, this user was timed out before the bot upgrade!'}\n`
                         + `**Date:** ${formattedDate}\n`
-                        + `**Infraction ID:** ${infraction.infractionID}`,
+                        + `**Infraction ID:** ${timeoutInfractions[i].infractionID}`,
                 },
                 {
                     name: '',
@@ -153,31 +157,23 @@ export async function handleListInfraction(interaction: CommandInteraction, user
         });
 
         //ScamLogs
-
         const scamLogFields: { name: string; value: string }[] = [];
-        for (const infraction of scamLogInfractions) {
-            const index = scamLogInfractions.indexOf(infraction);
-            let moderatorUser;
-            try {
-                const moderator = await interaction.client.users.fetch(infraction.moderatorID!);
-                moderatorUser = moderator.toString();
-            } catch (error) {
-                moderatorUser = `I can't find the moderator, here is the stored ID ${infraction.moderatorID}`;
-            }
+        const scamLogModerators = await fetchModerators(scamLogInfractions);
 
-            const formattedDate: string = moment(infraction.date)
+        for (let i = 0; i < scamLogInfractions.length; i++) {
+            const formattedDate: string = moment(scamLogInfractions[i].date)
                 .utcOffset(0)
                 .format();
 
             scamLogFields.push(
                 {
-                    name: `Scam Log #${index + 1}`,
+                    name: `Scam Log #${i + 1}`,
                     value:
-                        `**Type:** ${infraction.infractionType}\n`
-                        + `**Moderator:** ${moderatorUser}\n`
-                        + `**Message Content:** ${infraction.reason}\n`
+                        `**Type:** ${scamLogInfractions[i].infractionType}\n`
+                        + `**Moderator:** ${scamLogModerators[i]}\n`
+                        + `**Message Content:** ${scamLogInfractions[i].reason}\n`
                         + `**Date:** ${formattedDate}\n`
-                        + `**Infraction ID:** ${infraction.infractionID}`,
+                        + `**Infraction ID:** ${scamLogInfractions[i].infractionID}`,
                 },
                 {
                     name: '',
@@ -197,31 +193,23 @@ export async function handleListInfraction(interaction: CommandInteraction, user
         });
 
         //Bans
-
         const banFields: { name: string; value: string }[] = [];
-        for (const infraction of banInfractions) {
-            const index = banInfractions.indexOf(infraction);
-            let moderatorUser;
-            try {
-                const moderator = await interaction.client.users.fetch(infraction.moderatorID!);
-                moderatorUser = moderator.toString();
-            } catch (error) {
-                moderatorUser = `I can't find the moderator, here is the stored ID ${infraction.moderatorID}`;
-            }
+        const banModerators = await fetchModerators(banInfractions);
 
-            const formattedDate: string = moment(infraction.date)
+        for (let i = 0; i < banInfractions.length; i++) {
+            const formattedDate: string = moment(banInfractions[i].date)
                 .utcOffset(0)
                 .format();
 
             banFields.push(
                 {
-                    name: `Ban #${index + 1}`,
+                    name: `Ban #${i + 1}`,
                     value:
-                        `**Type:** ${infraction.infractionType}\n`
-                        + `**Moderator:** ${moderatorUser}\n`
-                        + `**Reason:** ${infraction.reason}\n`
+                        `**Type:** ${banInfractions[i].infractionType}\n`
+                        + `**Moderator:** ${banModerators[i]}\n`
+                        + `**Reason:** ${banInfractions[i].reason}\n`
                         + `**Date:** ${formattedDate}\n`
-                        + `**Infraction ID:** ${infraction.infractionID}`,
+                        + `**Infraction ID:** ${banInfractions[i].infractionID}`,
                 },
                 {
                     name: '',
@@ -241,31 +229,22 @@ export async function handleListInfraction(interaction: CommandInteraction, user
         });
 
         //Unbans
-
         const unbanFields: { name: string; value: string }[] = [];
-        for (const infraction of unbanInfractions) {
-            const index = unbanInfractions.indexOf(infraction);
-            let moderatorUser;
-            try {
-                const moderator = await interaction.client.users.fetch(infraction.moderatorID!);
-                moderatorUser = moderator.toString();
-            } catch (error) {
-                moderatorUser = `I can't find the moderator, here is the stored ID ${infraction.moderatorID}`;
-            }
-
-            const formattedDate: string = moment(infraction.date)
+        const unbanModerators = await fetchModerators(unbanInfractions);
+        for (let i = 0; i < unbanInfractions.length; i++) {
+            const formattedDate: string = moment(unbanInfractions[i].date)
                 .utcOffset(0)
                 .format();
 
             unbanFields.push(
                 {
-                    name: `Unban #${index + 1}`,
+                    name: `Unban #${i + 1}`,
                     value:
-                        `**Type:** ${infraction.infractionType}\n`
-                        + `**Moderator:** ${moderatorUser}\n`
-                        + `**Reason:** ${infraction.reason}\n`
+                        `**Type:** ${unbanInfractions[i].infractionType}\n`
+                        + `**Moderator:** ${unbanModerators[i]}\n`
+                        + `**Reason:** ${unbanInfractions[i].reason}\n`
                         + `**Date:** ${formattedDate}\n`
-                        + `**Infraction ID:** ${infraction.infractionID}`,
+                        + `**Infraction ID:** ${unbanInfractions[i].infractionID}`,
                 },
                 {
                     name: '',
@@ -285,31 +264,23 @@ export async function handleListInfraction(interaction: CommandInteraction, user
         });
 
         //Notes
-
         const noteFields: { name: string; value: string }[] = [];
-        for (const infraction of userNotes) {
-            const index = userNotes.indexOf(infraction);
-            let moderatorUser;
-            try {
-                const moderator = await interaction.client.users.fetch(infraction.moderatorID!);
-                moderatorUser = moderator.toString();
-            } catch (error) {
-                moderatorUser = `I can't find the moderator, here is the stored ID ${infraction.moderatorID}`;
-            }
+        const userNodeModerators = await fetchModerators(userNotes);
 
-            const formattedDate: string = moment(infraction.date)
+        for (let i = 0; i < userNotes.length; i++) {
+            const formattedDate: string = moment(userNotes[i].date)
                 .utcOffset(0)
                 .format();
 
             noteFields.push(
                 {
-                    name: `Note #${index + 1}`,
+                    name: `Note #${i + 1}`,
                     value:
-                        `**Type:** ${infraction.infractionType}\n`
-                        + `**Moderator:** ${moderatorUser}\n`
-                        + `**Note:** ${infraction.reason}\n`
+                        `**Type:** ${userNotes[i].infractionType}\n`
+                        + `**Moderator:** ${userNodeModerators[i]}\n`
+                        + `**Note:** ${userNotes[i].reason}\n`
                         + `**Date:** ${formattedDate}\n`
-                        + `**Infraction ID:** ${infraction.infractionID}`,
+                        + `**Infraction ID:** ${userNotes[i].infractionID}`,
                 },
                 {
                     name: '',
@@ -329,7 +300,6 @@ export async function handleListInfraction(interaction: CommandInteraction, user
         });
 
         //Make the about embed
-
         const aboutEmbed = makeEmbed({
             author: {
                 name: `${discordUser.tag}'s Infractions`,
@@ -382,7 +352,6 @@ export async function handleListInfraction(interaction: CommandInteraction, user
         });
 
         //Collect embeds and send with the paginator
-
         const embeds = [aboutEmbed, warnsEmbed, timeoutsEmbed, scamLogEmbed, banEmbed, unbanEmbed, userNoteEmbed];
         await interaction.deferReply({ ephemeral });
 

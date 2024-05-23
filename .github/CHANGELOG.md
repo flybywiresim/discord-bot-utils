@@ -1,5 +1,16 @@
 ## Changelog
 
+Update <small>_ May 2024</small>
+
+- chore: load .env before config (23/05/2024)
+- fix: lint workflow failing silently (18/05/2024)
+- chore: fix eol issues on Windows (17/05/2024)
+
+Update <small>_ April 2024</small>
+
+- fix: clarify errors in timeout command (30/04/2024)
+- fix: adds mod alerts to the config requirements (30/04/2024)
+
 Update <small>_ March 2024</small>
 
 - feat: migrate bithday handler to scheduler job (24/09/2024)

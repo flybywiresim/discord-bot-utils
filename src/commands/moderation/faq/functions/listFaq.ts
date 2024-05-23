@@ -22,26 +22,27 @@ export async function handleListFaq(interaction: ChatInputCommandInteraction<'ca
         let faqsAddedToPage = 0;
         const faqFields: { name: string; value: string; }[] = [];
 
-        for (const faq of faqs) {
-            const formattedDate: string = moment(faq.dateSet)
-                .utcOffset(0)
-                .format();
-            let moderatorUser;
-            try {
-                const moderator = await interaction.client.users.fetch(faq.moderatorID!);
-                moderatorUser = moderator.toString();
-            } catch (error) {
-                moderatorUser = `I can't find the moderator, here is the stored ID ${faq.moderatorID}`;
-            }
+        const moderatorPromises = faqs.map((currentFaq) => interaction.client.users.fetch(currentFaq.moderatorID!)
+            // Added for better readability
+            // eslint-disable-next-line arrow-body-style
+            .catch(() => {
+                return new Promise((resolve) => {
+                    resolve(`I can't find the moderator, here is the stored ID: ${currentFaq.moderatorID}`);
+                });
+            }));
+        const moderatorUsers = await Promise.all(moderatorPromises);
+
+        for (let i = 0; i < faqs.length; i++) {
+            const formattedDate = moment(faqs[i].dateSet).utcOffset(0).format();
 
             faqFields.push(
                 {
-                    name: `**Title:** ${faq.faqTitle}`,
+                    name: `**Title:** ${faqs[i].faqTitle}`,
                     value:
-                          `**Answer:** ${faq.faqAnswer}\n`
-                        + `**Moderator:** ${moderatorUser}\n`
+                          `**Answer:** ${faqs[i].faqAnswer}\n`
+                        + `**Moderator:** ${moderatorUsers[i]}\n`
                         + `**Date Set:** ${formattedDate}\n`
-                        + `**FAQ ID:** ${faq.id}\n`,
+                        + `**FAQ ID:** ${faqs[i].id}\n`,
                 },
                 {
                     name: '',
