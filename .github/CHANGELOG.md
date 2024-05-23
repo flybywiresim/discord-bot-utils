@@ -2,6 +2,7 @@
 
 Update <small>_ May 2024</small>
 
+- feat: migrate birthday handler to scheduler job (23/05/2024)
 - chore: load .env before config (23/05/2024)
 - fix: lint workflow failing silently (18/05/2024)
 - chore: fix eol issues on Windows (17/05/2024)
@@ -13,7 +14,6 @@ Update <small>_ April 2024</small>
 
 Update <small>_ March 2024</small>
 
-- feat: migrate bithday handler to scheduler job (24/09/2024)
 - fix: birthday handler user caching issue (23/03/2024)
 - feat: adds github issue command (18/03/2024)
 - fix: content change in welcome command (18/03/2024)
