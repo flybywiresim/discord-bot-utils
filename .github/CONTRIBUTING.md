@@ -47,7 +47,7 @@ The `config` folder contains the configuration details for running the bot in th
 
 The config contains different variables and settings which are used by the bot to reference channels, check permissions, use colors, etc. All these values are defined based on the Discord server the bot will connect to and are unique to that server.
 
-You can create your own config json file by copying one of the existing ones and updating the different constants/settings with your own values. This allows you to run the bot in your own environment without having to recompile it from the source.
+You need to create your own config json file by copying one of the existing ones and updating the different constants/settings with your own values. This allows you to run the bot in your own environment without having to recompile it from the source. See [Setting up the config](#setting-up-the-config) for more information.
 
 ### How to use a config
 
@@ -55,28 +55,20 @@ The config system uses the great [node-config](https://github.com/node-config/no
 
 This library will load a file from the `config` folder, based on an environment variable. It can read several types of files, including json, yaml, properties, toml, xml and more. For this bot, the standard is JSON, but nothing stops you from using your own format during development.
 
-As a best practice, it is bad to load a configuration based of the `NODE_ENV` environment variable: `NODE_ENV` has an impact on more than the config, and using custom values for it, could impact the behavior of `node` itself.
+### Setting up the config
 
-Therefore, this project strongly suggests the use of the `NODE_CONFIG_ENV` environment variable to load the config. This will not impact anything other than the configuration being loaded and will not change the behaviour of `node` itself.
+1. Create a file named `development.json` at [../config/](../config/).
+2. Copy the contents of [../config/staging.json](../config/staging.json).
+3. In your `.env` file set `NODE_CONFIG_ENV` to `development`.
+4. Change the `guildId` field to your server's ID.
+5. Update the channel and role IDs to those in your server.
+6. Add your own user ID and that of your test bot to `modLogsExclude`.
 
-The typical value of the `NODE_CONFIG_ENV` environment variable would be:
+> [!WARNING]
+> Not updating the IDs will produce unexpected behavior!
 
-- `staging` - to load the `config/staging.json` config file, for the staging bot, connecting to the staging server
-- `production` - to load the `config/production.json` config file, for the production bot, connecting to the production server
-- `CUSTOM_VALUE` - to load the `config/CUSTOM_VALUE.json` (or another supported extension) config file, for a custom environment
-
-The last example can be used when you have your own development discord server and you want to load your custom config file into the bot.
-
-> [!IMPORTANT]
-> As the config file gets loaded at the very beginning of the process, you can **not** rely on the `.env` file to load the `NODE_CONFIG_ENV` environment variable. You must set it in your environment yourself, before starting the bot!
-
-Set the environment variable before running the bot through whatever means you are comfortable with, in a development shell environment, this can be done as follows:
-
-
-```
-$ export NODE_CONFIG_ENV=my-dev-config
-$ npm run dev
-```
+> [!NOTE]
+> If your feature requires a permanent addition to the config where you do not know the correct ID, leave a note on your PR and a team member will handle it.
 
 ## Setting up the Bot
 
@@ -112,6 +104,9 @@ We recommend running your bot with the development node environment. Set `NODE_E
 ### Running the Bot for the first time and deploying commands
 
 When running the bot for the first time, it is important to set `DEPLOY=true` in your `.env`. This will ensure that commands are registered with Discord. Once the bot has been run once, you can set `DEPLOY=false` to prevent the bot from re-deploying commands every time it starts.
+
+> [!IMPORTANT]
+> There is a daily limit on command creation, so make sure you set `DEPLOY` to false after the first launch!
 
 If you need to re-deploy commands after making changes, you can run the `/deploy-command` command in Discord.
 
@@ -158,9 +153,6 @@ If your command requires environment variables please add them to the `.env.exam
 1. Copy the `.env.example` file to `.env`.
 2. You can do this manually or using the command line by typing `cp .env.example .env`.
 3. Fill out the `.env` file with your environment variables.
-
-> [!NOTE]
-> Don't use the `.env` file to configure the `NODE_CONFIG_ENV` value, while useful to store an expected value, the actual config gets loaded before the `.env` file gets loaed. Check the section on config files in this document for more details.
 
 ### Ban Appeal Form
 

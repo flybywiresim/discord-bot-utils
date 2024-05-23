@@ -7,7 +7,6 @@ import {
     connect,
     setupScheduler,
     Logger,
-    processBirthdays,
     imageBaseUrl,
     getScheduler,
 } from '../lib';
@@ -51,7 +50,7 @@ export default event(Events.ClientReady, async ({ log }, client) => {
         }
     }
 
-    // Connect to MongoDB
+    // Connect to MongoDB and set up scheduler
     let dbConnected = false;
     let dbError: Error | undefined;
     let schedulerConnected = false;
@@ -76,12 +75,7 @@ export default event(Events.ClientReady, async ({ log }, client) => {
             });
     }
 
-    // Set birthday handler
-    const birthdayInterval = setInterval(processBirthdays, 1000 * 60 * 30, client);
-    client.on('disconnect', () => {
-        clearInterval(birthdayInterval);
-    });
-
+    // Set heartbeat handler
     if (schedulerConnected && process.env.HEARTBEAT_URL && process.env.HEARTBEAT_INTERVAL) {
         const scheduler = getScheduler();
         if (scheduler) {
@@ -103,6 +97,29 @@ export default event(Events.ClientReady, async ({ log }, client) => {
         }
     }
 
+    // Set birthday handler
+    if (schedulerConnected && process.env.BIRTHDAY_INTERVAL) {
+        const scheduler = getScheduler();
+        if (scheduler) {
+            const birthdayJobList = await scheduler.jobs({ name: 'postBirthdays' });
+            if (birthdayJobList.length === 0) {
+                scheduler.every(`${process.env.BIRTHDAY_INTERVAL} seconds`, 'postBirthdays', { interval: process.env.BIRTHDAY_INTERVAL });
+                Logger.info(`Birthday job scheduled with interval ${process.env.BIRTHDAY_INTERVAL}`);
+            } else {
+                const birthdayJob = birthdayJobList[0];
+                const { interval } = birthdayJob.attrs.data as { interval: string };
+                if (interval !== process.env.BIRTHDAY_INTERVAL) {
+                    await scheduler.cancel({ name: 'postBirthdays' });
+                    scheduler.every(`${process.env.BIRTHDAY_INTERVAL} seconds`, 'postBirthdays', { interval: process.env.BIRTHDAY_INTERVAL });
+                    Logger.info(`Birthday job rescheduled with new interval ${process.env.BIRTHDAY_INTERVAL}`);
+                } else {
+                    Logger.info('Birthday job already scheduled');
+                }
+            }
+        }
+    }
+
+    // Send bot status message to bot-dev channel
     const botDevChannel = client.channels.resolve(constantsConfig.channels.MOD_LOGS) as TextChannel;
     if (botDevChannel) {
         const currentDate = new Date();

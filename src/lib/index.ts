@@ -9,7 +9,6 @@ export * from './slashCommand';
 export * from './replies';
 export * from './contextMenuCommand';
 export * from './durationInEnglish';
-export * from './birthdayFunction';
 export * from './genericPagination';
 export * from './autocomplete';
 
@@ -21,3 +20,4 @@ export * from './schemas/birthdaySchema';
 //Scheduler Jobs
 export * from './schedulerJobs/autoDisableSlowMode';
 export * from './schedulerJobs/sendHeartbeat';
+export * from './schedulerJobs/postBirthdays';
