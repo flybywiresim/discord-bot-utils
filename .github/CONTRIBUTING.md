@@ -66,7 +66,7 @@ This library will load a file from the `config` folder, based on an environment 
 ### Setting up the env
 
 1. Copy the `.env.example` file and rename it to `.env`.
-3. In your `.env` file replace `NODE_CONFIG_ENV=staging` with `NODE_CONFIG_ENV=development`.
+2. In your `.env` file replace `NODE_CONFIG_ENV=staging` with `NODE_CONFIG_ENV=development`.
 
 > [!WARNING]
 > Not updating the IDs will produce unexpected behavior!
