@@ -30,7 +30,7 @@ Reminder: When submitting a pull request, please ensure you target the `staging`
 
 1. Fork the repository.
 2. Clone to your local system using your IDE of choice.
-3. Make a new branch from staging and name appropriately (e.g. feat: added ADIRS command, fix: typos fixed in ADIRS).
+3. Make a new branch from staging and name it appropriately (e.g. feat: added ADIRS command, fix: typos fixed in ADIRS).
 4. Create/edit the command you are working on.
 5. Test your build locally.
 6. Create a PR to merge your changes into staging.
@@ -58,11 +58,15 @@ This library will load a file from the `config` folder, based on an environment 
 ### Setting up the config
 
 1. Create a file named `development.json` at [../config/](../config/).
-2. Copy the contents of [../config/staging.json](../config/staging.json).
-3. In your `.env` file set `NODE_CONFIG_ENV` to `development`.
-4. Change the `guildId` field to your server's ID.
+2. Paste the contents of [../config/staging.json](../config/staging.json) into `development.json`.
+4. In your `development.json` file replace the `guildId` field with your server ID.
 5. Update the channel and role IDs to those in your server.
-6. Add your own user ID and that of your test bot to `modLogsExclude`.
+6. Add your own user ID and that of your test bot to `userLogExclude`.
+
+### Setting up the env
+
+1. Copy the `.env.example` file and rename it to `.env`.
+3. In your `.env` file replace `NODE_CONFIG_ENV=staging` with `NODE_CONFIG_ENV=development`.
 
 > [!WARNING]
 > Not updating the IDs will produce unexpected behavior!
@@ -77,14 +81,13 @@ This library will load a file from the `config` folder, based on an environment 
 3. Give your application a name.
 4. Navigate to the `Bot` tab and click `Add Bot`. You will have to confirm by clicking `Yes, do it!`.
 5. Click the `Copy` button underneath token. (Do not share this).
-6. Copy the `.env.example` file and rename it to `.env`.
-7. Inside the .env file, type `BOT_SECRET=TOKEN` replacing TOKEN with what you copied in `step 6.`
+6. Inside the `.env` file, find `BOT_SECRET=TOKEN` and replace the `TOKEN` with what you copied in `step 5`.
 
 ## Setting Up Privileged Gateway Intents
 
 Privileged Gateway Intents must now be enabled within the Discord Developer Portal in order for your bot to function. The steps below will explain how to enable them.
 
-1. Log into the Discord website and navigate to the [applications page](https://discord.com/developers/applications) and select your application. Then select `Bot` under `Settings`
+1. Log into the Discord website and navigate to the [applications page](https://discord.com/developers/applications) and select your application. Then select `Bot` under `Settings`.
 2. Scroll down to the Privileged Gateway Intents section and enable all the intents.
 
 ### Inviting the Bot to Your Server
@@ -92,7 +95,7 @@ Privileged Gateway Intents must now be enabled within the Discord Developer Port
 1. Create a Discord server where you can test your bot.
 2. On the [applications page](https://discord.com/developers/applications), select your application and navigate to the `OAuth2` tab. Then select `bot` under the `scopes` section.
 3. Tick `Administrator` box under the `Bot Permissions` section.
-4. Click the `Copy` button and paste it into your search bar in the browser of choice, and invite it to your test server.
+4. Click the `Copy` button and paste it into your search bar in the browser of your choice, and invite it to your test server.
 
 ## Running the Bot
 
@@ -112,7 +115,7 @@ If you need to re-deploy commands after making changes, you can run the `/deploy
 
 Please note: If you are running the bot in a development environment, your commands will be deployed to the guild you have set in your [config file](https://github.com/fbw-devops/fbw-moderation-bot/blob/master/.github/CONTRIBUTING.md#using-different-configurations) (likely your test server). If running in a production environment, your commands will be deployed globally.
 
-When deploying guild commands, they are registered and available immidiately. However, global commands can take up to an hour to be registered and available.
+When deploying guild commands, they are registered and available immediately. However, global commands can take up to an hour to be registered and available.
 
 ## Database Setup
 
@@ -124,7 +127,7 @@ connect your application to your MongoDB instance.
 1. Install MongoDB from [their website](https://www.mongodb.com/docs/manual/tutorial/install-mongodb-on-windows/) or set up an [Atlas cluster](https://www.mongodb.com/cloud/atlas/lp/try2).
 2. If running MongoDB locally, run it [as a service](https://www.mongodb.com/docs/manual/tutorial/install-mongodb-on-windows/#run-mongodb-community-edition-as-a-windows-service) or [from the terminal](https://www.mongodb.com/docs/manual/tutorial/install-mongodb-on-windows/#run-mongodb-community-edition-from-the-command-interpreter).
 3. Create a new database named fbw in your MongoDB instance.
-4. Inside the .env file, on a new line type `MONGODB_URL=URL` replacing URL with your MongoDB access URL.
+4. Inside the .env file, on a new line type `MONGODB_URL=URL` replacing `URL` with your MongoDB access URL.
 
 If you have installed MongoDB locally, your access url will be `mongodb://localhost:27017/fbw`. If you are using Atlas, the connection URL can be found under
 `Connect->Connect your application` in Database, located under Deployments.
@@ -133,11 +136,11 @@ If you have installed MongoDB locally, your access url will be `mongodb://localh
 
 This is a guide on how to set up a MongoDB instance with Docker.
 
-1. Install Docker from [their website](https://www.docker.com/get-started/) and read the guide on how to get started if unsure how to use.
-2. In the .env file, on a new line type `MONGODB_URL=URL` replacing URL with your MongoDB access URL.
-3. In the .env file, on a new line type `MONGODB_DATABASE=DATABASE_NAME` replacing DATABASE with your MongoDB database name.
-4. In the .env file, on a new line type `MONGODB_USERNAME=USER_NAME` replacing USER with your MongoDB username.
-5. In the .env file, on a new line type `MONGODB_PASSWORD=PASSWORD` replacing PASSWORD with your MongoDB password.
+1. Install Docker from [their website](https://www.docker.com/get-started/) and read the guide on how to get started if unsure how to use it.
+2. In the `.env` file, on a new line type `MONGODB_URL=URL` replacing `URL` with your MongoDB access URL.
+3. In the `.env` file, on a new line type `MONGODB_DATABASE=DATABASE_NAME` replacing DATABASE with your MongoDB database name.
+4. In the `.env` file, on a new line type `MONGODB_USERNAME=USER_NAME` replacing USER with your MongoDB username.
+5. In the `.env` file, on a new line type `MONGODB_PASSWORD=PASSWORD` replacing PASSWORD with your MongoDB password.
 6. To run the docker-compose file, run `docker-compose up -d` this will start the MongoDB instance along with mongo-express to view the DB.
 7. To stop the container run `docker-compose down`.
 8. The volumes will be created in the `/data` directory.
@@ -165,15 +168,15 @@ Some commands may require additional tokens. If you would like to test them out 
 ### AVWX (Metar, TAF and Station)
 
 1. Make a free account [here](https://avwx.rest/). Then, follow the steps [here](https://account.avwx.rest/getting-started) to get your token.
-2. Inside the .env file, on a new line type `METAR_TOKEN=TOKEN` replacing TOKEN with what you copied in `step 1`.
-3. Then, on another new line within the .env file, type `STATION_TOKEN=TOKEN` replacing TOKEN with what you copied in `step 1`.
-4. Then, on another new line within the .env file, type `TAF_TOKEN=TOKEN` replacing the TOKEN with what you copied in `step 1`.
+2. Inside the .env file, on a new line type `METAR_TOKEN=TOKEN` replacing `TOKEN` with what you copied in `step 1`.
+3. Then, on another new line within the .env file, type `STATION_TOKEN=TOKEN` replacing `TOKEN` with what you copied in `step 1`.
+4. Then, on another new line within the .env file, type `TAF_TOKEN=TOKEN` replacing the `TOKEN` with what you copied in `step 1`.
 
 ### Wolfram Alpha
 
 1. Select get API access [here](https://products.wolframalpha.com/api/) to create an account.
 2. Once you have an account you will need to get an AppID from [here](https://developer.wolframalpha.com/portal/myapps/).
-3. Inside the .env file, on a new line type `WOLFRAMALPHA_TOKEN=TOKEN` replacing TOKEN with your wolfram alpha AppID.
+3. Inside the `.env` file, on a new line type `WOLFRAMALPHA_TOKEN=TOKEN` replacing `TOKEN` with your wolfram alpha AppID.
 
 ## Adding a New Command
 
@@ -189,7 +192,7 @@ If you need help creating a command, you may find it useful to copy an existing 
 > ### Considerations
 >
 > - Choose user-friendly command names.
-> - Test your build locally before submitting as ready for review.
+> - Test your build locally before submitting it as ready for review.
 
 ## Modifying a Command
 
