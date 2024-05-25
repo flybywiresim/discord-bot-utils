@@ -85,6 +85,9 @@ This library will load a file from the `config` folder, based on an environment 
 5. Click the `Copy` button underneath token. (Do not share this).
 6. Inside the `.env` file, find `BOT_SECRET=TOKEN` and replace the `TOKEN` with what you copied in `step 5`.
 
+> [!NOTE]
+> If you want to use features that rely on 3rd parties like AVWX or WolframAlpha, you need to update their respective environment variables. See below for more information.
+
 ## Setting Up Privileged Gateway Intents
 
 Privileged Gateway Intents must now be enabled within the Discord Developer Portal in order for your bot to function. The steps below will explain how to enable them.
