@@ -1,13 +1,11 @@
-import { ApplicationCommandOptionType, ApplicationCommandType, PermissionsBitField } from 'discord.js';
-import { slashCommand, slashCommandStructure, makeEmbed } from '../../lib';
-
-const ALLOWED_ROLE_IDS = ['775838587639824455', '716718991619653692'];
+import { ApplicationCommandOptionType, ApplicationCommandType, TextChannel } from 'discord.js';
+import { slashCommand, slashCommandStructure, makeEmbed, constantsConfig } from '../../lib';
 
 const data = slashCommandStructure({
     name: 'clear',
     description: 'Delete a specified number of messages in the current channel.',
     type: ApplicationCommandType.ChatInput,
-    default_member_permissions: PermissionsBitField.Flags.ManageMessages.toString(),
+    default_member_permissions: constantsConfig.commandPermission.MANAGE_SERVER,
     dm_permission: false,
     options: [{
         name: 'amount',
@@ -19,7 +17,7 @@ const data = slashCommandStructure({
     }],
 });
 
-export default slashCommand(data, async ({ interaction }) => {
+export default slashCommand(data, async ({ interaction, log, client }) => {
     const amount = interaction.options.getInteger('amount');
 
     if (!interaction.channel || !interaction.channel.isTextBased()) {
@@ -30,16 +28,22 @@ export default slashCommand(data, async ({ interaction }) => {
         return interaction.reply({ content: 'Please specify the number of messages to delete.', ephemeral: true });
     }
 
-    const member = await interaction.guild?.members.fetch(interaction.user.id);
-    const hasAllowedRole = member && member.roles.cache.some((role) => ALLOWED_ROLE_IDS.includes(role.id));
-
-    if (!hasAllowedRole) {
-        return interaction.reply({ content: 'You do not have permission to use this command.', ephemeral: true });
-    }
-
     try {
         const messages = await interaction.channel.bulkDelete(amount, true);
         const replyEmbed = makeEmbed({ description: `Successfully deleted ${messages.size} messages.` });
+
+        const targetChannel = await client.channels.fetch('1237362529965965352');
+
+        if (targetChannel && (targetChannel instanceof TextChannel)) {
+            const authorEmbed = makeEmbed({
+                title: 'Messages Cleared',
+                description: `**Moderator:** ${interaction.member.displayName}\n**Channel:** ${interaction.channel.name}\n**Amount:** ${amount}\n`,
+                timestamp: new Date(),
+            });
+            await (targetChannel as TextChannel).send({ embeds: [authorEmbed] });
+        } else {
+            log('Target channel not found or not a text channel');
+        }
 
         await interaction.reply({ embeds: [replyEmbed], ephemeral: true });
 
@@ -47,13 +51,14 @@ export default slashCommand(data, async ({ interaction }) => {
             try {
                 await interaction.deleteReply();
             } catch (err) {
-                //
+                log('Failed to delete the reply message:', err);
+                await interaction.followUp({ content: 'Failed to delete the reply message.', ephemeral: true });
             }
         }, 5000);
 
         return Promise.resolve();
     } catch (error) {
-        console.error('Error deleting messages:', error);
+        log('Error deleting messages:', error);
         return interaction.reply({ content: 'There was an error trying to delete messages in this channel.', ephemeral: true });
     }
 });
