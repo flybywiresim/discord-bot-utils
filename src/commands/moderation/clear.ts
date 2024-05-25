@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionType, ApplicationCommandType, TextChannel } from 'discord.js';
+import { ApplicationCommandOptionType, ApplicationCommandType, TextChannel, Colors } from 'discord.js';
 import { slashCommand, slashCommandStructure, makeEmbed, constantsConfig } from '../../lib';
 
 const data = slashCommandStructure({
@@ -30,17 +30,31 @@ export default slashCommand(data, async ({ interaction, log, client }) => {
 
     try {
         const messages = await interaction.channel.bulkDelete(amount, true);
-        const replyEmbed = makeEmbed({ description: `Successfully deleted ${messages.size} messages.` });
 
-        const targetChannel = await client.channels.fetch('1237362529965965352');
+        const replyEmbed = makeEmbed({
+            title: 'Messages Deleted',
+            description: `Successfully deleted **${messages.size}** messages.`,
+            color: Colors.Green,
+            footer: { text: `Requested by ${interaction.user.tag}`, iconURL: interaction.user.displayAvatarURL() },
+            timestamp: new Date(),
+        });
+
+        const targetChannel = await client.channels.fetch(constantsConfig.channels.MOD_LOGS);
 
         if (targetChannel && (targetChannel instanceof TextChannel)) {
             const authorEmbed = makeEmbed({
-                title: 'Messages Cleared',
-                description: `**Moderator:** ${interaction.member.displayName}\n**Channel:** ${interaction.channel.name}\n**Amount:** ${amount}\n`,
+                title: '🧹 Messages Cleared',
+                description: 'Messages have been cleared in the server.',
+                color: Colors.Red,
+                fields: [
+                    { name: 'Moderator', value: `<@${interaction.user.id}>`, inline: true },
+                    { name: 'Channel', value: `<#${interaction.channel.id}>`, inline: true },
+                    { name: 'Amount', value: `${amount}`, inline: true },
+                ],
+                footer: { text: `Moderator ID: ${interaction.user.id}`, iconURL: interaction.user.displayAvatarURL() },
                 timestamp: new Date(),
             });
-            await (targetChannel as TextChannel).send({ embeds: [authorEmbed] });
+            await targetChannel.send({ embeds: [authorEmbed] });
         } else {
             log('Target channel not found or not a text channel');
         }
