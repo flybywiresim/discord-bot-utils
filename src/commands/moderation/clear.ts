@@ -44,7 +44,7 @@ export default slashCommand(data, async ({ interaction, log, client }) => {
         if (targetChannel && (targetChannel instanceof TextChannel)) {
             const authorEmbed = makeEmbed({
                 title: '🧹 Messages Cleared',
-                description: 'Messages have been cleared in the server.',
+                description: 'Messages have been cleared.',
                 color: Colors.Red,
                 fields: [
                     { name: 'Moderator', value: `<@${interaction.user.id}>`, inline: true },
