@@ -44,7 +44,6 @@ You can find the pull request template [here](PULL_REQUEST_TEMPLATE.md).
 ## Setting up the env
 
 1. Copy the `.env.example` file and rename it to `.env`.
-2. In your `.env` file replace `NODE_CONFIG_ENV=staging` with `NODE_CONFIG_ENV=development`.
 
 ## Using different configurations
 
