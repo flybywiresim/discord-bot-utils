@@ -45,7 +45,6 @@ You can find the pull request template [here](PULL_REQUEST_TEMPLATE.md).
 
 1. Copy the `.env.example` file and rename it to `.env`.
 2. In your `.env` file replace `NODE_CONFIG_ENV=staging` with `NODE_CONFIG_ENV=development`.
-3. Update the `TOKEN` with your own if you wish to use certain features.
 
 ## Using different configurations
 
