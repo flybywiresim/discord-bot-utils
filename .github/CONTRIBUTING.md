@@ -65,7 +65,7 @@ This library will load a file from the `config` folder, based on an environment 
 
 1. Create a file named `development.json` at [../config/](../config/).
 2. Paste the contents of [../config/staging.json](../config/staging.json) into `development.json`.
-3. In your `.env` file set `NODE_CONFIG_ENV` to `development`
+3. In your `.env` file set `NODE_CONFIG_ENV` to `development`.
 4. In your `development.json` file replace the `guildId` field with your server ID.
 5. Update the channel and role IDs to those in your server.
 6. Add your test bot ID to `modLogExclude ` and `userLogExclude`.
