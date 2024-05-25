@@ -1,4 +1,5 @@
 import { Panel } from '../panel';
+import { flyPad } from './flyPad';
 import { accuPressPanel, autobrakeAndGearPanel, clockPanel, dcdu, ewd, instrumentLightingPanel, isis, nd, pfd, sd } from './front-panel';
 import { efisPanel, fcuPanel, lightKnobsPanel, warningPanel } from './glareshield';
 import { antiIcePanel, adirsPanel, apuPanel, callsPanel, cvrPanel, emerElecPwrPanel, evacPanel, extLtPanel, fltCtlPanel, gpwsPanel, intLtPanel, oxyPanel, paVideoPanel, signsPanel, wiperPanel, cabinPressPanel, airCondPanel, elecPanel, fuelPanel, hydPanel, firePanel, engManStartPanel, ventilationPanel, cargoSmokePanel, cargoVentPanel, thirdACP, readingLightsJumpSeats, cockpitDoorIndicatorPanel, eltPanel, pedestalLightPanel, emerCbPanel, fmsLoadPanel, maintenancePanel } from './overhead';
@@ -79,4 +80,7 @@ export const a32nxPanels: Panel[] = [
     atcTcasPanel,
     flaps,
     printer,
+
+    // flyPad
+    flyPad,
 ];
