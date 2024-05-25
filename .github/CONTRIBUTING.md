@@ -41,6 +41,12 @@ Note: It may be beneficial to create a draft PR while working on your command. T
 
 You can find the pull request template [here](PULL_REQUEST_TEMPLATE.md).
 
+## Setting up the env
+
+1. Copy the `.env.example` file and rename it to `.env`.
+2. In your `.env` file replace `NODE_CONFIG_ENV=staging` with `NODE_CONFIG_ENV=development`.
+3. Update the `TOKEN` with your own if you wish to use certain features
+
 ## Using different configurations
 
 The `config` folder contains the configuration details for running the bot in the staging or production environment.
@@ -59,14 +65,10 @@ This library will load a file from the `config` folder, based on an environment 
 
 1. Create a file named `development.json` at [../config/](../config/).
 2. Paste the contents of [../config/staging.json](../config/staging.json) into `development.json`.
+3. In your `.env` file set `NODE_CONFIG_ENV` to `development`
 4. In your `development.json` file replace the `guildId` field with your server ID.
 5. Update the channel and role IDs to those in your server.
-6. Add your own user ID and that of your test bot to `modLogExclude `.
-
-### Setting up the env
-
-1. Copy the `.env.example` file and rename it to `.env`.
-2. In your `.env` file replace `NODE_CONFIG_ENV=staging` with `NODE_CONFIG_ENV=development`.
+6. Add your test bot ID to `modLogExclude ` and `userLogExclude`.
 
 > [!WARNING]
 > Not updating the IDs will produce unexpected behavior!
