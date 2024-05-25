@@ -2,6 +2,7 @@
 
 Update <small>_ May 2024</small>
 
+- feat: /locate command (25/05/2024)
 - feat: add support for autocomplete (23/05/2024)
 - feat: migrate birthday handler to scheduler job (23/05/2024)
 - chore: load .env before config (23/05/2024)
