@@ -2,7 +2,8 @@
 
 Update <small>_ May 2024</small>
 
-- docs: improved CONTRIBUTING.md (25/05/2024)
+- docs: improved CONTRIBUTING.md (26/05/2024)
+- ci: disable CDN workflows on forks (26/05/2024)
 - feat: /locate command (25/05/2024)
 - feat: add support for autocomplete (23/05/2024)
 - feat: migrate birthday handler to scheduler job (23/05/2024)
