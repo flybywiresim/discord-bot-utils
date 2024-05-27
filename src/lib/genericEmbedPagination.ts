@@ -30,9 +30,9 @@ export async function createPaginatedEmbedHandler(initialInteraction: CommandInt
     collector.on('collect', async (collectedInteraction: ButtonInteraction) => {
         collectedInteraction.deferUpdate();
 
-        if (buttonInteraction.customId === 'pagination_nextPage') {
+        if (collectedInteraction.customId === 'pagination_nextPage') {
             currentPage++;
-        } else if (buttonInteraction.customId === 'pagination_prevPage') {
+        } else if (collectedInteraction.customId === 'pagination_prevPage') {
             currentPage--;
         }
 

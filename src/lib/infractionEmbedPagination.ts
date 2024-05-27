@@ -48,19 +48,19 @@ export async function createPaginatedInfractionEmbedHandler(initialInteraction: 
     collector.on('collect', async (collectedInteraction: ButtonInteraction) => {
         collectedInteraction.deferUpdate();
 
-        if (interaction.customId === 'infractions_about') {
+        if (collectedInteraction.customId === 'infractions_about') {
             currentPage = 0;
-        } else if (interaction.customId === 'infractions_warns') {
+        } else if (collectedInteraction.customId === 'infractions_warns') {
             currentPage = 1;
-        } else if (interaction.customId === 'infractions_timeouts') {
+        } else if (collectedInteraction.customId === 'infractions_timeouts') {
             currentPage = 2;
-        } else if (interaction.customId === 'infractions_scamlog') {
+        } else if (collectedInteraction.customId === 'infractions_scamlog') {
             currentPage = 3;
-        } else if (interaction.customId === 'infractions_bans') {
+        } else if (collectedInteraction.customId === 'infractions_bans') {
             currentPage = 4;
-        } else if (interaction.customId === 'infractions_unbans') {
+        } else if (collectedInteraction.customId === 'infractions_unbans') {
             currentPage = 5;
-        } else if (interaction.customId === 'infractions_notes') {
+        } else if (collectedInteraction.customId === 'infractions_notes') {
             currentPage = 6;
         }
 
