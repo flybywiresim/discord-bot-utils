@@ -1,6 +1,6 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, CommandInteraction, ComponentType, EmbedBuilder, Interaction, InteractionResponse, Message } from 'discord.js';
 
-export async function createPaginatedEmbedInteraction(initialInteraction: CommandInteraction, embeds: EmbedBuilder[]): Promise<void> {
+export async function createPaginatedEmbedInteractionHandler(initialInteraction: CommandInteraction, embeds: EmbedBuilder[]): Promise<void> {
     let currentPage = 0;
 
     const nextButton = new ButtonBuilder()
@@ -13,7 +13,7 @@ export async function createPaginatedEmbedInteraction(initialInteraction: Comman
         .setLabel('Previous')
         .setStyle(ButtonStyle.Primary);
 
-    setButtonStates();
+    setButtonDisabledStates();
 
     const buttonRow = new ActionRowBuilder<ButtonBuilder>().addComponents(prevButton, nextButton);
 
@@ -36,7 +36,7 @@ export async function createPaginatedEmbedInteraction(initialInteraction: Comman
             currentPage--;
         }
 
-        setButtonStates();
+        setButtonDisabledStates();
 
         updateEmbed(initialInteraction);
     });
@@ -53,7 +53,7 @@ export async function createPaginatedEmbedInteraction(initialInteraction: Comman
         initialInteraction.editReply({ embeds: [embeds[currentPage].setFooter({ text: 'This embed has expired.' })], components: [] });
     }
 
-    function setButtonStates() {
+    function setButtonDisabledStates() {
         prevButton.setDisabled(currentPage <= 0);
         nextButton.setDisabled(currentPage >= embeds.length - 1);
     }
