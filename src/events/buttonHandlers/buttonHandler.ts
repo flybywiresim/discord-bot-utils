@@ -1,5 +1,5 @@
 import { event, Events } from '../../lib';
-import { handleRollAssignment } from './functions/handleRollAssignment';
+import { handleRoleAssignment } from './functions/handleRoleAssignment';
 
 export default event(Events.InteractionCreate, async ({ log }, interaction) => {
     if (!interaction.isButton()) return;
@@ -16,7 +16,7 @@ export default event(Events.InteractionCreate, async ({ log }, interaction) => {
         switch (prefix) {
         case 'roleAssignment':
             const [roleID] = params;
-            await handleRollAssignment(interaction, roleID);
+            await handleRoleAssignment(interaction, roleID);
             log(`Button Handler: Role assignment button pressed by ${user.tag} (${user.id}). roleID: ${roleID}`);
             break;
         default:
