@@ -3,6 +3,7 @@
 Update <small>_ May 2024</small>
 
 - feat: /clear-messages command (27/05/2024)
+- feat: button handler (27/05/2024)
 - fix: add missing efb command to `/locate` (26/05/2024)
 - docs: improved CONTRIBUTING.md (26/05/2024)
 - ci: disable CDN workflows on forks (26/05/2024)

@@ -4,37 +4,37 @@ export async function sendPaginatedInfractionEmbeds(interaction: CommandInteract
     let currentPage = 0;
 
     const aboutButton = new ButtonBuilder()
-        .setCustomId('about')
+        .setCustomId('infractions_about')
         .setLabel('About')
         .setStyle(ButtonStyle.Success);
 
     const warnButton = new ButtonBuilder()
-        .setCustomId('warns')
+        .setCustomId('infractions_warns')
         .setLabel(`Warns (${infractionsLengths.warnsLength})`)
         .setStyle(ButtonStyle.Primary);
 
     const timeoutButton = new ButtonBuilder()
-        .setCustomId('timeouts')
+        .setCustomId('infractions_timeouts')
         .setLabel(`Timeouts (${infractionsLengths.timeoutsLength})`)
         .setStyle(ButtonStyle.Primary);
 
     const scamLogButton = new ButtonBuilder()
-        .setCustomId('scamlog')
+        .setCustomId('infractions_scamlog')
         .setLabel(`Scam Logs (${infractionsLengths.scamLogsLength})`)
         .setStyle(ButtonStyle.Primary);
 
     const banButton = new ButtonBuilder()
-        .setCustomId('bans')
+        .setCustomId('infractions_bans')
         .setLabel(`Bans (${infractionsLengths.bansLength})`)
         .setStyle(ButtonStyle.Primary);
 
     const unbanButton = new ButtonBuilder()
-        .setCustomId('unbans')
+        .setCustomId('infractions_unbans')
         .setLabel(`Unbans (${infractionsLengths.unbansLength})`)
         .setStyle(ButtonStyle.Primary);
 
     const noteButton = new ButtonBuilder()
-        .setCustomId('notes')
+        .setCustomId('infractions_notes')
         .setLabel(`Notes (${infractionsLengths.notesLength})`)
         .setStyle(ButtonStyle.Primary);
 
@@ -48,19 +48,19 @@ export async function sendPaginatedInfractionEmbeds(interaction: CommandInteract
     collector.on('collect', async (interaction: any) => {
         interaction.deferUpdate();
 
-        if (interaction.customId === 'about') {
+        if (interaction.customId === 'infractions_about') {
             currentPage = 0;
-        } else if (interaction.customId === 'warns') {
+        } else if (interaction.customId === 'infractions_warns') {
             currentPage = 1;
-        } else if (interaction.customId === 'timeouts') {
+        } else if (interaction.customId === 'infractions_timeouts') {
             currentPage = 2;
-        } else if (interaction.customId === 'scamlog') {
+        } else if (interaction.customId === 'infractions_scamlog') {
             currentPage = 3;
-        } else if (interaction.customId === 'bans') {
+        } else if (interaction.customId === 'infractions_bans') {
             currentPage = 4;
-        } else if (interaction.customId === 'unbans') {
+        } else if (interaction.customId === 'infractions_unbans') {
             currentPage = 5;
-        } else if (interaction.customId === 'notes') {
+        } else if (interaction.customId === 'infractions_notes') {
             currentPage = 6;
         }
 
