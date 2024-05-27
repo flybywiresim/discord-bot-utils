@@ -17,8 +17,7 @@ export default event(Events.InteractionCreate, async ({ log }, interaction) => {
         case 'roleAssignment':
             const [roleID] = params;
             await handleRollAssignment(interaction, roleID);
-            log(`Button Handler: Role assignment button pressed by ${user.tag} (${user.id})`);
-            log(`roleID ${roleID}`);
+            log(`Button Handler: Role assignment button pressed by ${user.tag} (${user.id}). roleID: ${roleID}`);
             break;
         default:
             if (buttonLabel) {
