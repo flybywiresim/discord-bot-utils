@@ -2,7 +2,7 @@ import { ApplicationCommandOptionType, ApplicationCommandType, TextChannel, Colo
 import { slashCommand, slashCommandStructure, makeEmbed, constantsConfig, Logger } from '../../lib';
 
 const data = slashCommandStructure({
-    name: 'clear',
+    name: 'clear-messages',
     description: 'Delete a specified number of messages in the current channel.',
     type: ApplicationCommandType.ChatInput,
     default_member_permissions: constantsConfig.commandPermission.MANAGE_SERVER,
@@ -21,7 +21,7 @@ export default slashCommand(data, async ({ interaction }) => {
     const amount = interaction.options.getInteger('amount');
 
     if (!amount) {
-        return interaction.reply({ content: 'Please specify the number of messages to delete.', ephemeral: true });
+        return interaction.reply({ content: 'Please specify the number of messages to clear.', ephemeral: true });
     }
 
     const { channel, user } = interaction;
@@ -33,10 +33,9 @@ export default slashCommand(data, async ({ interaction }) => {
         const messages = await (channel as TextChannel).bulkDelete(amount, true);
 
         const replyEmbed = makeEmbed({
-            title: 'Messages Deleted',
-            description: `Successfully deleted **${messages.size}** messages.`,
+            title: 'Messages Cleared',
+            description: `Successfully cleared **${messages.size}** messages.`,
             color: Colors.Green,
-            footer: { text: `Requested by ${user.tag}`, iconURL: user.displayAvatarURL() },
             timestamp: new Date(),
         });
 
@@ -45,7 +44,7 @@ export default slashCommand(data, async ({ interaction }) => {
         const modLogEmbed = makeEmbed({
             title: '🧹 Messages Cleared',
             description: 'Messages have been cleared.',
-            color: Colors.Red,
+            color: Colors.Green,
             fields: [
                 { name: 'Moderator', value: `<@${user.id}>`, inline: true },
                 { name: 'Channel', value: `<#${channel.id}>`, inline: true },
@@ -74,7 +73,7 @@ export default slashCommand(data, async ({ interaction }) => {
 
         return Promise.resolve();
     } catch (error) {
-        Logger.error('Error deleting messages:', error);
-        return interaction.reply({ content: 'There was an error trying to delete messages in this channel.', ephemeral: true });
+        Logger.error('Error clearing messages:', error);
+        return interaction.reply({ content: 'There was an error trying to clear messages in this channel.', ephemeral: true });
     }
 });
