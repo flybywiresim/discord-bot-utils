@@ -52,9 +52,11 @@ const contentEmbed = (command: string, version: string, title: string, content: 
 });
 
 export async function handleShowPrefixCommandContent(interaction: ChatInputCommandInteraction<'cached'>) {
+    await interaction.deferReply({ ephemeral: true });
+
     const conn = getConn();
     if (!conn) {
-        await interaction.reply({ embeds: [noConnEmbed], ephemeral: true });
+        await interaction.followUp({ embeds: [noConnEmbed], ephemeral: true });
         return;
     }
 
@@ -65,7 +67,7 @@ export async function handleShowPrefixCommandContent(interaction: ChatInputComma
         foundCommands = await PrefixCommand.find({ aliases: { $in: [command] } });
     }
     if (!foundCommands || foundCommands.length > 1) {
-        await interaction.reply({ embeds: [noCommandEmbed(command)], ephemeral: true });
+        await interaction.followUp({ embeds: [noCommandEmbed(command)], ephemeral: true });
         return;
     }
 
@@ -80,21 +82,21 @@ export async function handleShowPrefixCommandContent(interaction: ChatInputComma
             const [foundVersion] = foundVersions;
             ({ id: versionId } = foundVersion);
         } else {
-            await interaction.reply({ embeds: [noVersionEmbed(version)], ephemeral: true });
+            await interaction.followUp({ embeds: [noVersionEmbed(version)], ephemeral: true });
             return;
         }
     }
 
     const foundContent = foundCommand.contents.find((content) => content.versionId === versionId);
     if (!foundContent) {
-        await interaction.reply({ embeds: [noContentEmbed(command, version)], ephemeral: true });
+        await interaction.followUp({ embeds: [noContentEmbed(command, version)], ephemeral: true });
         return;
     }
     const { id: contentId, title, content, image } = foundContent;
     try {
-        await interaction.reply({ embeds: [contentEmbed(command, version, `${title}`, `${content}`, `${image}`, `${commandId}`, `${versionId}`, `${contentId}`)], ephemeral: false });
+        await interaction.followUp({ embeds: [contentEmbed(command, version, `${title}`, `${content}`, `${image}`, `${commandId}`, `${versionId}`, `${contentId}`)], ephemeral: false });
     } catch (error) {
         Logger.error(`Failed to show prefix command content for command ${command} and version ${version}: ${error}`);
-        await interaction.reply({ embeds: [failedEmbed(command, version)], ephemeral: true });
+        await interaction.followUp({ embeds: [failedEmbed(command, version)], ephemeral: true });
     }
 }

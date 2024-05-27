@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, Colors, TextChannel, User } from 'discord.js';
+import { ActionRowBuilder, ChatInputCommandInteraction, Colors, ModalBuilder, TextChannel, TextInputBuilder, TextInputStyle, User } from 'discord.js';
 import { constantsConfig, getConn, PrefixCommandVersion, PrefixCommand, Logger, makeEmbed } from '../../../../lib';
 
 const noConnEmbed = makeEmbed({
@@ -69,21 +69,91 @@ const noModLogs = makeEmbed({
 });
 
 export async function handleSetPrefixCommandContent(interaction: ChatInputCommandInteraction<'cached'>) {
-    await interaction.deferReply({ ephemeral: true });
-
     const conn = getConn();
     if (!conn) {
-        await interaction.followUp({ embeds: [noConnEmbed], ephemeral: true });
+        await interaction.reply({ embeds: [noConnEmbed], ephemeral: true });
         return;
     }
 
     const command = interaction.options.getString('command')!;
     const version = interaction.options.getString('version')!;
-    const title = interaction.options.getString('title')!;
-    const content = interaction.options.getString('content') || '';
-    const image = interaction.options.getString('image') || '';
     const moderator = interaction.user;
 
+    const contentModal = new ModalBuilder({
+        customId: 'commandContentModal',
+        title: `Content for ${command} - ${version}`,
+    });
+
+    const commandContentTitle = new TextInputBuilder()
+        .setCustomId('commandContentTitle')
+        .setLabel('Title')
+        .setPlaceholder('Provide a title for the command.')
+        .setStyle(TextInputStyle.Short)
+        .setMaxLength(255)
+        .setMinLength(0)
+        .setRequired(true);
+
+    const commandContentContent = new TextInputBuilder()
+        .setCustomId('commandContentContent')
+        .setLabel('Content')
+        .setPlaceholder('Provide the content for the command.')
+        .setStyle(TextInputStyle.Paragraph)
+        .setMaxLength(2047)
+        .setMinLength(0)
+        .setRequired(true);
+
+    const commandContentImageUrl = new TextInputBuilder()
+        .setCustomId('commandContentImageUrl')
+        .setLabel('Image URL')
+        .setPlaceholder('Provide an optional Image URL for the command.')
+        .setStyle(TextInputStyle.Short)
+        .setMaxLength(255)
+        .setMinLength(0)
+        .setRequired(false);
+
+    const titleActionRow = new ActionRowBuilder<TextInputBuilder>().addComponents(commandContentTitle);
+    const contentActionRow = new ActionRowBuilder<TextInputBuilder>().addComponents(commandContentContent);
+    const imageUrlActionRow = new ActionRowBuilder<TextInputBuilder>().addComponents(commandContentImageUrl);
+
+    contentModal.addComponents(titleActionRow);
+    contentModal.addComponents(contentActionRow);
+    contentModal.addComponents(imageUrlActionRow);
+
+    await interaction.showModal(contentModal);
+
+    const filter = (interaction: {
+        customId: string;
+        user: { id: any; };
+    }) => interaction.customId === 'commandContentModal' && interaction.user.id;
+
+    let title = '';
+    let content = '';
+    let image = '';
+
+    try {
+        //Await a modal response
+        const modalSubmitInteraction = await interaction.awaitModalSubmit({
+            filter,
+            time: 120000,
+        });
+
+        await modalSubmitInteraction.reply({
+            content: 'Processing command content data.',
+            ephemeral: true,
+        });
+
+        title = modalSubmitInteraction.fields.getTextInputValue('commandContentTitle').trim();
+        content = modalSubmitInteraction.fields.getTextInputValue('commandContentContent').trim();
+        image = modalSubmitInteraction.fields.getTextInputValue('commandContentImageUrl').trim();
+    } catch (error) {
+        //Handle the error if the user does not respond in time
+        Logger.error(error);
+        await interaction.followUp({
+            content: 'You did not provide the necessary content information and the change was not made.',
+            ephemeral: true,
+        });
+        return;
+    }
     //Check if the mod logs channel exists
     const modLogsChannel = interaction.guild.channels.resolve(constantsConfig.channels.MOD_LOGS) as TextChannel;
     if (!modLogsChannel) {

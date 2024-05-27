@@ -26,9 +26,11 @@ const successEmbed = (searchText: string, fields: APIEmbedField[]) => makeEmbed(
 });
 
 export async function handleListPrefixCommands(interaction: ChatInputCommandInteraction<'cached'>) {
+    await interaction.deferReply({ ephemeral: true });
+
     const conn = getConn();
     if (!conn) {
-        await interaction.reply({ embeds: [noConnEmbed], ephemeral: true });
+        await interaction.followUp({ embeds: [noConnEmbed], ephemeral: true });
         return;
     }
 
@@ -46,12 +48,12 @@ export async function handleListPrefixCommands(interaction: ChatInputCommandInte
             });
         }
         try {
-            await interaction.reply({ embeds: [successEmbed(searchText, embedFields)], ephemeral: false });
+            await interaction.followUp({ embeds: [successEmbed(searchText, embedFields)], ephemeral: false });
         } catch (error) {
             Logger.error(`Failed to list prefix command commands with search ${searchText}: ${error}`);
-            await interaction.reply({ embeds: [failedEmbed(searchText)], ephemeral: true });
+            await interaction.followUp({ embeds: [failedEmbed(searchText)], ephemeral: true });
         }
     } else {
-        await interaction.reply({ embeds: [noResultsEmbed(searchText)], ephemeral: true });
+        await interaction.followUp({ embeds: [noResultsEmbed(searchText)], ephemeral: true });
     }
 }

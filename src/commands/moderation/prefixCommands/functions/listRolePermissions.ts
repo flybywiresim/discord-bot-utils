@@ -31,16 +31,18 @@ const successEmbed = (command: string, fields: APIEmbedField[]) => makeEmbed({
 });
 
 export async function handleListPrefixCommandRolePermissions(interaction: ChatInputCommandInteraction<'cached'>) {
+    await interaction.deferReply({ ephemeral: true });
+
     const conn = getConn();
     if (!conn) {
-        await interaction.reply({ embeds: [noConnEmbed], ephemeral: true });
+        await interaction.followUp({ embeds: [noConnEmbed], ephemeral: true });
         return;
     }
 
     const command = interaction.options.getString('command')!;
     const foundCommands = await PrefixCommand.find({ name: command });
     if (!foundCommands || foundCommands.length === 0) {
-        await interaction.reply({ embeds: [noCommandEmbed(command)], ephemeral: true });
+        await interaction.followUp({ embeds: [noCommandEmbed(command)], ephemeral: true });
         return;
     }
     const [foundCommand] = foundCommands;
@@ -57,12 +59,12 @@ export async function handleListPrefixCommandRolePermissions(interaction: ChatIn
             });
         }
         try {
-            await interaction.reply({ embeds: [successEmbed(command, embedFields)], ephemeral: false });
+            await interaction.followUp({ embeds: [successEmbed(command, embedFields)], ephemeral: false });
         } catch (error) {
             Logger.error(`Failed to list prefix command role permissions for command ${command}: ${error}`);
-            await interaction.reply({ embeds: [failedEmbed(command)], ephemeral: true });
+            await interaction.followUp({ embeds: [failedEmbed(command)], ephemeral: true });
         }
     } else {
-        await interaction.reply({ embeds: [noResultsEmbed(command)], ephemeral: true });
+        await interaction.followUp({ embeds: [noResultsEmbed(command)], ephemeral: true });
     }
 }

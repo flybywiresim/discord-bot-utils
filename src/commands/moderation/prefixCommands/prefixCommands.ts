@@ -1,5 +1,5 @@
-import { ApplicationCommandOptionType, ApplicationCommandType } from 'discord.js';
-import { constantsConfig, slashCommand, slashCommandStructure } from '../../../lib';
+import { ApplicationCommandOptionChoiceData, ApplicationCommandOptionType, ApplicationCommandType } from 'discord.js';
+import { AutocompleteCallback, constantsConfig, getConn, PrefixCommand, PrefixCommandCategory, PrefixCommandVersion, slashCommand, slashCommandStructure } from '../../../lib';
 import { handleAddPrefixCommandCategory } from './functions/addCategory';
 import { handleModifyPrefixCommandCategory } from './functions/modifyCategory';
 import { handleDeletePrefixCommandCategory } from './functions/deleteCategory';
@@ -238,6 +238,7 @@ const data = slashCommandStructure({
                             description: 'Provide the category for the prefix command.',
                             type: ApplicationCommandOptionType.String,
                             required: true,
+                            autocomplete: true,
                             max_length: 32,
                         },
                         {
@@ -287,6 +288,7 @@ const data = slashCommandStructure({
                             description: 'Provide the category for the prefix command.',
                             type: ApplicationCommandOptionType.String,
                             required: false,
+                            autocomplete: true,
                             max_length: 32,
                         },
                         {
@@ -357,6 +359,7 @@ const data = slashCommandStructure({
                             description: 'Provide the name of the prefix command.',
                             type: ApplicationCommandOptionType.String,
                             required: true,
+                            autocomplete: true,
                             max_length: 32,
                         },
                         {
@@ -364,6 +367,7 @@ const data = slashCommandStructure({
                             description: 'Provide the name of the prefix command version. Use GENERIC for the generic content.',
                             type: ApplicationCommandOptionType.String,
                             required: true,
+                            autocomplete: true,
                             max_length: 32,
                         },
                     ],
@@ -378,6 +382,7 @@ const data = slashCommandStructure({
                             description: 'Provide the name of the prefix command.',
                             type: ApplicationCommandOptionType.String,
                             required: true,
+                            autocomplete: true,
                             max_length: 32,
                         },
                         {
@@ -385,27 +390,8 @@ const data = slashCommandStructure({
                             description: 'Provide the name of the prefix command version. Use GENERIC for the generic content.',
                             type: ApplicationCommandOptionType.String,
                             required: true,
+                            autocomplete: true,
                             max_length: 32,
-                        },
-                        {
-                            name: 'title',
-                            description: 'Provide a title for the prefix command version content.',
-                            type: ApplicationCommandOptionType.String,
-                            required: true,
-                            max_length: 255,
-                        },
-                        {
-                            name: 'content',
-                            description: 'Provide the content for the prefix command version content.',
-                            type: ApplicationCommandOptionType.String,
-                            required: false,
-                        },
-                        {
-                            name: 'image',
-                            description: 'Provide a URL for an image for the prefix command version content. Leave empty to set no image.',
-                            type: ApplicationCommandOptionType.String,
-                            required: false,
-                            max_length: 255,
                         },
                     ],
                 },
@@ -427,6 +413,57 @@ const data = slashCommandStructure({
         },
     ],
 });
+
+const autocompleteCallback: AutocompleteCallback = async ({ interaction }) => {
+    const autoCompleteOption = interaction.options.getFocused(true);
+    const { name: optionName, value: searchText } = autoCompleteOption;
+    let choices: ApplicationCommandOptionChoiceData<string>[] = [];
+
+    const conn = getConn();
+
+    switch (optionName) {
+    case 'category':
+        if (!conn) {
+            return interaction.respond(choices);
+        }
+        const foundCategories = await PrefixCommandCategory.find({ name: { $regex: searchText, $options: 'i' } });
+        for (let i = 0; i < foundCategories.length; i++) {
+            const category = foundCategories[i];
+            const { name } = category;
+            choices.push({ name, value: name });
+        }
+        break;
+    case 'command':
+        if (!conn) {
+            return interaction.respond(choices);
+        }
+        const foundCommands = await PrefixCommand.find({ name: { $regex: searchText, $options: 'i' } });
+        for (let i = 0; i < foundCommands.length; i++) {
+            const command = foundCommands[i];
+            const { name } = command;
+            choices.push({ name, value: name });
+        }
+        break;
+    case 'version':
+        choices = [
+            { name: 'GENERIC', value: 'GENERIC' },
+        ];
+        if (!conn) {
+            return interaction.respond(choices);
+        }
+        const foundVersions = await PrefixCommandVersion.find({ name: { $regex: searchText, $options: 'i' } });
+        for (let i = 0; i < foundVersions.length; i++) {
+            const version = foundVersions[i];
+            const { name } = version;
+            choices.push({ name, value: name });
+        }
+        break;
+    default:
+        choices = [];
+    }
+
+    return interaction.respond(choices);
+};
 
 export default slashCommand(data, async ({ interaction }) => {
     const subcommandGroup = interaction.options.getSubcommandGroup();
@@ -505,4 +542,4 @@ export default slashCommand(data, async ({ interaction }) => {
     default:
         await interaction.reply({ content: 'Unknown subcommand', ephemeral: true });
     }
-});
+}, autocompleteCallback);
