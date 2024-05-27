@@ -9,7 +9,7 @@ export * from './slashCommand';
 export * from './replies';
 export * from './contextMenuCommand';
 export * from './durationInEnglish';
-export * from './genericPagination';
+export * from './genericEmbedPagination';
 export * from './autocomplete';
 
 //Schemas
