@@ -3,13 +3,13 @@ import { slashCommand, slashCommandStructure, makeEmbed, constantsConfig, Logger
 
 const data = slashCommandStructure({
     name: 'clear-messages',
-    description: 'Delete a specified number of messages in the current channel.',
+    description: 'Clear a specified number of messages in the current channel.',
     type: ApplicationCommandType.ChatInput,
     default_member_permissions: constantsConfig.commandPermission.MANAGE_SERVER,
     dm_permission: false,
     options: [{
         name: 'amount',
-        description: 'Number of messages to delete (1-100).',
+        description: 'Number of messages to clear (1-100).',
         type: ApplicationCommandOptionType.Integer,
         required: true,
         min_value: 1,
@@ -41,7 +41,7 @@ export default slashCommand(data, async ({ interaction }) => {
         return interaction.reply({ content: 'The channel could not be resolved.', ephemeral: true });
     }
 
-    const response = await interaction.reply({ content: `Do you really want to delete ${amount} messages?`, components: [buttonRow], ephemeral: true });
+    const response = await interaction.reply({ content: `Do you really want to clear **${amount}** message${amount > 1 ? 's' : ''}?`, components: [buttonRow], ephemeral: true });
     const filter = (buttonInteraction: Interaction) => buttonInteraction.user.id === interaction.user.id;
 
     try {
@@ -51,7 +51,7 @@ export default slashCommand(data, async ({ interaction }) => {
                 const messages = await (channel as TextChannel).bulkDelete(amount, true);
                 const replyEmbed = makeEmbed({
                     title: 'Messages Cleared',
-                    description: `Successfully cleared **${messages.size}** messages.`,
+                    description: `Successfully cleared **${messages.size}** message${amount > 1 ? 's' : ''}.`,
                     color: Colors.Green,
                     timestamp: new Date(),
                 });
