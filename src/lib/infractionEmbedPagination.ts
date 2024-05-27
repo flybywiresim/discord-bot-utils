@@ -1,6 +1,6 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Interaction, CommandInteraction } from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Interaction, CommandInteraction, ButtonInteraction, EmbedBuilder } from 'discord.js';
 
-export async function sendPaginatedInfractionEmbeds(interaction: CommandInteraction, user:string, embeds: any[], infractionsLengths: { warnsLength: string; timeoutsLength: string; scamLogsLength: string; bansLength: string; unbansLength: string; notesLength: string; }): Promise<void> {
+export async function createPaginatedInfractionEmbedHandler(initialInteraction: CommandInteraction, user:string, embeds: EmbedBuilder[], infractionsLengths: { warnsLength: string; timeoutsLength: string; scamLogsLength: string; bansLength: string; unbansLength: string; notesLength: string; }): Promise<void> {
     let currentPage = 0;
 
     const aboutButton = new ButtonBuilder()
@@ -40,13 +40,13 @@ export async function sendPaginatedInfractionEmbeds(interaction: CommandInteract
 
     const buttonRow1 = new ActionRowBuilder<ButtonBuilder>().addComponents(aboutButton, warnButton, timeoutButton);
     const buttonRow2 = new ActionRowBuilder<ButtonBuilder>().addComponents(scamLogButton, banButton, unbanButton, noteButton);
-    const message = await interaction.followUp({ embeds: [embeds[currentPage]], components: [buttonRow1, buttonRow2] });
+    const message = await initialInteraction.followUp({ embeds: [embeds[currentPage]], components: [buttonRow1, buttonRow2] });
 
     const filter = (interaction: Interaction) => interaction.user.id === user;
     const collector = message.createMessageComponentCollector({ filter, time: 120000 });
 
-    collector.on('collect', async (interaction: any) => {
-        interaction.deferUpdate();
+    collector.on('collect', async (collectedInteraction: ButtonInteraction) => {
+        collectedInteraction.deferUpdate();
 
         if (interaction.customId === 'infractions_about') {
             currentPage = 0;
@@ -67,6 +67,10 @@ export async function sendPaginatedInfractionEmbeds(interaction: CommandInteract
         updateEmbed();
     });
 
+    collector.on('end', async () => {
+        handleEmbedExpire();
+    });
+
     function updateEmbed() {
         aboutButton.setStyle(currentPage === 0 ? ButtonStyle.Success : ButtonStyle.Primary);
         warnButton.setStyle(currentPage === 1 ? ButtonStyle.Success : ButtonStyle.Primary);
@@ -76,6 +80,10 @@ export async function sendPaginatedInfractionEmbeds(interaction: CommandInteract
         unbanButton.setStyle(currentPage === 5 ? ButtonStyle.Success : ButtonStyle.Primary);
         noteButton.setStyle(currentPage === 6 ? ButtonStyle.Success : ButtonStyle.Primary);
 
-        interaction.editReply({ embeds: [embeds[currentPage]], components: [buttonRow1, buttonRow2] });
+        initialInteraction.editReply({ embeds: [embeds[currentPage]], components: [buttonRow1, buttonRow2] });
+    }
+
+    function handleEmbedExpire() {
+        initialInteraction.editReply({ embeds: [embeds[currentPage].setFooter({ text: 'This embed has expired.' })], components: [] });
     }
 }

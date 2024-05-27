@@ -1,5 +1,5 @@
 import { ApplicationCommandOptionType, ApplicationCommandType } from 'discord.js';
-import { constantsConfig, Logger, makeEmbed, createPaginatedEmbedInteractionHandler, slashCommand, slashCommandStructure } from '../../lib';
+import { constantsConfig, Logger, makeEmbed, createPaginatedEmbedHandler, slashCommand, slashCommandStructure } from '../../lib';
 
 const data = slashCommandStructure({
     name: 'list-role-users',
@@ -63,7 +63,7 @@ export default slashCommand(data, async ({ interaction }) => {
     }
 
     try {
-        return createPaginatedEmbedInteractionHandler(interaction, embeds);
+        return createPaginatedEmbedHandler(interaction, embeds);
     } catch (error) {
         Logger.error('Error sending paginated embed', error);
         return interaction.editReply({ content: 'An error occurred while sending the paginated embed.' });

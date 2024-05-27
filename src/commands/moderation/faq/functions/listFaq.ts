@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction } from 'discord.js';
 import moment from 'moment/moment';
-import { Logger, makeEmbed, FAQ, createPaginatedEmbedInteractionHandler } from '../../../../lib';
+import { Logger, makeEmbed, FAQ, createPaginatedEmbedHandler } from '../../../../lib';
 
 const faqListEmbed = (faqFields: { name: string; value: string; }[], currentPage: number, totalPages: number) => makeEmbed({
     title: `FAQ List (Page ${currentPage} of ${totalPages})`,
@@ -68,7 +68,7 @@ export async function handleListFaq(interaction: ChatInputCommandInteraction<'ca
             return;
         }
 
-        await createPaginatedEmbedInteractionHandler(interaction, embeds);
+        await createPaginatedEmbedHandler(interaction, embeds);
     } catch (error) {
         Logger.error(error);
         await interaction.reply({ content: 'Could not list FAQs, error has been logged, please notify the bot team.', ephemeral: true });
