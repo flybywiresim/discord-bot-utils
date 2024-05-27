@@ -19,16 +19,16 @@ const data = slashCommandStructure({
 
 export default slashCommand(data, async ({ interaction }) => {
     const confirmButton = new ButtonBuilder()
-        .setCustomId('confirm')
+        .setCustomId('clearMessages_confirm')
         .setLabel('Confirm')
-        .setStyle(ButtonStyle.Primary);
+        .setStyle(ButtonStyle.Danger);
 
     const cancelButton = new ButtonBuilder()
-        .setCustomId('cancel')
+        .setCustomId('clearMessages_cancel')
         .setLabel('Cancel')
-        .setStyle(ButtonStyle.Primary);
+        .setStyle(ButtonStyle.Secondary);
 
-    const buttonRow = new ActionRowBuilder<ButtonBuilder>().addComponents(confirmButton, cancelButton);
+    const buttonRow = new ActionRowBuilder<ButtonBuilder>().addComponents(cancelButton, confirmButton);
 
     const amount = interaction.options.getInteger('amount');
 
@@ -46,7 +46,7 @@ export default slashCommand(data, async ({ interaction }) => {
 
     try {
         const confirmation = await response.awaitMessageComponent({ filter, time: 120_000 });
-        if (confirmation.customId === 'confirm') {
+        if (confirmation.customId === 'clearMessages_confirm') {
             try {
                 const messages = await (channel as TextChannel).bulkDelete(amount, true);
                 const replyEmbed = makeEmbed({
@@ -80,18 +80,18 @@ export default slashCommand(data, async ({ interaction }) => {
                         return interaction.deleteReply();
                     } catch (error) {
                         Logger.error('Failed to delete the reply message:', error);
-                        return interaction.followUp({ content: 'Failed to delete the reply message.', ephemeral: true });
+                        return interaction.editReply({ content: 'Failed to delete the reply message.' });
                     }
                 }, 5000);
-                return interaction.followUp({ embeds: [replyEmbed], ephemeral: true });
+                return interaction.editReply({ embeds: [replyEmbed], components: [] });
             } catch (error) {
                 Logger.error('Error clearing messages:', error);
-                return interaction.followUp({ content: 'There was an error trying to clear messages in this channel.', ephemeral: true });
+                return interaction.editReply({ content: 'There was an error trying to clear messages in this channel.' });
             }
         } else {
-            return interaction.followUp({ content: 'Interaction was canceled.', ephemeral: true });
+            return interaction.editReply({ content: 'Interaction was canceled.', components: [] });
         }
     } catch (e) {
-        return interaction.editReply({ content: '' });
+        return interaction.editReply({ content: 'The command timed out.', components: [] });
     }
 });
