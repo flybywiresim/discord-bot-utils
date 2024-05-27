@@ -83,7 +83,7 @@ export default slashCommand(data, async ({ interaction }) => {
                         return interaction.editReply({ content: 'Failed to delete the reply message.' });
                     }
                 }, 5000);
-                return interaction.editReply({ embeds: [replyEmbed], components: [] });
+                return interaction.editReply({ content: '', embeds: [replyEmbed], components: [] });
             } catch (error) {
                 Logger.error('Error clearing messages:', error);
                 return interaction.editReply({ content: 'There was an error trying to clear messages in this channel.' });
