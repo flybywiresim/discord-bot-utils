@@ -4,12 +4,12 @@ export async function sendPaginatedEmbed(interaction: CommandInteraction, embeds
     let currentPage = 0;
 
     const nextButton = new ButtonBuilder()
-        .setCustomId('next_page')
+        .setCustomId('pagination_nextPage')
         .setLabel('Next')
         .setStyle(ButtonStyle.Primary);
 
     const prevButton = new ButtonBuilder()
-        .setCustomId('prev_page')
+        .setCustomId('pagination_prevPage')
         .setLabel('Previous')
         .setStyle(ButtonStyle.Primary);
 
@@ -28,9 +28,9 @@ export async function sendPaginatedEmbed(interaction: CommandInteraction, embeds
     collector.on('collect', async (buttonInteraction: any) => {
         buttonInteraction.deferUpdate();
 
-        if (buttonInteraction.customId === 'next_page') {
+        if (buttonInteraction.customId === 'pagination_nextPage') {
             currentPage++;
-        } else if (buttonInteraction.customId === 'prev_page') {
+        } else if (buttonInteraction.customId === 'pagination_prevPage') {
             currentPage--;
         }
 
