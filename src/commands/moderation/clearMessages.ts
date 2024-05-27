@@ -64,7 +64,7 @@ export default slashCommand(data, async ({ interaction }) => {
                     fields: [
                         { name: 'Moderator', value: `<@${user.id}>`, inline: true },
                         { name: 'Channel', value: `<#${channel.id}>`, inline: true },
-                        { name: 'Amount', value: `${amount}`, inline: true },
+                        { name: 'Amount', value: `${messages.size}`, inline: true },
                     ],
                     footer: { text: `Moderator ID: ${user.id}`, iconURL: user.displayAvatarURL() },
                     timestamp: new Date(),
