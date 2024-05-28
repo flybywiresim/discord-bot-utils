@@ -42,10 +42,10 @@ export default slashCommand(data, async ({ interaction }) => {
     }
 
     const confirmEmbed = makeEmbed({
-        title: 'Important!',
-        description: `Do you really want to clear **${amount}** message${amount > 1 ? 's' : ''}?`,
+        title: 'Confirm Or Cancel',
+        description: `You are about to clear **${amount}** message${amount > 1 ? 's' : ''}. This action **cannot** be undone.`,
         color: Colors.Red,
-        timestamp: new Date(),
+        footer: { text: 'Please confirm or cancel this action within 2 minutes.' },
     });
 
     const response = await interaction.reply({
