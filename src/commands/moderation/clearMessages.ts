@@ -41,7 +41,19 @@ export default slashCommand(data, async ({ interaction }) => {
         return interaction.reply({ content: 'The channel could not be resolved.', ephemeral: true });
     }
 
-    const response = await interaction.reply({ content: `Do you really want to clear **${amount}** message${amount > 1 ? 's' : ''}?`, components: [buttonRow], ephemeral: true });
+    const confirmEmbed = makeEmbed({
+        title: 'Important!',
+        description: `Do you really want to clear **${amount}** message${amount > 1 ? 's' : ''}?`,
+        color: Colors.Red,
+        timestamp: new Date(),
+    });
+
+    const response = await interaction.reply({
+        embeds: [confirmEmbed],
+        components: [buttonRow],
+        ephemeral: true,
+    });
+
     const filter = (buttonInteraction: Interaction) => buttonInteraction.user.id === interaction.user.id;
 
     try {
