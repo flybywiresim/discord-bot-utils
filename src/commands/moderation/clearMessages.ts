@@ -98,7 +98,7 @@ export default slashCommand(data, async ({ interaction }) => {
                 return interaction.editReply({ content: '', embeds: [replyEmbed], components: [] });
             } catch (error) {
                 Logger.error('Error clearing messages:', error);
-                return interaction.editReply({ content: 'There was an error trying to clear messages in this channel.' });
+                return interaction.editReply({ content: 'There was an error trying to clear messages in this channel. The error has been logged.' });
             }
         } else {
             return interaction.editReply({ content: 'Interaction was canceled.', components: [] });
