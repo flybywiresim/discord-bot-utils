@@ -98,10 +98,15 @@ export default slashCommand(data, async ({ interaction }) => {
                 return interaction.editReply({ content: '', embeds: [replyEmbed], components: [] });
             } catch (error) {
                 Logger.error('Error clearing messages:', error);
-                return interaction.editReply({ content: 'There was an error trying to clear messages in this channel.' });
+                return interaction.editReply({ content: 'There was an error trying to clear messages in this channel. The error has been logged.' });
             }
         } else {
-            return interaction.editReply({ content: 'Interaction was canceled.', components: [] });
+            const canceledEmbed = makeEmbed({
+                title: 'Interaction canceled.',
+                color: Colors.Yellow,
+            });
+
+            return interaction.editReply({ embeds: [canceledEmbed], components: [] });
         }
     } catch (e) {
         return interaction.editReply({ content: 'The command timed out.', components: [] });
