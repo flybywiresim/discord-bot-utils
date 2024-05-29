@@ -25,7 +25,7 @@ export async function createPaginatedEmbedHandler(initialInteraction: CommandInt
     }
 
     const filter = (buttonInteraction: Interaction) => initialInteraction.user.id === buttonInteraction.user.id;
-    const collector = message.createMessageComponentCollector({ filter, componentType: ComponentType.Button, time: 120_000 });
+    const collector = message.createMessageComponentCollector({ filter, componentType: ComponentType.Button, time: 5_000 });
 
     collector.on('collect', async (collectedInteraction: ButtonInteraction) => {
         collectedInteraction.deferUpdate();
@@ -50,7 +50,8 @@ export async function createPaginatedEmbedHandler(initialInteraction: CommandInt
     }
 
     function handleEmbedExpire() {
-        initialInteraction.editReply({ embeds: [embeds[currentPage].setFooter({ text: 'This embed has expired.' })], components: [] });
+        const embed = embeds[currentPage];
+        initialInteraction.editReply({ embeds: [embed.setFooter({text: `${embed.data.footer ? embed.data.footer.text + ' - ' : ''} This embed has expired.`})], components: [] });
     }
 
     function setButtonDisabledStates() {
