@@ -17,7 +17,7 @@ export async function createPaginatedEmbedHandler(initialInteraction: CommandInt
 
     const buttonRow = new ActionRowBuilder<ButtonBuilder>().addComponents(prevButton, nextButton);
 
-    let message: Message<boolean> | InteractionResponse<boolean>;
+    let message: Message | InteractionResponse;
     if (initialInteraction.deferred || initialInteraction.replied) {
         message = await initialInteraction.editReply({ embeds: [embeds[currentPage]], components: [buttonRow] });
     } else {
