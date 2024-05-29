@@ -1,6 +1,6 @@
 import { Colors, CommandInteraction } from 'discord.js';
 import moment from 'moment';
-import { getConn, Infraction, makeEmbed, sendPaginatedInfractionEmbeds } from '../../../../lib';
+import { getConn, Infraction, makeEmbed, createPaginatedInfractionEmbedHandler } from '../../../../lib';
 
 const noConnEmbed = makeEmbed({
     title: 'List - No Connection',
@@ -355,7 +355,7 @@ export async function handleListInfraction(interaction: CommandInteraction, user
         const embeds = [aboutEmbed, warnsEmbed, timeoutsEmbed, scamLogEmbed, banEmbed, unbanEmbed, userNoteEmbed];
         await interaction.deferReply({ ephemeral });
 
-        await sendPaginatedInfractionEmbeds(interaction, interaction.user.id, embeds, infractionsLengths);
+        await createPaginatedInfractionEmbedHandler(interaction, interaction.user.id, embeds, infractionsLengths);
     } catch (error) {
         //Error handling - User is no longer on discord (Or ID doesn't exist)
 

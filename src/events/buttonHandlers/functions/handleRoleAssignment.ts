@@ -1,7 +1,7 @@
 import { ButtonInteraction, GuildMember } from 'discord.js';
 import { constantsConfig, Logger } from '../../../lib';
 
-export async function handleRollAssignment(interaction: ButtonInteraction, roleID: string) {
+export async function handleRoleAssignment(interaction: ButtonInteraction, roleID: string) {
     await interaction.deferReply({ ephemeral: true });
 
     try {
