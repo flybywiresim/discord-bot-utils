@@ -29,6 +29,7 @@ import docSearch from './utils/docSearch';
 import reportedIssues from './utils/reportedIssues';
 import commandTable from './moderation/commandTable';
 import listRoleUsers from './moderation/listRoleUsers';
+import clearMessages from './moderation/clearMessages';
 import locate from './utils/locate/locate';
 
 const commandArray: SlashCommand[] = [
@@ -62,6 +63,7 @@ const commandArray: SlashCommand[] = [
     reportedIssues,
     commandTable,
     listRoleUsers,
+    clearMessages,
     locate,
 ];
 
