@@ -17,7 +17,7 @@ export async function createPaginatedEmbedHandler(initialInteraction: CommandInt
 
     const buttonRow = new ActionRowBuilder<ButtonBuilder>().addComponents(prevButton, nextButton);
 
-    let message: Message<boolean> | InteractionResponse<boolean>;
+    let message: Message | InteractionResponse;
     if (initialInteraction.deferred || initialInteraction.replied) {
         message = await initialInteraction.editReply({ embeds: [embeds[currentPage]], components: [buttonRow] });
     } else {
@@ -28,7 +28,7 @@ export async function createPaginatedEmbedHandler(initialInteraction: CommandInt
     const collector = message.createMessageComponentCollector({ filter, componentType: ComponentType.Button, time: 120_000 });
 
     collector.on('collect', async (collectedInteraction: ButtonInteraction) => {
-        collectedInteraction.deferUpdate();
+        await collectedInteraction.deferUpdate();
 
         if (collectedInteraction.customId === 'pagination_nextPage') {
             currentPage++;
@@ -50,7 +50,8 @@ export async function createPaginatedEmbedHandler(initialInteraction: CommandInt
     }
 
     function handleEmbedExpire() {
-        initialInteraction.editReply({ embeds: [embeds[currentPage].setFooter({ text: 'This embed has expired.' })], components: [] });
+        const embed = embeds[currentPage];
+        initialInteraction.editReply({ embeds: [embed.setFooter({ text: `${embed.data.footer ? `${embed.data.footer.text} - ` : ''}This embed has expired.` })], components: [] });
     }
 
     function setButtonDisabledStates() {

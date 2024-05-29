@@ -348,7 +348,7 @@ export async function handleListInfraction(interaction: CommandInteraction, user
                     inline: true,
                 },
             ],
-            footer: { text: 'The buttons will expire in two minutes from command execution.' },
+            footer: { text: 'This embed will expire in two minutes from command execution.' },
         });
 
         //Collect embeds and send with the paginator

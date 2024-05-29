@@ -43,10 +43,10 @@ export async function createPaginatedInfractionEmbedHandler(initialInteraction: 
     const message = await initialInteraction.followUp({ embeds: [embeds[currentPage]], components: [buttonRow1, buttonRow2] });
 
     const filter = (interaction: Interaction) => interaction.user.id === user;
-    const collector = message.createMessageComponentCollector({ filter, time: 120000 });
+    const collector = message.createMessageComponentCollector({ filter, time: 120_000 });
 
     collector.on('collect', async (collectedInteraction: ButtonInteraction) => {
-        collectedInteraction.deferUpdate();
+        await collectedInteraction.deferUpdate();
 
         if (collectedInteraction.customId === 'infractions_about') {
             currentPage = 0;
@@ -84,6 +84,7 @@ export async function createPaginatedInfractionEmbedHandler(initialInteraction: 
     }
 
     function handleEmbedExpire() {
-        initialInteraction.editReply({ embeds: [embeds[currentPage].setFooter({ text: 'This embed has expired.' })], components: [] });
+        const embed = embeds[currentPage];
+        initialInteraction.editReply({ embeds: [embed.setFooter({ text: `${embed.data.footer ? `${embed.data.footer.text} - ` : ''}This embed has expired.` })], components: [] });
     }
 }
