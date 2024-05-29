@@ -2,7 +2,7 @@
 
 Update <small>_ May 2024</small>
 
-- fix: keep footer on embed expire
+- fix: keep footer on embed expire (29/05/2024)
 - feat: /clear-messages command (29/05/2024)
 - refactor: improve and simplify embed pagination (29/05/2024)
 - feat: button handler (27/05/2024)
