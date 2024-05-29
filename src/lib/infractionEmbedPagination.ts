@@ -85,6 +85,6 @@ export async function createPaginatedInfractionEmbedHandler(initialInteraction: 
 
     function handleEmbedExpire() {
         const embed = embeds[currentPage];
-        initialInteraction.editReply({ embeds: [embed.setFooter({ text: `${embed.data.footer ? `${embed.data.footer.text} - ` : ''} This embed has expired.` })], components: [] });
+        initialInteraction.editReply({ embeds: [embed.setFooter({ text: `${embed.data.footer ? `${embed.data.footer.text} - ` : ''}This embed has expired.` })], components: [] });
     }
 }
