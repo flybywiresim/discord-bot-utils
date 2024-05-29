@@ -5,7 +5,7 @@ const data = slashCommandStructure({
     name: 'clear-messages',
     description: 'Clear a specified number of messages in the current channel.',
     type: ApplicationCommandType.ChatInput,
-    default_member_permissions: constantsConfig.commandPermission.MANAGE_SERVER,
+    default_member_permissions: constantsConfig.commandPermission.MANAGE_SERVER, //Overrides need to be added for admin and moderator roles
     dm_permission: false,
     options: [{
         name: 'amount',
