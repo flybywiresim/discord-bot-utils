@@ -4,12 +4,12 @@ export * from './embed';
 export * from './db';
 export * from './scheduler';
 export * from './logger';
-export * from './infractionPagination';
+export * from './infractionEmbedPagination';
 export * from './slashCommand';
 export * from './replies';
 export * from './contextMenuCommand';
 export * from './durationInEnglish';
-export * from './genericPagination';
+export * from './genericEmbedPagination';
 export * from './autocomplete';
 
 //Schemas

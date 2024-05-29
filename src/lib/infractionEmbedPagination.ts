@@ -1,6 +1,6 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Interaction, CommandInteraction } from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Interaction, CommandInteraction, ButtonInteraction, EmbedBuilder } from 'discord.js';
 
-export async function sendPaginatedInfractionEmbeds(interaction: CommandInteraction, user:string, embeds: any[], infractionsLengths: { warnsLength: string; timeoutsLength: string; scamLogsLength: string; bansLength: string; unbansLength: string; notesLength: string; }): Promise<void> {
+export async function createPaginatedInfractionEmbedHandler(initialInteraction: CommandInteraction, user:string, embeds: EmbedBuilder[], infractionsLengths: { warnsLength: string; timeoutsLength: string; scamLogsLength: string; bansLength: string; unbansLength: string; notesLength: string; }): Promise<void> {
     let currentPage = 0;
 
     const aboutButton = new ButtonBuilder()
@@ -40,31 +40,35 @@ export async function sendPaginatedInfractionEmbeds(interaction: CommandInteract
 
     const buttonRow1 = new ActionRowBuilder<ButtonBuilder>().addComponents(aboutButton, warnButton, timeoutButton);
     const buttonRow2 = new ActionRowBuilder<ButtonBuilder>().addComponents(scamLogButton, banButton, unbanButton, noteButton);
-    const message = await interaction.followUp({ embeds: [embeds[currentPage]], components: [buttonRow1, buttonRow2] });
+    const message = await initialInteraction.followUp({ embeds: [embeds[currentPage]], components: [buttonRow1, buttonRow2] });
 
     const filter = (interaction: Interaction) => interaction.user.id === user;
     const collector = message.createMessageComponentCollector({ filter, time: 120000 });
 
-    collector.on('collect', async (interaction: any) => {
-        interaction.deferUpdate();
+    collector.on('collect', async (collectedInteraction: ButtonInteraction) => {
+        collectedInteraction.deferUpdate();
 
-        if (interaction.customId === 'infractions_about') {
+        if (collectedInteraction.customId === 'infractions_about') {
             currentPage = 0;
-        } else if (interaction.customId === 'infractions_warns') {
+        } else if (collectedInteraction.customId === 'infractions_warns') {
             currentPage = 1;
-        } else if (interaction.customId === 'infractions_timeouts') {
+        } else if (collectedInteraction.customId === 'infractions_timeouts') {
             currentPage = 2;
-        } else if (interaction.customId === 'infractions_scamlog') {
+        } else if (collectedInteraction.customId === 'infractions_scamlog') {
             currentPage = 3;
-        } else if (interaction.customId === 'infractions_bans') {
+        } else if (collectedInteraction.customId === 'infractions_bans') {
             currentPage = 4;
-        } else if (interaction.customId === 'infractions_unbans') {
+        } else if (collectedInteraction.customId === 'infractions_unbans') {
             currentPage = 5;
-        } else if (interaction.customId === 'infractions_notes') {
+        } else if (collectedInteraction.customId === 'infractions_notes') {
             currentPage = 6;
         }
 
         updateEmbed();
+    });
+
+    collector.on('end', async () => {
+        handleEmbedExpire();
     });
 
     function updateEmbed() {
@@ -76,6 +80,10 @@ export async function sendPaginatedInfractionEmbeds(interaction: CommandInteract
         unbanButton.setStyle(currentPage === 5 ? ButtonStyle.Success : ButtonStyle.Primary);
         noteButton.setStyle(currentPage === 6 ? ButtonStyle.Success : ButtonStyle.Primary);
 
-        interaction.editReply({ embeds: [embeds[currentPage]], components: [buttonRow1, buttonRow2] });
+        initialInteraction.editReply({ embeds: [embeds[currentPage]], components: [buttonRow1, buttonRow2] });
+    }
+
+    function handleEmbedExpire() {
+        initialInteraction.editReply({ embeds: [embeds[currentPage].setFooter({ text: 'This embed has expired.' })], components: [] });
     }
 }

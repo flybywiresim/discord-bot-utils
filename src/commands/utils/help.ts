@@ -1,5 +1,5 @@
 import { ApplicationCommandOptionType, ApplicationCommandType, CommandInteraction } from 'discord.js';
-import { slashCommand, slashCommandStructure, makeEmbed, sendPaginatedEmbed, Logger } from '../../lib';
+import { Logger, makeEmbed, createPaginatedEmbedHandler, slashCommand, slashCommandStructure } from '../../lib';
 
 // May need re wrting to pull commands from index instead of the API
 
@@ -101,7 +101,7 @@ export default slashCommand(data, async ({ interaction }: { interaction: Command
         }
 
         // Use the pagination function to send the paginated embeds
-        return sendPaginatedEmbed(interaction, embeds);
+        return createPaginatedEmbedHandler(interaction, embeds);
     } catch (error) {
         Logger.error(error);
         return interaction.reply({
