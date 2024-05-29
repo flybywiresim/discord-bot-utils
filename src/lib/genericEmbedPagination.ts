@@ -28,7 +28,7 @@ export async function createPaginatedEmbedHandler(initialInteraction: CommandInt
     const collector = message.createMessageComponentCollector({ filter, componentType: ComponentType.Button, time: 5_000 });
 
     collector.on('collect', async (collectedInteraction: ButtonInteraction) => {
-        collectedInteraction.deferUpdate();
+        await collectedInteraction.deferUpdate();
 
         if (collectedInteraction.customId === 'pagination_nextPage') {
             currentPage++;

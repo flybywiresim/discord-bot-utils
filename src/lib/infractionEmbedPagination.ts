@@ -46,7 +46,7 @@ export async function createPaginatedInfractionEmbedHandler(initialInteraction: 
     const collector = message.createMessageComponentCollector({ filter, time: 5_000 });
 
     collector.on('collect', async (collectedInteraction: ButtonInteraction) => {
-        collectedInteraction.deferUpdate();
+        await collectedInteraction.deferUpdate();
 
         if (collectedInteraction.customId === 'infractions_about') {
             currentPage = 0;
