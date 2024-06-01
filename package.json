@@ -22,7 +22,7 @@
     "bad-words": "^3.0.4",
     "config": "^3.3.9",
     "discord.js": "^14.11.0",
-    "jsdom": "^23.2.0",
+    "jsdom": "^24.1.0",
     "moment": "^2.29.4",
     "mongoose": "^8.0.3",
     "node-fetch": "^2.6.10",
