@@ -78,11 +78,12 @@ const data = slashCommandStructure({
     ],
 });
 
-const fetchErrorEmbed = (error: any) => makeEmbed({
-    title: 'VATSIM Data - Fetching data failure',
-    description: `Could not fetch the VATSIM data from the VATSIM API service: ${error}`,
-    color: Colors.Red,
-});
+const fetchErrorEmbed = (error: any) =>
+    makeEmbed({
+        title: 'VATSIM Data - Fetching data failure',
+        description: `Could not fetch the VATSIM data from the VATSIM API service: ${error}`,
+        color: Colors.Red,
+    });
 
 export default slashCommand(data, async ({ interaction }) => {
     // Fetch VATSIM data
@@ -112,8 +113,10 @@ export default slashCommand(data, async ({ interaction }) => {
         const regexMatches = callsign.match(regexCheck);
 
         if (!regexMatches || !regexMatches.groups || !regexMatches.groups.callsignSearch) {
-            // eslint-disable-next-line consistent-return
-            return interaction.reply({ content: 'You need to provide a valid callsign or part of a callsign to search for', ephemeral: true });
+            return interaction.reply({
+                content: 'You need to provide a valid callsign or part of a callsign to search for',
+                ephemeral: true,
+            });
         }
 
         callsignSearch = regexMatches.groups.callsignSearch;
@@ -124,23 +127,23 @@ export default slashCommand(data, async ({ interaction }) => {
     const subcommandName = interaction.options.getSubcommand();
 
     switch (subcommandName) {
-    case 'stats':
-        await handleVatsimStats(interaction, vatsimData, callsignSearch);
-        break;
-    case 'controllers':
-        await handleVatsimControllers(interaction, vatsimData, callsignSearch);
-        break;
-    case 'pilots':
-        await handleVatsimPilots(interaction, vatsimData, callsignSearch);
-        break;
-    case 'observers':
-        await handleVatsimObservers(interaction, vatsimData, callsignSearch);
-        break;
-    case 'events':
-        await handleVatsimEvents(interaction);
-        break;
+        case 'stats':
+            await handleVatsimStats(interaction, vatsimData, callsignSearch);
+            break;
+        case 'controllers':
+            await handleVatsimControllers(interaction, vatsimData, callsignSearch);
+            break;
+        case 'pilots':
+            await handleVatsimPilots(interaction, vatsimData, callsignSearch);
+            break;
+        case 'observers':
+            await handleVatsimObservers(interaction, vatsimData, callsignSearch);
+            break;
+        case 'events':
+            await handleVatsimEvents(interaction);
+            break;
 
-    default:
-        await interaction.reply({ content: 'Unknown subcommand', ephemeral: true });
+        default:
+            await interaction.reply({ content: 'Unknown subcommand', ephemeral: true });
     }
 });

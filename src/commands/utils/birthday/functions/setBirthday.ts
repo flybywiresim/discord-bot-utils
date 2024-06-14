@@ -31,10 +31,11 @@ const invalidDateEmbed = makeEmbed({
     color: Colors.Red,
 });
 
-const birthdaySetEmbed = (discordUser: User, birthdayDay: number, birthdayMonth: number, birthdayTimezone: number) => makeEmbed({
-    title: 'Birthday - Birthday Set',
-    description: `${discordUser}'s birthday has been set to ${birthdayDay}/${birthdayMonth} and their timezone is UTC${birthdayTimezone < 0 ? '' : '+'}${birthdayTimezone}`,
-});
+const birthdaySetEmbed = (discordUser: User, birthdayDay: number, birthdayMonth: number, birthdayTimezone: number) =>
+    makeEmbed({
+        title: 'Birthday - Birthday Set',
+        description: `${discordUser}'s birthday has been set to ${birthdayDay}/${birthdayMonth} and their timezone is UTC${birthdayTimezone < 0 ? '' : '+'}${birthdayTimezone}`,
+    });
 
 export async function handleSetBirthday(interaction: ChatInputCommandInteraction<'cached'>) {
     const selectedDay = interaction.options.getInteger('day')!;

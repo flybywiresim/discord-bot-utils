@@ -2,48 +2,52 @@ import { ChatInputCommandInteraction, Colors, TextChannel, User } from 'discord.
 import moment from 'moment';
 import { constantsConfig, Logger, makeEmbed } from '../../../../lib';
 
-const notTimedOutEmbed = (discordUser: User) => makeEmbed({
-    title: 'Remove Timeout - Failed',
-    description: `${discordUser.toString()} is not currently timed out.`,
-    color: Colors.Red,
-});
+const notTimedOutEmbed = (discordUser: User) =>
+    makeEmbed({
+        title: 'Remove Timeout - Failed',
+        description: `${discordUser.toString()} is not currently timed out.`,
+        color: Colors.Red,
+    });
 
-const failedRemoveTimeoutEmbed = (discordUser: User) => makeEmbed({
-    title: 'Remove Timeout - Failed',
-    description: `Failed to remove timeout for ${discordUser.toString()}`,
-    color: Colors.Red,
-});
+const failedRemoveTimeoutEmbed = (discordUser: User) =>
+    makeEmbed({
+        title: 'Remove Timeout - Failed',
+        description: `Failed to remove timeout for ${discordUser.toString()}`,
+        color: Colors.Red,
+    });
 
-const modLogEmbed = (moderator: User, discordUser: User, date: string) => makeEmbed({
-    author: {
-        name: `[TIMEOUT REMOVED]  ${discordUser.tag}`,
-        iconURL: discordUser.displayAvatarURL(),
-    },
-    fields: [
-        {
-            inline: true,
-            name: 'Moderator',
-            value: moderator.toString(),
+const modLogEmbed = (moderator: User, discordUser: User, date: string) =>
+    makeEmbed({
+        author: {
+            name: `[TIMEOUT REMOVED]  ${discordUser.tag}`,
+            iconURL: discordUser.displayAvatarURL(),
         },
-        {
-            inline: true,
-            name: 'User',
-            value: discordUser.toString(),
-        },
-        {
-            inline: false,
-            name: 'Date',
-            value: date,
-        },
-    ],
-    footer: { text: `User ID: ${discordUser.id}` },
-    color: Colors.Green,
-});
+        fields: [
+            {
+                inline: true,
+                name: 'Moderator',
+                value: moderator.toString(),
+            },
+            {
+                inline: true,
+                name: 'User',
+                value: discordUser.toString(),
+            },
+            {
+                inline: false,
+                name: 'Date',
+                value: date,
+            },
+        ],
+        footer: { text: `User ID: ${discordUser.id}` },
+        color: Colors.Green,
+    });
 
-const timeoutRemovedEmbed = (discordUser: User) => makeEmbed({
-    title: `${discordUser.tag} was successfully removed from timeout`,
-    color: Colors.Green,
-});
+const timeoutRemovedEmbed = (discordUser: User) =>
+    makeEmbed({
+        title: `${discordUser.tag} was successfully removed from timeout`,
+        color: Colors.Green,
+    });
 
 const noModLogs = makeEmbed({
     title: 'Remove Timeout - No Mod Log',

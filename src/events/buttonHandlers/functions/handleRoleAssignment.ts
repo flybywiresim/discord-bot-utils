@@ -14,7 +14,7 @@ export async function handleRoleAssignment(interaction: ButtonInteraction, roleI
 
         if (!role) {
             Logger.error('Role Assignment: Role not found');
-            interaction.editReply({ content: 'I couldn\'t find that role' });
+            interaction.editReply({ content: "I couldn't find that role" });
             return;
         }
 
@@ -36,6 +36,9 @@ export async function handleRoleAssignment(interaction: ButtonInteraction, roleI
         }
     } catch (error) {
         Logger.error(error);
-        await interaction.editReply({ content: 'Something went wrong, this role may no longer exist. Please try again. The error message has been logged.' });
+        await interaction.editReply({
+            content:
+                'Something went wrong, this role may no longer exist. Please try again. The error message has been logged.',
+        });
     }
 }

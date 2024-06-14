@@ -84,17 +84,17 @@ export default slashCommand(data, async ({ interaction }) => {
     const subcommandName = interaction.options.getSubcommand();
 
     switch (subcommandName) {
-    case 'set':
-        await handleSetBirthday(interaction);
-        break;
-    case 'remove':
-        await handleRemoveBirthday(interaction);
-        break;
-    case 'list':
-        await handleListBirthday(interaction);
-        break;
+        case 'set':
+            await handleSetBirthday(interaction);
+            break;
+        case 'remove':
+            await handleRemoveBirthday(interaction);
+            break;
+        case 'list':
+            await handleListBirthday(interaction);
+            break;
 
-    default:
-        await interaction.reply({ content: 'Unknown subcommand', ephemeral: true });
+        default:
+            await interaction.reply({ content: 'Unknown subcommand', ephemeral: true });
     }
 });

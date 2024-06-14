@@ -17,7 +17,7 @@ const data = slashCommandStructure({
 });
 
 export default slashCommand(data, async ({ interaction }) => {
-// check if user has the role
+    // check if user has the role
     const hasRole = interaction.member.roles.cache.has(constantsConfig.roles.BOT_DEVELOPER);
 
     if (!hasRole) {
@@ -25,7 +25,7 @@ export default slashCommand(data, async ({ interaction }) => {
         return;
     }
 
-    const countThread = interaction.guild.channels.resolve(constantsConfig.threads.COUNT_THREAD) as TextChannel | null;
+    const countThread = interaction.guild.channels.resolve(constantsConfig.threads.COUNT_THREAD);
 
     if (!countThread) {
         await interaction.reply({ content: 'Count thread not found.', ephemeral: true });

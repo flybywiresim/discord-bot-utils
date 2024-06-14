@@ -1,5 +1,12 @@
 import { ApplicationCommandOptionType, ApplicationCommandType, Colors, EmbedField, TextChannel } from 'discord.js';
-import { constantsConfig, slashCommand, slashCommandStructure, makeEmbed, durationInEnglish, getScheduler } from '../../../lib';
+import {
+    constantsConfig,
+    slashCommand,
+    slashCommandStructure,
+    makeEmbed,
+    durationInEnglish,
+    getScheduler,
+} from '../../../lib';
 import { handleSetSlowmode } from './functions/set';
 import { handleDisableSlowmode } from './functions/disable';
 
@@ -85,19 +92,26 @@ const noSchedulerEmbed = makeEmbed({
     color: Colors.Red,
 });
 
-const failedEmbed = (action: string, channel: string) => makeEmbed({
-    title: `Slow Mode - ${action} failed`,
-    description: `Failed to ${action} the slow mode for channel <@${channel}>.`,
-    color: Colors.Red,
-});
+const failedEmbed = (action: string, channel: string) =>
+    makeEmbed({
+        title: `Slow Mode - ${action} failed`,
+        description: `Failed to ${action} the slow mode for channel <@${channel}>.`,
+        color: Colors.Red,
+    });
 
-const modLogEmbed = (action: string, fields: any, color: number) => makeEmbed({
-    title: `Slow Mode - ${action}`,
-    fields,
-    color,
-});
+const modLogEmbed = (action: string, fields: any, color: number) =>
+    makeEmbed({
+        title: `Slow Mode - ${action}`,
+        fields,
+        color,
+    });
 
-const slowModeEmbedField = (moderator: string, channel: string, duration: number, autoDisable: string): EmbedField[] => [
+const slowModeEmbedField = (
+    moderator: string,
+    channel: string,
+    duration: number,
+    autoDisable: string,
+): EmbedField[] => [
     {
         inline: true,
         name: 'Channel',
@@ -120,17 +134,19 @@ const slowModeEmbedField = (moderator: string, channel: string, duration: number
     },
 ];
 
-const noChannelEmbed = (action:string, channelName: string) => makeEmbed({
-    title: `Slow Mode - ${action} - No ${channelName} channel`,
-    description: `The command was successful, but no message to ${channelName} was sent. Please check the channel still exists.`,
-    color: Colors.Yellow,
-});
+const noChannelEmbed = (action: string, channelName: string) =>
+    makeEmbed({
+        title: `Slow Mode - ${action} - No ${channelName} channel`,
+        description: `The command was successful, but no message to ${channelName} was sent. Please check the channel still exists.`,
+        color: Colors.Yellow,
+    });
 
-const successEmbed = (action: string, channel: string) => makeEmbed({
-    title: `Slow Mode - ${action} successful`,
-    description: `Slow mode for channel <#${channel}> has been ${action} successfully.`,
-    color: Colors.Green,
-});
+const successEmbed = (action: string, channel: string) =>
+    makeEmbed({
+        title: `Slow Mode - ${action} successful`,
+        description: `Slow mode for channel <#${channel}> has been ${action} successfully.`,
+        color: Colors.Green,
+    });
 
 export default slashCommand(data, async ({ interaction }) => {
     const scheduler = getScheduler();
@@ -146,14 +162,36 @@ export default slashCommand(data, async ({ interaction }) => {
     const subcommandName = interaction.options.getSubcommand();
 
     switch (subcommandName) {
-    case 'set':
-        await handleSetSlowmode(interaction, duration, slowmodeChannel, autoDisable, modLogsChannel, scheduler, failedEmbed, noChannelEmbed, successEmbed, modLogEmbed, slowModeEmbedField);
-        break;
-    case 'disable':
-        await handleDisableSlowmode(interaction, slowmodeChannel, modLogsChannel, scheduler, failedEmbed, noChannelEmbed, successEmbed, modLogEmbed, slowModeEmbedField);
-        break;
+        case 'set':
+            await handleSetSlowmode(
+                interaction,
+                duration,
+                slowmodeChannel,
+                autoDisable,
+                modLogsChannel,
+                scheduler,
+                failedEmbed,
+                noChannelEmbed,
+                successEmbed,
+                modLogEmbed,
+                slowModeEmbedField,
+            );
+            break;
+        case 'disable':
+            await handleDisableSlowmode(
+                interaction,
+                slowmodeChannel,
+                modLogsChannel,
+                scheduler,
+                failedEmbed,
+                noChannelEmbed,
+                successEmbed,
+                modLogEmbed,
+                slowModeEmbedField,
+            );
+            break;
 
-    default:
-        await interaction.reply({ content: 'Unknown subcommand', ephemeral: true });
+        default:
+            await interaction.reply({ content: 'Unknown subcommand', ephemeral: true });
     }
 });

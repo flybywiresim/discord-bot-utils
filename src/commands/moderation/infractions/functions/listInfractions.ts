@@ -8,7 +8,11 @@ const noConnEmbed = makeEmbed({
     color: Colors.Red,
 });
 
-export async function handleListInfraction(interaction: CommandInteraction, userID: string | undefined, ephemeral = false) {
+export async function handleListInfraction(
+    interaction: CommandInteraction,
+    userID: string | undefined,
+    ephemeral = false,
+) {
     const conn = getConn();
 
     if (!conn) {
@@ -63,22 +67,20 @@ export async function handleListInfraction(interaction: CommandInteraction, user
             notesLength: userNotes.length.toString(),
         };
 
-        type InfractionArray = typeof warnInfractions
-            | typeof timeoutInfractions
-            | typeof scamLogInfractions
-            | typeof banInfractions
-            | typeof unbanInfractions
-            | typeof userNotes;
+        type InfractionArray = typeof warnInfractions;
 
         const fetchModerators = (infractions: InfractionArray) => {
-            const moderatorPromises = infractions.map((infraction) => interaction.client.users.fetch(infraction.moderatorID!)
-                // Disabled for readability
-                // eslint-disable-next-line arrow-body-style
-                .catch(() => {
-                    return new Promise((resolve) => {
-                        resolve(`I can't find the moderator, here is the stored ID: ${infraction.moderatorID}`);
-                    });
-                }));
+            const moderatorPromises = infractions.map((infraction) =>
+                interaction.client.users
+                    .fetch(infraction.moderatorID)
+                    // Disabled for readability
+
+                    .catch(() => {
+                        return new Promise((resolve) => {
+                            resolve(`I can't find the moderator, here is the stored ID: ${infraction.moderatorID}`);
+                        });
+                    }),
+            );
 
             return Promise.all(moderatorPromises);
         };
@@ -88,19 +90,17 @@ export async function handleListInfraction(interaction: CommandInteraction, user
         const warnModeratorUsers = await fetchModerators(warnInfractions);
 
         for (let i = 0; i < warnInfractions.length; i++) {
-            const formattedDate: string = moment(warnInfractions[i].date)
-                .utcOffset(0)
-                .format();
+            const formattedDate: string = moment(warnInfractions[i].date).utcOffset(0).format();
 
             warnFields.push(
                 {
                     name: `Warn #${i + 1}`,
                     value:
-                        `**Type:** ${warnInfractions[i].infractionType}\n`
-                        + `**Moderator:** ${warnModeratorUsers[i]}\n`
-                        + `**Reason:** ${warnInfractions[i].reason}\n`
-                        + `**Date:** ${formattedDate}\n`
-                        + `**Infraction ID:** ${warnInfractions[i].infractionID}`,
+                        `**Type:** ${warnInfractions[i].infractionType}\n` +
+                        `**Moderator:** ${warnModeratorUsers[i]}\n` +
+                        `**Reason:** ${warnInfractions[i].reason}\n` +
+                        `**Date:** ${formattedDate}\n` +
+                        `**Infraction ID:** ${warnInfractions[i].infractionID}`,
                 },
                 {
                     name: '',
@@ -124,20 +124,18 @@ export async function handleListInfraction(interaction: CommandInteraction, user
         const timeoutModeratorUsers = await fetchModerators(timeoutInfractions);
 
         for (let i = 0; i < timeoutInfractions.length; i++) {
-            const formattedDate: string = moment(timeoutInfractions[i].date)
-                .utcOffset(0)
-                .format();
+            const formattedDate: string = moment(timeoutInfractions[i].date).utcOffset(0).format();
 
             timeoutFields.push(
                 {
                     name: `Timeout #${i + 1}`,
                     value:
-                        `**Type:** ${timeoutInfractions[i].infractionType}\n`
-                        + `**Moderator:** ${timeoutModeratorUsers[i]}\n`
-                        + `**Reason:** ${timeoutInfractions[i].reason}\n`
-                        + `**Duration:** ${timeoutInfractions[i].duration !== undefined ? timeoutInfractions[i].duration : 'No duration specified, this user was timed out before the bot upgrade!'}\n`
-                        + `**Date:** ${formattedDate}\n`
-                        + `**Infraction ID:** ${timeoutInfractions[i].infractionID}`,
+                        `**Type:** ${timeoutInfractions[i].infractionType}\n` +
+                        `**Moderator:** ${timeoutModeratorUsers[i]}\n` +
+                        `**Reason:** ${timeoutInfractions[i].reason}\n` +
+                        `**Duration:** ${timeoutInfractions[i].duration !== undefined ? timeoutInfractions[i].duration : 'No duration specified, this user was timed out before the bot upgrade!'}\n` +
+                        `**Date:** ${formattedDate}\n` +
+                        `**Infraction ID:** ${timeoutInfractions[i].infractionID}`,
                 },
                 {
                     name: '',
@@ -161,19 +159,17 @@ export async function handleListInfraction(interaction: CommandInteraction, user
         const scamLogModerators = await fetchModerators(scamLogInfractions);
 
         for (let i = 0; i < scamLogInfractions.length; i++) {
-            const formattedDate: string = moment(scamLogInfractions[i].date)
-                .utcOffset(0)
-                .format();
+            const formattedDate: string = moment(scamLogInfractions[i].date).utcOffset(0).format();
 
             scamLogFields.push(
                 {
                     name: `Scam Log #${i + 1}`,
                     value:
-                        `**Type:** ${scamLogInfractions[i].infractionType}\n`
-                        + `**Moderator:** ${scamLogModerators[i]}\n`
-                        + `**Message Content:** ${scamLogInfractions[i].reason}\n`
-                        + `**Date:** ${formattedDate}\n`
-                        + `**Infraction ID:** ${scamLogInfractions[i].infractionID}`,
+                        `**Type:** ${scamLogInfractions[i].infractionType}\n` +
+                        `**Moderator:** ${scamLogModerators[i]}\n` +
+                        `**Message Content:** ${scamLogInfractions[i].reason}\n` +
+                        `**Date:** ${formattedDate}\n` +
+                        `**Infraction ID:** ${scamLogInfractions[i].infractionID}`,
                 },
                 {
                     name: '',
@@ -197,19 +193,17 @@ export async function handleListInfraction(interaction: CommandInteraction, user
         const banModerators = await fetchModerators(banInfractions);
 
         for (let i = 0; i < banInfractions.length; i++) {
-            const formattedDate: string = moment(banInfractions[i].date)
-                .utcOffset(0)
-                .format();
+            const formattedDate: string = moment(banInfractions[i].date).utcOffset(0).format();
 
             banFields.push(
                 {
                     name: `Ban #${i + 1}`,
                     value:
-                        `**Type:** ${banInfractions[i].infractionType}\n`
-                        + `**Moderator:** ${banModerators[i]}\n`
-                        + `**Reason:** ${banInfractions[i].reason}\n`
-                        + `**Date:** ${formattedDate}\n`
-                        + `**Infraction ID:** ${banInfractions[i].infractionID}`,
+                        `**Type:** ${banInfractions[i].infractionType}\n` +
+                        `**Moderator:** ${banModerators[i]}\n` +
+                        `**Reason:** ${banInfractions[i].reason}\n` +
+                        `**Date:** ${formattedDate}\n` +
+                        `**Infraction ID:** ${banInfractions[i].infractionID}`,
                 },
                 {
                     name: '',
@@ -232,19 +226,17 @@ export async function handleListInfraction(interaction: CommandInteraction, user
         const unbanFields: { name: string; value: string }[] = [];
         const unbanModerators = await fetchModerators(unbanInfractions);
         for (let i = 0; i < unbanInfractions.length; i++) {
-            const formattedDate: string = moment(unbanInfractions[i].date)
-                .utcOffset(0)
-                .format();
+            const formattedDate: string = moment(unbanInfractions[i].date).utcOffset(0).format();
 
             unbanFields.push(
                 {
                     name: `Unban #${i + 1}`,
                     value:
-                        `**Type:** ${unbanInfractions[i].infractionType}\n`
-                        + `**Moderator:** ${unbanModerators[i]}\n`
-                        + `**Reason:** ${unbanInfractions[i].reason}\n`
-                        + `**Date:** ${formattedDate}\n`
-                        + `**Infraction ID:** ${unbanInfractions[i].infractionID}`,
+                        `**Type:** ${unbanInfractions[i].infractionType}\n` +
+                        `**Moderator:** ${unbanModerators[i]}\n` +
+                        `**Reason:** ${unbanInfractions[i].reason}\n` +
+                        `**Date:** ${formattedDate}\n` +
+                        `**Infraction ID:** ${unbanInfractions[i].infractionID}`,
                 },
                 {
                     name: '',
@@ -268,19 +260,17 @@ export async function handleListInfraction(interaction: CommandInteraction, user
         const userNodeModerators = await fetchModerators(userNotes);
 
         for (let i = 0; i < userNotes.length; i++) {
-            const formattedDate: string = moment(userNotes[i].date)
-                .utcOffset(0)
-                .format();
+            const formattedDate: string = moment(userNotes[i].date).utcOffset(0).format();
 
             noteFields.push(
                 {
                     name: `Note #${i + 1}`,
                     value:
-                        `**Type:** ${userNotes[i].infractionType}\n`
-                        + `**Moderator:** ${userNodeModerators[i]}\n`
-                        + `**Note:** ${userNotes[i].reason}\n`
-                        + `**Date:** ${formattedDate}\n`
-                        + `**Infraction ID:** ${userNotes[i].infractionID}`,
+                        `**Type:** ${userNotes[i].infractionType}\n` +
+                        `**Moderator:** ${userNodeModerators[i]}\n` +
+                        `**Note:** ${userNotes[i].reason}\n` +
+                        `**Date:** ${formattedDate}\n` +
+                        `**Infraction ID:** ${userNotes[i].infractionID}`,
                 },
                 {
                     name: '',
@@ -305,7 +295,7 @@ export async function handleListInfraction(interaction: CommandInteraction, user
                 name: `${discordUser.tag}'s Infractions`,
                 iconURL: avatarURL || undefined,
             },
-            description: 'Click the buttons below to view the user\'s infractions in detail.',
+            description: "Click the buttons below to view the user's infractions in detail.",
             fields: [
                 {
                     name: 'UserID',
@@ -362,7 +352,8 @@ export async function handleListInfraction(interaction: CommandInteraction, user
         const userNotFound = makeEmbed({
             color: Colors.Red,
             title: 'User not found',
-            description: 'An error occurred while fetching user information, please check the userID. If the ID is correct, this user may not exist on Discord anymore - If you need to view their infractions anyway one of the bot team can search the DB manually.',
+            description:
+                'An error occurred while fetching user information, please check the userID. If the ID is correct, this user may not exist on Discord anymore - If you need to view their infractions anyway one of the bot team can search the DB manually.',
         });
 
         await interaction.followUp({ embeds: [userNotFound], ephemeral });

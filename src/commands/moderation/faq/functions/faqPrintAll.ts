@@ -34,7 +34,8 @@ export async function handlePrintAllFAQ(interaction: ChatInputCommandInteraction
 
         if (faqs.length === 0) {
             return interaction.followUp('No FAQs found.');
-        } if (interaction.channel) {
+        }
+        if (interaction.channel) {
             await interaction.channel.send({ files: [FLIGHT_DECK_IMAGE_URL] });
 
             // Divide the FAQs into sets of 5
@@ -55,7 +56,6 @@ export async function handlePrintAllFAQ(interaction: ChatInputCommandInteraction
                     })),
                 });
 
-                // eslint-disable-next-line no-await-in-loop
                 await interaction.channel.send({ embeds: [faqEmbed] });
             }
 

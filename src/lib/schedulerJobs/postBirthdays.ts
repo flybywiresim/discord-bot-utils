@@ -25,14 +25,13 @@ export async function postBirthdays(job: Job) {
         return;
     }
 
-    // eslint-disable-next-line no-underscore-dangle
     const matchingJobs = await scheduler.jobs({ _id: job.attrs._id });
     if (matchingJobs.length !== 1) {
         Logger.debug('Job has been deleted already, skipping execution.');
         return;
     }
 
-    const guild = client.guilds.resolve(constantsConfig.guildId) as Guild | null;
+    const guild = client.guilds.resolve(constantsConfig.guildId);
     if (!guild) {
         Logger.error('BirthdayHandler - Guild not found.');
         return;
@@ -47,7 +46,7 @@ export async function postBirthdays(job: Job) {
     // Get all threads (archived included)
 
     await channel.threads.fetch({ archived: {} });
-    const thread = channel.threads.cache.find((t) => t.id === constantsConfig.threads.BIRTHDAY_THREAD) as ThreadChannel | null;
+    const thread = channel.threads.cache.find((t) => t.id === constantsConfig.threads.BIRTHDAY_THREAD);
     if (!thread) {
         Logger.error('Birthday handler - Thread not found');
         return;
@@ -85,8 +84,7 @@ export async function postBirthdays(job: Job) {
     for (const birthday of birthdays) {
         let user;
         try {
-            // eslint-disable-next-line no-await-in-loop
-            user = await guild.members.fetch(birthday.userID!);
+            user = await guild.members.fetch(birthday.userID);
         } catch (error) {
             Logger.error('BirthdayHandler - Failed to fetch user', error);
         }
@@ -106,7 +104,9 @@ export async function postBirthdays(job: Job) {
         });
 
         // Update birthday to next year
-        const nextBirthdayDatetime = new Date(Date.UTC(currentDate.getUTCFullYear() + 1, birthday.month! - 1, birthday.day!));
+        const nextBirthdayDatetime = new Date(
+            Date.UTC(currentDate.getUTCFullYear() + 1, birthday.month! - 1, birthday.day),
+        );
         nextBirthdayDatetime.setUTCHours(10 - birthday.timezone!);
         birthday.utcDatetime = nextBirthdayDatetime;
         try {

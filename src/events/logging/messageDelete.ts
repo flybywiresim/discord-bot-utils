@@ -7,12 +7,12 @@ const CONTENT_NOT_AVAIL = 'Unable to find content or embeds.';
 export default event(Events.MessageDelete, async (_, msg) => {
     try {
         if (msg.guild === null || msg.author === null) {
-        // DMs
+            // DMs
             return;
         }
 
         if (msg.content === null || msg.content.trim() === '') {
-        // Old Message or empty content
+            // Old Message or empty content
             return;
         }
 
@@ -22,10 +22,8 @@ export default event(Events.MessageDelete, async (_, msg) => {
         });
         const deletionLog = fetchedLogs.entries.first();
         const currentDate = new Date();
-        const formattedDate: string = moment(currentDate)
-            .utcOffset(0)
-            .format('DD, MM, YYYY, HH:mm:ss');
-        const userLogsChannel = msg.guild.channels.resolve(constantsConfig.channels.USER_LOGS) as TextChannel | null;
+        const formattedDate: string = moment(currentDate).utcOffset(0).format('DD, MM, YYYY, HH:mm:ss');
+        const userLogsChannel = msg.guild.channels.resolve(constantsConfig.channels.USER_LOGS);
         const messageEmbeds = msg.embeds.length > 0 ? msg.embeds : [];
         const messageComponents = [];
         if (msg.content) {
@@ -93,7 +91,10 @@ export default event(Events.MessageDelete, async (_, msg) => {
                 },
                 {
                     name: 'Deleted by',
-                    value: (deletionLog && deletionLog.target.id === msg.author.id) ? `${deletionLog.executor}` : 'No audit log was found, message was either deleted by author, or a bot',
+                    value:
+                        deletionLog && deletionLog.target.id === msg.author.id
+                            ? `${deletionLog.executor}`
+                            : 'No audit log was found, message was either deleted by author, or a bot',
                     inline: false,
                 },
                 {
@@ -105,7 +106,7 @@ export default event(Events.MessageDelete, async (_, msg) => {
             footer: { text: `User ID: ${msg.author.id}` },
         });
 
-        if (userLogsChannel && !constantsConfig.userLogExclude.includes(msg.author!.id)) {
+        if (userLogsChannel && !constantsConfig.userLogExclude.includes(msg.author.id)) {
             await userLogsChannel.send({ embeds: [messageDeleteEmbed] });
         }
     } catch (error) {

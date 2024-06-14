@@ -1,27 +1,32 @@
 import { ChatInputCommandInteraction, Colors, TextChannel, User } from 'discord.js';
 import { Logger, makeEmbed, FAQ } from '../../../../lib';
 
-const faqRemovedEmbed = (discordUser: User, faqQuestion: string, faqAnswer: string) => makeEmbed({
-    author: {
-        name: `[FAQ Removed]  ${discordUser.tag}`,
-        iconURL: discordUser.displayAvatarURL(),
-    },
-    fields: [
-        {
-            inline: false,
-            name: 'Question',
-            value: faqQuestion,
+const faqRemovedEmbed = (discordUser: User, faqQuestion: string, faqAnswer: string) =>
+    makeEmbed({
+        author: {
+            name: `[FAQ Removed]  ${discordUser.tag}`,
+            iconURL: discordUser.displayAvatarURL(),
         },
-        {
-            inline: false,
-            name: 'Answer',
-            value: faqAnswer,
-        },
-    ],
-    color: Colors.Red,
-});
+        fields: [
+            {
+                inline: false,
+                name: 'Question',
+                value: faqQuestion,
+            },
+            {
+                inline: false,
+                name: 'Answer',
+                value: faqAnswer,
+            },
+        ],
+        color: Colors.Red,
+    });
 
-export async function handleRemoveFaq(interaction: ChatInputCommandInteraction<'cached'>, faqID: string, modLogsChannel: TextChannel) {
+export async function handleRemoveFaq(
+    interaction: ChatInputCommandInteraction<'cached'>,
+    faqID: string,
+    modLogsChannel: TextChannel,
+) {
     const discordUser = interaction.user;
 
     const faqEntry = await FAQ.findOne({ _id: faqID });
@@ -38,7 +43,10 @@ export async function handleRemoveFaq(interaction: ChatInputCommandInteraction<'
         await faqEntry.deleteOne();
     } catch (error) {
         Logger.error(error);
-        await interaction.reply({ content: 'Could not remove FAQ, error has been logged, please notify the bot team.', ephemeral: true });
+        await interaction.reply({
+            content: 'Could not remove FAQ, error has been logged, please notify the bot team.',
+            ephemeral: true,
+        });
         return;
     }
 
@@ -46,7 +54,11 @@ export async function handleRemoveFaq(interaction: ChatInputCommandInteraction<'
         await modLogsChannel.send({ embeds: [faqRemovedEmbed(discordUser, faqTitle, faqAnswer)] });
     } catch (error) {
         Logger.error(error);
-        await interaction.reply({ content: 'FAQ removed successfully, but could not send mod log, error has been logged, please notify the bot team.', ephemeral: true });
+        await interaction.reply({
+            content:
+                'FAQ removed successfully, but could not send mod log, error has been logged, please notify the bot team.',
+            ephemeral: true,
+        });
         return;
     }
 
