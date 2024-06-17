@@ -41,7 +41,5 @@ export async function handleCommand(interaction: ChatInputCommandInteraction<'ca
     }
     const panel = panelMap.get(cleanTarget)!;
 
-    console.log(panel.imageUrl);
-
     return interaction.editReply({ embeds: [locateEmbed(panel)] });
 }
