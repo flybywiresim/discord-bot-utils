@@ -2,7 +2,7 @@
 
 Update <small>_ June 2024</small>
 
-- feat: add optional description to `/locate` panels.
+- feat: add optional description to `/locate` panels. (17/06/2024)
 
 Update <small>_ May 2024</small>
 
