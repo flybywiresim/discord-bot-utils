@@ -11,9 +11,8 @@
         "build:digitalocean": "npm ci --include=dev && npm run build",
         "lint": "eslint",
         "lint-fix": "eslint --fix",
-        "prettier": "prettier \"**/*.ts\" \"**/*.js\" \"**/*.json\" \"**/*.yaml\" \"**/*.yml\" \"**/*.md\"",
-        "prettier:check": "npm run prettier -- --check",
-        "prettier:write": "npm run prettier -- --write",
+        "prettier:check": "prettier . --check",
+        "prettier:write": "prettier . --write",
         "test": "tsc --noEmit && eslint & npm run prettier:check"
     },
     "author": "FlyByWire Simulations",
