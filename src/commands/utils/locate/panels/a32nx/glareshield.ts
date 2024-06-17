@@ -93,5 +93,9 @@ export const lightKnobsPanel: Panel = {
     docsUrl: `${GLARESHIELD_DOCS_BASE_URL}/light-knobs/`,
     flightDeckUrl: LOCATE_DOCS_BASE_URLS.a32nx.flightdeck,
     imageUrl: `${GLARESHIELD_IMAGE_BASE_URL}/light_knobs.png`,
-    identifiers: ['table-light-knob', 'integral-glareshield-lighting-knob', 'fcu-brightness-knob'],
+    identifiers: [
+        'table-light-knob',
+        'integral-glareshield-lighting-knob',
+        'fcu-brightness-knob',
+    ],
 };

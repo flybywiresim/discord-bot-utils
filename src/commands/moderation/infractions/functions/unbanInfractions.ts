@@ -9,48 +9,44 @@ const noConnEmbed = makeEmbed({
     color: Colors.Red,
 });
 
-const failedUnbanEmbed = (userID: string) =>
-    makeEmbed({
-        title: 'Unban - Failed',
-        description: `Failed to Unban ${userID}, this user may not be banned.`,
-        color: Colors.Red,
-    });
+const failedUnbanEmbed = (userID: string) => makeEmbed({
+    title: 'Unban - Failed',
+    description: `Failed to Unban ${userID}, this user may not be banned.`,
+    color: Colors.Red,
+});
 
-const unbanEmbed = (userID: string) =>
-    makeEmbed({
-        title: `${userID} was unbanned successfully`,
-        color: Colors.Green,
-    });
+const unbanEmbed = (userID: string) => makeEmbed({
+    title: `${userID} was unbanned successfully`,
+    color: Colors.Green,
+});
 
-const modLogEmbed = (moderator: User, userID: string, banReason: string, formattedDate: string) =>
-    makeEmbed({
-        author: { name: `[UNBANNED] ${userID}` },
-        fields: [
-            {
-                name: 'User',
-                value: userID,
-            },
-            {
-                name: 'Moderator',
-                value: `${moderator}`,
-            },
-            {
-                name: 'Reason',
-                value: `\u200B${banReason}`,
-            },
-            {
-                name: 'Date',
-                value: formattedDate,
-            },
-        ],
-        footer: { text: `User ID: ${userID}` },
-        color: Colors.Red,
-    });
+const modLogEmbed = (moderator: User, userID: string, banReason: string, formattedDate: string) => makeEmbed({
+    author: { name: `[UNBANNED] ${userID}` },
+    fields: [
+        {
+            name: 'User',
+            value: userID,
+        },
+        {
+            name: 'Moderator',
+            value: `${moderator}`,
+        },
+        {
+            name: 'Reason',
+            value: `\u200B${banReason}`,
+        },
+        {
+            name: 'Date',
+            value: formattedDate,
+        },
+    ],
+    footer: { text: `User ID: ${userID}` },
+    color: Colors.Red,
+});
 
 const noModLogs = makeEmbed({
     title: 'Unban - No Mod Log',
-    description:
-        "I can't find the mod logs channel. I will still try to unban the user. Please check the channel still exists.",
+    description: 'I can\'t find the mod logs channel. I will still try to unban the user. Please check the channel still exists.',
     color: Colors.Red,
 });
 
@@ -76,7 +72,9 @@ export async function handleUnbanInfraction(interaction: ChatInputCommandInterac
 
     const moderator = interaction.user;
     const currentDate = new Date();
-    const formattedDate: string = moment(currentDate).utcOffset(0).format();
+    const formattedDate: string = moment(currentDate)
+        .utcOffset(0)
+        .format();
     const modLogsChannel = interaction.guild.channels.resolve(constantsConfig.channels.MOD_LOGS) as TextChannel;
 
     //Check if the mod logs channel exists

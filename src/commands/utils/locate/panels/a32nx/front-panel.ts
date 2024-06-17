@@ -51,7 +51,13 @@ export const nd: Panel = {
     docsUrl: `${FRONT_DOCS_BASE_URL}/nd`,
     flightDeckUrl: LOCATE_DOCS_BASE_URLS.a32nx.flightdeck,
     imageUrl: `${FRONT_IMAGE_BASE_URL}/nd.png`,
-    identifiers: ['nd', 'navigation-display', 'weather-radar', 'terrain-map', 'terr-on-nd-switch'],
+    identifiers: [
+        'nd',
+        'navigation-display',
+        'weather-radar',
+        'terrain-map',
+        'terr-on-nd-switch',
+    ],
 };
 
 export const isis: Panel = {
@@ -60,7 +66,11 @@ export const isis: Panel = {
     docsUrl: `${FRONT_DOCS_BASE_URL}/isis`,
     flightDeckUrl: LOCATE_DOCS_BASE_URLS.a32nx.flightdeck,
     imageUrl: `${FRONT_IMAGE_BASE_URL}/isis.png`,
-    identifiers: ['isis', 'integrated-standby-instrument-system', 'backup-pfd'],
+    identifiers: [
+        'isis',
+        'integrated-standby-instrument-system',
+        'backup-pfd',
+    ],
 };
 
 export const dcdu: Panel = {
@@ -69,7 +79,11 @@ export const dcdu: Panel = {
     docsUrl: `${FRONT_DOCS_BASE_URL}/dcdu`,
     flightDeckUrl: LOCATE_DOCS_BASE_URLS.a32nx.flightdeck,
     imageUrl: `${FRONT_IMAGE_BASE_URL}/dcdu.png`,
-    identifiers: ['dcdu', 'datalink-ctl-and-display-unit', 'cpdlc'],
+    identifiers: [
+        'dcdu',
+        'datalink-ctl-and-display-unit',
+        'cpdlc',
+    ],
 };
 
 export const ewd: Panel = {
@@ -78,7 +92,13 @@ export const ewd: Panel = {
     docsUrl: `${FRONT_DOCS_BASE_URL}/upper-ecam`,
     flightDeckUrl: LOCATE_DOCS_BASE_URLS.a32nx.flightdeck,
     imageUrl: `${FRONT_IMAGE_BASE_URL}/ewd.png`,
-    identifiers: ['ecam-upper', 'upper-ecam', 'ewd', 'engine-and-warning-display', 'n1-display'],
+    identifiers: [
+        'ecam-upper',
+        'upper-ecam',
+        'ewd',
+        'engine-and-warning-display',
+        'n1-display',
+    ],
 };
 
 export const sd: Panel = {
@@ -124,7 +144,10 @@ export const clockPanel: Panel = {
     docsUrl: `${FRONT_DOCS_BASE_URL}/clock`,
     flightDeckUrl: LOCATE_DOCS_BASE_URLS.a32nx.flightdeck,
     imageUrl: `${FRONT_IMAGE_BASE_URL}/clock.png`,
-    identifiers: ['clock', 'date'],
+    identifiers: [
+        'clock',
+        'date',
+    ],
 };
 
 export const accuPressPanel: Panel = {
@@ -133,5 +156,9 @@ export const accuPressPanel: Panel = {
     docsUrl: `${FRONT_DOCS_BASE_URL}/accu`,
     flightDeckUrl: LOCATE_DOCS_BASE_URLS.a32nx.flightdeck,
     imageUrl: `${FRONT_IMAGE_BASE_URL}/accu_press.png`,
-    identifiers: ['accu-press', 'accumulator-pressure-indicator', 'brake-pressure-indicator'],
+    identifiers: [
+        'accu-press',
+        'accumulator-pressure-indicator',
+        'brake-pressure-indicator',
+    ],
 };

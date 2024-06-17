@@ -9,79 +9,74 @@ const noConnEmbed = makeEmbed({
     color: Colors.Red,
 });
 
-const warnFailed = (discordUser: User) =>
-    makeEmbed({
-        title: 'Warn - Failed',
-        description: `Failed to warn ${discordUser.toString()}, doc not saved to mongoDB`,
-        color: Colors.Red,
-    });
+const warnFailed = (discordUser: User) => makeEmbed({
+    title: 'Warn - Failed',
+    description: `Failed to warn ${discordUser.toString()}, doc not saved to mongoDB`,
+    color: Colors.Red,
+});
 
-const dmEmbed = (guild: Guild, formattedDate: any, moderator: User, reason: string) =>
-    makeEmbed({
-        title: `You have been warned in ${guild.name}`,
-        fields: [
-            {
-                inline: false,
-                name: 'Moderator',
-                value: moderator.toString(),
-            },
-            {
-                inline: false,
-                name: 'Reason',
-                value: reason,
-            },
-            {
-                inline: false,
-                name: 'Date',
-                value: formattedDate,
-            },
-        ],
-    });
-
-const noDM = (discordUser: User) =>
-    makeEmbed({
-        title: 'Warn - DM not sent',
-        description: `DM was not sent to ${discordUser.toString()}, they either have DMs closed or share no mutual servers with the bot.`,
-        color: Colors.Red,
-    });
-
-const modLogEmbed = (formattedDate: any, moderator: User, discordUser: User, reason: string) =>
-    makeEmbed({
-        author: {
-            name: `[WARNED]  ${discordUser.tag}`,
-            iconURL: discordUser.displayAvatarURL(),
+const dmEmbed = (guild: Guild, formattedDate: any, moderator: User, reason: string) => makeEmbed({
+    title: `You have been warned in ${guild.name}`,
+    fields: [
+        {
+            inline: false,
+            name: 'Moderator',
+            value: moderator.toString(),
         },
-        fields: [
-            {
-                inline: false,
-                name: 'User',
-                value: discordUser.toString(),
-            },
-            {
-                inline: false,
-                name: 'Moderator',
-                value: moderator.toString(),
-            },
-            {
-                inline: false,
-                name: 'Reason',
-                value: reason,
-            },
-            {
-                inline: false,
-                name: 'Date',
-                value: formattedDate,
-            },
-        ],
-        footer: { text: `User ID: ${discordUser.id}` },
-        color: Colors.Red,
-    });
+        {
+            inline: false,
+            name: 'Reason',
+            value: reason,
+        },
+        {
+            inline: false,
+            name: 'Date',
+            value: formattedDate,
+        },
+    ],
+});
 
-const warnEmbed = (discordUser: User) =>
-    makeEmbed({
-        title: `${discordUser.tag} was warned successfully`,
-        color: Colors.Green,
-    });
+const noDM = (discordUser: User) => makeEmbed({
+    title: 'Warn - DM not sent',
+    description: `DM was not sent to ${discordUser.toString()}, they either have DMs closed or share no mutual servers with the bot.`,
+    color: Colors.Red,
+});
+
+const modLogEmbed = (formattedDate: any, moderator: User, discordUser: User, reason: string) => makeEmbed({
+    author: {
+        name: `[WARNED]  ${discordUser.tag}`,
+        iconURL: discordUser.displayAvatarURL(),
+    },
+    fields: [
+        {
+            inline: false,
+            name: 'User',
+            value: discordUser.toString(),
+        },
+        {
+            inline: false,
+            name: 'Moderator',
+            value: moderator.toString(),
+        },
+        {
+            inline: false,
+            name: 'Reason',
+            value: reason,
+        },
+        {
+            inline: false,
+            name: 'Date',
+            value: formattedDate,
+        },
+    ],
+    footer: { text: `User ID: ${discordUser.id}` },
+    color: Colors.Red,
+});
+
+const warnEmbed = (discordUser: User) => makeEmbed({
+    title: `${discordUser.tag} was warned successfully`,
+    color: Colors.Green,
+});
 
 const noModLogs = makeEmbed({
     title: 'Warn - No Mod Log',

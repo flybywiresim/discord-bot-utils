@@ -15,18 +15,17 @@ const invalidTargetEmbed = makeEmbed({
     color: Colors.Red,
 });
 
-const locateEmbed = (panel: Panel) =>
-    makeEmbed({
-        title: panel.title,
-        url: panel.docsUrl,
-        description: makeLines([
-            `Learn more about the ${panel.name} and the flight deck:`,
-            `* [${panel.name} Documentation](${panel.docsUrl})`,
-            `* [Flight Deck Overview](${panel.flightDeckUrl})`,
-        ]),
-        image: { url: panel.imageUrl },
-        footer: { text: 'Tip: Click the image to view in full size' },
-    });
+const locateEmbed = (panel: Panel) => makeEmbed({
+    title: panel.title,
+    url: panel.docsUrl,
+    description: makeLines([
+        `Learn more about the ${panel.name} and the flight deck:`,
+        `* [${panel.name} Documentation](${panel.docsUrl})`,
+        `* [Flight Deck Overview](${panel.flightDeckUrl})`,
+    ]),
+    image: { url: panel.imageUrl },
+    footer: { text: 'Tip: Click the image to view in full size' },
+});
 
 export async function handleCommand(interaction: ChatInputCommandInteraction<'cached'>, panelMap: Map<string, Panel>) {
     const target = interaction.options.getString('target');

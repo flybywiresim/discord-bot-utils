@@ -2,8 +2,7 @@ import {
     Awaitable,
     Client,
     ContextMenuCommandBuilder,
-    RESTPostAPIApplicationCommandsJSONBody,
-    ContextMenuCommandInteraction,
+    RESTPostAPIApplicationCommandsJSONBody, ContextMenuCommandInteraction,
 } from 'discord.js';
 import { LogMethods } from './index';
 
@@ -15,7 +14,9 @@ export interface ContextMenuCommandProps {
 
 export type ContextMenuCommandCallback = (props: ContextMenuCommandProps) => Awaitable<unknown>;
 
-export type ContextMenuCommandStructure = ContextMenuCommandBuilder | RESTPostAPIApplicationCommandsJSONBody;
+export type ContextMenuCommandStructure =
+    | ContextMenuCommandBuilder
+    | RESTPostAPIApplicationCommandsJSONBody
 
 export interface ContextMenuCommand {
     meta: ContextMenuCommandStructure;
@@ -26,9 +27,6 @@ export function contextMenuCommandStructure(data: RESTPostAPIApplicationCommands
     return data;
 }
 
-export function contextMenuCommand(
-    meta: ContextMenuCommandStructure,
-    callback: ContextMenuCommandCallback,
-): ContextMenuCommand {
+export function contextMenuCommand(meta: ContextMenuCommandStructure, callback: ContextMenuCommandCallback): ContextMenuCommand {
     return { meta, callback };
 }

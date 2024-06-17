@@ -8,14 +8,12 @@ const data = slashCommandStructure({
     type: ApplicationCommandType.ChatInput,
     default_member_permissions: constantsConfig.commandPermission.MANAGE_SERVER, //Overrides need to be added for admin and moderator roles
     dm_permission: false,
-    options: [
-        {
-            name: 'tag_or_id',
-            description: "Provide a user's tag or id to get information about them.",
-            type: ApplicationCommandOptionType.User,
-            required: false,
-        },
-    ],
+    options: [{
+        name: 'tag_or_id',
+        description: 'Provide a user\'s tag or id to get information about them.',
+        type: ApplicationCommandOptionType.User,
+        required: false,
+    }],
 });
 
 const beautifiedStatus: { [key: string]: string } = {
@@ -74,11 +72,7 @@ export default slashCommand(data, async ({ interaction }) => {
             },
             {
                 name: 'Permissions',
-                value: targetMember.permissions
-                    .toArray()
-                    .join(', ')
-                    .toLowerCase()
-                    .replace(/_/g, ' ')
+                value: targetMember.permissions.toArray().join(', ').toLowerCase().replace(/_/g, ' ')
                     .replace(/(^\w)|(\s+\w)/g, (char) => char.toUpperCase()),
             },
         ],

@@ -6,16 +6,14 @@ const data = slashCommandStructure({
     name: 'station',
     description: 'Provides station information.',
     type: ApplicationCommandType.ChatInput,
-    options: [
-        {
-            name: 'icao',
-            description: 'Provide an airport ICAO code.',
-            type: ApplicationCommandOptionType.String,
-            max_length: 4,
-            min_length: 4,
-            required: true,
-        },
-    ],
+    options: [{
+        name: 'icao',
+        description: 'Provide an airport ICAO code.',
+        type: ApplicationCommandOptionType.String,
+        max_length: 4,
+        min_length: 4,
+        required: true,
+    }],
 });
 
 const noQueryEmbed = makeEmbed({
@@ -57,12 +55,9 @@ export default slashCommand(data, async ({ interaction }) => {
             return interaction.editReply({ embeds: [invalidEmbed] });
         }
 
-        const runwayIdents = stationReport.runways.map(
-            (runways: any) =>
-                `**${runways.ident1}/${runways.ident2}:** ` +
-                `${runways.length_ft} ft x ${runways.width_ft} ft / ` +
-                `${Math.round(runways.length_ft * 0.3048)} m x ${Math.round(runways.width_ft * 0.3048)} m`,
-        );
+        const runwayIdents = stationReport.runways.map((runways: any) => `**${runways.ident1}/${runways.ident2}:** `
+            + `${runways.length_ft} ft x ${runways.width_ft} ft / `
+            + `${Math.round(runways.length_ft * 0.3048)} m x ${Math.round(runways.width_ft * 0.3048)} m`);
 
         const stationEmbed = makeEmbed({
             title: `Station Info | ${stationReport.icao}`,

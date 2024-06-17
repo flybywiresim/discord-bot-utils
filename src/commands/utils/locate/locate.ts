@@ -68,38 +68,34 @@ const autocompleteCallback: AutocompleteCallback = ({ interaction }) => {
 
     let choices: ApplicationCommandOptionChoiceData<string>[];
     switch (subcommand) {
-        case 'a32nx':
-            choices = filterSearchResults(cleanTarget, a32nxPanelMap);
-            break;
-        /* case 'a380x':
+    case 'a32nx':
+        choices = filterSearchResults(cleanTarget, a32nxPanelMap);
+        break;
+    /* case 'a380x':
         choices = filterSearchResults(cleanTarget, a380xPanelMap);
         break;
     */
-        default:
-            return interaction.respond([]);
+    default:
+        return interaction.respond([]);
     }
 
     return interaction.respond(choices);
 };
 
-export default slashCommand(
-    data,
-    async ({ interaction }) => {
-        await interaction.deferReply();
+export default slashCommand(data, async ({ interaction }) => {
+    await interaction.deferReply();
 
-        const subcommand = interaction.options.getSubcommand();
+    const subcommand = interaction.options.getSubcommand();
 
-        switch (subcommand) {
-            case 'a32nx':
-                await handleCommand(interaction, a32nxPanelMap);
-                break;
-            /* case 'a380x':
+    switch (subcommand) {
+    case 'a32nx':
+        await handleCommand(interaction, a32nxPanelMap);
+        break;
+    /* case 'a380x':
         await handleCommand(interaction, a380xPanelMap);
         break;
     */
-            default:
-                await interaction.editReply({ content: 'Unknown subcommand' });
-        }
-    },
-    autocompleteCallback,
-);
+    default:
+        await interaction.editReply({ content: 'Unknown subcommand' });
+    }
+}, autocompleteCallback);

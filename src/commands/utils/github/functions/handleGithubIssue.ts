@@ -35,9 +35,7 @@ export async function handleGithubIssue(interaction: ChatInputCommandInteraction
         }
     } else {
         try {
-            const response = await request('GET /repos/flybywiresim/a32nx/issues/{issue_number}', {
-                issue_number: cleanedIssueNumber,
-            });
+            const response = await request('GET /repos/flybywiresim/a32nx/issues/{issue_number}', { issue_number: cleanedIssueNumber });
             return interaction.reply(response.data.html_url);
         } catch {
             return interaction.reply({ embeds: [invalidEmbed] });

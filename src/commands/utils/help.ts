@@ -46,55 +46,52 @@ export default slashCommand(data, async ({ interaction }: { interaction: Command
             const totalPages = Math.ceil(sortedCommands.length / pageLimit);
 
             // Build the description with subcommands and subcommand groups
-            const description = currentCommands
-                .map((command) => {
-                    let { description } = command;
+            const description = currentCommands.map((command) => {
+                let { description } = command;
 
-                    // Check if it's a context-specific message command
-                    const isMessageCommand = command.type === ApplicationCommandType.Message;
+                // Check if it's a context-specific message command
+                const isMessageCommand = command.type === ApplicationCommandType.Message;
 
-                    // Check if it's a context-specific user command
-                    const isUserCommand = command.type === ApplicationCommandType.User;
+                // Check if it's a context-specific user command
+                const isUserCommand = command.type === ApplicationCommandType.User;
 
-                    const subcommandList = command.options?.filter(
-                        (option) =>
-                            option.type === ApplicationCommandOptionType.Subcommand ||
-                            option.type === ApplicationCommandOptionType.SubcommandGroup,
-                    );
+                const subcommandList = command.options?.filter(
+                    (option) => option.type === ApplicationCommandOptionType.Subcommand
+                        || option.type === ApplicationCommandOptionType.SubcommandGroup,
+                );
 
-                    if (subcommandList && subcommandList.length > 0) {
-                        const subcommandDescription = subcommandList
-                            .map((subcommand) => {
-                                if (subcommand.type === ApplicationCommandOptionType.Subcommand) {
-                                    return subcommand.name;
+                if (subcommandList && subcommandList.length > 0) {
+                    const subcommandDescription = subcommandList
+                        .map((subcommand) => {
+                            if (subcommand.type === ApplicationCommandOptionType.Subcommand) {
+                                return subcommand.name;
+                            }
+                            if (subcommand.type === ApplicationCommandOptionType.SubcommandGroup) {
+                                const groupSubcommands = subcommand.options?.filter(
+                                    (sub) => sub.type === ApplicationCommandOptionType.Subcommand,
+                                );
+                                if (groupSubcommands && groupSubcommands.length > 0) {
+                                    return `${subcommand.name} [${groupSubcommands
+                                        .map((sub) => sub.name)
+                                        .join(', ')}]`;
                                 }
-                                if (subcommand.type === ApplicationCommandOptionType.SubcommandGroup) {
-                                    const groupSubcommands = subcommand.options?.filter(
-                                        (sub) => sub.type === ApplicationCommandOptionType.Subcommand,
-                                    );
-                                    if (groupSubcommands && groupSubcommands.length > 0) {
-                                        return `${subcommand.name} [${groupSubcommands
-                                            .map((sub) => sub.name)
-                                            .join(', ')}]`;
-                                    }
-                                    return `${subcommand.name} [None]`;
-                                }
-                                return '';
-                            })
-                            .join(', '); // Use a comma to separate subcommands
-                        description += `\n**Subcommands and Groups:** \n${subcommandDescription}`;
-                    }
+                                return `${subcommand.name} [None]`;
+                            }
+                            return '';
+                        })
+                        .join(', '); // Use a comma to separate subcommands
+                    description += `\n**Subcommands and Groups:** \n${subcommandDescription}`;
+                }
 
-                    // Append a label for context-specific message and user commands
-                    if (isMessageCommand) {
-                        description += '\n(Context Command - Message)';
-                    } else if (isUserCommand) {
-                        description += '\n(Context Command - User)';
-                    }
+                // Append a label for context-specific message and user commands
+                if (isMessageCommand) {
+                    description += '\n(Context Command - Message)';
+                } else if (isUserCommand) {
+                    description += '\n(Context Command - User)';
+                }
 
-                    return `**${command.name}**: ${description}`;
-                })
-                .join('\n\n');
+                return `**${command.name}**: ${description}`;
+            }).join('\n\n');
 
             const embed = makeEmbed({
                 title: `Bot Commands - Page ${page + 1} of ${totalPages}`,

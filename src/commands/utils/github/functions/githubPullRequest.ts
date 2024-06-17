@@ -35,9 +35,7 @@ export async function handleGithubPullRequest(interaction: ChatInputCommandInter
         }
     } else {
         try {
-            const response = await request('GET /repos/flybywiresim/a32nx/pulls/{pull_number}', {
-                pull_number: cleanedPrNumber,
-            });
+            const response = await request('GET /repos/flybywiresim/a32nx/pulls/{pull_number}', { pull_number: cleanedPrNumber });
             return interaction.reply(response.data.html_url);
         } catch {
             return interaction.reply({ embeds: [invalidEmbed] });

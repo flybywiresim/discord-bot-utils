@@ -1,16 +1,6 @@
 import { codeBlock, Colors, DMChannel, TextChannel } from 'discord.js';
 import mongoose from 'mongoose';
-import {
-    constantsConfig,
-    makeEmbed,
-    makeLines,
-    event,
-    Events,
-    getConn,
-    Infraction,
-    Logger,
-    imageBaseUrl,
-} from '../../lib';
+import { constantsConfig, makeEmbed, makeLines, event, Events, getConn, Infraction, Logger, imageBaseUrl } from '../../lib';
 
 const excludedRoles = [
     constantsConfig.roles.ADMIN_TEAM,
@@ -45,7 +35,7 @@ export default event(Events.MessageCreate, async ({ log }, msg) => {
         return;
     }
 
-    const scamReportLogs = msg.guild.channels.resolve(constantsConfig.channels.SCAM_REPORT_LOGS);
+    const scamReportLogs = msg.guild.channels.resolve(constantsConfig.channels.SCAM_REPORT_LOGS) as TextChannel | null;
     if (scamReportLogs && msg.content.toLowerCase().includes('@everyone') && !msg.author.bot) {
         const conn = getConn();
         if (!conn && scamReportLogs) {
@@ -153,9 +143,7 @@ export default event(Events.MessageCreate, async ({ log }, msg) => {
             }
             // Try and send a DM
             try {
-                await msg.author.send(
-                    'We have detected use of @everyone in one of our text channels. This function is in place to prevent discord scams and has resulted in an automatic timeout and notification of our moderation team. If this was done in error, our moderation team will reverse the timeout, however please refrain from using the @everyone ping in future.',
-                );
+                await msg.author.send('We have detected use of @everyone in one of our text channels. This function is in place to prevent discord scams and has resulted in an automatic timeout and notification of our moderation team. If this was done in error, our moderation team will reverse the timeout, however please refrain from using the @everyone ping in future.');
             } catch (e) {
                 log(e);
 

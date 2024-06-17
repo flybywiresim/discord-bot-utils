@@ -2,8 +2,7 @@ import {
     ActionRowBuilder,
     ApplicationCommandType,
     ContextMenuCommandInteraction,
-    ModalBuilder,
-    TextChannel,
+    ModalBuilder, TextChannel,
     TextInputBuilder,
     TextInputStyle,
     Colors,
@@ -16,57 +15,52 @@ const data = contextMenuCommandStructure({
     type: ApplicationCommandType.Message,
 });
 
-const reportedMessageEmbed = (
-    targetMessage: any,
-    interaction: ContextMenuCommandInteraction<'cached'>,
-    messageContent: string,
-    commentContent: string,
-    formattedDate: string,
-) =>
-    makeEmbed({
-        author: {
-            name: `[REPORTED MESSAGE] ${targetMessage.author.tag}`,
-            iconURL: targetMessage.author.displayAvatarURL(),
+const reportedMessageEmbed = (targetMessage: any, interaction: ContextMenuCommandInteraction<'cached'>, messageContent: string, commentContent: string, formattedDate: string) => makeEmbed({
+    author: {
+        name: `[REPORTED MESSAGE] ${targetMessage.author.tag}`,
+        iconURL: targetMessage.author.displayAvatarURL(),
+    },
+    fields: [
+        {
+            name: 'Reported by',
+            value: interaction.user.toString(),
+            inline: true,
         },
-        fields: [
-            {
-                name: 'Reported by',
-                value: interaction.user.toString(),
-                inline: true,
-            },
-            {
-                name: 'Message Author',
-                value: targetMessage.author.toString(),
-                inline: true,
-            },
-            {
-                name: 'Message Content',
-                value: messageContent,
-                inline: false,
-            },
-            {
-                name: 'Link to Message',
-                value: targetMessage.url,
-                inline: false,
-            },
-            {
-                name: 'Additional Comments',
-                value: commentContent,
-                inline: false,
-            },
-            {
-                name: 'Reported at',
-                value: formattedDate,
-                inline: false,
-            },
-        ],
-        color: Colors.Red,
-        footer: { text: `Reported Users ID: ${targetMessage.author.id}` },
-    });
+        {
+            name: 'Message Author',
+            value: targetMessage.author.toString(),
+            inline: true,
+        },
+        {
+            name: 'Message Content',
+            value: messageContent,
+            inline: false,
+        },
+        {
+            name: 'Link to Message',
+            value: targetMessage.url,
+            inline: false,
+        },
+        {
+            name: 'Additional Comments',
+            value: commentContent,
+            inline: false,
+        },
+        {
+            name: 'Reported at',
+            value: formattedDate,
+            inline: false,
+        },
+    ],
+    color: Colors.Red,
+    footer: { text: `Reported Users ID: ${targetMessage.author.id}` },
+});
 
 export default contextMenuCommand(data, async ({ interaction }) => {
     const currentDate = new Date();
-    const formattedDate: string = moment(currentDate).utcOffset(0).format();
+    const formattedDate: string = moment(currentDate)
+        .utcOffset(0)
+        .format();
     const scamReportLogs = interaction.guild.channels.resolve(constantsConfig.channels.SCAM_REPORT_LOGS) as TextChannel;
     const modRoleId = constantsConfig.roles.MODERATION_TEAM;
 
@@ -132,8 +126,10 @@ export default contextMenuCommand(data, async ({ interaction }) => {
 
     //Modal sent
 
-    const filter = (interaction: { customId: string; user: { id: any } }) =>
-        interaction.customId === 'reportMessageModal' && interaction.user.id;
+    const filter = (interaction: {
+        customId: string;
+        user: { id: any; };
+    }) => interaction.customId === 'reportMessageModal' && interaction.user.id;
 
     let commentContent = 'No additional comments provided.';
 
@@ -164,10 +160,7 @@ export default contextMenuCommand(data, async ({ interaction }) => {
 
     //Send a follow-up message to the user if they are part of the staff role group
 
-    if (
-        constantsConfig.roleGroups.SUPPORT &&
-        constantsConfig.roleGroups.SUPPORT.some((role) => interaction.member.roles.cache.has(role))
-    ) {
+    if (constantsConfig.roleGroups.SUPPORT && constantsConfig.roleGroups.SUPPORT.some((role) => interaction.member.roles.cache.has(role))) {
         await interaction.followUp({
             content: `Is your report urgent and requires immediate attention from the <@&${modRoleId}>? If so please click yes and I will ping the <@&${modRoleId}>. If not, click no.`,
             components: [
@@ -193,7 +186,7 @@ export default contextMenuCommand(data, async ({ interaction }) => {
         });
 
         try {
-            // Handle the button interactions
+        // Handle the button interactions
             const modPingButtonInteraction = await interaction.channel.awaitMessageComponent({
                 filter: (i) => i.customId === 'pingModerationTeamYes' || i.customId === 'pingModerationTeamNo',
                 time: 60000,
@@ -238,11 +231,7 @@ export default contextMenuCommand(data, async ({ interaction }) => {
                 content: 'Unable to find the mod alerts channel. Please contact a Moderator.',
                 ephemeral: true,
             });
-            await scamReportLogs.send({
-                embeds: [
-                    reportedMessageEmbed(targetMessage, interaction, messageContent, commentContent, formattedDate),
-                ],
-            });
+            await scamReportLogs.send({ embeds: [reportedMessageEmbed(targetMessage, interaction, messageContent, commentContent, formattedDate)] });
             return;
         }
 
@@ -297,9 +286,7 @@ export default contextMenuCommand(data, async ({ interaction }) => {
                     content: `Your report has been submitted and shared in ${modAlertsChannel}.`,
                     ephemeral: true,
                 });
-                await scamReportLogs.send({
-                    content: `Reported message from ${interaction.user.toString()} has been shared in ${modAlertsChannel}.`,
-                });
+                await scamReportLogs.send({ content: `Reported message from ${interaction.user.toString()} has been shared in ${modAlertsChannel}.` });
             }
 
             if (shareReportButtonInteraction.customId === 'shareReportNo') {
@@ -316,7 +303,5 @@ export default contextMenuCommand(data, async ({ interaction }) => {
             });
         }
     }
-    await scamReportLogs.send({
-        embeds: [reportedMessageEmbed(targetMessage, interaction, messageContent, commentContent, formattedDate)],
-    });
+    await scamReportLogs.send({ embeds: [reportedMessageEmbed(targetMessage, interaction, messageContent, commentContent, formattedDate)] });
 });

@@ -27,7 +27,12 @@ export const mcdu: Panel = {
     docsUrl: `${PEDESTAL_DOCS_BASE_URL}/mcdu`,
     flightDeckUrl: LOCATE_DOCS_BASE_URLS.a32nx.flightdeck,
     imageUrl: `${PEDESTAL_IMAGE_BASE_URL}/mcdu.png`,
-    identifiers: ['fms', 'cdu', 'mcdu', 'fmgc'],
+    identifiers: [
+        'fms',
+        'cdu',
+        'mcdu',
+        'fmgc',
+    ],
 };
 
 export const rmpAcpPanel: Panel = {
@@ -36,7 +41,13 @@ export const rmpAcpPanel: Panel = {
     docsUrl: `${PEDESTAL_DOCS_BASE_URL}/rmp`,
     flightDeckUrl: LOCATE_DOCS_BASE_URLS.a32nx.flightdeck,
     imageUrl: `${PEDESTAL_IMAGE_BASE_URL}/rmp_acp.png`,
-    identifiers: ['rmp', 'radio-management-panel', 'acp', 'audio-control-panel', 'atc-panel'],
+    identifiers: [
+        'rmp',
+        'radio-management-panel',
+        'acp',
+        'audio-control-panel',
+        'atc-panel',
+    ],
 };
 
 export const captPedestalLightingPanel: Panel = {
@@ -45,7 +56,9 @@ export const captPedestalLightingPanel: Panel = {
     docsUrl: `${PEDESTAL_DOCS_BASE_URL}/lighting-capt`,
     flightDeckUrl: LOCATE_DOCS_BASE_URLS.a32nx.flightdeck,
     imageUrl: `${PEDESTAL_IMAGE_BASE_URL}/capt_pedestal_lt.png`,
-    identifiers: ['captain-pedestal-lighting-panel'],
+    identifiers: [
+        'captain-pedestal-lighting-panel',
+    ],
 };
 
 export const wxPanel: Panel = {
@@ -54,7 +67,13 @@ export const wxPanel: Panel = {
     docsUrl: `${PEDESTAL_DOCS_BASE_URL}/radar`,
     flightDeckUrl: LOCATE_DOCS_BASE_URLS.a32nx.flightdeck,
     imageUrl: `${PEDESTAL_IMAGE_BASE_URL}/wx_radar.png`,
-    identifiers: ['wx', 'weather-radar', 'wx-radar', 'pws', 'predictive-windshear-systems'],
+    identifiers: [
+        'wx',
+        'weather-radar',
+        'wx-radar',
+        'pws',
+        'predictive-windshear-systems',
+    ],
 };
 
 export const speedBrake: Panel = {
@@ -63,7 +82,12 @@ export const speedBrake: Panel = {
     docsUrl: `${PEDESTAL_DOCS_BASE_URL}/speedbrake`,
     flightDeckUrl: LOCATE_DOCS_BASE_URLS.a32nx.flightdeck,
     imageUrl: `${PEDESTAL_IMAGE_BASE_URL}/spd_brk.png`,
-    identifiers: ['speed-brake', 'spd-brk', 'spoilers', 'gnd-sprls'],
+    identifiers: [
+        'speed-brake',
+        'spd-brk',
+        'spoilers',
+        'gnd-sprls',
+    ],
 };
 
 export const cockpitDoorPanel: Panel = {
@@ -72,7 +96,12 @@ export const cockpitDoorPanel: Panel = {
     docsUrl: `${PEDESTAL_DOCS_BASE_URL}/cockpit-door`,
     flightDeckUrl: LOCATE_DOCS_BASE_URLS.a32nx.flightdeck,
     imageUrl: `${PEDESTAL_IMAGE_BASE_URL}/cockpit_door.png`,
-    identifiers: ['cockpit-door', 'cockpit-door-panel', 'cockpit-door-switch', 'cockpit-door-video-button'],
+    identifiers: [
+        'cockpit-door',
+        'cockpit-door-panel',
+        'cockpit-door-switch',
+        'cockpit-door-video-button',
+    ],
 };
 
 export const switchingPanel: Panel = {
@@ -151,7 +180,9 @@ export const rudderTrim: Panel = {
     docsUrl: `${PEDESTAL_DOCS_BASE_URL}/rudder-trim`,
     flightDeckUrl: LOCATE_DOCS_BASE_URLS.a32nx.flightdeck,
     imageUrl: `${PEDESTAL_IMAGE_BASE_URL}/rudder_trim.png`,
-    identifiers: ['rudder-trim'],
+    identifiers: [
+        'rudder-trim',
+    ],
 };
 
 export const parkBrkPanel: Panel = {
@@ -160,7 +191,10 @@ export const parkBrkPanel: Panel = {
     docsUrl: `${PEDESTAL_DOCS_BASE_URL}/parking-brake`,
     flightDeckUrl: LOCATE_DOCS_BASE_URLS.a32nx.flightdeck,
     imageUrl: `${PEDESTAL_IMAGE_BASE_URL}/park_brk.png`,
-    identifiers: ['parking-brake', 'park-brk'],
+    identifiers: [
+        'parking-brake',
+        'park-brk',
+    ],
 };
 
 export const gravityGearExtensionPanel: Panel = {
@@ -169,7 +203,9 @@ export const gravityGearExtensionPanel: Panel = {
     docsUrl: `${PEDESTAL_DOCS_BASE_URL}/gravity-gear-ext`,
     flightDeckUrl: LOCATE_DOCS_BASE_URLS.a32nx.flightdeck,
     imageUrl: `${PEDESTAL_IMAGE_BASE_URL}/gravity_gear_extn.png`,
-    identifiers: ['gravity-gear-extension'],
+    identifiers: [
+        'gravity-gear-extension',
+    ],
 };
 
 export const aidsDfdrPanel: Panel = {
@@ -178,7 +214,14 @@ export const aidsDfdrPanel: Panel = {
     docsUrl: `${PEDESTAL_DOCS_BASE_URL}/lighting-aids-dfdr`,
     flightDeckUrl: LOCATE_DOCS_BASE_URLS.a32nx.flightdeck,
     imageUrl: `${PEDESTAL_IMAGE_BASE_URL}/aids_dfdr.png`,
-    identifiers: ['aids', 'dfdr', 'ped-flood-lt-knob', 'pedestal-flood-light-knob', 'aids-button', 'dfdr-button'],
+    identifiers: [
+        'aids',
+        'dfdr',
+        'ped-flood-lt-knob',
+        'pedestal-flood-light-knob',
+        'aids-button',
+        'dfdr-button',
+    ],
 };
 
 export const atcTcasPanel: Panel = {
@@ -187,7 +230,13 @@ export const atcTcasPanel: Panel = {
     docsUrl: `${PEDESTAL_DOCS_BASE_URL}/atc-tcas`,
     flightDeckUrl: LOCATE_DOCS_BASE_URLS.a32nx.flightdeck,
     imageUrl: `${PEDESTAL_IMAGE_BASE_URL}/atc_tcas.png`,
-    identifiers: ['xpdr', 'atc-tcas-panel', 'transponder', 'tcas', 'alt-rptg-switch'],
+    identifiers: [
+        'xpdr',
+        'atc-tcas-panel',
+        'transponder',
+        'tcas',
+        'alt-rptg-switch',
+    ],
 };
 
 export const flaps: Panel = {
@@ -196,7 +245,9 @@ export const flaps: Panel = {
     docsUrl: `${PEDESTAL_DOCS_BASE_URL}/flaps`,
     flightDeckUrl: LOCATE_DOCS_BASE_URLS.a32nx.flightdeck,
     imageUrl: `${PEDESTAL_IMAGE_BASE_URL}/flaps.png`,
-    identifiers: ['flaps'],
+    identifiers: [
+        'flaps',
+    ],
 };
 
 export const printer: Panel = {
@@ -205,5 +256,7 @@ export const printer: Panel = {
     docsUrl: `${PEDESTAL_DOCS_BASE_URL}/printer`,
     flightDeckUrl: LOCATE_DOCS_BASE_URLS.a32nx.flightdeck,
     imageUrl: `${PEDESTAL_IMAGE_BASE_URL}/printer.png`,
-    identifiers: ['printer'],
+    identifiers: [
+        'printer',
+    ],
 };

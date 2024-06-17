@@ -42,11 +42,7 @@ export default slashCommand(data, async ({ interaction }: { interaction: Command
             // eslint-disable-next-line prefer-const
             let { name, description, type } = command;
 
-            const subcommandList = command.options?.filter(
-                (option) =>
-                    option.type === ApplicationCommandOptionType.Subcommand ||
-                    option.type === ApplicationCommandOptionType.SubcommandGroup,
-            );
+            const subcommandList = command.options?.filter((option) => option.type === ApplicationCommandOptionType.Subcommand || option.type === ApplicationCommandOptionType.SubcommandGroup);
 
             let subcommandDescription = '';
 
@@ -57,11 +53,11 @@ export default slashCommand(data, async ({ interaction }: { interaction: Command
                             return subcommand.name;
                         }
                         if (subcommand.type === ApplicationCommandOptionType.SubcommandGroup) {
-                            const groupSubcommands = subcommand.options?.filter(
-                                (sub) => sub.type === ApplicationCommandOptionType.Subcommand,
-                            );
+                            const groupSubcommands = subcommand.options?.filter((sub) => sub.type === ApplicationCommandOptionType.Subcommand);
                             if (groupSubcommands && groupSubcommands.length > 0) {
-                                return `${subcommand.name} [${groupSubcommands.map((sub) => sub.name).join(', ')}]`;
+                                return `${subcommand.name} [${groupSubcommands
+                                    .map((sub) => sub.name)
+                                    .join(', ')}]`;
                             }
                             return `${subcommand.name} [None]`;
                         }

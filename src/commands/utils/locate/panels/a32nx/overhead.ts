@@ -32,7 +32,11 @@ export const callsPanel: Panel = {
     docsUrl: `${OVHD_DOCS_BASE_URL}/calls/`,
     flightDeckUrl: LOCATE_DOCS_BASE_URLS.a32nx.flightdeck,
     imageUrl: `${OVHD_IMAGE_BASE_URL}/calls.png`,
-    identifiers: ['calls-panel', 'call', 'calls'],
+    identifiers: [
+        'calls-panel',
+        'call',
+        'calls',
+    ],
 };
 
 export const oxyPanel: Panel = {
@@ -41,7 +45,13 @@ export const oxyPanel: Panel = {
     docsUrl: `${OVHD_DOCS_BASE_URL}/oxygen/`,
     flightDeckUrl: LOCATE_DOCS_BASE_URLS.a32nx.flightdeck,
     imageUrl: `${OVHD_IMAGE_BASE_URL}/oxygen.png`,
-    identifiers: ['oxy', 'oxygen-panel', 'oxygen', 'mask-man-on-switch', 'crew-supply-switch'],
+    identifiers: [
+        'oxy',
+        'oxygen-panel',
+        'oxygen',
+        'mask-man-on-switch',
+        'crew-supply-switch',
+    ],
 };
 
 export const cvrPanel: Panel = {
@@ -103,7 +113,14 @@ export const evacPanel: Panel = {
     docsUrl: `${OVHD_DOCS_BASE_URL}/evacuation/`,
     flightDeckUrl: LOCATE_DOCS_BASE_URLS.a32nx.flightdeck,
     imageUrl: `${OVHD_IMAGE_BASE_URL}/evac.png`,
-    identifiers: ['evac-panel', 'evac', 'evacuation', 'command-switch', 'horn-shut-off-button', 'capt-purs-switch'],
+    identifiers: [
+        'evac-panel',
+        'evac',
+        'evacuation',
+        'command-switch',
+        'horn-shut-off-button',
+        'capt-purs-switch',
+    ],
 };
 
 export const fltCtlPanel: Panel = {
@@ -112,7 +129,14 @@ export const fltCtlPanel: Panel = {
     docsUrl: `${OVHD_DOCS_BASE_URL}/flight-control-computer/`,
     flightDeckUrl: LOCATE_DOCS_BASE_URLS.a32nx.flightdeck,
     imageUrl: `${OVHD_IMAGE_BASE_URL}/flt_ctl.png`,
-    identifiers: ['flight-controls', 'flight-control-panel', 'flt-ctl', 'elac', 'sec', 'fac'],
+    identifiers: [
+        'flight-controls',
+        'flight-control-panel',
+        'flt-ctl',
+        'elac',
+        'sec',
+        'fac',
+    ],
 };
 
 export const adirsPanel: Panel = {
@@ -121,7 +145,14 @@ export const adirsPanel: Panel = {
     docsUrl: `${OVHD_DOCS_BASE_URL}/adirs/`,
     flightDeckUrl: LOCATE_DOCS_BASE_URLS.a32nx.flightdeck,
     imageUrl: `${OVHD_IMAGE_BASE_URL}/adirs.png`,
-    identifiers: ['adirs-panel', 'adirs', 'adiru', 'irs', 'adr', 'ir-selector'],
+    identifiers: [
+        'adirs-panel',
+        'adirs',
+        'adiru',
+        'irs',
+        'adr',
+        'ir-selector',
+    ],
 };
 
 export const paVideoPanel: Panel = {
@@ -130,7 +161,13 @@ export const paVideoPanel: Panel = {
     docsUrl: `${OVHD_DOCS_BASE_URL}/pa-cockpit-video/`,
     flightDeckUrl: LOCATE_DOCS_BASE_URLS.a32nx.flightdeck,
     imageUrl: `${OVHD_IMAGE_BASE_URL}/pa_video.png`,
-    identifiers: ['pa-panel', 'video', 'cockpit-video-panel', 'cockpit-door-video', 'cockpit-door-video-switch'],
+    identifiers: [
+        'pa-panel',
+        'video',
+        'cockpit-video-panel',
+        'cockpit-door-video',
+        'cockpit-door-video-switch',
+    ],
 };
 
 export const extLtPanel: Panel = {
@@ -165,7 +202,13 @@ export const apuPanel: Panel = {
     docsUrl: `${OVHD_DOCS_BASE_URL}/apu/`,
     flightDeckUrl: LOCATE_DOCS_BASE_URLS.a32nx.flightdeck,
     imageUrl: `${OVHD_IMAGE_BASE_URL}/apu.png`,
-    identifiers: ['apu-panel', 'apu', 'auxiliary-power-unit', 'apu-master-switch', 'apu-start-button'],
+    identifiers: [
+        'apu-panel',
+        'apu',
+        'auxiliary-power-unit',
+        'apu-master-switch',
+        'apu-start-button',
+    ],
 };
 
 export const signsPanel: Panel = {
@@ -305,7 +348,15 @@ export const fuelPanel: Panel = {
     docsUrl: `${OVHD_DOCS_BASE_URL}/fuel/`,
     flightDeckUrl: LOCATE_DOCS_BASE_URLS.a32nx.flightdeck,
     imageUrl: `${OVHD_IMAGE_BASE_URL}/fuel.png`,
-    identifiers: ['fuel', 'fuel-panel', 'fuel-pumps', 'x-feed', 'cross-feed', 'wing-tanks', 'center-tanks'],
+    identifiers: [
+        'fuel',
+        'fuel-panel',
+        'fuel-pumps',
+        'x-feed',
+        'cross-feed',
+        'wing-tanks',
+        'center-tanks',
+    ],
 };
 
 export const hydPanel: Panel = {
@@ -335,7 +386,13 @@ export const firePanel: Panel = {
     docsUrl: `${OVHD_DOCS_BASE_URL}/fire/`,
     flightDeckUrl: LOCATE_DOCS_BASE_URLS.a32nx.flightdeck,
     imageUrl: `${OVHD_IMAGE_BASE_URL}/fire.png`,
-    identifiers: ['engine-fire-panel', 'fire', 'smoke', 'fire-agent', 'disch'],
+    identifiers: [
+        'engine-fire-panel',
+        'fire',
+        'smoke',
+        'fire-agent',
+        'disch',
+    ],
 };
 
 export const engManStartPanel: Panel = {
@@ -344,7 +401,11 @@ export const engManStartPanel: Panel = {
     docsUrl: `${OVHD_DOCS_BASE_URL}/eng-man/`,
     flightDeckUrl: LOCATE_DOCS_BASE_URLS.a32nx.flightdeck,
     imageUrl: `${OVHD_IMAGE_BASE_URL}/eng_n1.png`,
-    identifiers: ['eng-n1', 'manual-engine-start', 'eng-man-start-switch'],
+    identifiers: [
+        'eng-n1',
+        'manual-engine-start',
+        'eng-man-start-switch',
+    ],
 };
 
 export const ventilationPanel: Panel = {
@@ -353,7 +414,13 @@ export const ventilationPanel: Panel = {
     docsUrl: `${OVHD_DOCS_BASE_URL}/vent/`,
     flightDeckUrl: LOCATE_DOCS_BASE_URLS.a32nx.flightdeck,
     imageUrl: `${OVHD_IMAGE_BASE_URL}/ventilation.png`,
-    identifiers: ['vent', 'ventilation-panel', 'cabin-fans', 'blower-switch', 'extract-ventilation-switch'],
+    identifiers: [
+        'vent',
+        'ventilation-panel',
+        'cabin-fans',
+        'blower-switch',
+        'extract-ventilation-switch',
+    ],
 };
 
 export const cargoSmokePanel: Panel = {
@@ -362,7 +429,10 @@ export const cargoSmokePanel: Panel = {
     docsUrl: `${OVHD_DOCS_BASE_URL}/cargo-smoke/`,
     flightDeckUrl: LOCATE_DOCS_BASE_URLS.a32nx.flightdeck,
     imageUrl: `${OVHD_IMAGE_BASE_URL}/cargo_smoke.png`,
-    identifiers: ['cargo-fire', 'cargo-smoke-panel'],
+    identifiers: [
+        'cargo-fire',
+        'cargo-smoke-panel',
+    ],
 };
 
 export const cargoVentPanel: Panel = {
@@ -371,7 +441,11 @@ export const cargoVentPanel: Panel = {
     docsUrl: `${OVHD_DOCS_BASE_URL}/cargo-vent/`,
     flightDeckUrl: LOCATE_DOCS_BASE_URLS.a32nx.flightdeck,
     imageUrl: `${OVHD_IMAGE_BASE_URL}/cargo_vent.png`,
-    identifiers: ['cargo-vent-panel', 'cargo-ventilation', 'aft-isol-valve-switch'],
+    identifiers: [
+        'cargo-vent-panel',
+        'cargo-ventilation',
+        'aft-isol-valve-switch',
+    ],
 };
 
 export const thirdACP: Panel = {
@@ -380,7 +454,11 @@ export const thirdACP: Panel = {
     docsUrl: `${OVHD_DOCS_BASE_URL}/3rd-acp/`,
     flightDeckUrl: LOCATE_DOCS_BASE_URLS.a32nx.flightdeck,
     imageUrl: `${OVHD_IMAGE_BASE_URL}/acp_3.png`,
-    identifiers: ['acp3', '3rd-acp', '3rd-audio-control-panel'],
+    identifiers: [
+        'acp3',
+        '3rd-acp',
+        '3rd-audio-control-panel',
+    ],
 };
 
 export const readingLightsJumpSeats: Panel = {
@@ -389,7 +467,10 @@ export const readingLightsJumpSeats: Panel = {
     docsUrl: `${AFT_OVHD_DOCS_BASE_URL}/reading-light/`,
     flightDeckUrl: LOCATE_DOCS_BASE_URLS.a32nx.flightdeck,
     imageUrl: `${AFT_OVHD_IMAGE_BASE_URL}/jump_seat_reading_lt.png`,
-    identifiers: ['reading-lights-jump-seat', 'jump-seat-reading-lights'],
+    identifiers: [
+        'reading-lights-jump-seat',
+        'jump-seat-reading-lights',
+    ],
 };
 
 export const cockpitDoorIndicatorPanel: Panel = {
@@ -398,7 +479,10 @@ export const cockpitDoorIndicatorPanel: Panel = {
     docsUrl: `${AFT_OVHD_DOCS_BASE_URL}/cockpit-door/#description`,
     flightDeckUrl: LOCATE_DOCS_BASE_URLS.a32nx.flightdeck,
     imageUrl: `${AFT_OVHD_IMAGE_BASE_URL}/ckpt_door_cont.png`,
-    identifiers: ['cockpit-door-cont', 'cockpit-door-indicator-panel'],
+    identifiers: [
+        'cockpit-door-cont',
+        'cockpit-door-indicator-panel',
+    ],
 };
 
 export const eltPanel: Panel = {
@@ -407,7 +491,11 @@ export const eltPanel: Panel = {
     docsUrl: `${AFT_OVHD_DOCS_BASE_URL}/elt/`,
     flightDeckUrl: LOCATE_DOCS_BASE_URLS.a32nx.flightdeck,
     imageUrl: `${AFT_OVHD_IMAGE_BASE_URL}/elt.png`,
-    identifiers: ['elt', 'elt-panel', 'emergency-locator-transmitter'],
+    identifiers: [
+        'elt',
+        'elt-panel',
+        'emergency-locator-transmitter',
+    ],
 };
 
 export const pedestalLightPanel: Panel = {
@@ -416,7 +504,11 @@ export const pedestalLightPanel: Panel = {
     docsUrl: `${AFT_OVHD_DOCS_BASE_URL}/pedestal-light/`,
     flightDeckUrl: LOCATE_DOCS_BASE_URLS.a32nx.flightdeck,
     imageUrl: `${AFT_OVHD_IMAGE_BASE_URL}/pedestal_light.png`,
-    identifiers: ['pedestal-light-panel', 'acp3-switching-selector', 'audio-control-panel-3-switching-selector'],
+    identifiers: [
+        'pedestal-light-panel',
+        'acp3-switching-selector',
+        'audio-control-panel-3-switching-selector',
+    ],
 };
 
 export const emerCbPanel: Panel = {
@@ -425,7 +517,10 @@ export const emerCbPanel: Panel = {
     docsUrl: `${AFT_OVHD_DOCS_BASE_URL}/circuit/`,
     flightDeckUrl: LOCATE_DOCS_BASE_URLS.a32nx.flightdeck,
     imageUrl: `${AFT_OVHD_IMAGE_BASE_URL}/emer_cb.png`,
-    identifiers: ['emer-cb', 'emergency-circuit-breaker-panel'],
+    identifiers: [
+        'emer-cb',
+        'emergency-circuit-breaker-panel',
+    ],
 };
 
 export const fmsLoadPanel: Panel = {
@@ -434,7 +529,9 @@ export const fmsLoadPanel: Panel = {
     docsUrl: `${AFT_OVHD_DOCS_BASE_URL}/fms-load/`,
     flightDeckUrl: LOCATE_DOCS_BASE_URLS.a32nx.flightdeck,
     imageUrl: `${AFT_OVHD_IMAGE_BASE_URL}/fms_load.png`,
-    identifiers: ['fms-load-panel'],
+    identifiers: [
+        'fms-load-panel',
+    ],
 };
 
 export const maintenancePanel: Panel = {

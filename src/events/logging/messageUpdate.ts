@@ -1,17 +1,17 @@
 import { Colors, TextChannel } from 'discord.js';
 import { constantsConfig, event, Events, imageBaseUrl, Logger, makeEmbed } from '../../lib';
 
-const FEATURE_NOT_AVAIL = "(can't show embeds or images)";
+const FEATURE_NOT_AVAIL = '(can\'t show embeds or images)';
 
 export default event(Events.MessageUpdate, async (_, oldMessage, newMessage) => {
     try {
         if (oldMessage.guild === null || oldMessage.author === null || newMessage.author === null) {
-            // DMs
+        // DMs
             return;
         }
 
         if (oldMessage.content === null) {
-            // Old Message
+        // Old Message
             return;
         }
 
@@ -20,7 +20,7 @@ export default event(Events.MessageUpdate, async (_, oldMessage, newMessage) => 
             return;
         }
 
-        const userLogsChannel = oldMessage.guild.channels.resolve(constantsConfig.channels.USER_LOGS);
+        const userLogsChannel = oldMessage.guild.channels.resolve(constantsConfig.channels.USER_LOGS) as TextChannel | null;
 
         const MAX_MESSAGE_LENGTH = 1024;
 
@@ -40,7 +40,7 @@ export default event(Events.MessageUpdate, async (_, oldMessage, newMessage) => 
             editedMessageFieldTitle = 'Edited Message (truncated)';
         }
 
-        if (userLogsChannel && !constantsConfig.userLogExclude.includes(oldMessage.author.id)) {
+        if (userLogsChannel && !constantsConfig.userLogExclude.includes(oldMessage.author!.id)) {
             const messageUpdateEmbed = makeEmbed({
                 color: Colors.Orange,
                 thumbnail: { url: `${imageBaseUrl}/moderation/message_edited.png` },
@@ -51,16 +51,8 @@ export default event(Events.MessageUpdate, async (_, oldMessage, newMessage) => 
                 fields: [
                     { name: 'Author', value: `${oldMessage.author}`, inline: true },
                     { name: 'Channel', value: `${oldMessage.channel}`, inline: true },
-                    {
-                        name: originalMessageFieldTitle,
-                        value: oldMessageContent ? `\`\`\`${oldMessageContent}\`\`\`` : FEATURE_NOT_AVAIL,
-                        inline: false,
-                    },
-                    {
-                        name: editedMessageFieldTitle,
-                        value: newMessageContent ? `\`\`\`${newMessageContent}\`\`\`` : FEATURE_NOT_AVAIL,
-                        inline: false,
-                    },
+                    { name: originalMessageFieldTitle, value: oldMessageContent ? `\`\`\`${oldMessageContent}\`\`\`` : FEATURE_NOT_AVAIL, inline: false },
+                    { name: editedMessageFieldTitle, value: newMessageContent ? `\`\`\`${newMessageContent}\`\`\`` : FEATURE_NOT_AVAIL, inline: false },
                 ],
                 footer: { text: `User ID: ${oldMessage.author.id}` },
             });

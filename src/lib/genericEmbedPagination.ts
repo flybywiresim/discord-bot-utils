@@ -1,20 +1,6 @@
-import {
-    ActionRowBuilder,
-    ButtonBuilder,
-    ButtonInteraction,
-    ButtonStyle,
-    CommandInteraction,
-    ComponentType,
-    EmbedBuilder,
-    Interaction,
-    InteractionResponse,
-    Message,
-} from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, CommandInteraction, ComponentType, EmbedBuilder, Interaction, InteractionResponse, Message } from 'discord.js';
 
-export async function createPaginatedEmbedHandler(
-    initialInteraction: CommandInteraction,
-    embeds: EmbedBuilder[],
-): Promise<void> {
+export async function createPaginatedEmbedHandler(initialInteraction: CommandInteraction, embeds: EmbedBuilder[]): Promise<void> {
     let currentPage = 0;
 
     const nextButton = new ButtonBuilder()
@@ -39,11 +25,7 @@ export async function createPaginatedEmbedHandler(
     }
 
     const filter = (buttonInteraction: Interaction) => initialInteraction.user.id === buttonInteraction.user.id;
-    const collector = message.createMessageComponentCollector({
-        filter,
-        componentType: ComponentType.Button,
-        time: 120_000,
-    });
+    const collector = message.createMessageComponentCollector({ filter, componentType: ComponentType.Button, time: 120_000 });
 
     collector.on('collect', async (collectedInteraction: ButtonInteraction) => {
         await collectedInteraction.deferUpdate();
@@ -69,14 +51,7 @@ export async function createPaginatedEmbedHandler(
 
     function handleEmbedExpire() {
         const embed = embeds[currentPage];
-        initialInteraction.editReply({
-            embeds: [
-                embed.setFooter({
-                    text: `${embed.data.footer ? `${embed.data.footer.text} - ` : ''}This embed has expired.`,
-                }),
-            ],
-            components: [],
-        });
+        initialInteraction.editReply({ embeds: [embed.setFooter({ text: `${embed.data.footer ? `${embed.data.footer.text} - ` : ''}This embed has expired.` })], components: [] });
     }
 
     function setButtonDisabledStates() {

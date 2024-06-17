@@ -1,7 +1,9 @@
 import { Color, ContextMenuCommand, event, Events, makeEmbed, Reply } from '../lib';
 import contextArray from '../commands/context';
 
-const contextMap = new Map<string, ContextMenuCommand>(contextArray.map((c) => [c.meta.name, c]));
+const contextMap = new Map<string, ContextMenuCommand>(
+    contextArray.map((c) => [c.meta.name, c]),
+);
 
 export default event(Events.InteractionCreate, async ({ log, client }, interaction) => {
     if (!interaction.isContextMenuCommand()) {
@@ -9,7 +11,9 @@ export default event(Events.InteractionCreate, async ({ log, client }, interacti
     }
 
     if (!interaction.inCachedGuild()) {
-        await interaction.reply(Reply('This bot can only be used in a server!', Color.Error));
+        await interaction.reply(
+            Reply('This bot can only be used in a server!', Color.Error),
+        );
         return;
     }
 

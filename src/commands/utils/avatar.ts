@@ -3,16 +3,14 @@ import { slashCommand, slashCommandStructure, makeEmbed } from '../../lib';
 
 const data = slashCommandStructure({
     name: 'avatar',
-    description: "Shows the selected user's avatar",
+    description: 'Shows the selected user\'s avatar',
     type: ApplicationCommandType.ChatInput,
-    options: [
-        {
-            name: 'tag_or_id',
-            description: 'Please provide a user tag or ID.',
-            type: ApplicationCommandOptionType.User,
-            required: false,
-        },
-    ],
+    options: [{
+        name: 'tag_or_id',
+        description: 'Please provide a user tag or ID.',
+        type: ApplicationCommandOptionType.User,
+        required: false,
+    }],
 });
 
 export default slashCommand(data, async ({ interaction }) => {

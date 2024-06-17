@@ -16,11 +16,11 @@ export function makeLines(lines: string[]): string {
 
 export const makeList = (lines: string[], type?: ListTypes): string => {
     switch (type) {
-        case 'bullet':
-            return lines.map((line) => `• ${line}`).join('\n');
-        case 'ordered':
-            return lines.map((line, index) => `${index + 1}. ${line}`).join('\n');
-        default:
-            return lines.map((line) => `- ${line}`).join('\n');
+    case 'bullet':
+        return lines.map((line) => `• ${line}`).join('\n');
+    case 'ordered':
+        return lines.map((line, index) => `${index + 1}. ${line}`).join('\n');
+    default:
+        return lines.map((line) => `- ${line}`).join('\n');
     }
 };

@@ -1,13 +1,4 @@
-import {
-    ApplicationCommandOptionType,
-    ApplicationCommandType,
-    TextChannel,
-    Colors,
-    ActionRowBuilder,
-    ButtonBuilder,
-    ButtonStyle,
-    Interaction,
-} from 'discord.js';
+import { ApplicationCommandOptionType, ApplicationCommandType, TextChannel, Colors, ActionRowBuilder, ButtonBuilder, ButtonStyle, Interaction } from 'discord.js';
 import { slashCommand, slashCommandStructure, makeEmbed, constantsConfig, Logger } from '../../lib';
 
 const data = slashCommandStructure({
@@ -16,16 +7,14 @@ const data = slashCommandStructure({
     type: ApplicationCommandType.ChatInput,
     default_member_permissions: constantsConfig.commandPermission.MANAGE_SERVER, //Overrides need to be added for admin and moderator roles
     dm_permission: false,
-    options: [
-        {
-            name: 'amount',
-            description: 'Number of messages to clear (1-100).',
-            type: ApplicationCommandOptionType.Integer,
-            required: true,
-            min_value: 1,
-            max_value: 100,
-        },
-    ],
+    options: [{
+        name: 'amount',
+        description: 'Number of messages to clear (1-100).',
+        type: ApplicationCommandOptionType.Integer,
+        required: true,
+        min_value: 1,
+        max_value: 100,
+    }],
 });
 
 export default slashCommand(data, async ({ interaction }) => {
@@ -79,9 +68,7 @@ export default slashCommand(data, async ({ interaction }) => {
                     timestamp: new Date(),
                 });
 
-                const modLogsChannel = interaction.guild.channels.resolve(
-                    constantsConfig.channels.MOD_LOGS,
-                ) as TextChannel;
+                const modLogsChannel = interaction.guild.channels.resolve(constantsConfig.channels.MOD_LOGS) as TextChannel;
                 const modLogEmbed = makeEmbed({
                     title: '🧹 Messages Cleared',
                     description: 'Messages have been cleared.',
@@ -111,9 +98,7 @@ export default slashCommand(data, async ({ interaction }) => {
                 return interaction.editReply({ content: '', embeds: [replyEmbed], components: [] });
             } catch (error) {
                 Logger.error('Error clearing messages:', error);
-                return interaction.editReply({
-                    content: 'There was an error trying to clear messages in this channel. The error has been logged.',
-                });
+                return interaction.editReply({ content: 'There was an error trying to clear messages in this channel. The error has been logged.' });
             }
         } else {
             const canceledEmbed = makeEmbed({

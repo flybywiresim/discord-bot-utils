@@ -1,12 +1,5 @@
 import { ApplicationCommandOptionType, ApplicationCommandType } from 'discord.js';
-import {
-    constantsConfig,
-    Logger,
-    makeEmbed,
-    createPaginatedEmbedHandler,
-    slashCommand,
-    slashCommandStructure,
-} from '../../lib';
+import { constantsConfig, Logger, makeEmbed, createPaginatedEmbedHandler, slashCommand, slashCommandStructure } from '../../lib';
 
 const data = slashCommandStructure({
     name: 'list-role-users',
@@ -48,12 +41,10 @@ export default slashCommand(data, async ({ interaction }) => {
         membersAddedToPage++;
 
         if (membersAddedToPage >= pageLimit) {
-            embeds.push(
-                makeEmbed({
-                    title: `Role Users | ${role.name} - Page ${currentPage + 1} of ${totalPages}`,
-                    description,
-                }),
-            );
+            embeds.push(makeEmbed({
+                title: `Role Users | ${role.name} - Page ${currentPage + 1} of ${totalPages}`,
+                description,
+            }));
             description = '';
             membersAddedToPage = 0;
             currentPage++;
@@ -61,12 +52,10 @@ export default slashCommand(data, async ({ interaction }) => {
     }
 
     if (description.trim() !== '') {
-        embeds.push(
-            makeEmbed({
-                title: `Role Users | ${role.name} - Page ${currentPage + 1} of ${totalPages}`,
-                description,
-            }),
-        );
+        embeds.push(makeEmbed({
+            title: `Role Users | ${role.name} - Page ${currentPage + 1} of ${totalPages}`,
+            description,
+        }));
     }
 
     if (embeds.length === 0) {

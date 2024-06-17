@@ -63,20 +63,20 @@ export default slashCommand(data, async ({ interaction }) => {
     const modLogsChannel = interaction.guild.channels.resolve(constantsConfig.channels.MOD_LOGS) as TextChannel;
 
     switch (subcommandName) {
-        case 'add':
-            await handleAddFaq(interaction, modLogsChannel);
-            break;
-        case 'remove':
-            await handleRemoveFaq(interaction, faqID, modLogsChannel);
-            break;
-        case 'list':
-            await handleListFaq(interaction);
-            break;
-        case 'print-all':
-            await handlePrintAllFAQ(interaction);
-            break;
+    case 'add':
+        await handleAddFaq(interaction, modLogsChannel);
+        break;
+    case 'remove':
+        await handleRemoveFaq(interaction, faqID, modLogsChannel);
+        break;
+    case 'list':
+        await handleListFaq(interaction);
+        break;
+    case 'print-all':
+        await handlePrintAllFAQ(interaction);
+        break;
 
-        default:
-            await interaction.reply({ content: 'Unknown subcommand', ephemeral: true });
+    default:
+        await interaction.reply({ content: 'Unknown subcommand', ephemeral: true });
     }
 });

@@ -16,37 +16,36 @@ const data = slashCommandStructure({
 export default slashCommand(data, async ({ interaction }) => {
     if (interaction.guild) {
         try {
-            await deployCommands(commandArray, contextArray).then(async (user) => {
-                const bot = `<@${user.id}>`;
+            await deployCommands(commandArray, contextArray)
+                .then(async (user) => {
+                    const bot = `<@${user.id}>`;
 
-                const guildID = constantsConfig.guildId;
-                if (!guildID) {
-                    await interaction.reply('guildId configuration constant is not defined.');
-                    return;
-                }
+                    const guildID = constantsConfig.guildId;
+                    if (!guildID) {
+                        await interaction.reply('guildId configuration constant is not defined.');
+                        return;
+                    }
 
-                const guildName = client.guilds.cache.get(guildID);
+                    const guildName = client.guilds.cache.get(guildID);
 
-                let response;
-                //If the bot is deployed to a guild and can resolve the name, use the guild name in the response
-                if (guildName) {
-                    response =
-                        process.env.NODE_ENV === 'production'
+                    let response;
+                    //If the bot is deployed to a guild and can resolve the name, use the guild name in the response
+                    if (guildName) {
+                        response = process.env.NODE_ENV === 'production'
                             ? `Deployed ${commandArray.length} commands and ${contextArray.length} contexts globally as ${bot}!`
                             : `Deployed ${commandArray.length} commands and ${contextArray.length} contexts to \`${guildName}\` as ${bot}!`;
-                } else {
+                    } else {
                     //If the bot can't gather the guild name, use the ID in the response
-                    response =
-                        process.env.NODE_ENV === 'production'
+                        response = process.env.NODE_ENV === 'production'
                             ? `Deployed ${commandArray.length} commands and ${contextArray.length} contexts globally as ${bot}!`
                             : `Deployed ${commandArray.length} commands and ${contextArray.length} contexts to \`<@${guildID}>\` as ${bot}!`;
-                }
-                Logger.info(response);
-                await interaction.reply({
-                    content: response,
-                    ephemeral: true,
+                    }
+                    Logger.info(response);
+                    await interaction.reply({
+                        content: response,
+                        ephemeral: true,
+                    });
                 });
-            });
         } catch (error) {
             await interaction.reply({
                 content: 'Failed to deploy commands!',

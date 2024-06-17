@@ -1,26 +1,6 @@
-import {
-    ActionRowBuilder,
-    ButtonBuilder,
-    ButtonStyle,
-    Interaction,
-    CommandInteraction,
-    ButtonInteraction,
-    EmbedBuilder,
-} from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Interaction, CommandInteraction, ButtonInteraction, EmbedBuilder } from 'discord.js';
 
-export async function createPaginatedInfractionEmbedHandler(
-    initialInteraction: CommandInteraction,
-    user: string,
-    embeds: EmbedBuilder[],
-    infractionsLengths: {
-        warnsLength: string;
-        timeoutsLength: string;
-        scamLogsLength: string;
-        bansLength: string;
-        unbansLength: string;
-        notesLength: string;
-    },
-): Promise<void> {
+export async function createPaginatedInfractionEmbedHandler(initialInteraction: CommandInteraction, user:string, embeds: EmbedBuilder[], infractionsLengths: { warnsLength: string; timeoutsLength: string; scamLogsLength: string; bansLength: string; unbansLength: string; notesLength: string; }): Promise<void> {
     let currentPage = 0;
 
     const aboutButton = new ButtonBuilder()
@@ -59,16 +39,8 @@ export async function createPaginatedInfractionEmbedHandler(
         .setStyle(ButtonStyle.Primary);
 
     const buttonRow1 = new ActionRowBuilder<ButtonBuilder>().addComponents(aboutButton, warnButton, timeoutButton);
-    const buttonRow2 = new ActionRowBuilder<ButtonBuilder>().addComponents(
-        scamLogButton,
-        banButton,
-        unbanButton,
-        noteButton,
-    );
-    const message = await initialInteraction.followUp({
-        embeds: [embeds[currentPage]],
-        components: [buttonRow1, buttonRow2],
-    });
+    const buttonRow2 = new ActionRowBuilder<ButtonBuilder>().addComponents(scamLogButton, banButton, unbanButton, noteButton);
+    const message = await initialInteraction.followUp({ embeds: [embeds[currentPage]], components: [buttonRow1, buttonRow2] });
 
     const filter = (interaction: Interaction) => interaction.user.id === user;
     const collector = message.createMessageComponentCollector({ filter, time: 120_000 });
@@ -113,13 +85,6 @@ export async function createPaginatedInfractionEmbedHandler(
 
     function handleEmbedExpire() {
         const embed = embeds[currentPage];
-        initialInteraction.editReply({
-            embeds: [
-                embed.setFooter({
-                    text: `${embed.data.footer ? `${embed.data.footer.text} - ` : ''}This embed has expired.`,
-                }),
-            ],
-            components: [],
-        });
+        initialInteraction.editReply({ embeds: [embed.setFooter({ text: `${embed.data.footer ? `${embed.data.footer.text} - ` : ''}This embed has expired.` })], components: [] });
     }
 }
