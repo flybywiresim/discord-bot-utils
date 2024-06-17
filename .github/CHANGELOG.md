@@ -1,5 +1,9 @@
 ## Changelog
 
+Update <small>_ June 2024</small>
+
+- feat: add optional description to `/locate` panels.
+
 Update <small>_ May 2024</small>
 
 - fix: keep footer on embed expire (29/05/2024)
