@@ -23,6 +23,7 @@ const locateEmbed = (panel: Panel) => makeEmbed({
         `* [${panel.name} Documentation](${panel.docsUrl})`,
         `* [Flight Deck Overview](${panel.flightDeckUrl})`,
     ]),
+    fields: panel.description ? [panel.description] : [],
     image: { url: panel.imageUrl },
     footer: { text: 'Tip: Click the image to view in full size' },
 });
@@ -39,6 +40,8 @@ export async function handleCommand(interaction: ChatInputCommandInteraction<'ca
         return interaction.editReply({ embeds: [invalidTargetEmbed] });
     }
     const panel = panelMap.get(cleanTarget)!;
+
+    console.log(panel.imageUrl);
 
     return interaction.editReply({ embeds: [locateEmbed(panel)] });
 }
