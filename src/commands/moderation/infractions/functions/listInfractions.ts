@@ -67,6 +67,8 @@ export async function handleListInfraction(
       notesLength: userNotes.length.toString(),
     };
 
+    // Added for future compatibility with other types.
+    /* eslint-disable @typescript-eslint/no-duplicate-type-constituents */
     type InfractionArray =
       | typeof warnInfractions
       | typeof timeoutInfractions
@@ -74,13 +76,14 @@ export async function handleListInfraction(
       | typeof banInfractions
       | typeof unbanInfractions
       | typeof userNotes;
+    /* eslint-enable @typescript-eslint/no-duplicate-type-constituents */
 
     const fetchModerators = (infractions: InfractionArray) => {
       const moderatorPromises = infractions.map((infraction) =>
         interaction.client.users
-          .fetch(infraction.moderatorID!)
+          .fetch(infraction.moderatorID)
           // Disabled for readability
-          // eslint-disable-next-line arrow-body-style
+
           .catch(() => {
             return new Promise((resolve) => {
               resolve(`I can't find the moderator, here is the stored ID: ${infraction.moderatorID}`);
