@@ -1,8 +1,18 @@
+root = true
+
 [*]
 charset = utf-8
 indent_size = 4
 indent_style = space
 insert_final_newline = true
-max_line_length = 120
 tab_width = 4
-trim_trailing_whitespace = true
+
+[*.{js,jsx,ts,tsx}]
+indent_size = 2
+insert_final_newline = true
+tab_width = 2
+
+# YAML is usually 2 spaces
+[*.{yml,yaml}]
+indent_size = 2
+tab_width = 2
