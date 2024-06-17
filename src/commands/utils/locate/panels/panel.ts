@@ -1,4 +1,4 @@
-import { EmbedField } from "discord.js";
+import { EmbedField } from 'discord.js';
 
 export interface Panel {
     /**
