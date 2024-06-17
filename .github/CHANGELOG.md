@@ -1,6 +1,6 @@
 ## Changelog
 
-Update <small>_ May 2024</small>
+Update <small>\_ May 2024</small>
 
 - fix: keep footer on embed expire (29/05/2024)
 - feat: /clear-messages command (29/05/2024)
@@ -16,12 +16,12 @@ Update <small>_ May 2024</small>
 - fix: lint workflow failing silently (18/05/2024)
 - chore: fix eol issues on Windows (17/05/2024)
 
-Update <small>_ April 2024</small>
+Update <small>\_ April 2024</small>
 
 - fix: clarify errors in timeout command (30/04/2024)
 - fix: adds mod alerts to the config requirements (30/04/2024)
 
-Update <small>_ March 2024</small>
+Update <small>\_ March 2024</small>
 
 - fix: birthday handler user caching issue (23/03/2024)
 - feat: adds github issue command (18/03/2024)
@@ -29,7 +29,7 @@ Update <small>_ March 2024</small>
 - fix: multiple plus symbols in zulu command (18/03/2024)
 - feat: add infractions counts to buttons in list infractions command (18/03/2024)
 
-Update <small>_ February 2024</small>
+Update <small>\_ February 2024</small>
 
 - fix: report message logging bug (18/02/2024)
 - feat: command to list users in a role (18/02/2024)
@@ -40,7 +40,7 @@ Update <small>_ February 2024</small>
 - fix: message edit and delete crash (01/02/2024)
 - feat: add heartbeat mechanism for monitoring (01/02/2024)
 
-Update <small>_ January 2024</small>
+Update <small>\_ January 2024</small>
 
 - fix: defer interaction for cache update (28/01/2024)
 - fix: defer interaction on birthday list command (28/01/2024)
@@ -50,7 +50,7 @@ Update <small>_ January 2024</small>
 - fix: ScamLog - Ignore messages entirely unless it has everyone (28/01/2024)
 - fix: command names (28/01/2024)
 - fix: ignore Dyno bot (27/01/2024)
-- fix: use - instead of _ in command names (27/01/2024)
+- fix: use - instead of \_ in command names (27/01/2024)
 - feat: auto-generation of the command table (24/01/2024)
 - feat: migrate reportedIssues command (22/01/2024)
 - feat: docSearch command (22/01/2024)

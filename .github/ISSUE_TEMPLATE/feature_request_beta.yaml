@@ -4,7 +4,7 @@ labels: [Request]
 body:
   - type: markdown
     attributes:
-      value: "# FBW Discord Bot Feature Request Form"
+      value: '# FBW Discord Bot Feature Request Form'
   - type: dropdown
     id: type
     attributes:

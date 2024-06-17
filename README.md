@@ -13,8 +13,8 @@ This is the repository for the FlyByWire Simulations Discord Bot. You can find t
 
 ## Best Practices
 
-* Please use clear names for your PR's and commands.
-* Check the #discord-bot channel for regular discussions about the repository and what is being worked on.
+- Please use clear names for your PR's and commands.
+- Check the #discord-bot channel for regular discussions about the repository and what is being worked on.
 
 ## Contributing
 
