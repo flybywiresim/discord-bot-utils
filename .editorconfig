@@ -13,6 +13,7 @@ insert_final_newline = true
 tab_width = 2
 
 # YAML is usually 2 spaces
-[*.{yml,yaml}]
+# Markdown will cause weird formating with 4 spaces
+[*.{md,yml,yaml}]
 indent_size = 2
 tab_width = 2
