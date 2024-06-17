@@ -6,17 +6,20 @@ const data = slashCommandStructure({
     name: 'reported-issues',
     description: 'Provides a link to the reported issues page within docs.',
     type: ApplicationCommandType.ChatInput,
-    options: [{
-        name: 'query',
-        description: 'Provide a query to search for.',
-        type: ApplicationCommandOptionType.String,
-        max_length: 100,
-        required: true,
-    }],
+    options: [
+        {
+            name: 'query',
+            description: 'Provide a query to search for.',
+            type: ApplicationCommandOptionType.String,
+            max_length: 100,
+            required: true,
+        },
+    ],
 });
 
 const FBW_DOCS_REPORTED_ISSUES_URL = 'https://docs.flybywiresim.com/fbw-a32nx/support/reported-issues/';
-const FBW_DOCS_AUTOPILOT_ISSUES_URL = 'https://docs.flybywiresim.com/fbw-a32nx/feature-guides/autopilot-fbw/#typical-issues-and-how-to-solve-them';
+const FBW_DOCS_AUTOPILOT_ISSUES_URL =
+    'https://docs.flybywiresim.com/fbw-a32nx/feature-guides/autopilot-fbw/#typical-issues-and-how-to-solve-them';
 const FBW_DOCS_SIMBRIDGE_ISSUES_URL = 'https://docs.flybywiresim.com/simbridge/troubleshooting/';
 
 const genericReportedIssuesEmbed = makeEmbed({
@@ -24,11 +27,13 @@ const genericReportedIssuesEmbed = makeEmbed({
     description: `I couldn't find a match foy your query. Please see [this link](${FBW_DOCS_REPORTED_ISSUES_URL}) for a current list of reported issues.`,
 });
 
-const issueInSubsectionEmbed = (fields: EmbedField[]) => makeEmbed({
-    title: 'FlyByWire A32NX | Reported Issues',
-    description: 'Your issue is in our reported issues list. Please try the possible solutions in the following link(s) and report back if they didn\'t help. Include all the steps you tried.',
-    fields,
-});
+const issueInSubsectionEmbed = (fields: EmbedField[]) =>
+    makeEmbed({
+        title: 'FlyByWire A32NX | Reported Issues',
+        description:
+            "Your issue is in our reported issues list. Please try the possible solutions in the following link(s) and report back if they didn't help. Include all the steps you tried.",
+        fields,
+    });
 
 const subsectionLinkEmbedField = (id: string, title: string): EmbedField[] => [
     {
@@ -50,12 +55,15 @@ const simbridgeEmbed = makeEmbed({
 
 const generalTroubleshootingEmbed = makeEmbed({
     title: 'FlyByWire A32NX | Reported Issues',
-    description: 'Please try the general troubleshooting steps from our reported issues page and report back if they didn\'t help. Include all the steps you tried.',
-    fields: [{
-        inline: false,
-        name: 'General Troubleshooting Steps',
-        value: `[Link to reported issues section](${FBW_DOCS_REPORTED_ISSUES_URL}#general-troubleshooting-steps)`,
-    }],
+    description:
+        "Please try the general troubleshooting steps from our reported issues page and report back if they didn't help. Include all the steps you tried.",
+    fields: [
+        {
+            inline: false,
+            name: 'General Troubleshooting Steps',
+            value: `[Link to reported issues section](${FBW_DOCS_REPORTED_ISSUES_URL}#general-troubleshooting-steps)`,
+        },
+    ],
 });
 
 const tooManyResultsEmbed = makeEmbed({
@@ -102,7 +110,9 @@ export default slashCommand(data, async ({ interaction }) => {
             return interaction.reply({ embeds: [genericReportedIssuesEmbed] });
         }
 
-        const fields = reportedIssues.map((sectionElement: any) => subsectionLinkEmbedField(sectionElement.id, sectionElement.title)).flat();
+        const fields = reportedIssues
+            .map((sectionElement: any) => subsectionLinkEmbedField(sectionElement.id, sectionElement.title))
+            .flat();
         return interaction.reply({ embeds: [issueInSubsectionEmbed(fields)] });
     } catch (error: any) {
         Logger.error(error);

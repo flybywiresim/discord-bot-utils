@@ -49,7 +49,7 @@ const DISCUSSION_EMBED = makeEmbed({
         '- Use of slurs or any form of bigotry is not tolerated',
         '- No inappropriate, NSFW or NSFL content like (but not limited to) nudity, pornography, gore, ...',
         '- No general spam',
-        '- Do not send multiple unsolicited DM\'s',
+        "- Do not send multiple unsolicited DM's",
         '- No troll or insensitive messaging, including insensitive inside jokes',
         '- Inappropriate/offensive profile information/picture will not be tolerated',
         '- Certain topics like politics, religion and other sensitive subjects will only be tolerated if a careful and respectful conversation is held',
@@ -67,7 +67,9 @@ const ROLE_EMBED = makeEmbed({
 
 export default slashCommand(data, async ({ interaction }) => {
     if (interaction.channel) {
-        await interaction.channel.send({ embeds: [RULES_EMBED, FAQ_EMBED, POLICIES_EMBED, DISCUSSION_EMBED, ROLE_EMBED] });
+        await interaction.channel.send({
+            embeds: [RULES_EMBED, FAQ_EMBED, POLICIES_EMBED, DISCUSSION_EMBED, ROLE_EMBED],
+        });
     } else {
         await interaction.reply({ content: 'This command can only be used in a server.', ephemeral: true });
     }

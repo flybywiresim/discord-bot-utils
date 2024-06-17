@@ -11,13 +11,15 @@ const data = slashCommandStructure({
             name: 'retrieve',
             description: 'Shows data for your last filed flight plan.',
             type: ApplicationCommandOptionType.Subcommand,
-            options: [{
-                name: 'pilot_id',
-                description: 'Please provide your pilot ID.',
-                type: ApplicationCommandOptionType.String,
-                max_length: 100,
-                required: true,
-            }],
+            options: [
+                {
+                    name: 'pilot_id',
+                    description: 'Please provide your pilot ID.',
+                    type: ApplicationCommandOptionType.String,
+                    max_length: 100,
+                    required: true,
+                },
+            ],
         },
         {
             name: 'support-request',
@@ -40,31 +42,33 @@ const simbriefdatarequestEmbed = makeEmbed({
     ]),
 });
 
-const errorEmbed = (errorMessage: any) => makeEmbed({
-    title: 'SimBrief Error',
-    description: makeLines(['SimBrief data could not be read.', errorMessage]),
-    color: Colors.Red,
-});
+const errorEmbed = (errorMessage: any) =>
+    makeEmbed({
+        title: 'SimBrief Error',
+        description: makeLines(['SimBrief data could not be read.', errorMessage]),
+        color: Colors.Red,
+    });
 
-const simbriefIdMismatchEmbed = (enteredId: any, flightplanId: any) => makeEmbed({
-    title: 'SimBrief Data',
-    description: makeLines([
-        `Entered pilotId ${enteredId} and returned pilotId ${flightplanId} don't match. The pilotId might be used as username by someone else.`,
-    ]),
-});
+const simbriefIdMismatchEmbed = (enteredId: any, flightplanId: any) =>
+    makeEmbed({
+        title: 'SimBrief Data',
+        description: makeLines([
+            `Entered pilotId ${enteredId} and returned pilotId ${flightplanId} don't match. The pilotId might be used as username by someone else.`,
+        ]),
+    });
 
-const simbriefEmbed = (flightplan: any) => makeEmbed({
-    title: 'SimBrief Data',
-    description: makeLines([
-        `**Generated at**: ${moment(flightplan.params.time_generated * 1000).format('DD.MM.YYYY, HH:mm:ss')}`,
-        `**AirFrame**: ${flightplan.aircraft.name} ${flightplan.aircraft.internal_id} ${(flightplan.aircraft.internal_id === FBW_AIRFRAME_ID) ? '(provided by FBW)' : ''}`,
-        `**AIRAC Cycle**: ${flightplan.params.airac}`,
-        `**Origin**: ${flightplan.origin.icao_code}`,
-        `**Destination**: ${flightplan.destination.icao_code}`,
-        `**Route**: ${flightplan.general.route}`,
-    ]),
-
-});
+const simbriefEmbed = (flightplan: any) =>
+    makeEmbed({
+        title: 'SimBrief Data',
+        description: makeLines([
+            `**Generated at**: ${moment(flightplan.params.time_generated * 1000).format('DD.MM.YYYY, HH:mm:ss')}`,
+            `**AirFrame**: ${flightplan.aircraft.name} ${flightplan.aircraft.internal_id} ${flightplan.aircraft.internal_id === FBW_AIRFRAME_ID ? '(provided by FBW)' : ''}`,
+            `**AIRAC Cycle**: ${flightplan.params.airac}`,
+            `**Origin**: ${flightplan.origin.icao_code}`,
+            `**Destination**: ${flightplan.destination.icao_code}`,
+            `**Route**: ${flightplan.general.route}`,
+        ]),
+    });
 
 export default slashCommand(data, async ({ interaction }) => {
     if (interaction.options.getSubcommand() === 'support-request') {
@@ -75,7 +79,9 @@ export default slashCommand(data, async ({ interaction }) => {
         const simbriefId = interaction.options.getString('pilot_id');
         if (!simbriefId) return interaction.reply({ content: 'Invalid pilot ID!', ephemeral: true });
 
-        const flightplan = await fetch(`https://www.simbrief.com/api/xml.fetcher.php?json=1&userid=${simbriefId}&username=${simbriefId}`).then((res) => res.json());
+        const flightplan = await fetch(
+            `https://www.simbrief.com/api/xml.fetcher.php?json=1&userid=${simbriefId}&username=${simbriefId}`,
+        ).then((res) => res.json());
 
         if (flightplan.fetch.status !== 'Success') {
             interaction.reply({ embeds: [errorEmbed(flightplan.fetch.status)], ephemeral: true });

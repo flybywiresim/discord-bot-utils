@@ -11,15 +11,17 @@ export enum Color {
 
 export const EditReply = (msg: string, color: Color = Color.Info): InteractionEditReplyOptions => ({
     content: undefined,
-    embeds: [{
-        description: msg,
-        color,
-    }],
+    embeds: [
+        {
+            description: msg,
+            color,
+        },
+    ],
     components: [],
     files: [],
 });
 
 export const Reply = (msg: string, color: Color = Color.Info): InteractionReplyOptions => ({
     ephemeral: true,
-    ...EditReply(msg, color) as InteractionReplyOptions,
+    ...(EditReply(msg, color) as InteractionReplyOptions),
 });

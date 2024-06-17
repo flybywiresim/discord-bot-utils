@@ -5,12 +5,14 @@ const data = slashCommandStructure({
     name: 'wolframalpha',
     description: 'Queries the Wolfram Alpha API.',
     type: ApplicationCommandType.ChatInput,
-    options: [{
-        name: 'query',
-        description: 'Please provide a query. For example: `.wa How much is 1 + 1?`.',
-        type: ApplicationCommandOptionType.String,
-        required: true,
-    }],
+    options: [
+        {
+            name: 'query',
+            description: 'Please provide a query. For example: `.wa How much is 1 + 1?`.',
+            type: ApplicationCommandOptionType.String,
+            required: true,
+        },
+    ],
 });
 
 const noQueryEmbed = makeEmbed({
@@ -50,8 +52,7 @@ export default slashCommand(data, async ({ interaction }) => {
     const searchParams = new URLSearchParams(params);
 
     try {
-        const response = await fetch(`${WOLFRAMALPHA_API_URL}${searchParams.toString()}`)
-            .then((res) => res.json());
+        const response = await fetch(`${WOLFRAMALPHA_API_URL}${searchParams.toString()}`).then((res) => res.json());
 
         if (response.error) {
             const errorEmbed = makeEmbed({
@@ -93,18 +94,14 @@ export default slashCommand(data, async ({ interaction }) => {
             }
             const noResultsEmbed = makeEmbed({
                 title: 'Wolfram Alpha Error | No Results',
-                description: makeLines([
-                    'No results were found for your query.',
-                ]),
+                description: makeLines(['No results were found for your query.']),
                 color: Colors.Red,
             });
             return interaction.followUp({ embeds: [noResultsEmbed], ephemeral: true });
         }
         const obscureQueryEmbed = makeEmbed({
             title: 'Wolfram Alpha Error | Could not understand query',
-            description: makeLines([
-                'Wolfram Alpha could not understand your query.',
-            ]),
+            description: makeLines(['Wolfram Alpha could not understand your query.']),
             color: Colors.Red,
         });
         return interaction.followUp({ embeds: [obscureQueryEmbed], ephemeral: true });

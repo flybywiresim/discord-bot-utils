@@ -1,11 +1,12 @@
 import { ChatInputCommandInteraction } from 'discord.js';
 import { Birthday, Logger, makeEmbed } from '../../../../lib';
 
-const birthdayListEmbed = (fields: Array<any>) => makeEmbed({
-    title: 'Birthday - Birthday List',
-    description: fields.length > 0 ? undefined : 'No birthdays set',
-    fields,
-});
+const birthdayListEmbed = (fields: Array<any>) =>
+    makeEmbed({
+        title: 'Birthday - Birthday List',
+        description: fields.length > 0 ? undefined : 'No birthdays set',
+        fields,
+    });
 
 export async function handleListBirthday(interaction: ChatInputCommandInteraction<'cached'>) {
     await interaction.deferReply();
@@ -33,7 +34,9 @@ export async function handleListBirthday(interaction: ChatInputCommandInteractio
             const member = members.get(birthday.userID!);
 
             if (member) {
-                monthBuckets[birthday.utcDatetime!.getUTCMonth()][1].push(`${member.displayName} - ${birthday.day}/${birthday.month} (Z${birthday.timezone! < 0 ? '' : '+'}${birthday.timezone})`);
+                monthBuckets[birthday.utcDatetime!.getUTCMonth()][1].push(
+                    `${member.displayName} - ${birthday.day}/${birthday.month} (Z${birthday.timezone! < 0 ? '' : '+'}${birthday.timezone})`,
+                );
             }
         }
 

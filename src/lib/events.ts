@@ -11,10 +11,7 @@ export interface EventProps {
     log: LogMethods;
 }
 
-export type EventCallback<T extends EventKeys> = (
-    props: EventProps,
-    ...args: ClientEvents[T]
-) => Awaitable<unknown>;
+export type EventCallback<T extends EventKeys> = (props: EventProps, ...args: ClientEvents[T]) => Awaitable<unknown>;
 
 export interface Event<T extends EventKeys = EventKeys> {
     key: T;

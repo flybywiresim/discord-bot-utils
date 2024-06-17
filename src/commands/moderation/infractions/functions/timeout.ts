@@ -9,80 +9,87 @@ const noConnEmbed = makeEmbed({
     color: Colors.Red,
 });
 
-const failedTimeoutEmbed = (discordUser: User, error: any) => makeEmbed({
-    title: 'Timeout - Failed',
-    description: makeLines([
-        `Failed to timeout ${discordUser.toString()}`,
-        '',
-        error,
-    ]),
-    color: Colors.Red,
-});
+const failedTimeoutEmbed = (discordUser: User, error: any) =>
+    makeEmbed({
+        title: 'Timeout - Failed',
+        description: makeLines([`Failed to timeout ${discordUser.toString()}`, '', error]),
+        color: Colors.Red,
+    });
 
-const DMEmbed = (moderator: User, timeoutDuration: string, reason: string, guild: Guild, timedOutUntil: Date) => makeEmbed({
-    title: `You have been timed out in ${guild.name}`,
-    description: 'This timeout is also logged against your record.',
-    fields: [
-        {
-            inline: true,
-            name: 'Duration',
-            value: durationInEnglish(timeoutDuration),
-        },
-        {
-            inline: true,
-            name: 'Moderator',
-            value: moderator.toString(),
-        },
-        {
-            inline: false,
-            name: 'Reason',
-            value: reason,
-        },
-    ],
-    footer: { text: `Your timeout will be lifted on ${timedOutUntil.toUTCString()}` },
-});
+const DMEmbed = (moderator: User, timeoutDuration: string, reason: string, guild: Guild, timedOutUntil: Date) =>
+    makeEmbed({
+        title: `You have been timed out in ${guild.name}`,
+        description: 'This timeout is also logged against your record.',
+        fields: [
+            {
+                inline: true,
+                name: 'Duration',
+                value: durationInEnglish(timeoutDuration),
+            },
+            {
+                inline: true,
+                name: 'Moderator',
+                value: moderator.toString(),
+            },
+            {
+                inline: false,
+                name: 'Reason',
+                value: reason,
+            },
+        ],
+        footer: { text: `Your timeout will be lifted on ${timedOutUntil.toUTCString()}` },
+    });
 
-const timeoutEmbed = (discordUser: User) => makeEmbed({
-    title: `${discordUser.tag} was timed out successfully`,
-    color: Colors.Green,
-});
+const timeoutEmbed = (discordUser: User) =>
+    makeEmbed({
+        title: `${discordUser.tag} was timed out successfully`,
+        color: Colors.Green,
+    });
 
-const DMFailed = (discordUser: User) => makeEmbed({
-    title: 'Timeout - DM not sent',
-    description: `DM was not sent to ${discordUser.toString()}, they either have DMs closed or share no mutual servers with the bot.`,
-    color: Colors.Red,
-});
+const DMFailed = (discordUser: User) =>
+    makeEmbed({
+        title: 'Timeout - DM not sent',
+        description: `DM was not sent to ${discordUser.toString()}, they either have DMs closed or share no mutual servers with the bot.`,
+        color: Colors.Red,
+    });
 
-const modLogEmbed = (moderator: User, discordUser: User, timeoutReason: string, timeoutDuration: string, formattedDate: string) => makeEmbed({
-    author: {
-        name: `[TIMED OUT] ${discordUser.tag}`,
-        iconURL: discordUser.displayAvatarURL(),
-    },
-    fields: [
-        {
-            name: 'User',
-            value: discordUser.toString(),
+const modLogEmbed = (
+    moderator: User,
+    discordUser: User,
+    timeoutReason: string,
+    timeoutDuration: string,
+    formattedDate: string,
+) =>
+    makeEmbed({
+        author: {
+            name: `[TIMED OUT] ${discordUser.tag}`,
+            iconURL: discordUser.displayAvatarURL(),
         },
-        {
-            name: 'Moderator',
-            value: `${moderator}`,
-        },
-        {
-            name: 'Reason',
-            value: `\u200B${timeoutReason}`,
-        },
-        {
-            name: 'Duration',
-            value: durationInEnglish(timeoutDuration),
-        },
-        {
-            name: 'Date',
-            value: formattedDate,
-        },
-    ],
-    footer: { text: `User ID: ${discordUser.id}` },
-    color: Colors.Red,
-});
+        fields: [
+            {
+                name: 'User',
+                value: discordUser.toString(),
+            },
+            {
+                name: 'Moderator',
+                value: `${moderator}`,
+            },
+            {
+                name: 'Reason',
+                value: `\u200B${timeoutReason}`,
+            },
+            {
+                name: 'Duration',
+                value: durationInEnglish(timeoutDuration),
+            },
+            {
+                name: 'Date',
+                value: formattedDate,
+            },
+        ],
+        footer: { text: `User ID: ${discordUser.id}` },
+        color: Colors.Red,
+    });
 
 const noModLogs = makeEmbed({
     title: 'Timeout - No Mod Log',
@@ -96,11 +103,12 @@ const logFailed = makeEmbed({
     color: Colors.Red,
 });
 
-const communicationNotDisabledEmbed = (discordUser: User) => makeEmbed({
-    title: 'Timeout - Communication not disabled',
-    description: `Bot has not detected that ${discordUser.toString()} was successfully timed out. Timeout may have failed.`,
-    color: Colors.Red,
-});
+const communicationNotDisabledEmbed = (discordUser: User) =>
+    makeEmbed({
+        title: 'Timeout - Communication not disabled',
+        description: `Bot has not detected that ${discordUser.toString()} was successfully timed out. Timeout may have failed.`,
+        color: Colors.Red,
+    });
 
 export async function handleTimeoutInfraction(interaction: ChatInputCommandInteraction<'cached'>) {
     await interaction.deferReply({ ephemeral: true });
@@ -119,9 +127,7 @@ export async function handleTimeoutInfraction(interaction: ChatInputCommandInter
     const discordUser = await interaction.guild.members.fetch(userID);
     const moderator = interaction.user;
     const currentDate = new Date();
-    const formattedDate: string = moment(currentDate)
-        .utcOffset(0)
-        .format();
+    const formattedDate: string = moment(currentDate).utcOffset(0).format();
     const modLogsChannel = interaction.guild.channels.resolve(constantsConfig.channels.MOD_LOGS) as TextChannel;
 
     //Try to timeout the user
@@ -134,11 +140,22 @@ export async function handleTimeoutInfraction(interaction: ChatInputCommandInter
         return;
     }
 
-    if (discordUser.isCommunicationDisabled()) { //Timeout was successful
+    if (discordUser.isCommunicationDisabled()) {
+        //Timeout was successful
         await interaction.editReply({ embeds: [timeoutEmbed(discordUser.user)] });
         //Try and send a Dm to the user
         try {
-            await discordUser.send({ embeds: [DMEmbed(moderator, timeoutDuration.toString(), timeoutReason, interaction.guild, discordUser.communicationDisabledUntil)] });
+            await discordUser.send({
+                embeds: [
+                    DMEmbed(
+                        moderator,
+                        timeoutDuration.toString(),
+                        timeoutReason,
+                        interaction.guild,
+                        discordUser.communicationDisabledUntil,
+                    ),
+                ],
+            });
         } catch {
             if (modLogsChannel) {
                 await interaction.followUp({ embeds: [DMFailed(discordUser.user)], ephemeral: true });
@@ -146,7 +163,11 @@ export async function handleTimeoutInfraction(interaction: ChatInputCommandInter
         }
         //Send a mod log to the mod logs channel
         try {
-            await modLogsChannel.send({ embeds: [modLogEmbed(moderator, discordUser.user, timeoutReason, timeoutDuration.toString(), formattedDate)] });
+            await modLogsChannel.send({
+                embeds: [
+                    modLogEmbed(moderator, discordUser.user, timeoutReason, timeoutDuration.toString(), formattedDate),
+                ],
+            });
         } catch {
             await interaction.followUp({ embeds: [noModLogs], ephemeral: true });
             return;

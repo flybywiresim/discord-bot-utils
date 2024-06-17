@@ -6,14 +6,16 @@ const data = slashCommandStructure({
     name: 'metar',
     description: 'Provides the METAR report of the requested airport',
     type: ApplicationCommandType.ChatInput,
-    options: [{
-        name: 'icao',
-        description: 'Provide an airport ICAO code.',
-        type: ApplicationCommandOptionType.String,
-        max_length: 4,
-        min_length: 4,
-        required: true,
-    }],
+    options: [
+        {
+            name: 'icao',
+            description: 'Provide an airport ICAO code.',
+            type: ApplicationCommandOptionType.String,
+            max_length: 4,
+            min_length: 4,
+            required: true,
+        },
+    ],
 });
 
 export default slashCommand(data, async ({ interaction }) => {
@@ -36,8 +38,7 @@ export default slashCommand(data, async ({ interaction }) => {
         const metarReport: any = await fetch(`https://avwx.rest/api/metar/${icao}`, {
             method: 'GET',
             headers: { Authorization: metarToken },
-        })
-            .then((res) => res.json());
+        }).then((res) => res.json());
 
         if (metarReport.error) {
             const invalidEmbed = makeEmbed({
@@ -70,7 +71,9 @@ export default slashCommand(data, async ({ interaction }) => {
                     inline: false,
                 },
             ],
-            footer: { text: 'This METAR report may not accurately reflect the weather in the simulator. However, it will always be similar to the current conditions present in the sim.' },
+            footer: {
+                text: 'This METAR report may not accurately reflect the weather in the simulator. However, it will always be similar to the current conditions present in the sim.',
+            },
         });
 
         return interaction.editReply({ embeds: [metarEmbed] });

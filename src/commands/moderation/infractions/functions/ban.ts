@@ -11,82 +11,94 @@ const noConnEmbed = makeEmbed({
 
 const moderatableFailEmbed = makeEmbed({
     color: Colors.Red,
-    description: 'You can\'t ban a moderator!',
+    description: "You can't ban a moderator!",
 });
 
-const failedBanEmbed = (discordUser: User) => makeEmbed({
-    title: 'Ban - Failed',
-    description: `Failed to Ban ${discordUser.toString()}`,
-    color: Colors.Red,
-});
+const failedBanEmbed = (discordUser: User) =>
+    makeEmbed({
+        title: 'Ban - Failed',
+        description: `Failed to Ban ${discordUser.toString()}`,
+        color: Colors.Red,
+    });
 
-const DMEmbed = (moderator: User, banReason: string, guild: Guild) => makeEmbed({
-    title: `You have been banned from ${guild.name}`,
-    description: 'This ban is also logged against your record.',
-    fields: [
-        {
-            inline: true,
-            name: 'Moderator',
-            value: moderator.toString(),
-        },
-        {
-            inline: false,
-            name: 'Reason',
-            value: banReason,
-        },
-        {
-            inline: false,
-            name: 'Appeal',
-            value: `If you would like to appeal your ban, please fill out [this form.](${process.env.BAN_APPEAL_URL})`,
-        },
-    ],
-});
+const DMEmbed = (moderator: User, banReason: string, guild: Guild) =>
+    makeEmbed({
+        title: `You have been banned from ${guild.name}`,
+        description: 'This ban is also logged against your record.',
+        fields: [
+            {
+                inline: true,
+                name: 'Moderator',
+                value: moderator.toString(),
+            },
+            {
+                inline: false,
+                name: 'Reason',
+                value: banReason,
+            },
+            {
+                inline: false,
+                name: 'Appeal',
+                value: `If you would like to appeal your ban, please fill out [this form.](${process.env.BAN_APPEAL_URL})`,
+            },
+        ],
+    });
 
-const banEmbed = (discordUser: User) => makeEmbed({
-    title: `${discordUser.tag} was banned successfully`,
-    color: Colors.Green,
-});
+const banEmbed = (discordUser: User) =>
+    makeEmbed({
+        title: `${discordUser.tag} was banned successfully`,
+        color: Colors.Green,
+    });
 
-const DMFailed = (discordUser: User) => makeEmbed({
-    title: 'Ban - DM not sent',
-    description: `DM was not sent to ${discordUser.toString()}, they either have DMs closed or share no mutual servers with the bot.`,
-    color: Colors.Red,
-});
+const DMFailed = (discordUser: User) =>
+    makeEmbed({
+        title: 'Ban - DM not sent',
+        description: `DM was not sent to ${discordUser.toString()}, they either have DMs closed or share no mutual servers with the bot.`,
+        color: Colors.Red,
+    });
 
-const modLogEmbed = (moderator: User, discordUser: User, banReason: string, daysDeletedNumber: number, formattedDate: string) => makeEmbed({
-    author: {
-        name: `[BANNED] ${discordUser.tag}`,
-        iconURL: discordUser.displayAvatarURL(),
-    },
-    fields: [
-        {
-            name: 'User',
-            value: discordUser.toString(),
+const modLogEmbed = (
+    moderator: User,
+    discordUser: User,
+    banReason: string,
+    daysDeletedNumber: number,
+    formattedDate: string,
+) =>
+    makeEmbed({
+        author: {
+            name: `[BANNED] ${discordUser.tag}`,
+            iconURL: discordUser.displayAvatarURL(),
         },
-        {
-            name: 'Moderator',
-            value: `${moderator}`,
-        },
-        {
-            name: 'Reason',
-            value: `\u200B${banReason}`,
-        },
-        {
-            name: 'Days of messages deleted',
-            value: daysDeletedNumber.toString(),
-        },
-        {
-            name: 'Date',
-            value: formattedDate,
-        },
-    ],
-    footer: { text: `User ID: ${discordUser.id}` },
-    color: Colors.Red,
-});
+        fields: [
+            {
+                name: 'User',
+                value: discordUser.toString(),
+            },
+            {
+                name: 'Moderator',
+                value: `${moderator}`,
+            },
+            {
+                name: 'Reason',
+                value: `\u200B${banReason}`,
+            },
+            {
+                name: 'Days of messages deleted',
+                value: daysDeletedNumber.toString(),
+            },
+            {
+                name: 'Date',
+                value: formattedDate,
+            },
+        ],
+        footer: { text: `User ID: ${discordUser.id}` },
+        color: Colors.Red,
+    });
 
 const noModLogs = makeEmbed({
     title: 'Ban - No Mod Log',
-    description: 'I can\'t find the mod logs channel. I will still try to ban the user. Please check the channel still exists.',
+    description:
+        "I can't find the mod logs channel. I will still try to ban the user. Please check the channel still exists.",
     color: Colors.Red,
 });
 
@@ -112,9 +124,7 @@ export async function handleBanInfraction(interaction: ChatInputCommandInteracti
     const discordUser = await interaction.guild.members.fetch(userID);
     const moderator = interaction.user;
     const currentDate = new Date();
-    const formattedDate: string = moment(currentDate)
-        .utcOffset(0)
-        .format();
+    const formattedDate: string = moment(currentDate).utcOffset(0).format();
     const modLogsChannel = interaction.guild.channels.resolve(constantsConfig.channels.MOD_LOGS) as TextChannel;
 
     //Check if the user is a moderator
@@ -145,7 +155,9 @@ export async function handleBanInfraction(interaction: ChatInputCommandInteracti
     try {
         await interaction.guild.members.ban(discordUser, { deleteMessageDays: daysDeletedNumber, reason: banReason });
         if (modLogsChannel) {
-            await modLogsChannel.send({ embeds: [modLogEmbed(moderator, discordUser.user, banReason, daysDeletedNumber, formattedDate)] });
+            await modLogsChannel.send({
+                embeds: [modLogEmbed(moderator, discordUser.user, banReason, daysDeletedNumber, formattedDate)],
+            });
         }
         await interaction.followUp({ embeds: [banEmbed(discordUser.user)], ephemeral: true });
     } catch (error) {

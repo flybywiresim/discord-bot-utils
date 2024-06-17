@@ -8,8 +8,8 @@ const imageBaseUrl = originalBaseUrl.endsWith('/') ? originalBaseUrl.slice(0, -1
 export { imageBaseUrl };
 
 interface roleAssignmentId {
-    group: string,
-    roles: { id: string, label: string}[]
+    group: string;
+    roles: { id: string; label: string }[];
 }
 
 // Config constants that are directly used in code should be mandatory,
@@ -19,62 +19,62 @@ interface roleAssignmentId {
 // not mandatory, as they can be dynamic.
 interface Config {
     aircraftTypeList: {
-        [x: string]: string,
-    },
+        [x: string]: string;
+    };
     channels: {
-        A32NX_SUPPORT: string,
-        FAQ: string,
-        FLIGHT_SCHOOL: string,
-        KNOWN_ISSUES: string,
-        MOD_ALERTS: string,
-        MOD_LOGS: string,
-        ROLES: string,
-        SCAM_REPORT_LOGS: string,
-        TEAM: string,
-        USER_LOGS: string,
-        VIDEOS: string,
-        [x: string]: string,
-    },
+        A32NX_SUPPORT: string;
+        FAQ: string;
+        FLIGHT_SCHOOL: string;
+        KNOWN_ISSUES: string;
+        MOD_ALERTS: string;
+        MOD_LOGS: string;
+        ROLES: string;
+        SCAM_REPORT_LOGS: string;
+        TEAM: string;
+        USER_LOGS: string;
+        VIDEOS: string;
+        [x: string]: string;
+    };
     colors: {
-        FBW_CYAN: string,
-        [x: string]: string,
-    },
+        FBW_CYAN: string;
+        [x: string]: string;
+    };
     commandPermission: {
-        MANAGE_SERVER: string,
-        [x: string]: string,
-    },
-    guildId: string,
-    modLogExclude: string[],
-    roleAssignmentIds: roleAssignmentId[],
+        MANAGE_SERVER: string;
+        [x: string]: string;
+    };
+    guildId: string;
+    modLogExclude: string[];
+    roleAssignmentIds: roleAssignmentId[];
     roleGroups: {
-        [x: string]: string[],
-    },
+        [x: string]: string[];
+    };
     roles: {
-        ADMIN_TEAM: string,
-        BOT_DEVELOPER: string,
-        COMMUNITY_SUPPORT: string,
-        DEVELOPMENT_TEAM: string,
-        FBW_EMERITUS: string,
-        MEDIA_TEAM: string,
-        MODERATION_TEAM: string,
-        [x: string]: string,
-    },
+        ADMIN_TEAM: string;
+        BOT_DEVELOPER: string;
+        COMMUNITY_SUPPORT: string;
+        DEVELOPMENT_TEAM: string;
+        FBW_EMERITUS: string;
+        MEDIA_TEAM: string;
+        MODERATION_TEAM: string;
+        [x: string]: string;
+    };
     threads: {
-        BIRTHDAY_THREAD: string,
-        COUNT_THREAD: string,
-        [x: string]: string,
-    },
+        BIRTHDAY_THREAD: string;
+        COUNT_THREAD: string;
+        [x: string]: string;
+    };
     units: {
-        CELSIUS: string,
-        DEGREES: string,
-        [x: string]: string,
-    },
-    userLogExclude: string[],
+        CELSIUS: string;
+        DEGREES: string;
+        [x: string]: string;
+    };
+    userLogExclude: string[];
 }
 
 let parsedConfig: Config;
 try {
-    parsedConfig = (botConfig as unknown as Config);
+    parsedConfig = botConfig as unknown as Config;
     if (!parsedConfig.commandPermission.MANAGE_SERVER) {
         // Making sure this is always set, even if an empty string is given
         parsedConfig.commandPermission.MANAGE_SERVER = '32';

@@ -3,14 +3,16 @@ import { slashCommand, slashCommandStructure, makeEmbed } from '../../lib';
 
 const data = slashCommandStructure({
     name: 'role-info',
-    description: 'Lists the given role\'s amount of members.',
+    description: "Lists the given role's amount of members.",
     type: ApplicationCommandType.ChatInput,
-    options: [{
-        name: 'role',
-        description: 'Provide the role to get info about.',
-        type: ApplicationCommandOptionType.Role,
-        required: true,
-    }],
+    options: [
+        {
+            name: 'role',
+            description: 'Provide the role to get info about.',
+            type: ApplicationCommandOptionType.Role,
+            required: true,
+        },
+    ],
 });
 
 export default slashCommand(data, async ({ interaction }) => {

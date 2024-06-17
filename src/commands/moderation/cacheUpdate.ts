@@ -31,19 +31,26 @@ const data = slashCommandStructure({
     ],
 });
 
-const cacheUpdateEmbed = (action: string, fields: any, color: number) => makeEmbed({
-    title: `Cache Update - ${action}`,
-    fields,
-    color,
-});
+const cacheUpdateEmbed = (action: string, fields: any, color: number) =>
+    makeEmbed({
+        title: `Cache Update - ${action}`,
+        fields,
+        color,
+    });
 
-const noChannelEmbed = (action:string, channelName: string) => makeEmbed({
-    title: `Sticky Message - ${action} - No ${channelName} channel`,
-    description: `The command was successful, but no message to ${channelName} was sent. Please check the channel still exists.`,
-    color: Colors.Yellow,
-});
+const noChannelEmbed = (action: string, channelName: string) =>
+    makeEmbed({
+        title: `Sticky Message - ${action} - No ${channelName} channel`,
+        description: `The command was successful, but no message to ${channelName} was sent. Please check the channel still exists.`,
+        color: Colors.Yellow,
+    });
 
-const cacheUpdateEmbedField = (moderator: string, cacheType: string, cacheSize: string, duration: string): EmbedField[] => [
+const cacheUpdateEmbedField = (
+    moderator: string,
+    cacheType: string,
+    cacheSize: string,
+    duration: string,
+): EmbedField[] => [
     {
         name: 'Type',
         value: cacheType,
@@ -95,26 +102,34 @@ export default slashCommand(data, async ({ interaction }) => {
 
     if (cacheSize !== undefined) {
         await interaction.editReply({
-            embeds: [cacheUpdateEmbed(interaction.options.getSubcommand(),
-                cacheUpdateEmbedField(
-                    interaction.user.tag,
+            embeds: [
+                cacheUpdateEmbed(
                     interaction.options.getSubcommand(),
-                    cacheSize.toString(),
-                    duration,
-                ),
-                Colors.Green)],
-        });
-
-        try {
-            await modLogsChannel.send({
-                embeds: [cacheUpdateEmbed(interaction.options.getSubcommand(),
                     cacheUpdateEmbedField(
                         interaction.user.tag,
                         interaction.options.getSubcommand(),
                         cacheSize.toString(),
                         duration,
                     ),
-                    Colors.Green)],
+                    Colors.Green,
+                ),
+            ],
+        });
+
+        try {
+            await modLogsChannel.send({
+                embeds: [
+                    cacheUpdateEmbed(
+                        interaction.options.getSubcommand(),
+                        cacheUpdateEmbedField(
+                            interaction.user.tag,
+                            interaction.options.getSubcommand(),
+                            cacheSize.toString(),
+                            duration,
+                        ),
+                        Colors.Green,
+                    ),
+                ],
             });
         } catch (error) {
             await interaction.followUp({ embeds: [noChannelEmbed(interaction.options.getSubcommand(), 'mod-log')] });

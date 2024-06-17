@@ -197,33 +197,33 @@ export default slashCommand(data, async ({ interaction }) => {
     const subcommandName = interaction.options.getSubcommand();
 
     switch (subcommandName) {
-    case 'list':
-        const userID = interaction.options.getUser('tag_or_id')?.id;
-        await handleListInfraction(interaction, userID, false);
-        break;
-    case 'delete':
-        await handleDeleteInfraction(interaction);
-        break;
-    case 'note':
-        await handleUserNoteInfraction(interaction);
-        break;
-    case 'warn':
-        await handleWarnInfraction(interaction);
-        break;
-    case 'timeout':
-        await handleTimeoutInfraction(interaction);
-        break;
-    case 'remove-timeout':
-        await handleRemoveTimeoutInfraction(interaction);
-        break;
-    case 'ban':
-        await handleBanInfraction(interaction);
-        break;
-    case 'unban':
-        await handleUnbanInfraction(interaction);
-        break;
+        case 'list':
+            const userID = interaction.options.getUser('tag_or_id')?.id;
+            await handleListInfraction(interaction, userID, false);
+            break;
+        case 'delete':
+            await handleDeleteInfraction(interaction);
+            break;
+        case 'note':
+            await handleUserNoteInfraction(interaction);
+            break;
+        case 'warn':
+            await handleWarnInfraction(interaction);
+            break;
+        case 'timeout':
+            await handleTimeoutInfraction(interaction);
+            break;
+        case 'remove-timeout':
+            await handleRemoveTimeoutInfraction(interaction);
+            break;
+        case 'ban':
+            await handleBanInfraction(interaction);
+            break;
+        case 'unban':
+            await handleUnbanInfraction(interaction);
+            break;
 
-    default:
-        await interaction.reply({ content: 'Unknown subcommand', ephemeral: true });
+        default:
+            await interaction.reply({ content: 'Unknown subcommand', ephemeral: true });
     }
 });

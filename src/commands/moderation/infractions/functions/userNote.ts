@@ -15,41 +15,43 @@ const noteFailed = makeEmbed({
     color: Colors.Red,
 });
 
-const modLogEmbed = (formattedDate: any, moderator: User, discordUser: User, note: string) => makeEmbed({
-    author: {
-        name: `[NOTE]  ${discordUser.tag}`,
-        iconURL: discordUser.displayAvatarURL(),
-    },
-    fields: [
-        {
-            inline: false,
-            name: 'User',
-            value: discordUser.toString(),
+const modLogEmbed = (formattedDate: any, moderator: User, discordUser: User, note: string) =>
+    makeEmbed({
+        author: {
+            name: `[NOTE]  ${discordUser.tag}`,
+            iconURL: discordUser.displayAvatarURL(),
         },
-        {
-            inline: false,
-            name: 'Moderator',
-            value: moderator.toString(),
-        },
-        {
-            inline: false,
-            name: 'Note',
-            value: note,
-        },
-        {
-            inline: false,
-            name: 'Date',
-            value: formattedDate,
-        },
-    ],
-    footer: { text: `User ID: ${discordUser.id}` },
-    color: Colors.Red,
-});
+        fields: [
+            {
+                inline: false,
+                name: 'User',
+                value: discordUser.toString(),
+            },
+            {
+                inline: false,
+                name: 'Moderator',
+                value: moderator.toString(),
+            },
+            {
+                inline: false,
+                name: 'Note',
+                value: note,
+            },
+            {
+                inline: false,
+                name: 'Date',
+                value: formattedDate,
+            },
+        ],
+        footer: { text: `User ID: ${discordUser.id}` },
+        color: Colors.Red,
+    });
 
-const noteEmbed = (user: User) => makeEmbed({
-    title: `Note for ${user.tag} has been added successfully`,
-    color: Colors.Green,
-});
+const noteEmbed = (user: User) =>
+    makeEmbed({
+        title: `Note for ${user.tag} has been added successfully`,
+        color: Colors.Green,
+    });
 
 const noModLogs = makeEmbed({
     title: 'Note - No Mod Log',
