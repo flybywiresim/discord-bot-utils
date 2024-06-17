@@ -10,7 +10,8 @@
     "build": "tsc",
     "build:digitalocean": "npm ci --include=dev && npm run build",
     "lint": "eslint",
-    "lint-fix": "eslint --fix"
+    "lint-fix": "eslint --fix",
+    "test": "npm run build && npm run lint" // TODO: Remove before merge
   },
   "author": "FlyByWire Simulations",
   "license": "AGPL-3.0",
