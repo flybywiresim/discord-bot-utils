@@ -1,8 +1,6 @@
 import { ChatInputCommandInteraction, EmbedField } from 'discord.js';
 import { makeEmbed } from '../../../../lib';
 
-/* eslint-disable camelcase */
-
 const listEmbed = (type: string, fields: EmbedField[], totalCount: number, shownCount: number, callsign: string) =>
   makeEmbed({
     title: `VATSIM Data - ${callsign} - ${totalCount} ${type} online`,

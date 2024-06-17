@@ -90,8 +90,8 @@ export async function handleAddFaq(interaction: ChatInputCommandInteraction<'cac
 
     if (!faqData) {
       faqData = new FAQ({
-        faqTitle: faqTitle!,
-        faqAnswer: faqAnswer!,
+        faqTitle: faqTitle,
+        faqAnswer: faqAnswer,
         moderatorID: discordUser.id,
         dateSet: currentDate,
       });

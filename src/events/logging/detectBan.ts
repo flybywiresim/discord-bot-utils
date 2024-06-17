@@ -108,7 +108,7 @@ const logFailed = makeEmbed({
 export default event(Events.GuildBanAdd, async (_, msg) => {
   Logger.debug('Starting Ban Handler');
 
-  const guildBanAdd = msg as GuildBan;
+  const guildBanAdd = msg;
 
   if (guildBanAdd.guild === null) {
     // DMs
@@ -133,10 +133,9 @@ export default event(Events.GuildBanAdd, async (_, msg) => {
   do {
     Logger.debug(`Ban Handler - Finding Audit Log entry retries left: ${retryCount}`);
     if (retryCount < MAX_RETRIES) {
-      // eslint-disable-next-line no-await-in-loop
       await new Promise((f) => setTimeout(f, SLEEP_TIMER));
     }
-    // eslint-disable-next-line no-await-in-loop
+
     const fetchedLogs = await guildBanAdd.guild.fetchAuditLogs({
       limit: 1,
       type: AuditLogEvent.MemberBanAdd,

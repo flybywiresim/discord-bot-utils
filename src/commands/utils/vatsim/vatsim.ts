@@ -113,7 +113,6 @@ export default slashCommand(data, async ({ interaction }) => {
     const regexMatches = callsign.match(regexCheck);
 
     if (!regexMatches || !regexMatches.groups || !regexMatches.groups.callsignSearch) {
-      // eslint-disable-next-line consistent-return
       return interaction.reply({
         content: 'You need to provide a valid callsign or part of a callsign to search for',
         ephemeral: true,

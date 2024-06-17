@@ -13,7 +13,7 @@ export async function handleListBirthday(interaction: ChatInputCommandInteractio
 
   try {
     const birthdays = await Birthday.find({}).sort({ day: 1 }); // Only day sort required, months are bucketized
-    const members = await interaction.guild!.members.fetch();
+    const members = await interaction.guild.members.fetch();
 
     const monthBuckets: Array<string | Array<any>> = [
       ['January', []],
@@ -31,7 +31,7 @@ export async function handleListBirthday(interaction: ChatInputCommandInteractio
     ];
 
     for (const birthday of birthdays) {
-      const member = members.get(birthday.userID!);
+      const member = members.get(birthday.userID);
 
       if (member) {
         monthBuckets[birthday.utcDatetime!.getUTCMonth()][1].push(

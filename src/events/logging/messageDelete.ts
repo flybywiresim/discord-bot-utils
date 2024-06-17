@@ -106,7 +106,7 @@ export default event(Events.MessageDelete, async (_, msg) => {
       footer: { text: `User ID: ${msg.author.id}` },
     });
 
-    if (userLogsChannel && !constantsConfig.userLogExclude.includes(msg.author!.id)) {
+    if (userLogsChannel && !constantsConfig.userLogExclude.includes(msg.author.id)) {
       await userLogsChannel.send({ embeds: [messageDeleteEmbed] });
     }
   } catch (error) {

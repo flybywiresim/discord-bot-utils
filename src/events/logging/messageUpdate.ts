@@ -40,7 +40,7 @@ export default event(Events.MessageUpdate, async (_, oldMessage, newMessage) => 
       editedMessageFieldTitle = 'Edited Message (truncated)';
     }
 
-    if (userLogsChannel && !constantsConfig.userLogExclude.includes(oldMessage.author!.id)) {
+    if (userLogsChannel && !constantsConfig.userLogExclude.includes(oldMessage.author.id)) {
       const messageUpdateEmbed = makeEmbed({
         color: Colors.Orange,
         thumbnail: { url: `${imageBaseUrl}/moderation/message_edited.png` },

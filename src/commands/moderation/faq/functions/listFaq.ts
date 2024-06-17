@@ -25,9 +25,9 @@ export async function handleListFaq(interaction: ChatInputCommandInteraction<'ca
 
     const moderatorPromises = faqs.map((currentFaq) =>
       interaction.client.users
-        .fetch(currentFaq.moderatorID!)
+        .fetch(currentFaq.moderatorID)
         // Added for better readability
-        // eslint-disable-next-line arrow-body-style
+
         .catch(() => {
           return new Promise((resolve) => {
             resolve(`I can't find the moderator, here is the stored ID: ${currentFaq.moderatorID}`);

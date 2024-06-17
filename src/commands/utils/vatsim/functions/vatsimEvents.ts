@@ -28,7 +28,6 @@ export async function handleVatsimEvents(interaction: ChatInputCommandInteractio
 
     const fields: EmbedField[] = eventsList
       .map((event: any) => {
-        // eslint-disable-next-line camelcase
         const { name, organisers, end_time, start_time, link } = event;
         const { division } = organisers[0];
         const startDate = new Date(start_time);
