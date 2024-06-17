@@ -11,7 +11,10 @@
     "build:digitalocean": "npm ci --include=dev && npm run build",
     "lint": "eslint",
     "lint-fix": "eslint --fix",
-    "test": "npm run build && npm run lint" // TODO: Remove before merge
+    "prettier": "prettier \"**/*.ts\" \"**/*.js\" \"**/*.json\" \"**/*.yaml\" \"**/*.yml\" \"**/*.md\"",
+    "prettier:check": "npm run prettier -- --check",
+    "prettier:write": "npm run prettier -- --write",
+    "test": "tsc --noEmit && eslint & npm run prettier:check"
   },
   "author": "FlyByWire Simulations",
   "license": "AGPL-3.0",
