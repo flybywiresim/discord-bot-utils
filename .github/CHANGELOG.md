@@ -1,5 +1,9 @@
 ## Changelog
 
+Update <small>_ June 2024</small>
+
+- chore: add vscode editor settings (18/06/2024)
+
 Update <small>_ May 2024</small>
 
 - fix: keep footer on embed expire (29/05/2024)
