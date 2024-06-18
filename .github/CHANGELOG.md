@@ -2,7 +2,7 @@
 
 Update <small>_ June 2024</small>
 
-- chore: add vscode editor settings (18/06/2024)
+- chore: configure vscode workspace (18/06/2024)
 
 Update <small>_ May 2024</small>
 
