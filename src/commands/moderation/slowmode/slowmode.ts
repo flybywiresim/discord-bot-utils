@@ -125,7 +125,7 @@ const slowModeEmbedField = (
   {
     inline: true,
     name: 'Auto disable timeout',
-    value: durationInEnglish(autoDisable),
+    value: durationInEnglish(Number.parseInt(autoDisable)),
   },
   {
     inline: true,

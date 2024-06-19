@@ -24,7 +24,7 @@ const DMEmbed = (moderator: User, timeoutDuration: string, reason: string, guild
       {
         inline: true,
         name: 'Duration',
-        value: durationInEnglish(timeoutDuration),
+        value: durationInEnglish(Number.parseInt(timeoutDuration)),
       },
       {
         inline: true,
@@ -80,7 +80,7 @@ const modLogEmbed = (
       },
       {
         name: 'Duration',
-        value: durationInEnglish(timeoutDuration),
+        value: durationInEnglish(Number.parseInt(timeoutDuration)),
       },
       {
         name: 'Date',
