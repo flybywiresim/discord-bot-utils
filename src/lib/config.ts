@@ -113,7 +113,7 @@ try {
   }
   parsedConfig.roleAssignmentIds = newRoleAssignmentIds;
 } catch (e) {
-  Logger.error(`Failed to load config: ${e}`);
+  Logger.error(`Failed to load config: ${JSON.stringify(e)}`);
   exit(1);
 }
 
