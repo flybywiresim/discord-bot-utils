@@ -1,5 +1,5 @@
 import { Job } from '@hokify/agenda';
-import { Colors, Guild, TextChannel, ThreadChannel } from 'discord.js';
+import { Colors, TextChannel } from 'discord.js';
 import { Logger, getScheduler, constantsConfig, getConn, Birthday, makeEmbed, imageBaseUrl } from '../index';
 import { client } from '../../client';
 
@@ -80,8 +80,7 @@ export async function postBirthdays(job: Job) {
   Logger.info(`BirthdayHandler - Processing ${birthdays.length} birthdays.`);
 
   // Send birthday messages
-
-  for (const birthday of birthdays) {
+  const birthdayPromises = birthdays.map(async (birthday) => {
     let user;
     try {
       user = await guild.members.fetch(birthday.userID!);
@@ -90,7 +89,7 @@ export async function postBirthdays(job: Job) {
     }
 
     if (!user) {
-      continue;
+      return;
     }
 
     const gif = gifs[Math.floor(Math.random() * gifs.length)];
@@ -110,19 +109,21 @@ export async function postBirthdays(job: Job) {
     nextBirthdayDatetime.setUTCHours(10 - birthday.timezone!);
     birthday.utcDatetime = nextBirthdayDatetime;
     try {
-      birthday.save();
-    } catch (e) {
-      Logger.error(`Birthday handler - Failed to save the new birthday trigger: ${e}`);
+      await birthday.save();
+    } catch (error) {
+      Logger.error(`Birthday handler - Failed to save the new birthday trigger:`, error);
     }
 
     // Send the birthday message
     try {
-      thread.send({
+      await thread.send({
         content: user.toString(),
         embeds: [birthdayEmbed],
       });
     } catch (error) {
       Logger.error('BirthdayHandler - Failed to send birthday message', error);
     }
-  }
+  });
+
+  await Promise.all(birthdayPromises);
 }
