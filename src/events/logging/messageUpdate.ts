@@ -49,8 +49,8 @@ export default event(Events.MessageUpdate, async (_, oldMessage, newMessage) => 
           iconURL: oldMessage.author.displayAvatarURL(),
         },
         fields: [
-          { name: 'Author', value: `${oldMessage.author}`, inline: true },
-          { name: 'Channel', value: `${oldMessage.channel}`, inline: true },
+          { name: 'Author', value: `${oldMessage.author.toString()}`, inline: true },
+          { name: 'Channel', value: `${oldMessage.channel.toString()}`, inline: true },
           {
             name: originalMessageFieldTitle,
             value: oldMessageContent ? `\`\`\`${oldMessageContent}\`\`\`` : FEATURE_NOT_AVAIL,
