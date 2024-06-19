@@ -57,7 +57,7 @@ export async function autoDisableSlowMode(job: Job) {
     }
     await job.remove();
   } catch (err) {
-    Logger.error(`Failed to auto disable slow mode for channel <#${channelId}>:`, err);
+    Logger.error(`Failed to auto disable slow mode for channel <#${channelId}>: ${JSON.stringify(err)}`);
     return;
   }
 
