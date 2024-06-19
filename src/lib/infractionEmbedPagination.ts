@@ -92,14 +92,14 @@ export async function createPaginatedInfractionEmbedHandler(
       currentPage = 6;
     }
 
-    updateEmbed();
+    await updateEmbed();
   });
 
   collector.on('end', async () => {
-    handleEmbedExpire();
+    await handleEmbedExpire();
   });
 
-  function updateEmbed() {
+  async function updateEmbed() {
     aboutButton.setStyle(currentPage === 0 ? ButtonStyle.Success : ButtonStyle.Primary);
     warnButton.setStyle(currentPage === 1 ? ButtonStyle.Success : ButtonStyle.Primary);
     timeoutButton.setStyle(currentPage === 2 ? ButtonStyle.Success : ButtonStyle.Primary);
@@ -108,12 +108,12 @@ export async function createPaginatedInfractionEmbedHandler(
     unbanButton.setStyle(currentPage === 5 ? ButtonStyle.Success : ButtonStyle.Primary);
     noteButton.setStyle(currentPage === 6 ? ButtonStyle.Success : ButtonStyle.Primary);
 
-    initialInteraction.editReply({ embeds: [embeds[currentPage]], components: [buttonRow1, buttonRow2] });
+    await initialInteraction.editReply({ embeds: [embeds[currentPage]], components: [buttonRow1, buttonRow2] });
   }
 
-  function handleEmbedExpire() {
+  async function handleEmbedExpire() {
     const embed = embeds[currentPage];
-    initialInteraction.editReply({
+    await initialInteraction.editReply({
       embeds: [
         embed.setFooter({
           text: `${embed.data.footer ? `${embed.data.footer.text} - ` : ''}This embed has expired.`,
