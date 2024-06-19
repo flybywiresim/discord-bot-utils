@@ -9,7 +9,7 @@
         "dev": "nodemon --config nodemon.json src/index.ts",
         "build": "tsc",
         "build:digitalocean": "npm ci --include=dev && npm run build",
-        "lint": "eslint",
+        "lint": "eslint --quiet",
         "lint-fix": "eslint --fix",
         "prettier:check": "prettier . --check",
         "prettier:write": "prettier . --write",
