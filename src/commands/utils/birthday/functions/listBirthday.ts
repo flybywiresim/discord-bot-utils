@@ -31,7 +31,7 @@ export async function handleListBirthday(interaction: ChatInputCommandInteractio
     ];
 
     for (const birthday of birthdays) {
-      const member = members.get(birthday.userID);
+      const member = members.get(birthday.userID!);
 
       if (member) {
         monthBuckets[birthday.utcDatetime!.getUTCMonth()][1].push(

@@ -84,7 +84,7 @@ export async function postBirthdays(job: Job) {
   for (const birthday of birthdays) {
     let user;
     try {
-      user = await guild.members.fetch(birthday.userID);
+      user = await guild.members.fetch(birthday.userID!);
     } catch (error) {
       Logger.error('BirthdayHandler - Failed to fetch user', error);
     }
@@ -105,7 +105,7 @@ export async function postBirthdays(job: Job) {
 
     // Update birthday to next year
     const nextBirthdayDatetime = new Date(
-      Date.UTC(currentDate.getUTCFullYear() + 1, birthday.month! - 1, birthday.day),
+      Date.UTC(currentDate.getUTCFullYear() + 1, birthday.month! - 1, birthday.day!),
     );
     nextBirthdayDatetime.setUTCHours(10 - birthday.timezone!);
     birthday.utcDatetime = nextBirthdayDatetime;

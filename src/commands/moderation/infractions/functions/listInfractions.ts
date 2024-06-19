@@ -81,7 +81,7 @@ export async function handleListInfraction(
     const fetchModerators = (infractions: InfractionArray) => {
       const moderatorPromises = infractions.map((infraction) =>
         interaction.client.users
-          .fetch(infraction.moderatorID)
+          .fetch(infraction.moderatorID!)
           // Disabled for readability
 
           .catch(() => {
