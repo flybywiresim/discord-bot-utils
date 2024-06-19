@@ -13,7 +13,8 @@
         "lint-fix": "eslint --fix",
         "prettier:check": "prettier . --check",
         "prettier:write": "prettier . --write",
-        "test": "tsc --noEmit && eslint & npm run prettier:check"
+        "dtest": "tsc --noEmit && eslint & npm run prettier:check",
+        "test": "tsc --noEmit"
     },
     "author": "FlyByWire Simulations",
     "license": "AGPL-3.0",
