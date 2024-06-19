@@ -1,4 +1,4 @@
-export function durationInEnglish(milliseconds: any) {
+export function durationInEnglish(milliseconds: number) {
   const seconds = milliseconds / 1000;
 
   if (seconds < 60) {
