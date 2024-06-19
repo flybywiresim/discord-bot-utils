@@ -13,10 +13,10 @@ export default event(Events.ClientReady, async ({ log }, client) => {
     log('Production environment detected, setting username, activity, status and avatar.');
 
     try {
-      client.user?.setUsername('FlyByWire Simulations Utilities');
+      await client.user?.setUsername('FlyByWire Simulations Utilities');
       client.user?.setActivity('the A380X', { type: ActivityType.Watching });
       client.user?.setStatus('online');
-      client.user?.setAvatar(`${imageBaseUrl}/fbw_tail.png`);
+      await client.user?.setAvatar(`${imageBaseUrl}/fbw_tail.png`);
     } catch (error) {
       log('Failed to set username, activity, status and avatar:', error);
     }
@@ -26,7 +26,7 @@ export default event(Events.ClientReady, async ({ log }, client) => {
   if (process.env.DEPLOY === 'true') {
     log('DEPLOY variable set to true, deploying commands and contexts.');
     try {
-      await deployCommands(commandArray, contextArray).then(async (user) => {
+      await deployCommands(commandArray, contextArray).then((user) => {
         const bot = `<@${user.id}>`;
 
         const response =
@@ -53,7 +53,7 @@ export default event(Events.ClientReady, async ({ log }, client) => {
         dbConnected = true;
       })
       .catch((error) => {
-        dbError = error;
+        dbError = error instanceof Error ? error : undefined;
         Logger.error(error);
       });
     await setupScheduler('fbwBotScheduler', process.env.MONGODB_URL)
@@ -61,7 +61,7 @@ export default event(Events.ClientReady, async ({ log }, client) => {
         schedulerConnected = true;
       })
       .catch((error) => {
-        schedulerError = error;
+        schedulerError = error instanceof Error ? error : undefined;
         Logger.error(error);
       });
   }
@@ -72,7 +72,7 @@ export default event(Events.ClientReady, async ({ log }, client) => {
     if (scheduler) {
       const heartbeatJobList = await scheduler.jobs({ name: 'sendHeartbeat' });
       if (heartbeatJobList.length === 0) {
-        scheduler.every(`${process.env.HEARTBEAT_INTERVAL} seconds`, 'sendHeartbeat', {
+        await scheduler.every(`${process.env.HEARTBEAT_INTERVAL} seconds`, 'sendHeartbeat', {
           interval: process.env.HEARTBEAT_INTERVAL,
         });
         Logger.info(`Heartbeat job scheduled with interval ${process.env.HEARTBEAT_INTERVAL}`);
@@ -81,7 +81,7 @@ export default event(Events.ClientReady, async ({ log }, client) => {
         const { interval } = heartbeatJob.attrs.data as { interval: string };
         if (interval !== process.env.HEARTBEAT_INTERVAL) {
           await scheduler.cancel({ name: 'sendHeartbeat' });
-          scheduler.every(`${process.env.HEARTBEAT_INTERVAL} seconds`, 'sendHeartbeat', {
+          await scheduler.every(`${process.env.HEARTBEAT_INTERVAL} seconds`, 'sendHeartbeat', {
             interval: process.env.HEARTBEAT_INTERVAL,
           });
           Logger.info(`Heartbeat job rescheduled with new interval ${process.env.HEARTBEAT_INTERVAL}`);
@@ -98,7 +98,7 @@ export default event(Events.ClientReady, async ({ log }, client) => {
     if (scheduler) {
       const birthdayJobList = await scheduler.jobs({ name: 'postBirthdays' });
       if (birthdayJobList.length === 0) {
-        scheduler.every(`${process.env.BIRTHDAY_INTERVAL} seconds`, 'postBirthdays', {
+        await scheduler.every(`${process.env.BIRTHDAY_INTERVAL} seconds`, 'postBirthdays', {
           interval: process.env.BIRTHDAY_INTERVAL,
         });
         Logger.info(`Birthday job scheduled with interval ${process.env.BIRTHDAY_INTERVAL}`);
@@ -107,7 +107,7 @@ export default event(Events.ClientReady, async ({ log }, client) => {
         const { interval } = birthdayJob.attrs.data as { interval: string };
         if (interval !== process.env.BIRTHDAY_INTERVAL) {
           await scheduler.cancel({ name: 'postBirthdays' });
-          scheduler.every(`${process.env.BIRTHDAY_INTERVAL} seconds`, 'postBirthdays', {
+          await scheduler.every(`${process.env.BIRTHDAY_INTERVAL} seconds`, 'postBirthdays', {
             interval: process.env.BIRTHDAY_INTERVAL,
           });
           Logger.info(`Birthday job rescheduled with new interval ${process.env.BIRTHDAY_INTERVAL}`);
