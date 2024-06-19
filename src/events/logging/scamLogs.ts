@@ -68,8 +68,8 @@ export default event(Events.MessageCreate, async ({ log }, msg) => {
       let hasRole = false;
       try {
         excludedRoles.forEach((roleList) => {
-          // @ts-ignore
-          if (msg.member.roles.cache.some((role) => role.id === roleList)) {
+          // FIXME: assert msg.member type
+          if (msg.member!.roles.cache.some((role) => role.id === roleList)) {
             hasRole = true;
           }
         });
@@ -89,11 +89,11 @@ export default event(Events.MessageCreate, async ({ log }, msg) => {
           fields: [
             {
               name: 'User:',
-              value: `${msg.author}`,
+              value: `${msg.author.toString()}`,
             },
             {
               name: 'Channel:',
-              value: `${msg.channel}`,
+              value: `${msg.channel.toString()}`,
             },
             {
               name: messageContentFieldTitle,
@@ -123,11 +123,11 @@ export default event(Events.MessageCreate, async ({ log }, msg) => {
         fields: [
           {
             name: 'User:',
-            value: `${msg.author}`,
+            value: `${msg.author.toString()}`,
           },
           {
             name: 'Channel:',
-            value: `${msg.channel}`,
+            value: `${msg.channel.toString()}`,
           },
           {
             name: messageContentFieldTitle,
@@ -137,13 +137,16 @@ export default event(Events.MessageCreate, async ({ log }, msg) => {
       });
       // Time out
       try {
-        // @ts-ignore
-        await msg.member.timeout(60 * 60 * 24 * 7 * 1000, 'Scam log');
+        // FIXME: assert msg.member type
+        await msg.member!.timeout(60 * 60 * 24 * 7 * 1000, 'Scam log');
       } catch (e) {
         log(e);
         const errorEmbed = makeEmbed({
           title: 'Error timing out user',
-          description: makeLines([`An error occurred while timing out ${msg.author}`, `${codeBlock(`Error : ${e}`)}`]),
+          description: makeLines([
+            `An error occurred while timing out ${msg.author.toString()}`,
+            `${codeBlock(`Error : ${String(e)}`)}`,
+          ]),
           color: Colors.Red,
         });
         await scamReportLogs.send({ embeds: [errorEmbed] });
