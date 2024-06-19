@@ -1,5 +1,5 @@
 import { Job } from '@hokify/agenda';
-import { ChannelType, TextChannel, Colors } from 'discord.js';
+import { ChannelType, TextChannel, Colors, EmbedField } from 'discord.js';
 import { client } from '../../client';
 import { constantsConfig, makeEmbed, Logger, getScheduler } from '../index';
 
@@ -10,7 +10,7 @@ const failedEmbed = (action: string, channel: string) =>
     color: Colors.Red,
   });
 
-const modLogEmbed = (action: string, fields: any, color: number) =>
+const modLogEmbed = (action: string, fields: EmbedField[], color: number) =>
   makeEmbed({
     title: `Slow Mode - ${action}`,
     fields,
@@ -45,6 +45,7 @@ export async function autoDisableSlowMode(job: Job) {
     }
     return;
   }
+
   try {
     if (
       slowmodeChannel.type === ChannelType.GuildForum ||
@@ -56,13 +57,12 @@ export async function autoDisableSlowMode(job: Job) {
     }
     await job.remove();
   } catch (err) {
-    Logger.error(`Failed to auto disable slow mode for channel <#${channelId}>: ${err}`);
+    Logger.error(`Failed to auto disable slow mode for channel <#${channelId}>:`, err);
     return;
   }
 
   try {
-    // @ts-ignore
-    await modLogsChannel.send({
+    await modLogsChannel!.send({
       embeds: [
         modLogEmbed(
           'Auto Disable',
@@ -93,6 +93,6 @@ export async function autoDisableSlowMode(job: Job) {
       ],
     });
   } catch (err) {
-    Logger.warn(`Failed to send Mod Log for auto disable of slow mode for channel <#${channelId}>: ${err}`);
+    Logger.warn(`Failed to send Mod Log for auto disable of slow mode for channel <#${channelId}>:`, err);
   }
 }
