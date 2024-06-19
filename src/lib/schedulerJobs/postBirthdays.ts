@@ -85,7 +85,7 @@ export async function postBirthdays(job: Job) {
     try {
       user = await guild.members.fetch(birthday.userID!);
     } catch (error) {
-      Logger.error('BirthdayHandler - Failed to fetch user', error);
+      Logger.error(`BirthdayHandler - Failed to fetch user: ${JSON.stringify(error)}`);
     }
 
     if (!user) {
@@ -111,7 +111,7 @@ export async function postBirthdays(job: Job) {
     try {
       await birthday.save();
     } catch (error) {
-      Logger.error(`Birthday handler - Failed to save the new birthday trigger:`, error);
+      Logger.error(`Birthday handler - Failed to save the new birthday trigger: ${JSON.stringify(error)}`);
     }
 
     // Send the birthday message
@@ -121,7 +121,7 @@ export async function postBirthdays(job: Job) {
         embeds: [birthdayEmbed],
       });
     } catch (error) {
-      Logger.error('BirthdayHandler - Failed to send birthday message', error);
+      Logger.error(`BirthdayHandler - Failed to send birthday message: ${JSON.stringify(error)}`);
     }
   });
 
