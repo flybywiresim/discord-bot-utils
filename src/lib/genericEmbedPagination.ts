@@ -56,20 +56,20 @@ export async function createPaginatedEmbedHandler(
 
     setButtonDisabledStates();
 
-    updateEmbed();
+    await updateEmbed();
   });
 
   collector.on('end', async () => {
-    handleEmbedExpire();
+    await handleEmbedExpire();
   });
 
-  function updateEmbed() {
-    initialInteraction.editReply({ embeds: [embeds[currentPage]], components: [buttonRow] });
+  async function updateEmbed() {
+    await initialInteraction.editReply({ embeds: [embeds[currentPage]], components: [buttonRow] });
   }
 
-  function handleEmbedExpire() {
+  async function handleEmbedExpire() {
     const embed = embeds[currentPage];
-    initialInteraction.editReply({
+    await initialInteraction.editReply({
       embeds: [
         embed.setFooter({
           text: `${embed.data.footer ? `${embed.data.footer.text} - ` : ''}This embed has expired.`,
