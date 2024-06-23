@@ -28,7 +28,7 @@ export default event(Events.InteractionCreate, async ({ log, client }, interacti
   } catch (error) {
     const errorEmbed = makeEmbed({
       title: 'An error occurred while executing this context command.',
-      description: `${error}`,
+      description: String(error),
       color: Color.Error,
     });
 
