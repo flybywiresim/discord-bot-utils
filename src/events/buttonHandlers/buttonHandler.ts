@@ -14,11 +14,12 @@ export default event(Events.InteractionCreate, async ({ log }, interaction) => {
     const [prefix, ...params] = interaction.customId.split('_');
 
     switch (prefix) {
-      case 'roleAssignment':
+      case 'roleAssignment': {
         const [roleID] = params;
         await handleRoleAssignment(interaction, roleID);
         log(`Button Handler: Role assignment button pressed by ${user.tag} (${user.id}). roleID: ${roleID}`);
         break;
+      }
       default:
         if (buttonLabel) {
           log(
