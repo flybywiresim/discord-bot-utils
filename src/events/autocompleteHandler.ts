@@ -17,10 +17,7 @@ export default event(Events.InteractionCreate, async ({ log, client }, interacti
   }
 
   try {
-    const { commandName } = interaction as {
-      commandName: any;
-      options: any;
-    };
+    const { commandName } = interaction;
 
     const command = commandMap.get(commandName);
 
