@@ -76,12 +76,12 @@ export default event(Events.MessageDelete, async (_, msg) => {
         },
         {
           name: 'Author',
-          value: `${msg.author}`,
+          value: `${msg.author.toString()}`,
           inline: true,
         },
         {
           name: 'Channel',
-          value: `${msg.channel}`,
+          value: `${msg.channel.toString()}`,
           inline: true,
         },
         {
@@ -93,7 +93,7 @@ export default event(Events.MessageDelete, async (_, msg) => {
           name: 'Deleted by',
           value:
             deletionLog && deletionLog.target.id === msg.author.id
-              ? `${deletionLog.executor}`
+              ? `${deletionLog.executor ? deletionLog.executor.toString() : 'Could not find executor.'}`
               : 'No audit log was found, message was either deleted by author, or a bot',
           inline: false,
         },
