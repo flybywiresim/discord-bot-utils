@@ -1,6 +1,6 @@
 //This detects non bot bans and sends a message to the mod logs channel
 
-import { AuditLogEvent, bold, Colors, GuildBan, TextChannel, User } from 'discord.js';
+import { AuditLogEvent, bold, Colors, TextChannel, User } from 'discord.js';
 import moment from 'moment/moment';
 import mongoose from 'mongoose';
 import { constantsConfig, event, Events, Infraction, Logger, makeEmbed, makeLines } from '../../lib';
@@ -40,11 +40,11 @@ const modLogEmbed = (user: User, executor: User, reason: string, formattedDate: 
     fields: [
       {
         name: 'User',
-        value: `${user}`,
+        value: `${user.toString()}`,
       },
       {
         name: 'Moderator',
-        value: `${executor}`,
+        value: `${executor.toString()}`,
       },
       {
         name: 'Reason',
@@ -115,9 +115,7 @@ export default event(Events.GuildBanAdd, async (_, msg) => {
     return;
   }
 
-  const modLogsChannel = (await guildBanAdd.guild.channels.resolve(
-    constantsConfig.channels.MOD_LOGS,
-  )) as TextChannel | null;
+  const modLogsChannel = guildBanAdd.guild.channels.resolve(constantsConfig.channels.MOD_LOGS) as TextChannel | null;
   if (!modLogsChannel) {
     // Exit as can't post
     return;
@@ -130,6 +128,9 @@ export default event(Events.GuildBanAdd, async (_, msg) => {
   let reason;
   let target;
   let retryCount = MAX_RETRIES;
+
+  // No performance impact by await.
+  /* eslint-disable no-await-in-loop */
   do {
     Logger.debug(`Ban Handler - Finding Audit Log entry retries left: ${retryCount}`);
     if (retryCount < MAX_RETRIES) {
@@ -147,6 +148,7 @@ export default event(Events.GuildBanAdd, async (_, msg) => {
 
     retryCount--;
   } while ((!target || target.id !== guildBanAdd.user.id) && retryCount > 0);
+  /* eslint-enable no-await-in-loop */
 
   if (!target) {
     await modLogsChannel.send({ embeds: [noLogEmbed(guildBanAdd.user, guildBanAdd.guild.name)] });
