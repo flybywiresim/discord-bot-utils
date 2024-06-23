@@ -1,5 +1,6 @@
 import { ApplicationCommandOptionType, ApplicationCommandType, Colors } from 'discord.js';
 import { slashCommand, slashCommandStructure, makeEmbed, makeLines, Logger } from '../../lib';
+import { Response } from 'node-fetch';
 
 const data = slashCommandStructure({
   name: 'wolframalpha',
@@ -52,12 +53,14 @@ export default slashCommand(data, async ({ interaction }) => {
   const searchParams = new URLSearchParams(params);
 
   try {
-    const response = await fetch(`${WOLFRAMALPHA_API_URL}${searchParams.toString()}`).then((res) => res.json());
+    const response = (await fetch(`${WOLFRAMALPHA_API_URL}${searchParams.toString()}`).then((res) =>
+      res.json(),
+    )) as WolframAlphaResponse;
 
     if (response.error) {
       const errorEmbed = makeEmbed({
         title: 'Wolfram Alpha Error',
-        description: response.error,
+        description: response.error.toString(),
         color: Colors.Red,
       });
       return interaction.followUp({ embeds: [errorEmbed], ephemeral: true });
@@ -65,10 +68,10 @@ export default slashCommand(data, async ({ interaction }) => {
 
     if (response.queryresult.success === true) {
       const podTexts: string[] = [];
-      response.queryresult.pods.forEach((pod: any) => {
+      response.queryresult.pods.forEach((pod: Pod) => {
         if (pod.id !== 'Input' && pod.primary === true) {
           const results: string[] = [];
-          pod.subpods.forEach((subpod: any) => {
+          pod.subpods.forEach((subpod: SubPod) => {
             results.push(subpod.plaintext);
           });
           if (results.length > 0) {
@@ -115,3 +118,36 @@ export default slashCommand(data, async ({ interaction }) => {
     return interaction.followUp({ embeds: [fetchErrorEmbed], ephemeral: true });
   }
 });
+
+/**
+ * This is a very hacky approach to satisfy TS-ESLint. However, there are no type packages or API wrappers that are somewhat up-to-date.
+ * Therefore, I would recommend using our own types.
+ * Note, that the types below are not complete and only cover our current needs.
+ * Changes to the JSON data returned by the API may break this code, whether or not proper typing is used.
+ * Therefore, this approach is probably better than simply disabling ESLint for this file.
+ * See WolframAlpha API docs: https://products.wolframalpha.com/api/documentation
+ */
+
+interface WolframAlphaResponse extends Response {
+  queryresult: QueryResult;
+  error?: string;
+}
+
+interface QueryResult {
+  success: boolean;
+  error: boolean;
+  pods: Pod[];
+}
+
+interface Pod {
+  title: string;
+  id: string;
+  primary: boolean;
+  subpods: SubPod[];
+}
+
+interface SubPod {
+  title: string;
+  plaintext: string;
+  primary: boolean;
+}
