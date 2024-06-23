@@ -14,7 +14,7 @@ export async function handleRoleAssignment(interaction: ButtonInteraction, roleI
 
     if (!role) {
       Logger.error('Role Assignment: Role not found');
-      interaction.editReply({ content: "I couldn't find that role" });
+      await interaction.editReply({ content: "I couldn't find that role" });
       return;
     }
 
