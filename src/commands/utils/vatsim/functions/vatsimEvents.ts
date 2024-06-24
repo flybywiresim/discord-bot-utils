@@ -1,3 +1,6 @@
+/* eslint-disable */
+// Safer to be done separately due to complexity.
+
 import { ChatInputCommandInteraction, Colors, EmbedField } from 'discord.js';
 import { Logger, makeEmbed } from '../../../../lib';
 

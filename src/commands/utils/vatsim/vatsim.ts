@@ -1,3 +1,6 @@
+/* eslint-disable */
+// Safer to be done separately due to complexity.
+
 import { ApplicationCommandOptionType, ApplicationCommandType, Colors } from 'discord.js';
 import { makeEmbed, slashCommand, slashCommandStructure } from '../../../lib';
 import { handleVatsimStats } from './functions/vatsimStats';
