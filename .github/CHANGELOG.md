@@ -1,5 +1,9 @@
 ## Changelog
 
+Update <small>_ June 2024</small>
+
+- fix: resolve security vulnerabilities in 3rd-party packages
+
 Update <small>_ May 2024</small>
 
 - fix: keep footer on embed expire (29/05/2024)
