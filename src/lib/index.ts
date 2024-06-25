@@ -21,3 +21,7 @@ export * from './schemas/birthdaySchema';
 export * from './schedulerJobs/autoDisableSlowMode';
 export * from './schedulerJobs/sendHeartbeat';
 export * from './schedulerJobs/postBirthdays';
+
+// API Wrapper
+export * from './apiWrapper/fetchData';
+export * from './apiWrapper/typeGuard';
