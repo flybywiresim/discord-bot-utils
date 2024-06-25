@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 
-import { TypeGuard } from '../typeGuard';
+import { TypeGuard, isArray, isBoolean, isNull, isNumber, isString, isTrueObject } from '../typeGuard';
 
 /**
  * @see https://vatsim.dev/api/events-api/1.0.0/list-events
@@ -42,7 +42,7 @@ export interface Route {
 }
 
 export const isVatsimEvents: TypeGuard<VatsimEvents> = (events): events is VatsimEvents => {
-    if (typeof events !== 'object' || events === null) {
+    if (isNull(events) || !isTrueObject(events)) {
         return false;
     }
 
@@ -50,7 +50,7 @@ export const isVatsimEvents: TypeGuard<VatsimEvents> = (events): events is Vatsi
         return false;
     }
 
-    if (!Array.isArray(events.data)) {
+    if (!isArray(events.data)) {
         return false;
     }
 
@@ -62,7 +62,7 @@ export const isVatsimEvents: TypeGuard<VatsimEvents> = (events): events is Vatsi
 };
 
 const isData: TypeGuard<Data> = (data): data is Data => {
-    if (typeof data !== 'object' || data === null) {
+    if (isNull(data) || !isTrueObject(data)) {
         return false;
     }
 
@@ -70,7 +70,7 @@ const isData: TypeGuard<Data> = (data): data is Data => {
         return false;
     }
 
-    if (!Array.isArray(data.organisers) || !Array.isArray(data.airports) || !Array.isArray(data.routes)) {
+    if (!isArray(data.organisers) || !isArray(data.airports) || !isArray(data.routes)) {
         return false;
     }
 
@@ -87,47 +87,47 @@ const isData: TypeGuard<Data> = (data): data is Data => {
     }
 
     return (
-        ('id' in data && typeof data.id === 'number')
+        ('id' in data && isNumber(data.id))
         && ('type' in data && (data.type === 'Event' || data.type === 'Controller Examination' || data.type === 'VASOPS Event'))
-        && ('name' in data && typeof data.name === 'string')
-        && ('link' in data && typeof data.link === 'string')
-        && ('start_time' in data && typeof data.start_time === 'string')
-        && ('end_time' in data && typeof data.end_time === 'string')
-        && ('short_description' in data && typeof data.short_description === 'string')
-        && ('description' in data && typeof data.description === 'string')
-        && ('banner' in data && typeof data.banner === 'string')
+        && ('name' in data && isString(data.name))
+        && ('link' in data && isString(data.link))
+        && ('start_time' in data && isString(data.start_time))
+        && ('end_time' in data && isString(data.end_time))
+        && ('short_description' in data && isString(data.short_description))
+        && ('description' in data && isString(data.description))
+        && ('banner' in data && isString(data.banner))
     );
 };
 
 const isOrganiser: TypeGuard<Organiser> = (organiser): organiser is Organiser => {
-    if (typeof organiser !== 'object' || organiser === null) {
+    if (isNull(organiser) || !isTrueObject(organiser)) {
         return false;
     }
 
     return (
-        ('region' in organiser && (typeof organiser.region === 'string' || organiser.region === null))
-        && ('division' in organiser && (typeof organiser.division === 'string' || organiser.division === null))
-        && ('subdivision' in organiser && (typeof organiser.subdivision === 'string' || organiser.subdivision === null))
-        && ('organised_by_vatsim' in organiser && typeof organiser.organised_by_vatsim === 'boolean')
+        ('region' in organiser && (isString(organiser.region) || isNull(organiser.region)))
+        && ('division' in organiser && (isString(organiser.division) || isNull(organiser.division)))
+        && ('subdivision' in organiser && (isString(organiser.subdivision) || isNull(organiser.subdivision)))
+        && ('organised_by_vatsim' in organiser && isBoolean(organiser.organised_by_vatsim))
     );
 };
 
 const isAirport: TypeGuard<Airport> = (airport): airport is Airport => {
-    if (typeof airport !== 'object' || airport === null) {
+    if (isNull(airport) || !isTrueObject(airport)) {
         return false;
     }
 
-    return ('icao' in airport && typeof airport.icao === 'string');
+    return ('icao' in airport && isString(airport.icao));
 };
 
 const isRoute: TypeGuard<Route> = (route): route is Route => {
-    if (typeof route !== 'object' || route === null) {
+    if (isNull(route) || !isTrueObject(route)) {
         return false;
     }
 
     return (
-        ('departure' in route && typeof route.departure === 'string')
-        && ('arrival' in route && typeof route.arrival === 'string')
-        && ('route' in route && typeof route.route === 'string')
+        ('departure' in route && isString(route.departure))
+        && ('arrival' in route && isString(route.arrival))
+        && ('route' in route && isString(route.route))
     );
 };
