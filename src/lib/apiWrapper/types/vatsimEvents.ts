@@ -1,5 +1,4 @@
 /* eslint-disable camelcase */
-
 import { TypeGuard, isArray, isBoolean, isNull, isNumber, isString, isTrueObject } from '../typeGuard';
 
 /**
