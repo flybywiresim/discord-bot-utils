@@ -25,3 +25,4 @@ export * from './schedulerJobs/postBirthdays';
 // API Wrapper
 export * from './apiWrapper/fetchData';
 export * from './apiWrapper/typeGuard';
+export * from './apiWrapper/types/vatsimEvents';
