@@ -24,3 +24,5 @@ export * from './schedulerJobs/postBirthdays';
 
 // API Wrapper
 export * from './apis/fetchData';
+export * from './apis/zodSchemas/vatsimEvents';
+export * from './apis/zodSchemas/vatsimData';

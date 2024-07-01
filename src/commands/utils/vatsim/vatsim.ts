@@ -1,10 +1,12 @@
 import { ApplicationCommandOptionType, ApplicationCommandType, Colors } from 'discord.js';
-import { makeEmbed, slashCommand, slashCommandStructure } from '../../../lib';
-import { handleVatsimStats } from './functions/vatsimStats';
+import { Request } from 'node-fetch';
+import { ZodError } from 'zod';
+import { Logger, VatsimData, VatsimDataSchema, fetchData, makeEmbed, slashCommand, slashCommandStructure } from '../../../lib';
 import { handleVatsimControllers } from './functions/vatsimControllers';
-import { handleVatsimPilots } from './functions/vatsimPilots';
-import { handleVatsimObservers } from './functions/vatsimObservers';
 import { handleVatsimEvents } from './functions/vatsimEvents';
+import { handleVatsimObservers } from './functions/vatsimObservers';
+import { handleVatsimPilots } from './functions/vatsimPilots';
+import { handleVatsimStats } from './functions/vatsimStats';
 
 const data = slashCommandStructure({
     name: 'vatsim',
@@ -86,24 +88,21 @@ const fetchErrorEmbed = (error: any) => makeEmbed({
 
 export default slashCommand(data, async ({ interaction }) => {
     // Fetch VATSIM data
-
-    let vatsimData;
+    let vatsimData: VatsimData;
     try {
-        vatsimData = await fetch('https://data.vatsim.net/v3/vatsim-data.json').then((response) => {
-            if (response.ok) {
-                return response.json();
-            }
-            throw new Error(response.statusText);
-        });
-    } catch (error) {
-        await interaction.reply({ embeds: [fetchErrorEmbed(error)], ephemeral: true });
-        return;
+        vatsimData = await fetchData<VatsimData>(new Request('https://data.vatsim.net/v3/vatsim-data.json'), VatsimDataSchema);
+    } catch (e) {
+        if (e instanceof ZodError) {
+            e.issues.forEach((e) => Logger.error(`[zod Issue VATSIM Data] Code: ${e.code}, Path: ${e.path.join('.')}, Message: ${e.message}`));
+            return interaction.reply({ embeds: [fetchErrorEmbed('The VATSIM API returned unknown data.')] });
+        }
+
+        return interaction.reply({ embeds: [fetchErrorEmbed(e)], ephemeral: true });
     }
 
     // Grap the callsign from the interaction
-
     let callsign = interaction.options.getString('callsign');
-    let callsignSearch;
+    let callsignSearch: string | undefined;
 
     if (callsign) {
         callsign = callsign.toUpperCase();
@@ -112,7 +111,6 @@ export default slashCommand(data, async ({ interaction }) => {
         const regexMatches = callsign.match(regexCheck);
 
         if (!regexMatches || !regexMatches.groups || !regexMatches.groups.callsignSearch) {
-            // eslint-disable-next-line consistent-return
             return interaction.reply({ content: 'You need to provide a valid callsign or part of a callsign to search for', ephemeral: true });
         }
 
@@ -128,19 +126,18 @@ export default slashCommand(data, async ({ interaction }) => {
         await handleVatsimStats(interaction, vatsimData, callsignSearch);
         break;
     case 'controllers':
-        await handleVatsimControllers(interaction, vatsimData, callsignSearch);
-        break;
+        if (!callsignSearch) {
+            return interaction.reply({ content: 'You need to provide a valid callsign or part of a callsign to search for', ephemeral: true });
+        }
+        return handleVatsimControllers(interaction, vatsimData, callsignSearch);
     case 'pilots':
-        await handleVatsimPilots(interaction, vatsimData, callsignSearch);
-        break;
+        return handleVatsimPilots(interaction, vatsimData, callsignSearch);
     case 'observers':
-        await handleVatsimObservers(interaction, vatsimData, callsignSearch);
-        break;
+        return handleVatsimObservers(interaction, vatsimData, callsignSearch);
     case 'events':
-        await handleVatsimEvents(interaction);
-        break;
+        return handleVatsimEvents(interaction);
 
     default:
-        await interaction.reply({ content: 'Unknown subcommand', ephemeral: true });
+        return interaction.reply({ content: 'Unknown subcommand', ephemeral: true });
     }
 });

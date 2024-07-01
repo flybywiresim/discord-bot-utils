@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, EmbedField } from 'discord.js';
-import { makeEmbed } from '../../../../lib';
+import { Atis, Rating, VatsimData, makeEmbed } from '../../../../lib';
 
 /* eslint-disable camelcase */
 
@@ -9,7 +9,7 @@ const listEmbed = (type: string, fields: EmbedField[], totalCount: number, shown
     fields,
 });
 
-const controllersListEmbedFields = (callsign: string, frequency: string, logon: string, rating: string, atis: string, atisCode: string): EmbedField[] => {
+const controllersListEmbedFields = (callsign: string, frequency: string, logon: string, rating?: Rating, atis?: Atis): EmbedField[] => {
     const fields = [
         {
             name: 'Callsign',
@@ -26,22 +26,20 @@ const controllersListEmbedFields = (callsign: string, frequency: string, logon: 
             value: `${logon}`,
             inline: true,
         },
-        {
-            name: 'Rating',
-            value: `${rating}`,
-            inline: true,
-        },
     ];
-    if (atis !== null) {
-        let atisTitle = 'Info';
-        if (atisCode) {
-            atisTitle = `ATIS - Code: ${atisCode}`;
-        } else if (atisCode !== undefined) {
-            atisTitle = 'ATIS';
-        }
+
+    if (rating) {
         fields.push({
-            name: atisTitle,
-            value: atis,
+            name: 'Rating',
+            value: `${rating.short} - ${rating.long}`,
+            inline: true,
+        });
+    }
+
+    if (atis) {
+        fields.push({
+            name: `ATIS - Code: ${atis.atis_code}`,
+            value: atis.text_atis.join('\n'),
             inline: false,
         });
     }
@@ -57,30 +55,17 @@ const handleLocaleDateTimeString = (date: Date) => date.toLocaleDateString('en-U
     day: 'numeric',
 });
 
-export async function handleVatsimControllers(interaction: ChatInputCommandInteraction<'cached'>, vatsimData: any, callsignSearch: any) {
-    const vatsimAllControllers = vatsimData.controllers ? vatsimData.controllers.filter((controller: { facility: number; }) => controller.facility > 0) : null;
+export async function handleVatsimControllers(interaction: ChatInputCommandInteraction<'cached'>, vatsimData: VatsimData, callsignSearch: string) {
+    const controllers = vatsimData.controllers.filter((controller) => controller.facility > 0 && controller.callsign.includes(callsignSearch));
+    controllers.sort((a, b) => b.facility - a.facility);
 
-    const vatsimControllerRatings = vatsimData.ratings ? vatsimData.ratings : null;
-    const vatsimControllers = vatsimAllControllers ? vatsimAllControllers.filter((controller: { callsign: string | string[]; }) => controller.callsign.includes(callsignSearch)) : null;
-    const vatsimAtis = vatsimData.atis ? vatsimData.atis.filter((atis: { callsign: string | string[]; }) => atis.callsign.includes(callsignSearch)) : null;
+    const fields: EmbedField[] = controllers.map((controller) => {
+        const { callsign, frequency, logon_time } = controller;
+        const rating = vatsimData.ratings.find((rating) => rating.id === controller.rating);
+        const atis = vatsimData.atis.find((atis) => atis.cid === controller.cid);
 
-    const { keys }: ObjectConstructor = Object;
+        return controllersListEmbedFields(callsign, frequency, handleLocaleDateTimeString(new Date(logon_time)), rating, atis);
+    }).splice(0, 5).flat();
 
-    const fields: EmbedField[] = [...vatsimControllers.sort((a: { facility: number; }, b: { facility: number; }) => b.facility - a.facility), ...vatsimAtis]
-        .map((vatsimController) => {
-            const { callsign, frequency, logon_time, atis_code, text_atis, rating } = vatsimController;
-            const logonTime = new Date(logon_time);
-            const logonTimeString = handleLocaleDateTimeString(logonTime);
-            const ratingDetail = vatsimControllerRatings.filter((ratingInfo: { id: any; }) => ratingInfo.id === rating);
-            const { short, long } = ratingDetail[0];
-            const ratingText = `${short} - ${long}`;
-            const atisText = text_atis ? text_atis.join('\n') : null;
-
-            return controllersListEmbedFields(callsign, frequency, logonTimeString, ratingText, atisText, atis_code);
-        }).slice(0, 5).flat();
-
-    const totalCount = keys(vatsimControllers).length + keys(vatsimAtis).length;
-    const shownCount = totalCount < 5 ? totalCount : 5;
-
-    return interaction.reply({ embeds: [listEmbed('Controllers & ATIS', fields, totalCount, shownCount, callsignSearch)] });
+    return interaction.reply({ embeds: [listEmbed('Controllers & ATIS', fields, controllers.length, fields.length, callsignSearch)] });
 }
