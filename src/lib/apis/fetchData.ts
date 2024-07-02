@@ -9,7 +9,7 @@ import { ZodSchema } from 'zod';
  * **It is up to the developer to ensure the type guard works correctly!**
  * @returns A promise that resolves to the expected type or rejects with an [Error](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error).
  */
-export const fetchData = async <ReturnType>(request: Request, schema: ZodSchema<ReturnType>): Promise<ReturnType> => {
+export const fetchData = async <ReturnType>(request: Request, zodSchema: ZodSchema<ReturnType>): Promise<ReturnType> => {
     try {
         const response = await fetch(request);
 
@@ -24,7 +24,7 @@ export const fetchData = async <ReturnType>(request: Request, schema: ZodSchema<
             return Promise.reject(new Error(`Could not parse JSON. Make sure the endpoint at ${request.url} returns valid JSON. Error: ${String(e)}`));
         }
 
-        const result = schema.safeParse(data);
+        const result = zodSchema.safeParse(data);
 
         if (!result.success) {
             return Promise.reject(result.error);
