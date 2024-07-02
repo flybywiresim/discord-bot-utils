@@ -95,11 +95,10 @@ export default slashCommand(data, async ({ interaction }) => {
         vatsimData = await fetchData<VatsimData>(new Request('https://data.vatsim.net/v3/vatsim-data.json'), VatsimDataSchema);
     } catch (e) {
         if (e instanceof ZodError) {
-            e.issues.forEach((e) => Logger.error(`[zod Issue VATSIM Data] Code: ${e.code}, Path: ${e.path.join('.')}, Message: ${e.message}`));
+            e.issues.forEach((issue) => Logger.error(`[zod Issue VATSIM Data] Code: ${issue.code}, Path: ${issue.path.join('.')}, Message: ${issue.message}`));
             return interaction.editReply({ embeds: [fetchErrorEmbed('The VATSIM API returned unknown data.')] });
         }
-
-        return interaction.editReply({ embeds: [fetchErrorEmbed(e)] });
+        return interaction.editReply({ embeds: [fetchErrorEmbed('The VATSIM API returned unknown data.')] });
     }
 
     // Grap the callsign from the interaction
@@ -120,35 +119,35 @@ export default slashCommand(data, async ({ interaction }) => {
     }
 
     // Handle the subcommands
-
     const subcommandName = interaction.options.getSubcommand();
 
     switch (subcommandName) {
-    case 'stats':
-        await handleVatsimStats(interaction, vatsimData, callsignSearch);
-        break;
-    case 'controllers':
+    case 'stats': {
+        return handleVatsimStats(interaction, vatsimData, callsignSearch);
+    }
+    case 'controllers': {
         if (!callsignSearch) {
             return interaction.editReply({ content: 'You need to provide a valid callsign or part of a callsign to search for.' });
         }
         return handleVatsimControllers(interaction, vatsimData, callsignSearch);
-    case 'pilots':
+    }
+    case 'pilots': {
         if (!callsignSearch) {
             return interaction.editReply({ content: 'You need to provide a valid callsign or part of a callsign to search for.' });
         }
         return handleVatsimPilots(interaction, vatsimData, callsignSearch);
-    case 'observers':
+    }
+    case 'observers': {
         if (!callsignSearch) {
             return interaction.editReply({ content: 'You need to provide a valid callsign or part of a callsign to search for.' });
         }
         return handleVatsimObservers(interaction, vatsimData, callsignSearch);
-    case 'events':
+    }
+    case 'events': {
         return handleVatsimEvents(interaction);
-
-    default:
+    }
+    default: {
         return interaction.editReply({ content: 'Unknown subcommand' });
     }
-
-    // Done to satisfy ESLint
-    return interaction.editReply({ content: 'Unknown subcommend' });
+    }
 });

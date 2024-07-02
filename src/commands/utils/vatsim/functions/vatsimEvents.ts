@@ -16,8 +16,6 @@ const handleLocaleDateString = (date: Date) => date.toLocaleDateString('en-US', 
 });
 
 export async function handleVatsimEvents(interaction: ChatInputCommandInteraction<'cached'>) {
-    await interaction.deferReply();
-
     try {
         const response = await fetchData<VatsimEvents>(new Request(`${BASE_VATSIM_URL}/api/v1/events/all`), VatsimEventsSchema);
 
