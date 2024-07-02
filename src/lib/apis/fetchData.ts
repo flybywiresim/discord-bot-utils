@@ -16,7 +16,7 @@ export const fetchData = async <ReturnType = unknown>(request: Request, zodSchem
             throw new Error(`HTTP Error. Status: ${response.status}`);
         }
 
-        let data;
+        let data: unknown;
         try {
             data = await response.json();
         } catch (e) {
