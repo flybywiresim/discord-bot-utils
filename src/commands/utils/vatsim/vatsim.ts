@@ -133,6 +133,9 @@ export default slashCommand(data, async ({ interaction }) => {
         }
         return handleVatsimControllers(interaction, vatsimData, callsignSearch);
     case 'pilots':
+        if (!callsignSearch) {
+            return interaction.editReply({ content: 'You need to provide a valid callsign or part of a callsign to search for.' });
+        }
         return handleVatsimPilots(interaction, vatsimData, callsignSearch);
     case 'observers':
         if (!callsignSearch) {

@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, EmbedField } from 'discord.js';
-import { makeEmbed } from '../../../../lib';
+import { FlightPlan, PilotRating, VatsimData, makeEmbed } from '../../../../lib';
 
 /* eslint-disable camelcase */
 
@@ -8,21 +8,24 @@ const listEmbed = (type: string, fields: EmbedField[], totalCount: number, shown
     description: `A list of ${shownCount} online ${type} matching ${callsign}.`,
     fields,
 });
-const pilotsListEmbedFields = (callsign: string, rating: string, flightPlan: any) => {
+const pilotsListEmbedFields = (callsign: string, rating?: PilotRating, flightPlan?: FlightPlan) => {
     const fields = [
         {
             name: 'Callsign',
             value: callsign,
             inline: false,
         },
-        {
-            name: 'Rating',
-            value: rating,
-            inline: true,
-        },
     ];
 
-    if (flightPlan !== null) {
+    if (rating) {
+        fields.push({
+            name: 'Rating',
+            value: `${rating.short_name} - ${rating.long_name}`,
+            inline: true,
+        });
+    }
+
+    if (flightPlan) {
         const { aircraft_short, departure, arrival } = flightPlan;
         fields.push(
             {
@@ -41,23 +44,16 @@ const pilotsListEmbedFields = (callsign: string, rating: string, flightPlan: any
     return fields;
 };
 
-export async function handleVatsimPilots(interaction: ChatInputCommandInteraction<'cached'>, vatsimData: any, callsignSearch: any) {
-    const vatsimPilotRatings = vatsimData.pilot_ratings ? vatsimData.pilot_ratings : null;
-    const vatsimPilots = vatsimData.pilots ? vatsimData.pilots.filter((pilot: { callsign: (string | null)[]; }) => pilot.callsign.includes(callsignSearch)) : null;
+export async function handleVatsimPilots(interaction: ChatInputCommandInteraction<'cached'>, vatsimData: VatsimData, callsignSearch: string) {
+    const pilots = vatsimData.pilots.filter((pilot) => pilot.callsign.includes(callsignSearch));
+    pilots.sort((a, b) => b.pilot_rating - a.pilot_rating);
 
-    const { keys }: ObjectConstructor = Object;
+    const fields = pilots.map((pilot) => {
+        const { callsign, flight_plan } = pilot;
+        const rating = vatsimData.pilot_ratings.find((rating) => rating.id === pilot.pilot_rating);
 
-    const fields: EmbedField[] = [...vatsimPilots.sort((a: { pilot_rating: number; }, b: { pilot_rating: number; }) => b.pilot_rating - a.pilot_rating)].map((vatsimPilot) => {
-        const { callsign, pilot_rating, flight_plan } = vatsimPilot;
-        const ratingDetail = vatsimPilotRatings.filter((ratingInfo: { id: number; }) => ratingInfo.id === pilot_rating);
-        const { short_name, long_name } = ratingDetail[0];
-        const ratingText = `${short_name} - ${long_name}`;
+        return pilotsListEmbedFields(callsign, rating, flight_plan ?? undefined);
+    }).splice(0, 5);
 
-        return pilotsListEmbedFields(callsign, ratingText, flight_plan);
-    }).slice(0, 5).flat();
-
-    const totalCount = keys(vatsimPilots).length;
-    const shownCount = totalCount < 5 ? totalCount : 5;
-
-    return interaction.reply({ embeds: [listEmbed('Pilots', fields, totalCount, shownCount, callsignSearch)] });
+    return interaction.editReply({ embeds: [listEmbed('Pilots', fields.flat(), pilots.length, fields.length, callsignSearch)] });
 }
