@@ -148,4 +148,7 @@ export default slashCommand(data, async ({ interaction }) => {
     default:
         return interaction.editReply({ content: 'Unknown subcommand' });
     }
+
+    // Done to satisfy ESLint
+    return interaction.editReply({ content: 'Unknown subcommend' });
 });
