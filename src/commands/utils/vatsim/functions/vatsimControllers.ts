@@ -36,9 +36,9 @@ const controllersListEmbedFields = (callsign: string, frequency: string, logon: 
         });
     }
 
-    if (atis) {
+    if (atis && atis.text_atis) {
         fields.push({
-            name: `ATIS - Code: ${atis.atis_code}`,
+            name: `ATIS - ${atis.atis_code ? atis.atis_code : 'N/A'}`,
             value: atis.text_atis.join('\n'),
             inline: false,
         });
@@ -59,13 +59,13 @@ export async function handleVatsimControllers(interaction: ChatInputCommandInter
     const controllers = vatsimData.controllers.filter((controller) => controller.facility > 0 && controller.callsign.includes(callsignSearch));
     controllers.sort((a, b) => b.facility - a.facility);
 
-    const fields: EmbedField[] = controllers.map((controller) => {
+    const fields = controllers.map((controller) => {
         const { callsign, frequency, logon_time } = controller;
         const rating = vatsimData.ratings.find((rating) => rating.id === controller.rating);
         const atis = vatsimData.atis.find((atis) => atis.cid === controller.cid);
 
         return controllersListEmbedFields(callsign, frequency, handleLocaleDateTimeString(new Date(logon_time)), rating, atis);
-    }).splice(0, 5).flat();
+    }).splice(0, 5);
 
-    return interaction.reply({ embeds: [listEmbed('Controllers & ATIS', fields, controllers.length, fields.length, callsignSearch)] });
+    return interaction.editReply({ embeds: [listEmbed('Controllers & ATIS', fields.flat(), controllers.length, fields.length, callsignSearch)] });
 }

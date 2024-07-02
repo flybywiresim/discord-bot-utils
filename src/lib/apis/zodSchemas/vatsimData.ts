@@ -72,7 +72,7 @@ const AtisSchema = z.object({
     server: z.string(),
     visual_range: z.number(),
     atis_code: z.nullable(z.string()),
-    text_atis: z.array(z.string()),
+    text_atis: z.nullable(z.array(z.string())),
     last_updated: z.string(),
     logon_time: z.string(),
 });

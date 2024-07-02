@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, EmbedField } from 'discord.js';
-import { makeEmbed } from '../../../../lib';
+import { Rating, VatsimData, makeEmbed } from '../../../../lib';
 
 /* eslint-disable camelcase */
 
@@ -9,7 +9,7 @@ const listEmbed = (type: string, fields: EmbedField[], totalCount: number, shown
     fields,
 });
 
-const observersListEmbedFields = (callsign: string, logon: string, rating: string, atis: string): EmbedField[] => {
+const observersListEmbedFields = (callsign: string, logon: string, rating?: Rating): EmbedField[] => {
     const fields = [
         {
             name: 'Callsign',
@@ -21,18 +21,13 @@ const observersListEmbedFields = (callsign: string, logon: string, rating: strin
             value: `${logon}`,
             inline: true,
         },
-        {
-            name: 'Rating',
-            value: `${rating}`,
-            inline: true,
-        },
     ];
-    if (atis !== null) {
-        const atisTitle = 'Info';
+
+    if (rating) {
         fields.push({
-            name: atisTitle,
-            value: atis,
-            inline: false,
+            name: 'Rating',
+            value: `${rating.short} - ${rating.long}`,
+            inline: true,
         });
     }
 
@@ -47,28 +42,15 @@ const handleLocaleDateTimeString = (date: Date) => date.toLocaleDateString('en-U
     day: 'numeric',
 });
 
-export async function handleVatsimObservers(interaction: ChatInputCommandInteraction<'cached'>, vatsimData: any, callsignSearch: any) {
-    const vatsimAllObservers = vatsimData.controllers ? vatsimData.controllers.filter((controller: { facility: number; }) => controller.facility <= 0) : null;
+export async function handleVatsimObservers(interaction: ChatInputCommandInteraction<'cached'>, vatsimData: VatsimData, callsignSearch: string) {
+    const observers = vatsimData.controllers.filter((controller) => controller.facility <= 0 && controller.callsign.includes(callsignSearch));
 
-    const vatsimControllerRatings = vatsimData.ratings ? vatsimData.ratings : null;
-    const vatsimObservers = vatsimAllObservers ? vatsimAllObservers.filter((observer: { callsign: string | any[]; }) => observer.callsign.includes(callsignSearch)) : null;
+    const fields = observers.map((observer) => {
+        const { callsign, logon_time } = observer;
+        const rating = vatsimData.ratings.find((rating) => rating.id === observer.rating);
 
-    const { keys }: ObjectConstructor = Object;
+        return observersListEmbedFields(callsign, handleLocaleDateTimeString(new Date(logon_time)), rating);
+    }).splice(0, 5);
 
-    const fields: EmbedField[] = [...vatsimObservers.sort((a: { rating: number; }, b: { rating: number; }) => b.rating - a.rating)].map((vatsimObserver) => {
-        const { callsign, logon_time, text_atis, rating } = vatsimObserver;
-        const logonTime = new Date(logon_time);
-        const logonTimeString = handleLocaleDateTimeString(logonTime);
-        const ratingDetail = vatsimControllerRatings.filter((ratingInfo: { id: any; }) => ratingInfo.id === rating);
-        const { short, long } = ratingDetail[0];
-        const ratingText = `${short} - ${long}`;
-        const atisText = text_atis ? text_atis.join('\n') : null;
-
-        return observersListEmbedFields(callsign, logonTimeString, ratingText, atisText);
-    }).slice(0, 5).flat();
-
-    const totalCount = keys(vatsimObservers).length;
-    const shownCount = totalCount < 5 ? totalCount : 5;
-
-    return interaction.reply({ embeds: [listEmbed('Observers', fields, totalCount, shownCount, callsignSearch)] });
+    return interaction.editReply({ embeds: [listEmbed('Observers', fields.flat(), observers.length, fields.length, callsignSearch)] });
 }
