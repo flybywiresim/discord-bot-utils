@@ -150,6 +150,7 @@ export type Controller = z.infer<typeof ControllerSchema>;
 export type Atis = z.infer<typeof AtisSchema>;
 export type Server = z.infer<typeof ServerSchema>;
 export type Prefiles = z.infer<typeof PrefileSchema>;
+export type FlightPlan = z.infer<typeof FlightPlanSchema>;
 export type Facility = z.infer<typeof FacilitySchema>;
 export type Rating = z.infer<typeof RatingSchema>;
 export type PilotRating = z.infer<typeof PilotRatingSchema>;
