@@ -2,7 +2,7 @@ import { ApplicationCommandOptionType, ApplicationCommandType, Colors } from 'di
 import { Request } from 'node-fetch';
 import { ZodError } from 'zod';
 import { constantsConfig, fetchData, makeEmbed, makeLines, slashCommand, slashCommandStructure } from '../../lib';
-import { Metar, MetarSchema } from '../../lib/apis/zodSchemas/metarSchemas';
+import { Metar, MetarSchema } from '../../lib/apis/zodSchemas/avwx/metarSchemas';
 
 const data = slashCommandStructure({
     name: 'metar',

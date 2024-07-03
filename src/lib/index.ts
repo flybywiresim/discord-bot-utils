@@ -24,8 +24,8 @@ export * from './schedulerJobs/postBirthdays';
 
 // API Wrapper
 export * from './apis/fetchData';
-export * from './apis/zodSchemas/vatsimEventsSchemas';
-export * from './apis/zodSchemas/vatsimDataSchemas';
-export * from './apis/zodSchemas/tafSchemas';
-export * from './apis/zodSchemas/simbriefSchemas';
-export * from './apis/zodSchemas/wolframAlphaSchemas';
+export * from './apis/zodSchemas/vatsim/vatsimEventsSchemas';
+export * from './apis/zodSchemas/vatsim/vatsimDataSchemas';
+export * from './apis/zodSchemas/avwx/tafSchemas';
+export * from './apis/zodSchemas/simbrief/simbriefSchemas';
+export * from './apis/zodSchemas/wolframAlpha/wolframAlphaSchemas';
