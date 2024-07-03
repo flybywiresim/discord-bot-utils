@@ -1,5 +1,6 @@
 import fetch, { Request } from 'node-fetch';
 import { ZodSchema } from 'zod';
+import { Logger } from '../logger';
 
 /**
  * Fetch data from any API endpoint that returns JSON formatted data.
@@ -26,6 +27,8 @@ export const fetchData = async <ReturnType = unknown>(request: Request, zodSchem
         const result = zodSchema.safeParse(data);
 
         if (!result.success) {
+            Logger.error('[zod] Data validation failed:');
+            result.error.issues.forEach((issue) => Logger.error(`Code: ${issue.code}, Path: ${issue.path.join('.')}, Message: ${issue.message}`));
             throw result.error;
         }
 
