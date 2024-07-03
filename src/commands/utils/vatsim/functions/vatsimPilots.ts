@@ -1,5 +1,9 @@
 import { ChatInputCommandInteraction, EmbedField } from 'discord.js';
-import { FlightPlan, PilotRating, VatsimData, makeEmbed } from '../../../../lib';
+import { z } from 'zod';
+import { VatsimFlightPlanSchema, VatsimPilotRatingSchema, VatsimData, makeEmbed } from '../../../../lib';
+
+type PilotRating = z.infer<typeof VatsimPilotRatingSchema>;
+type FlightPlan = z.infer<typeof VatsimFlightPlanSchema>;
 
 /* eslint-disable camelcase */
 

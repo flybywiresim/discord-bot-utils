@@ -1,30 +1,30 @@
 import { z } from 'zod';
 
-const MilitaryRatingSchema = z.object({
+export const VatsimMilitaryRatingSchema = z.object({
     id: z.number(),
     short_name: z.string(),
     long_name: z.string(),
 });
 
-const PilotRatingSchema = z.object({
+export const VatsimPilotRatingSchema = z.object({
     id: z.number(),
     short_name: z.string(),
     long_name: z.string(),
 });
 
-const RatingSchema = z.object({
+export const VatsimRatingSchema = z.object({
     id: z.number(),
     short: z.string(),
     long: z.string(),
 });
 
-const FacilitySchema = z.object({
+export const VatsimFacilitySchema = z.object({
     id: z.number(),
     short: z.string(),
     long: z.string(),
 });
 
-const FlightPlanSchema = z.object({
+export const VatsimFlightPlanSchema = z.object({
     flight_rules: z.enum(['I', 'V']),
     aircraft: z.string(),
     aircraft_faa: z.string(),
@@ -41,15 +41,15 @@ const FlightPlanSchema = z.object({
     assigned_transponder: z.string(),
 });
 
-const PrefileSchema = z.object({
+export const VatsimPrefileSchema = z.object({
     cid: z.number(),
     name: z.string(),
     callsign: z.string(),
-    flight_plan: FlightPlanSchema,
+    flight_plan: VatsimFlightPlanSchema,
     last_updated: z.string(),
 });
 
-const ServerSchema = z.object({
+export const VatsimServerSchema = z.object({
     ident: z.string(),
     hostname_or_ip: z.string(),
     location: z.string(),
@@ -62,7 +62,7 @@ const ServerSchema = z.object({
     is_sweatbox: z.boolean(),
 });
 
-const AtisSchema = z.object({
+export const VatsimAtisSchema = z.object({
     cid: z.number(),
     name: z.string(),
     callsign: z.string(),
@@ -77,7 +77,7 @@ const AtisSchema = z.object({
     logon_time: z.string(),
 });
 
-const ControllerSchema = z.object({
+export const VatsimControllerSchema = z.object({
     cid: z.number(),
     name: z.string(),
     callsign: z.string(),
@@ -91,7 +91,7 @@ const ControllerSchema = z.object({
     logon_time: z.string(),
 });
 
-const PilotSchema = z.object({
+export const VatsimPilotSchema = z.object({
     cid: z.number(),
     name: z.string(),
     callsign: z.string(),
@@ -106,12 +106,12 @@ const PilotSchema = z.object({
     heading: z.number(),
     qnh_i_hg: z.number(),
     qnh_mb: z.number(),
-    flight_plan: z.nullable(FlightPlanSchema),
+    flight_plan: z.nullable(VatsimFlightPlanSchema),
     logon_time: z.string(),
     last_updated: z.string(),
 });
 
-const GeneralSchema = z.object({
+export const VatsimGeneralSchema = z.object({
     version: z.number(),
     /**
      * @deprecated
@@ -131,27 +131,16 @@ const GeneralSchema = z.object({
  * @see https://vatsim.dev/api/data-api/get-network-data
  */
 export const VatsimDataSchema = z.object({
-    general: GeneralSchema,
-    pilots: z.array(PilotSchema),
-    controllers: z.array(ControllerSchema),
-    atis: z.array(AtisSchema),
-    servers: z.array(ServerSchema),
-    prefiles: z.array(PrefileSchema),
-    facilities: z.array(FacilitySchema),
-    ratings: z.array(RatingSchema),
-    pilot_ratings: z.array(PilotRatingSchema),
-    military_ratings: z.array(MilitaryRatingSchema),
+    general: VatsimGeneralSchema,
+    pilots: z.array(VatsimPilotSchema),
+    controllers: z.array(VatsimControllerSchema),
+    atis: z.array(VatsimAtisSchema),
+    servers: z.array(VatsimServerSchema),
+    prefiles: z.array(VatsimPrefileSchema),
+    facilities: z.array(VatsimFacilitySchema),
+    ratings: z.array(VatsimRatingSchema),
+    pilot_ratings: z.array(VatsimPilotRatingSchema),
+    military_ratings: z.array(VatsimMilitaryRatingSchema),
 });
 
 export type VatsimData = z.infer<typeof VatsimDataSchema>;
-export type General = z.infer<typeof GeneralSchema>;
-export type Pilot = z.infer<typeof PilotSchema>;
-export type Controller = z.infer<typeof ControllerSchema>;
-export type Atis = z.infer<typeof AtisSchema>;
-export type Server = z.infer<typeof ServerSchema>;
-export type Prefiles = z.infer<typeof PrefileSchema>;
-export type FlightPlan = z.infer<typeof FlightPlanSchema>;
-export type Facility = z.infer<typeof FacilitySchema>;
-export type Rating = z.infer<typeof RatingSchema>;
-export type PilotRating = z.infer<typeof PilotRatingSchema>;
-export type MilitaryRating = z.infer<typeof MilitaryRatingSchema>;

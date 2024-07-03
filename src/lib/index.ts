@@ -27,3 +27,4 @@ export * from './apis/fetchData';
 export * from './apis/zodSchemas/vatsimEventsSchemas';
 export * from './apis/zodSchemas/vatsimDataSchemas';
 export * from './apis/zodSchemas/tafSchemas';
+export * from './apis/zodSchemas/simbriefSchemas';

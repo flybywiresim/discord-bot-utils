@@ -1,5 +1,9 @@
 import { ChatInputCommandInteraction, EmbedField } from 'discord.js';
-import { Atis, Rating, VatsimData, makeEmbed } from '../../../../lib';
+import { z } from 'zod';
+import { VatsimAtisSchema, VatsimRatingSchema, VatsimData, makeEmbed } from '../../../../lib';
+
+type Atis = z.infer<typeof VatsimAtisSchema>;
+type Rating = z.infer<typeof VatsimRatingSchema>;
 
 /* eslint-disable camelcase */
 

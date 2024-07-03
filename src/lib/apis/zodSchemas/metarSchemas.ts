@@ -1,20 +1,20 @@
 import { z } from 'zod';
 
-export const TimeSchema = z.object({ dt: z.string().datetime() });
+export const MetarTimeSchema = z.object({ dt: z.string().datetime() });
 
-export const WindDirectionSchema = z.object({ repr: z.string() });
+export const MetarWindDirectionSchema = z.object({ repr: z.string() });
 
-export const WindSpeedSchema = z.object({ repr: z.string() });
+export const MetarWindSpeedSchema = z.object({ repr: z.string() });
 
-export const VisibilitySchema = z.object({ repr: z.string() });
+export const MetarVisibilitySchema = z.object({ repr: z.string() });
 
-export const TemperatureSchema = z.object({ repr: z.string() });
+export const MetarTemperatureSchema = z.object({ repr: z.string() });
 
-export const DewpointSchema = z.object({ repr: z.string() });
+export const MetarDewpointSchema = z.object({ repr: z.string() });
 
-export const AltimeterSchema = z.object({ value: z.number() });
+export const MetarAltimeterSchema = z.object({ value: z.number() });
 
-export const UnitsSchema = z.object({
+export const MetarUnitsSchema = z.object({
     accumulation: z.string(),
     altimeter: z.string(),
     altitude: z.string(),
@@ -29,15 +29,15 @@ export const UnitsSchema = z.object({
 export const MetarSchema = z.object({
     station: z.string(),
     raw: z.string(),
-    time: TimeSchema,
-    wind_direction: WindDirectionSchema,
-    wind_speed: WindSpeedSchema,
-    visibility: VisibilitySchema,
-    temperature: TemperatureSchema,
-    dewpoint: DewpointSchema,
-    altimeter: AltimeterSchema,
+    time: MetarTimeSchema,
+    wind_direction: MetarWindDirectionSchema,
+    wind_speed: MetarWindSpeedSchema,
+    visibility: MetarVisibilitySchema,
+    temperature: MetarTemperatureSchema,
+    dewpoint: MetarDewpointSchema,
+    altimeter: MetarAltimeterSchema,
     flight_rules: z.string(),
-    units: UnitsSchema,
+    units: MetarUnitsSchema,
 });
 
 /**
