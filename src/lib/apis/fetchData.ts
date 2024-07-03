@@ -1,4 +1,4 @@
-import fetch, { Request } from 'node-fetch';
+import fetch, { Request, Response } from 'node-fetch';
 import { ZodSchema } from 'zod';
 import { Logger } from '../logger';
 
@@ -10,30 +10,32 @@ import { Logger } from '../logger';
  * @returns A promise that resolves to the expected type or rejects with an [Error](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error).
  */
 export const fetchData = async <ReturnType = unknown>(request: Request, zodSchema: ZodSchema<ReturnType>): Promise<ReturnType> => {
+    let response: Response;
     try {
-        const response = await fetch(request);
-
-        if (!response.ok) {
-            throw new Error(`HTTP Error. Status: ${response.status}`);
-        }
-
-        let data: unknown;
-        try {
-            data = await response.json();
-        } catch (e) {
-            throw new Error(`Could not parse JSON. Make sure the endpoint at ${request.url} returns valid JSON. Error: ${String(e)}`);
-        }
-
-        const result = zodSchema.safeParse(data);
-
-        if (!result.success) {
-            Logger.error('[zod] Data validation failed:');
-            result.error.issues.forEach((issue) => Logger.error(`Code: ${issue.code}, Path: ${issue.path.join('.')}, Message: ${issue.message}`));
-            throw result.error;
-        }
-
-        return result.data;
+        response = await fetch(request);
     } catch (e) {
         throw new Error(`An error occured while fetching data from ${request.url}: ${String(e)}`);
     }
+
+    if (!response.ok) {
+        throw new Error(`HTTP Error. Status: ${response.status}`);
+    }
+
+    let data: unknown;
+    try {
+        data = await response.json();
+    } catch (e) {
+        throw new Error(`Could not parse JSON. Make sure the endpoint at ${request.url} returns valid JSON. Error: ${String(e)}`);
+    }
+
+    const result = zodSchema.safeParse(data);
+
+    if (!result.success) {
+        Logger.error('[zod] Data validation failed:');
+        result.error.issues.forEach((issue) => Logger.error(`Code: ${issue.code}, Path: ${issue.path.join('.')}, Message: ${issue.message}`));
+        console.log(data);
+        throw result.error;
+    }
+
+    return result.data;
 };
