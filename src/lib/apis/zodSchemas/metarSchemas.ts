@@ -24,7 +24,7 @@ export const UnitsSchema = z.object({
 });
 
 /**
- * This schema only contains currently used fields. If you wish to use other fields returned by the API add them below.
+ * This schema only contains currently used fields. If you wish to use other fields returned by the API add them in this file.
  */
 export const MetarSchema = z.object({
     station: z.string(),
@@ -41,6 +41,6 @@ export const MetarSchema = z.object({
 });
 
 /**
- * This type only contains currently used fields. If you wish to use other fields returned by the API add them below.
+ * This type only contains currently used fields. If you wish to use other fields returned by the API add them in this file.
  */
 export type Metar = z.infer<typeof MetarSchema>;
