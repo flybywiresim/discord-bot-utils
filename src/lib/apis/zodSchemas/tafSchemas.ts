@@ -8,5 +8,4 @@ export const TafSchema = z.object({
     forecast: z.array(ForecastSchema),
 });
 
-export type Forecast = z.infer<typeof ForecastSchema>;
 export type TAF = z.infer<typeof TafSchema>;

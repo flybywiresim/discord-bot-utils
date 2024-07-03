@@ -1,7 +1,7 @@
 import { ApplicationCommandOptionType, ApplicationCommandType, Colors } from 'discord.js';
 import { Request } from 'node-fetch';
 import { ZodError } from 'zod';
-import { Logger, TAF, TafSchema, fetchData, makeEmbed, makeLines, slashCommand, slashCommandStructure } from '../../lib';
+import { TAF, TafSchema, fetchData, makeEmbed, makeLines, slashCommand, slashCommandStructure } from '../../lib';
 
 const data = slashCommandStructure({
     name: 'taf',
@@ -62,33 +62,23 @@ export default slashCommand(data, async ({ interaction }) => {
         return interaction.editReply({ embeds: [errorEmbed(`An error occurred while fetching the latest TAF for ${icao.toUpperCase()}.`)] });
     }
 
-    try {
-        const tafEmbed = makeEmbed({
-            title: `TAF Report | ${taf.station}`,
-            description: makeLines(['**Raw Report**', ...taf.forecast.map((forecast, i) => {
-                if (i === 0) {
-                    return `${taf.station} ${forecast.raw}`;
-                }
-                return forecast.raw;
-            })]),
-            fields: [
-                {
-                    name: 'Unsure of how to read the report?',
-                    value: `Please refer to our guide [here](https://docs.flybywiresim.com/pilots-corner/airliner-flying-guide/weather/#taf-example-decoded) or see above report decoded [here](https://e6bx.com/weather/${taf.station}/?showDecoded=1&focuspoint=tafdecoder).`,
-                    inline: false,
-                },
-            ],
-            footer: { text: 'This TAF report is only a forecast, and may not accurately reflect weather in the simulator.' },
-        });
+    const tafEmbed = makeEmbed({
+        title: `TAF Report | ${taf.station}`,
+        description: makeLines(['**Raw Report**', ...taf.forecast.map((forecast, i) => {
+            if (i === 0) {
+                return `${taf.station} ${forecast.raw}`;
+            }
+            return forecast.raw;
+        })]),
+        fields: [
+            {
+                name: 'Unsure of how to read the report?',
+                value: `Please refer to our guide [here](https://docs.flybywiresim.com/pilots-corner/airliner-flying-guide/weather/#taf-example-decoded) or see above report decoded [here](https://e6bx.com/weather/${taf.station}/?showDecoded=1&focuspoint=tafdecoder).`,
+                inline: false,
+            },
+        ],
+        footer: { text: 'This TAF report is only a forecast, and may not accurately reflect weather in the simulator.' },
+    });
 
-        return interaction.editReply({ embeds: [tafEmbed] });
-    } catch (error) {
-        Logger.error('taf:', error);
-        const fetchErrorEmbed = makeEmbed({
-            title: 'TAF Error | Fetch Error',
-            description: 'There was an error fetching the TAF report. Please try again later.',
-            color: Colors.Red,
-        });
-        return interaction.editReply({ embeds: [fetchErrorEmbed] });
-    }
+    return interaction.editReply({ embeds: [tafEmbed] });
 });
