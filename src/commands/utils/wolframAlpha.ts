@@ -1,5 +1,4 @@
 import { ApplicationCommandOptionType, ApplicationCommandType, Colors } from 'discord.js';
-import { Request } from 'node-fetch';
 import { z, ZodError } from 'zod';
 import { fetchForeignAPI, Logger, makeEmbed, makeLines, slashCommand, slashCommandStructure, WolframAlphaData, WolframAlphaDataSchema, WolframAlphaPodSchema, WolframAlphaSubpodSchema } from '../../lib';
 
@@ -62,7 +61,7 @@ export default slashCommand(data, async ({ interaction }) => {
 
     let response: WolframAlphaData;
     try {
-        response = await fetchForeignAPI<WolframAlphaData>(new Request(`${WOLFRAMALPHA_API_URL}${searchParams.toString()}`), WolframAlphaDataSchema);
+        response = await fetchForeignAPI<WolframAlphaData>(`${WOLFRAMALPHA_API_URL}${searchParams.toString()}`, WolframAlphaDataSchema);
     } catch (e) {
         if (e instanceof ZodError) {
             return interaction.editReply({ embeds: [errorEmbed('Wolfram Alpha returned unknown data.')] });
