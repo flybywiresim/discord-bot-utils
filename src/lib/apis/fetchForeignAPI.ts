@@ -1,4 +1,4 @@
-import fetch, { Request, Response } from 'node-fetch';
+import fetch, { Request, RequestInfo, Response } from 'node-fetch';
 import { ZodSchema } from 'zod';
 import { Logger } from '../logger';
 
@@ -9,12 +9,14 @@ import { Logger } from '../logger';
  * @param zodSchema The [Zod](https://github.com/colinhacks/zod) schema that the returned data conforms to. The promise will reject if the returned data does not conform to the schema provided.
  * @returns A promise that resolves to the expected type or rejects with an [Error](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error).
  */
-export const fetchForeignAPI = async <ReturnType = unknown>(request: Request, zodSchema: ZodSchema<ReturnType>, debug?: boolean): Promise<ReturnType> => {
+export const fetchForeignAPI = async <ReturnType = unknown>(request: RequestInfo, zodSchema: ZodSchema<ReturnType>, debug?: boolean): Promise<ReturnType> => {
+    const req = new Request(request);
+
     let response: Response;
     try {
-        response = await fetch(request);
+        response = await fetch(req);
     } catch (e) {
-        throw new Error(`An error occured while fetching data from ${request.url}: ${String(e)}`);
+        throw new Error(`An error occured while fetching data from ${req.url}: ${String(e)}`);
     }
 
     if (!response.ok) {
@@ -25,14 +27,14 @@ export const fetchForeignAPI = async <ReturnType = unknown>(request: Request, zo
     try {
         data = await response.json();
     } catch (e) {
-        throw new Error(`Could not parse JSON. Make sure the endpoint at ${request.url} returns valid JSON. Error: ${String(e)}`);
+        throw new Error(`Could not parse JSON. Make sure the endpoint at ${req.url} returns valid JSON. Error: ${String(e)}`);
     }
 
     const result = zodSchema.safeParse(data);
 
     if (!result.success) {
         Logger.error("[zod] Data validation failed! Pass the 'debug' flag to 'fetchForeignAPI()' to print the retrieved data to the console.");
-        Logger.error(`Endpoint location: ${request.url}.`);
+        Logger.error(`Endpoint location: ${req.url}.`);
         if (debug) {
             // winston doesn't usefully log object at the moment
             // eslint-disable-next-line no-console
