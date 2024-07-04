@@ -1,8 +1,7 @@
 import { ApplicationCommandOptionType, ApplicationCommandType, Colors } from 'discord.js';
 import { Request } from 'node-fetch';
 import { ZodError } from 'zod';
-import { constantsConfig, fetchData, makeEmbed, makeLines, slashCommand, slashCommandStructure } from '../../lib';
-import { Metar, MetarSchema } from '../../lib/apis/zodSchemas/avwx/metarSchemas';
+import { constantsConfig, fetchData, makeEmbed, makeLines, slashCommand, slashCommandStructure, Metar, MetarSchema } from '../../lib';
 
 const data = slashCommandStructure({
     name: 'metar',

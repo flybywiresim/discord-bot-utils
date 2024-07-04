@@ -31,3 +31,4 @@ export * from './apis/zodSchemas/avwx/tafSchemas';
 export * from './apis/zodSchemas/avwx/stationSchemas';
 export * from './apis/zodSchemas/simbrief/simbriefSchemas';
 export * from './apis/zodSchemas/wolframAlpha/wolframAlphaSchemas';
+export * from './apis/zodSchemas/flybywire/telex';

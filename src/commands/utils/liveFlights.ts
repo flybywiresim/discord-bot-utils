@@ -1,5 +1,7 @@
 import { ApplicationCommandType, Colors } from 'discord.js';
-import { slashCommand, slashCommandStructure, makeEmbed, Logger } from '../../lib';
+import { Request } from 'node-fetch';
+import { ZodError } from 'zod';
+import { slashCommand, slashCommandStructure, makeEmbed, Logger, fetchData, TelexCountSchema } from '../../lib';
 
 const data = slashCommandStructure({
     name: 'live-flights',
@@ -11,8 +13,10 @@ const FBW_WEB_MAP_URL = 'https://flybywiresim.com/map';
 const FBW_API_BASE_URL = 'https://api.flybywiresim.com';
 
 export default slashCommand(data, async ({ interaction }) => {
+    await interaction.deferReply();
+
     try {
-        const flights = await fetch(`${FBW_API_BASE_URL}/txcxn/_count`).then((res) => res.json());
+        const flights = await fetchData(new Request(`${FBW_API_BASE_URL}/txcxn/_count`), TelexCountSchema);
         const flightsEmbed = makeEmbed({
             title: 'Live Flights',
             description: `There are currently **${flights}** active flights with TELEX enabled.`,
@@ -20,8 +24,16 @@ export default slashCommand(data, async ({ interaction }) => {
             url: FBW_WEB_MAP_URL,
             timestamp: new Date().toISOString(),
         });
-        return interaction.reply({ embeds: [flightsEmbed] });
+        return interaction.editReply({ embeds: [flightsEmbed] });
     } catch (e) {
+        if (e instanceof ZodError) {
+            const errorEmbed = makeEmbed({
+                title: 'TELEX Error',
+                description: 'The API returned unknown data.',
+                color: Colors.Red,
+            });
+            return interaction.editReply({ embeds: [errorEmbed] });
+        }
         const error = e as Error;
         Logger.error(error);
         const errorEmbed = makeEmbed({
@@ -29,6 +41,6 @@ export default slashCommand(data, async ({ interaction }) => {
             description: error.message,
             color: Colors.Red,
         });
-        return interaction.reply({ embeds: [errorEmbed] });
+        return interaction.editReply({ embeds: [errorEmbed] });
     }
 });
