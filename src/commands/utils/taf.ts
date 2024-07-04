@@ -1,7 +1,7 @@
 import { ApplicationCommandOptionType, ApplicationCommandType, Colors } from 'discord.js';
 import { Request } from 'node-fetch';
 import { ZodError } from 'zod';
-import { TAF, TafSchema, fetchData, makeEmbed, makeLines, slashCommand, slashCommandStructure } from '../../lib';
+import { Logger, TAF, TafSchema, fetchData, makeEmbed, makeLines, slashCommand, slashCommandStructure } from '../../lib';
 
 const data = slashCommandStructure({
     name: 'taf',
@@ -59,6 +59,7 @@ export default slashCommand(data, async ({ interaction }) => {
         if (e instanceof ZodError) {
             return interaction.editReply({ embeds: [errorEmbed('The API returned unknown data.')] });
         }
+        Logger.error(`Error while fetching TAF from AVWX: ${e}`);
         return interaction.editReply({ embeds: [errorEmbed(`An error occurred while fetching the latest TAF for ${icao.toUpperCase()}.`)] });
     }
 
