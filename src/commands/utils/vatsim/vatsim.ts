@@ -91,13 +91,13 @@ export default slashCommand(data, async ({ interaction }) => {
     // Fetch VATSIM data
     let vatsimData: VatsimData;
     try {
-        vatsimData = await fetchForeignAPI<VatsimData>('https://data.vatsim.net/v3/vatsim-data.json', VatsimDataSchema);
+        vatsimData = await fetchForeignAPI('https://data.vatsim.net/v3/vatsim-data.json', VatsimDataSchema);
     } catch (e) {
         if (e instanceof ZodError) {
-            e.issues.forEach((issue) => Logger.error(`[zod Issue VATSIM Data] Code: ${issue.code}, Path: ${issue.path.join('.')}, Message: ${issue.message}`));
             return interaction.editReply({ embeds: [fetchErrorEmbed('The VATSIM API returned unknown data.')] });
         }
-        return interaction.editReply({ embeds: [fetchErrorEmbed('The VATSIM API returned unknown data.')] });
+        Logger.error(`Error while fetching VATSIM data: ${String(e)}.`);
+        return interaction.editReply({ embeds: [fetchErrorEmbed('An error occurred while fetching data from VATSIM.')] });
     }
 
     // Grap the callsign from the interaction

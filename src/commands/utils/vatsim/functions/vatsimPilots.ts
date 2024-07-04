@@ -12,7 +12,7 @@ const listEmbed = (type: string, fields: EmbedField[], totalCount: number, shown
     description: `A list of ${shownCount} online ${type} matching ${callsign}.`,
     fields,
 });
-const pilotsListEmbedFields = (callsign: string, rating?: PilotRating, flightPlan?: FlightPlan) => {
+const pilotsListEmbedFields = (callsign: string, flightPlan: FlightPlan | null, rating?: PilotRating) => {
     const fields = [
         {
             name: 'Callsign',
@@ -56,7 +56,7 @@ export async function handleVatsimPilots(interaction: ChatInputCommandInteractio
         const { callsign, flight_plan } = pilot;
         const rating = vatsimData.pilot_ratings.find((rating) => rating.id === pilot.pilot_rating);
 
-        return pilotsListEmbedFields(callsign, rating, flight_plan ?? undefined);
+        return pilotsListEmbedFields(callsign, flight_plan, rating);
     }).splice(0, 5);
 
     return interaction.editReply({ embeds: [listEmbed('Pilots', fields.flat(), pilots.length, fields.length, callsignSearch)] });

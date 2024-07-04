@@ -1,7 +1,7 @@
 import { ApplicationCommandOptionType, ApplicationCommandType, Colors } from 'discord.js';
 import { Request } from 'node-fetch';
 import { ZodError } from 'zod';
-import { constantsConfig, fetchForeignAPI, makeEmbed, makeLines, slashCommand, slashCommandStructure, Metar, MetarSchema } from '../../lib';
+import { constantsConfig, fetchForeignAPI, makeEmbed, makeLines, slashCommand, slashCommandStructure, Metar, MetarSchema, Logger } from '../../lib';
 
 const data = slashCommandStructure({
     name: 'metar',
@@ -41,7 +41,7 @@ export default slashCommand(data, async ({ interaction }) => {
 
     let metar: Metar;
     try {
-        metar = await fetchForeignAPI<Metar>(new Request(`https://avwx.rest/api/metar/${icao}`, {
+        metar = await fetchForeignAPI(new Request(`https://avwx.rest/api/metar/${icao}`, {
             method: 'GET',
             headers: { Authorization: metarToken },
         }), MetarSchema);
@@ -49,6 +49,7 @@ export default slashCommand(data, async ({ interaction }) => {
         if (e instanceof ZodError) {
             return interaction.editReply({ embeds: [errorEmbed('The API returned unknown data.')] });
         }
+        Logger.error(`Error occured while fetching METAR: ${String(e)}`);
         return interaction.editReply({ embeds: [errorEmbed(`An error occurred while fetching the latest METAR for ${icao.toUpperCase()}.`)] });
     }
 

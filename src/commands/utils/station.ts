@@ -51,7 +51,7 @@ export default slashCommand(data, async ({ interaction }) => {
 
     let station: AVWXStation;
     try {
-        station = await fetchForeignAPI<AVWXStation>(new Request(`https://avwx.rest/api/station/${icao}`, {
+        station = await fetchForeignAPI(new Request(`https://avwx.rest/api/station/${icao}`, {
             method: 'GET',
             headers: { Authorization: stationToken },
         }), AVWXStationSchema);

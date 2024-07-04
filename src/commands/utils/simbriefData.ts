@@ -1,7 +1,7 @@
 import { ApplicationCommandOptionType, ApplicationCommandType, Colors } from 'discord.js';
 import moment from 'moment';
 import { ZodError } from 'zod';
-import { fetchForeignAPI, makeEmbed, makeLines, SimbriefFlightPlan, SimbriefFlightPlanSchema, slashCommand, slashCommandStructure } from '../../lib';
+import { fetchForeignAPI, Logger, makeEmbed, makeLines, SimbriefFlightPlan, SimbriefFlightPlanSchema, slashCommand, slashCommandStructure } from '../../lib';
 
 const data = slashCommandStructure({
     name: 'simbrief-data',
@@ -41,9 +41,9 @@ const simbriefdatarequestEmbed = makeEmbed({
     ]),
 });
 
-const errorEmbed = (errorMessage: string) => makeEmbed({
+const errorEmbed = (error: string) => makeEmbed({
     title: 'SimBrief Error',
-    description: errorMessage,
+    description: error,
     color: Colors.Red,
 });
 
@@ -85,6 +85,7 @@ export default slashCommand(data, async ({ interaction }) => {
             if (e instanceof ZodError) {
                 return interaction.editReply({ embeds: [errorEmbed('The API returned unknown data.')] });
             }
+            Logger.error(`Error while fetching SimBrief flightplan: ${String(e)}`);
             return interaction.editReply({ embeds: [errorEmbed('An error occurred while fetching the SimBrief flightplan.')] });
         }
 

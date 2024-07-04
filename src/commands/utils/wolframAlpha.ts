@@ -23,9 +23,9 @@ const noQueryEmbed = makeEmbed({
     color: Colors.Red,
 });
 
-const errorEmbed = (errorMessage: string) => makeEmbed({
+const errorEmbed = (error: string) => makeEmbed({
     title: 'Wolfram Alpha Error',
-    description: errorMessage,
+    description: error,
     color: Colors.Red,
 });
 
@@ -61,7 +61,7 @@ export default slashCommand(data, async ({ interaction }) => {
 
     let response: WolframAlphaData;
     try {
-        response = await fetchForeignAPI<WolframAlphaData>(`${WOLFRAMALPHA_API_URL}${searchParams.toString()}`, WolframAlphaDataSchema);
+        response = await fetchForeignAPI(`${WOLFRAMALPHA_API_URL}${searchParams.toString()}`, WolframAlphaDataSchema);
     } catch (e) {
         if (e instanceof ZodError) {
             return interaction.editReply({ embeds: [errorEmbed('Wolfram Alpha returned unknown data.')] });

@@ -7,7 +7,7 @@ import { Logger } from '../logger';
  * @typeParam ReturnType - The expected type of the returned data.
  * @param request The [Request](https://developer.mozilla.org/en-US/docs/Web/API/Request) object to be passed to `fetch()`.
  * @param zodSchema The [Zod](https://github.com/colinhacks/zod) schema that the returned data conforms to. The promise will reject if the returned data does not conform to the schema provided.
- * @returns A promise that resolves to the expected type or rejects with an [Error](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error).
+ * @returns A promise that resolves to the expected type or rejects with an [Error](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error) or a {@link ZodError} if the validation failed.
  */
 export const fetchForeignAPI = async <ReturnType = unknown>(request: RequestInfo, zodSchema: ZodSchema<ReturnType>, debug?: boolean): Promise<ReturnType> => {
     const req = new Request(request);
@@ -33,10 +33,10 @@ export const fetchForeignAPI = async <ReturnType = unknown>(request: RequestInfo
     const result = zodSchema.safeParse(data);
 
     if (!result.success) {
-        Logger.error("[zod] Data validation failed! Pass the 'debug' flag to 'fetchForeignAPI()' to print the retrieved data to the console.");
+        Logger.error("[zod] Data validation failed! Pass the 'debug' flag to 'fetchForeignAPI()' to dump the retrieved data to the console.");
         Logger.error(`Endpoint location: ${req.url}.`);
         if (debug) {
-            // winston doesn't usefully log object at the moment
+            // winston doesn't log objects in a useful way at the moment
             // eslint-disable-next-line no-console
             console.log('RETRIEVED DATA:', data);
         }

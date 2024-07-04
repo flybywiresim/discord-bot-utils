@@ -51,7 +51,7 @@ export default slashCommand(data, async ({ interaction }) => {
 
     let taf: TAF;
     try {
-        taf = await fetchForeignAPI<TAF>(new Request(`https://avwx.rest/api/taf/${icao}`, {
+        taf = await fetchForeignAPI(new Request(`https://avwx.rest/api/taf/${icao}`, {
             method: 'GET',
             headers: { Authorization: tafToken },
         }), TafSchema);
