@@ -9,7 +9,7 @@ import { Logger } from '../logger';
  * @param zodSchema The [Zod](https://github.com/colinhacks/zod) schema that the returned data conforms to. The promise will reject if the returned data does not conform to the schema provided.
  * @returns A promise that resolves to the expected type or rejects with an [Error](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error).
  */
-export const fetchForeignAPI = async <ReturnType = unknown>(request: Request, zodSchema: ZodSchema<ReturnType>): Promise<ReturnType> => {
+export const fetchForeignAPI = async <ReturnType = unknown>(request: Request, zodSchema: ZodSchema<ReturnType>, debug?: boolean): Promise<ReturnType> => {
     let response: Response;
     try {
         response = await fetch(request);
@@ -31,9 +31,14 @@ export const fetchForeignAPI = async <ReturnType = unknown>(request: Request, zo
     const result = zodSchema.safeParse(data);
 
     if (!result.success) {
-        Logger.error('[zod] Data validation failed:');
-        console.log(data); // winston doesn't correctly print object at the moment
-        result.error.issues.forEach((issue) => Logger.error(`Code: ${issue.code}, Path: ${issue.path.join('.')}, Message: ${issue.message}`));
+        Logger.error("[zod] Data validation failed! Pass the 'debug' flag to 'fetchForeignAPI()' to print the retrieved data to the console.");
+        Logger.error(`Endpoint location: ${request.url}.`);
+        if (debug) {
+            // winston doesn't usefully log object at the moment
+            // eslint-disable-next-line no-console
+            console.log('RETRIEVED DATA:', data);
+        }
+        result.error.issues.forEach((issue) => Logger.error(`[zod] Code: ${issue.code}, Path: ${issue.path.join('.')}, Message: ${issue.message}`));
         throw result.error;
     }
 
