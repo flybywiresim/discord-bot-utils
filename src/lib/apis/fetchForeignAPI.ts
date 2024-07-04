@@ -9,7 +9,7 @@ import { Logger } from '../logger';
  * @param zodSchema The [Zod](https://github.com/colinhacks/zod) schema that the returned data conforms to. The promise will reject if the returned data does not conform to the schema provided.
  * @returns A promise that resolves to the expected type or rejects with an [Error](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error).
  */
-export const fetchData = async <ReturnType = unknown>(request: Request, zodSchema: ZodSchema<ReturnType>): Promise<ReturnType> => {
+export const fetchForeignAPI = async <ReturnType = unknown>(request: Request, zodSchema: ZodSchema<ReturnType>): Promise<ReturnType> => {
     let response: Response;
     try {
         response = await fetch(request);
@@ -32,8 +32,8 @@ export const fetchData = async <ReturnType = unknown>(request: Request, zodSchem
 
     if (!result.success) {
         Logger.error('[zod] Data validation failed:');
+        console.log(data); // winston doesn't correctly print object at the moment
         result.error.issues.forEach((issue) => Logger.error(`Code: ${issue.code}, Path: ${issue.path.join('.')}, Message: ${issue.message}`));
-        console.log(data);
         throw result.error;
     }
 

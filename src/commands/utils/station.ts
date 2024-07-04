@@ -1,7 +1,7 @@
 import { ApplicationCommandOptionType, ApplicationCommandType, Colors } from 'discord.js';
 import { Request } from 'node-fetch';
 import { z, ZodError } from 'zod';
-import { AVWXRunwaySchema, AVWXStation, AVWXStationSchema, fetchData, Logger, makeEmbed, makeLines, slashCommand, slashCommandStructure } from '../../lib';
+import { AVWXRunwaySchema, AVWXStation, AVWXStationSchema, fetchForeignAPI, Logger, makeEmbed, makeLines, slashCommand, slashCommandStructure } from '../../lib';
 
 type Runway = z.infer<typeof AVWXRunwaySchema>;
 
@@ -51,7 +51,7 @@ export default slashCommand(data, async ({ interaction }) => {
 
     let station: AVWXStation;
     try {
-        station = await fetchData<AVWXStation>(new Request(`https://avwx.rest/api/station/${icao}`, {
+        station = await fetchForeignAPI<AVWXStation>(new Request(`https://avwx.rest/api/station/${icao}`, {
             method: 'GET',
             headers: { Authorization: stationToken },
         }), AVWXStationSchema);

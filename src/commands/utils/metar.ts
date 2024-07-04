@@ -1,7 +1,7 @@
 import { ApplicationCommandOptionType, ApplicationCommandType, Colors } from 'discord.js';
 import { Request } from 'node-fetch';
 import { ZodError } from 'zod';
-import { constantsConfig, fetchData, makeEmbed, makeLines, slashCommand, slashCommandStructure, Metar, MetarSchema } from '../../lib';
+import { constantsConfig, fetchForeignAPI, makeEmbed, makeLines, slashCommand, slashCommandStructure, Metar, MetarSchema } from '../../lib';
 
 const data = slashCommandStructure({
     name: 'metar',
@@ -41,7 +41,7 @@ export default slashCommand(data, async ({ interaction }) => {
 
     let metar: Metar;
     try {
-        metar = await fetchData<Metar>(new Request(`https://avwx.rest/api/metar/${icao}`, {
+        metar = await fetchForeignAPI<Metar>(new Request(`https://avwx.rest/api/metar/${icao}`, {
             method: 'GET',
             headers: { Authorization: metarToken },
         }), MetarSchema);

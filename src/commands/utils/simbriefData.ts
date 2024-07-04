@@ -2,7 +2,7 @@ import { ApplicationCommandOptionType, ApplicationCommandType, Colors } from 'di
 import moment from 'moment';
 import { Request } from 'node-fetch';
 import { ZodError } from 'zod';
-import { slashCommand, makeEmbed, makeLines, slashCommandStructure, SimbriefFlightPlan, fetchData, SimbriefFlightPlanSchema } from '../../lib';
+import { slashCommand, makeEmbed, makeLines, slashCommandStructure, SimbriefFlightPlan, fetchForeignAPI, SimbriefFlightPlanSchema } from '../../lib';
 
 const data = slashCommandStructure({
     name: 'simbrief-data',
@@ -81,7 +81,7 @@ export default slashCommand(data, async ({ interaction }) => {
 
         let flightplan: SimbriefFlightPlan;
         try {
-            flightplan = await fetchData<SimbriefFlightPlan>(new Request(`https://www.simbrief.com/api/xml.fetcher.php?json=1&userid=${simbriefId}&username=${simbriefId}`), SimbriefFlightPlanSchema);
+            flightplan = await fetchForeignAPI<SimbriefFlightPlan>(new Request(`https://www.simbrief.com/api/xml.fetcher.php?json=1&userid=${simbriefId}&username=${simbriefId}`), SimbriefFlightPlanSchema);
         } catch (e) {
             if (e instanceof ZodError) {
                 return interaction.editReply({ embeds: [errorEmbed('The API returned unknown data.')] });

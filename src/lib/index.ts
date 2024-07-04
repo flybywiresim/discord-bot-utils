@@ -23,7 +23,7 @@ export * from './schedulerJobs/sendHeartbeat';
 export * from './schedulerJobs/postBirthdays';
 
 // API Wrapper
-export * from './apis/fetchData';
+export * from './apis/fetchForeignAPI';
 export * from './apis/zodSchemas/vatsim/vatsimEventsSchemas';
 export * from './apis/zodSchemas/vatsim/vatsimDataSchemas';
 export * from './apis/zodSchemas/avwx/metarSchemas';

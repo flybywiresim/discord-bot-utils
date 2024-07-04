@@ -1,7 +1,7 @@
 import { ApplicationCommandOptionType, ApplicationCommandType, Colors } from 'discord.js';
 import { Request } from 'node-fetch';
 import { ZodError } from 'zod';
-import { Logger, VatsimData, VatsimDataSchema, fetchData, makeEmbed, slashCommand, slashCommandStructure } from '../../../lib';
+import { Logger, VatsimData, VatsimDataSchema, fetchForeignAPI, makeEmbed, slashCommand, slashCommandStructure } from '../../../lib';
 import { handleVatsimControllers } from './functions/vatsimControllers';
 import { handleVatsimEvents } from './functions/vatsimEvents';
 import { handleVatsimObservers } from './functions/vatsimObservers';
@@ -92,7 +92,7 @@ export default slashCommand(data, async ({ interaction }) => {
     // Fetch VATSIM data
     let vatsimData: VatsimData;
     try {
-        vatsimData = await fetchData<VatsimData>(new Request('https://data.vatsim.net/v3/vatsim-data.json'), VatsimDataSchema);
+        vatsimData = await fetchForeignAPI<VatsimData>(new Request('https://data.vatsim.net/v3/vatsim-data.json'), VatsimDataSchema);
     } catch (e) {
         if (e instanceof ZodError) {
             e.issues.forEach((issue) => Logger.error(`[zod Issue VATSIM Data] Code: ${issue.code}, Path: ${issue.path.join('.')}, Message: ${issue.message}`));

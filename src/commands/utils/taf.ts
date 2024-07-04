@@ -1,7 +1,7 @@
 import { ApplicationCommandOptionType, ApplicationCommandType, Colors } from 'discord.js';
 import { Request } from 'node-fetch';
 import { ZodError } from 'zod';
-import { Logger, TAF, TafSchema, fetchData, makeEmbed, makeLines, slashCommand, slashCommandStructure } from '../../lib';
+import { Logger, TAF, TafSchema, fetchForeignAPI, makeEmbed, makeLines, slashCommand, slashCommandStructure } from '../../lib';
 
 const data = slashCommandStructure({
     name: 'taf',
@@ -51,7 +51,7 @@ export default slashCommand(data, async ({ interaction }) => {
 
     let taf: TAF;
     try {
-        taf = await fetchData<TAF>(new Request(`https://avwx.rest/api/taf/${icao}`, {
+        taf = await fetchForeignAPI<TAF>(new Request(`https://avwx.rest/api/taf/${icao}`, {
             method: 'GET',
             headers: { Authorization: tafToken },
         }), TafSchema);

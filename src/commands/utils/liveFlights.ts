@@ -1,7 +1,7 @@
 import { ApplicationCommandType, Colors } from 'discord.js';
 import { Request } from 'node-fetch';
 import { ZodError } from 'zod';
-import { slashCommand, slashCommandStructure, makeEmbed, Logger, fetchData, TelexCountSchema } from '../../lib';
+import { slashCommand, slashCommandStructure, makeEmbed, Logger, fetchForeignAPI, TelexCountSchema } from '../../lib';
 
 const data = slashCommandStructure({
     name: 'live-flights',
@@ -16,7 +16,7 @@ export default slashCommand(data, async ({ interaction }) => {
     await interaction.deferReply();
 
     try {
-        const flights = await fetchData(new Request(`${FBW_API_BASE_URL}/txcxn/_count`), TelexCountSchema);
+        const flights = await fetchForeignAPI(new Request(`${FBW_API_BASE_URL}/txcxn/_count`), TelexCountSchema);
         const flightsEmbed = makeEmbed({
             title: 'Live Flights',
             description: `There are currently **${flights}** active flights with TELEX enabled.`,

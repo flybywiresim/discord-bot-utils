@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction, Colors, EmbedField } from 'discord.js';
 import { Request } from 'node-fetch';
-import { Logger, VatsimEvents, VatsimEventsSchema, fetchData, makeEmbed } from '../../../../lib';
+import { Logger, VatsimEvents, VatsimEventsSchema, fetchForeignAPI, makeEmbed } from '../../../../lib';
 
 const BASE_VATSIM_URL = 'https://my.vatsim.net';
 
@@ -17,7 +17,7 @@ const handleLocaleDateString = (date: Date) => date.toLocaleDateString('en-US', 
 
 export async function handleVatsimEvents(interaction: ChatInputCommandInteraction<'cached'>) {
     try {
-        const response = await fetchData<VatsimEvents>(new Request(`${BASE_VATSIM_URL}/api/v1/events/all`), VatsimEventsSchema);
+        const response = await fetchForeignAPI<VatsimEvents>(new Request(`${BASE_VATSIM_URL}/api/v1/events/all`), VatsimEventsSchema);
 
         const filteredEvents = response.data.filter((event) => event.type === 'Event');
         const finalList = filteredEvents.slice(0, 5);
