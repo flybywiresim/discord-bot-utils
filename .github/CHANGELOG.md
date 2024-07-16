@@ -1,5 +1,10 @@
 ## Changelog
 
+Update <small>_ July 2024</small>
+
+- fix: corrected typo in the embed for simbrief-data support-request (16/07/2024)
+- docs: updated the Ground Rules on the Contributing guide page (16/07/2024)
+
 Update <small>_ May 2024</small>
 
 - fix: keep footer on embed expire (29/05/2024)
