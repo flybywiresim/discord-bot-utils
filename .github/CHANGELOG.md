@@ -2,6 +2,7 @@
 
 Update <small>_ July 2024</small>
 
+- fix: resolve security vulnerabilities in 3rd-party packages (27/07/2024)
 - fix: corrected typo in the embed for simbrief-data support-request (27/07/2024)
 - docs: updated the Ground Rules on the Contributing guide page (27/07/2024)
 - feat: add optional description to `/locate` panels. (27/07/2024)
