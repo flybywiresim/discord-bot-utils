@@ -1,3 +1,4 @@
+import { makeLines } from '../../../../../lib';
 import { LOCATE_DOCS_BASE_URLS, LOCATE_IMAGE_BASE_URLS } from '../../base-urls';
 import { Panel } from '../panel';
 
@@ -142,6 +143,14 @@ export const fltCtlPanel: Panel = {
 export const adirsPanel: Panel = {
     name: 'ADIRS Panel',
     title: 'FlyByWire A32NX | ADIRS Panel',
+    description: {
+        name: 'Aligning the ADIRSs',
+        value: makeLines([
+            'On the overhead panel you will see the three switches under \'ADIRS\'. Turn these three to the \'NAV\' position. It takes several minutes for the ADIRUs to align.',
+            'You can check how long you have to wait by looking at the align time on your Upper Ecam.',
+        ]),
+        inline: false,
+    },
     docsUrl: `${OVHD_DOCS_BASE_URL}/adirs/`,
     flightDeckUrl: LOCATE_DOCS_BASE_URLS.a32nx.flightdeck,
     imageUrl: `${OVHD_IMAGE_BASE_URL}/adirs.png`,
