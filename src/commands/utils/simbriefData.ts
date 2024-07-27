@@ -33,7 +33,7 @@ const simbriefdatarequestEmbed = makeEmbed({
     title: 'FlyByWire Support | SimBrief Data Request',
     description: makeLines([
         'To evaluate your problem we kindly ask you to enter the following bot command into a new message.',
-        '```/simbrief_data retrieve```',
+        '```/simbrief-data retrieve```',
         'Enter your `pilotId` with your simbrief pilotId or userName (as set in the EFB settings). The Bot will read your last generated flight plan and display some details about it including the route.',
         '',
         '**Privacy notice**: If you share your pilotId or username it is possible to read your pilot name from the API the bot uses. This pilot name is by default your real name, but you can change it in the flight edit screen or your user profile in SimBrief. No data is stored by FlyByWire when using the command.',
