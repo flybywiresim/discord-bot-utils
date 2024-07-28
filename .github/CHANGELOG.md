@@ -8,6 +8,7 @@ Update <small>_ August 2024</small>
 
 Update <small>_ July 2024</small>
 
+- feat: generic wrapper for JSON APIs (CHANGE DATE)
 - fix: resolve security vulnerabilities in 3rd-party packages (27/07/2024)
 - fix: corrected typo in the embed for simbrief-data support-request (27/07/2024)
 - docs: updated the Ground Rules on the Contributing guide page (27/07/2024)
