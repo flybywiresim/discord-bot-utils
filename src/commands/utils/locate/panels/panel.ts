@@ -1,3 +1,5 @@
+import { EmbedField } from 'discord.js';
+
 export interface Panel {
   /**
    * The name of the Panel. This should be usable in sentences.
@@ -9,10 +11,15 @@ export interface Panel {
    */
   title: string;
 
-  /**
-   * The URL to the relevant documentation.
-   */
-  docsUrl: string;
+    /**
+     * Optional description for a panel such as instructions on aligning the ADIRSs.
+     */
+    description?: EmbedField;
+
+    /**
+     * The URL to the relevant documentation.
+     */
+    docsUrl: string;
 
   /**
    * The URL to documentation of the flight deck this panel belongs to.

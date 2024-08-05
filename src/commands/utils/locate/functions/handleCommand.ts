@@ -24,6 +24,7 @@ const locateEmbed = (panel: Panel) =>
       `* [${panel.name} Documentation](${panel.docsUrl})`,
       `* [Flight Deck Overview](${panel.flightDeckUrl})`,
     ]),
+    fields: panel.description ? [panel.description] : [],
     image: { url: panel.imageUrl },
     footer: { text: 'Tip: Click the image to view in full size' },
   });

@@ -18,7 +18,7 @@ Please help other contributors to the project wherever you can, as people all st
 
 To ensure that commands are written professionally and clearly, please follow the guide below:
 
-- Use the proper name for third party services. For example: simBrief and not SimBrief.
+- Use the proper name for third party services. For example: SimBrief and not simBrief.
 - If you are using images within the command, please ensure that they are clear and easy to understand.
 - Refrain from using exclamation points unless it is a warning.
 - Ensure that the contents of the command are correct. If you are unsure if something is correct please speak to any bot developer, and they will be able to verify anything.
