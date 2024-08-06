@@ -1,5 +1,9 @@
 ## Changelog
 
+Update <small>_ August 2024</small>
+
+- feat: add runway information to simbriefdata (10/08/2024)
+
 Update <small>_ July 2024</small>
 
 - fix: resolve security vulnerabilities in 3rd-party packages (27/07/2024)
