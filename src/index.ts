@@ -1,3 +1,3 @@
 import 'dotenv/config';
 
-import('./client');
+void import('./client');
