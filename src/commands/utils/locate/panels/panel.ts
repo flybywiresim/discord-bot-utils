@@ -11,15 +11,15 @@ export interface Panel {
    */
   title: string;
 
-    /**
-     * Optional description for a panel such as instructions on aligning the ADIRSs.
-     */
-    description?: EmbedField;
+  /**
+   * Optional description for a panel such as instructions on aligning the ADIRSs.
+   */
+  description?: EmbedField;
 
-    /**
-     * The URL to the relevant documentation.
-     */
-    docsUrl: string;
+  /**
+   * The URL to the relevant documentation.
+   */
+  docsUrl: string;
 
   /**
    * The URL to documentation of the flight deck this panel belongs to.
