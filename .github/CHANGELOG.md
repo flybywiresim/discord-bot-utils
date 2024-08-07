@@ -2,7 +2,7 @@
 
 Update <small>_ August 2024</small>
 
-- fix: temporarily pin typescript version to v5.4.x (see https://github.com/flybywiresim/discord-bot-utils/issues/78) (06/10/2024)
+- fix: temporarily pin typescript version to v5.4.x (see https://github.com/flybywiresim/discord-bot-utils/issues/78) (07/10/2024)
 
 Update <small>_ July 2024</small>
 
