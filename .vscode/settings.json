@@ -10,7 +10,7 @@
     "typescript.preferences.quoteStyle": "single",
     "[yaml]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode",
-        "editor.formatOnSave": true,
+        "editor.formatOnSave": true
     },
     "[markdown]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode",
@@ -27,5 +27,5 @@
     "[javascript]": {
         "editor.defaultFormatter": "dbaeumer.vscode-eslint",
         "editor.formatOnSave": true
-    },
+    }
 }
