@@ -2,7 +2,9 @@
 
 Update <small>_ August 2024</small>
 
-- feat: add runway information to simbriefdata (10/08/2024)
+- feat: add runway information to simbriefdata (08/08/2024)
+- chore: add vscode editor settings (08/08/2024)
+- fix: temporarily pin typescript version to v5.4.x (see https://github.com/flybywiresim/discord-bot-utils/issues/78) (07/10/2024)
 
 Update <small>_ July 2024</small>
 
