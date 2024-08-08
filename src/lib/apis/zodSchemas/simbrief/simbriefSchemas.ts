@@ -13,9 +13,15 @@ const SimBriefAircraftSchema = z.object({
     internal_id: z.string(),
 });
 
-const SimBriefOriginSchema = z.object({ icao_code: z.string() });
+const SimBriefOriginSchema = z.object({
+    icao_code: z.string(),
+    plan_rwy: z.string(),
+});
 
-const SimBriefDestinationSchema = z.object({ icao_code: z.string() });
+const SimBriefDestinationSchema = z.object({
+    icao_code: z.string(),
+    plan_rwy: z.string(),
+});
 
 const SimBriefGeneralSchema = z.object({ route: z.string() });
 
