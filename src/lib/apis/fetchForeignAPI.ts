@@ -36,9 +36,7 @@ export const fetchForeignAPI = async <ReturnType = unknown>(request: RequestInfo
         Logger.error("[zod] Data validation failed! Pass the 'debug' flag to 'fetchForeignAPI()' to dump the retrieved data to the console.");
         Logger.error(`Endpoint location: ${req.url}.`);
         if (debug) {
-            // winston doesn't log objects in a useful way at the moment
-            // eslint-disable-next-line no-console
-            console.log('RETRIEVED DATA:', data);
+            Logger.debug('RETRIEVED DATA:', data);
         }
         result.error.issues.forEach((issue) => Logger.error(`[zod] Code: ${issue.code}, Path: ${issue.path.join('.')}, Message: ${issue.message}`));
         throw result.error;
