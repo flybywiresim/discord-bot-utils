@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, Colors, TextChannel, User } from 'discord.js';
-import { constantsConfig, getConn, PrefixCommandVersion, Logger, makeEmbed } from '../../../../lib';
+import { constantsConfig, getConn, PrefixCommandVersion, Logger, makeEmbed, PrefixCommandChannelDefaultVersion } from '../../../../lib';
 
 const noConnEmbed = makeEmbed({
     title: 'Prefix Commands - Delete Version - No Connection',
@@ -13,15 +13,21 @@ const contentPresentEmbed = makeEmbed({
     color: Colors.Red,
 });
 
+const channelDefaultVersionPresentEmbed = makeEmbed({
+    title: 'Prefix Commands - Delete Version - Default Channel Versions Present',
+    description: 'There is one or more channel with this version selected as its default version. Please change or unset the default version for those channels first, or use the `force` option to delete the command version and all the default channel versions referencing it (making them default back to the GENERIC version).',
+    color: Colors.Red,
+});
+
 const failedEmbed = (versionId: string) => makeEmbed({
     title: 'Prefix Commands - Delete Version - Failed',
     description: `Failed to delete the prefix command version with id ${versionId}.`,
     color: Colors.Red,
 });
 
-const doesNotExistsEmbed = (versionId: string) => makeEmbed({
+const doesNotExistsEmbed = (version: string) => makeEmbed({
     title: 'Prefix Commands - Delete Version - Does not exist',
-    description: `The prefix command version with id ${versionId} does not exists. Can not delete it.`,
+    description: `The prefix command version ${version} does not exists. Can not delete it.`,
     color: Colors.Red,
 });
 
@@ -30,7 +36,7 @@ const successEmbed = (version: string, versionId: string) => makeEmbed({
     color: Colors.Green,
 });
 
-const modLogEmbed = (moderator: User, version: string, emoji: string, enabled: boolean, versionId: string) => makeEmbed({
+const modLogEmbed = (moderator: User, version: string, emoji: string, alias: string, enabled: boolean, versionId: string) => makeEmbed({
     title: 'Prefix command version deleted',
     fields: [
         {
@@ -44,6 +50,10 @@ const modLogEmbed = (moderator: User, version: string, emoji: string, enabled: b
         {
             name: 'Emoji',
             value: emoji,
+        },
+        {
+            name: 'Alias',
+            value: alias,
         },
         {
             name: 'Enabled',
@@ -69,7 +79,7 @@ export async function handleDeletePrefixCommandVersion(interaction: ChatInputCom
         return;
     }
 
-    const versionId = interaction.options.getString('id')!;
+    const version = interaction.options.getString('version')!;
     const force = interaction.options.getBoolean('force') || false;
     const moderator = interaction.user;
 
@@ -79,15 +89,25 @@ export async function handleDeletePrefixCommandVersion(interaction: ChatInputCom
         await interaction.followUp({ embeds: [noModLogs], ephemeral: true });
     }
 
-    const existingVersion = await PrefixCommandVersion.findById(versionId);
+    const existingVersion = await PrefixCommandVersion.findOne({ name: version });
+    if (!existingVersion) {
+        await interaction.followUp({ embeds: [doesNotExistsEmbed(version)], ephemeral: true });
+        return;
+    }
+    const { id: versionId } = existingVersion;
     const foundContents = await PrefixCommandVersion.find({ versionId });
     if (foundContents && foundContents.length > 0 && !force) {
         await interaction.followUp({ embeds: [contentPresentEmbed], ephemeral: true });
         return;
     }
+    const foundChannelDefaultVersions = await PrefixCommandChannelDefaultVersion.find({ versionId });
+    if (foundChannelDefaultVersions && foundChannelDefaultVersions.length > 0 && !force) {
+        await interaction.followUp({ embeds: [channelDefaultVersionPresentEmbed], ephemeral: true });
+        return;
+    }
 
     if (existingVersion) {
-        const { name, emoji, enabled } = existingVersion;
+        const { name, emoji, enabled, alias } = existingVersion;
         try {
             await existingVersion.deleteOne();
             if (foundContents && force) {
@@ -96,10 +116,16 @@ export async function handleDeletePrefixCommandVersion(interaction: ChatInputCom
                     await content.deleteOne();
                 }
             }
+            if (foundChannelDefaultVersions && force) {
+                for (const channelDefaultVersion of foundChannelDefaultVersions) {
+                    // eslint-disable-next-line no-await-in-loop
+                    await channelDefaultVersion.deleteOne();
+                }
+            }
             await interaction.followUp({ embeds: [successEmbed(name || '', versionId)], ephemeral: true });
             if (modLogsChannel) {
                 try {
-                    await modLogsChannel.send({ embeds: [modLogEmbed(moderator, name || '', emoji || '', enabled || false, versionId)] });
+                    await modLogsChannel.send({ embeds: [modLogEmbed(moderator, name || '', emoji || '', alias || '', enabled || false, versionId)] });
                 } catch (error) {
                     Logger.error(`Failed to post a message to the mod logs channel: ${error}`);
                 }

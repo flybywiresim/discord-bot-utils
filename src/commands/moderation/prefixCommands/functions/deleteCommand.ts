@@ -13,9 +13,9 @@ const failedEmbed = (commandId: string) => makeEmbed({
     color: Colors.Red,
 });
 
-const doesNotExistsEmbed = (commandId: string) => makeEmbed({
+const doesNotExistsEmbed = (command: string) => makeEmbed({
     title: 'Prefix Commands - Delete Command - Does not exist',
-    description: `The prefix command with id ${commandId} does not exists. Can not delete it.`,
+    description: `The prefix command ${command} does not exists. Can not delete it.`,
     color: Colors.Red,
 });
 
@@ -67,7 +67,7 @@ export async function handleDeletePrefixCommand(interaction: ChatInputCommandInt
         return;
     }
 
-    const commandId = interaction.options.getString('id')!;
+    const command = interaction.options.getString('command')!;
     const moderator = interaction.user;
 
     //Check if the mod logs channel exists
@@ -76,10 +76,10 @@ export async function handleDeletePrefixCommand(interaction: ChatInputCommandInt
         await interaction.followUp({ embeds: [noModLogs], ephemeral: true });
     }
 
-    const existingCommand = await PrefixCommand.findById(commandId);
+    const existingCommand = await PrefixCommand.findOne({ name: command });
 
     if (existingCommand) {
-        const { name, aliases, isEmbed, embedColor } = existingCommand;
+        const { id: commandId, name, aliases, isEmbed, embedColor } = existingCommand;
         try {
             await existingCommand.deleteOne();
             await interaction.followUp({ embeds: [successEmbed(name || '', commandId)], ephemeral: true });
@@ -95,6 +95,6 @@ export async function handleDeletePrefixCommand(interaction: ChatInputCommandInt
             await interaction.followUp({ embeds: [failedEmbed(commandId)], ephemeral: true });
         }
     } else {
-        await interaction.followUp({ embeds: [doesNotExistsEmbed(commandId)], ephemeral: true });
+        await interaction.followUp({ embeds: [doesNotExistsEmbed(command)], ephemeral: true });
     }
 }

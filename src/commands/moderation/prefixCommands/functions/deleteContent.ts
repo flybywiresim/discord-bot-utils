@@ -7,9 +7,9 @@ const noConnEmbed = makeEmbed({
     color: Colors.Red,
 });
 
-const noContentEmbed = (contentId: string) => makeEmbed({
+const noContentEmbed = (command: string, version: string) => makeEmbed({
     title: 'Prefix Commands - Delete Content - No Content',
-    description: `Failed to delete command content with ID ${contentId} as the content does not exist.`,
+    description: `Failed to delete command content for command ${command} and version ${version} as the content does not exist.`,
     color: Colors.Red,
 });
 
@@ -71,7 +71,8 @@ export async function handleDeletePrefixCommandContent(interaction: ChatInputCom
         return;
     }
 
-    const contentId = interaction.options.getString('id')!;
+    const command = interaction.options.getString('command')!;
+    const version = interaction.options.getString('version')!;
     const moderator = interaction.user;
 
     //Check if the mod logs channel exists
@@ -80,11 +81,16 @@ export async function handleDeletePrefixCommandContent(interaction: ChatInputCom
         await interaction.followUp({ embeds: [noModLogs], ephemeral: true });
     }
 
-    const foundCommand = await PrefixCommand.findOne({ 'contents._id': contentId });
-    const existingContent = foundCommand?.contents.id(contentId) || null;
+    let versionId = 'GENERIC';
+    if (version !== 'GENERIC') {
+        const foundVersion = await PrefixCommandVersion.findOne({ name: version });
+        versionId = foundVersion?.id;
+    }
+    const foundCommand = await PrefixCommand.findOne({ 'name': command, 'contents.versionId': versionId });
+    const existingContent = foundCommand?.contents.filter((content) => content.versionId === versionId)[0] || null;
 
     if (foundCommand && existingContent) {
-        const { versionId, title, content, image } = existingContent;
+        const { id: contentId, title, content, image } = existingContent;
         const { name: commandName } = foundCommand;
         let versionName = '';
         if (versionId !== 'GENERIC') {
@@ -110,6 +116,6 @@ export async function handleDeletePrefixCommandContent(interaction: ChatInputCom
             await interaction.followUp({ embeds: [failedEmbed(contentId)], ephemeral: true });
         }
     } else {
-        await interaction.followUp({ embeds: [noContentEmbed(contentId)], ephemeral: true });
+        await interaction.followUp({ embeds: [noContentEmbed(command, version)], ephemeral: true });
     }
 }

@@ -24,7 +24,7 @@ const successEmbed = (version: string) => makeEmbed({
     color: Colors.Green,
 });
 
-const modLogEmbed = (moderator: User, version: string, emoji: string, enabled: boolean, versionId: string) => makeEmbed({
+const modLogEmbed = (moderator: User, version: string, emoji: string, alias: string, enabled: boolean, versionId: string) => makeEmbed({
     title: 'Prefix command version added',
     fields: [
         {
@@ -38,6 +38,10 @@ const modLogEmbed = (moderator: User, version: string, emoji: string, enabled: b
         {
             name: 'Emoji',
             value: emoji,
+        },
+        {
+            name: 'Alias',
+            value: alias,
         },
         {
             name: 'Enabled',
@@ -66,6 +70,7 @@ export async function handleAddPrefixCommandVersion(interaction: ChatInputComman
 
     const name = interaction.options.getString('name')!;
     const emoji = interaction.options.getString('emoji')!;
+    const alias = interaction.options.getString('alias')!;
     const enabled = interaction.options.getBoolean('is_enabled') || false;
     const moderator = interaction.user;
 
@@ -82,13 +87,14 @@ export async function handleAddPrefixCommandVersion(interaction: ChatInputComman
             name,
             emoji,
             enabled,
+            alias,
         });
         try {
             await prefixCommandVersion.save();
             await interaction.followUp({ embeds: [successEmbed(name)], ephemeral: true });
             if (modLogsChannel) {
                 try {
-                    await modLogsChannel.send({ embeds: [modLogEmbed(moderator, name, emoji, enabled, prefixCommandVersion.id)] });
+                    await modLogsChannel.send({ embeds: [modLogEmbed(moderator, name, emoji, alias, enabled, prefixCommandVersion.id)] });
                 } catch (error) {
                     Logger.error(`Failed to post a message to the mod logs channel: ${error}`);
                 }

@@ -13,9 +13,9 @@ const failedEmbed = (categoryId: string) => makeEmbed({
     color: Colors.Red,
 });
 
-const doesNotExistsEmbed = (categoryId: string) => makeEmbed({
+const doesNotExistsEmbed = (category: string) => makeEmbed({
     title: 'Prefix Commands - Modify Category - Does not exist',
-    description: `The prefix command category with id ${categoryId} does not exists. Can not modify it.`,
+    description: `The prefix command category ${category} does not exists. Can not modify it.`,
     color: Colors.Red,
 });
 
@@ -59,7 +59,7 @@ export async function handleModifyPrefixCommandCategory(interaction: ChatInputCo
         return;
     }
 
-    const categoryId = interaction.options.getString('id')!;
+    const category = interaction.options.getString('category')!;
     const name = interaction.options.getString('name') || '';
     const emoji = interaction.options.getString('emoji') || '';
     const moderator = interaction.user;
@@ -70,9 +70,10 @@ export async function handleModifyPrefixCommandCategory(interaction: ChatInputCo
         await interaction.followUp({ embeds: [noModLogs], ephemeral: true });
     }
 
-    const existingCategory = await PrefixCommandCategory.findById(categoryId);
+    const existingCategory = await PrefixCommandCategory.findOne({ name: category });
 
     if (existingCategory) {
+        const { id: categoryId } = existingCategory;
         existingCategory.name = name || existingCategory.name;
         existingCategory.emoji = emoji || existingCategory.emoji;
         try {
@@ -91,6 +92,6 @@ export async function handleModifyPrefixCommandCategory(interaction: ChatInputCo
             await interaction.followUp({ embeds: [failedEmbed(categoryId)], ephemeral: true });
         }
     } else {
-        await interaction.followUp({ embeds: [doesNotExistsEmbed(categoryId)], ephemeral: true });
+        await interaction.followUp({ embeds: [doesNotExistsEmbed(category)], ephemeral: true });
     }
 }

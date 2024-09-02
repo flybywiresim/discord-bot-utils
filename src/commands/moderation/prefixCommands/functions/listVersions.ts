@@ -41,9 +41,9 @@ export async function handleListPrefixCommandVersions(interaction: ChatInputComm
         const embedFields: APIEmbedField[] = [];
         for (let i = 0; i < foundVersions.length; i++) {
             const version = foundVersions[i];
-            const { id, name, emoji, enabled } = version;
+            const { id, name, emoji, enabled, alias } = version;
             embedFields.push({
-                name: `${name} - ${emoji} - ${enabled ? 'Enabled' : 'Disabled'}`,
+                name: `${name} - ${emoji} - ${enabled ? 'Enabled' : 'Disabled'} - ${alias}`,
                 value: `${id}`,
             });
         }

@@ -79,6 +79,33 @@ export async function handleSetPrefixCommandContent(interaction: ChatInputComman
     const version = interaction.options.getString('version')!;
     const moderator = interaction.user;
 
+    let foundCommands = await PrefixCommand.find({ name: command });
+    if (!foundCommands || foundCommands.length !== 1) {
+        foundCommands = await PrefixCommand.find({ aliases: { $in: [command] } });
+    }
+    if (!foundCommands || foundCommands.length !== 1) {
+        await interaction.followUp({ embeds: [noCommandEmbed(command)], ephemeral: true });
+        return;
+    }
+
+    const foundCommand = foundCommands[0];
+    const { id: commandId } = foundCommand;
+    let versionId = '';
+    let foundVersions = null;
+    if (version === 'GENERIC' || version === 'generic') {
+        versionId = 'GENERIC';
+    } else {
+        foundVersions = await PrefixCommandVersion.find({ name: version });
+        if (foundVersions && foundVersions.length === 1) {
+            versionId = foundVersions[0].id;
+        } else {
+            await interaction.followUp({ embeds: [noVersionEmbed(version)], ephemeral: true });
+            return;
+        }
+    }
+
+    const foundContent = foundCommand.contents.find((c) => c.versionId === versionId);
+
     const contentModal = new ModalBuilder({
         customId: 'commandContentModal',
         title: `Content for ${command} - ${version}`,
@@ -91,7 +118,8 @@ export async function handleSetPrefixCommandContent(interaction: ChatInputComman
         .setStyle(TextInputStyle.Short)
         .setMaxLength(255)
         .setMinLength(0)
-        .setRequired(true);
+        .setRequired(true)
+        .setValue(foundContent ? foundContent.title : '');
 
     const commandContentContent = new TextInputBuilder()
         .setCustomId('commandContentContent')
@@ -100,7 +128,8 @@ export async function handleSetPrefixCommandContent(interaction: ChatInputComman
         .setStyle(TextInputStyle.Paragraph)
         .setMaxLength(2047)
         .setMinLength(0)
-        .setRequired(true);
+        .setRequired(true)
+        .setValue(foundContent && foundContent.content ? foundContent.content : '');
 
     const commandContentImageUrl = new TextInputBuilder()
         .setCustomId('commandContentImageUrl')
@@ -109,7 +138,8 @@ export async function handleSetPrefixCommandContent(interaction: ChatInputComman
         .setStyle(TextInputStyle.Short)
         .setMaxLength(255)
         .setMinLength(0)
-        .setRequired(false);
+        .setRequired(false)
+        .setValue(foundContent && foundContent.image ? foundContent.image : '');
 
     const titleActionRow = new ActionRowBuilder<TextInputBuilder>().addComponents(commandContentTitle);
     const contentActionRow = new ActionRowBuilder<TextInputBuilder>().addComponents(commandContentContent);
@@ -160,32 +190,6 @@ export async function handleSetPrefixCommandContent(interaction: ChatInputComman
         await interaction.followUp({ embeds: [noModLogs], ephemeral: true });
     }
 
-    let foundCommands = await PrefixCommand.find({ name: command });
-    if (!foundCommands || foundCommands.length !== 1) {
-        foundCommands = await PrefixCommand.find({ aliases: { $in: [command] } });
-    }
-    if (!foundCommands || foundCommands.length !== 1) {
-        await interaction.followUp({ embeds: [noCommandEmbed(command)], ephemeral: true });
-        return;
-    }
-
-    const foundCommand = foundCommands[0];
-    const { id: commandId } = foundCommand;
-    let versionId = '';
-    let foundVersions = null;
-    if (version === 'GENERIC' || version === 'generic') {
-        versionId = 'GENERIC';
-    } else {
-        foundVersions = await PrefixCommandVersion.find({ name: version });
-        if (foundVersions && foundVersions.length === 1) {
-            versionId = foundVersions[0].id;
-        } else {
-            await interaction.followUp({ embeds: [noVersionEmbed(version)], ephemeral: true });
-            return;
-        }
-    }
-
-    const foundContent = foundCommand.contents.find((c) => c.versionId === versionId);
     if (foundContent) {
         const foundData = foundCommand.contents.id(foundContent.id);
         try {

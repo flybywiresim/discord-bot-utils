@@ -15,6 +15,9 @@ import { handleListPrefixCommands } from './functions/listCommands';
 import { handleShowPrefixCommandContent } from './functions/showContent';
 import { handleSetPrefixCommandContent } from './functions/setContent';
 import { handleDeletePrefixCommandContent } from './functions/deleteContent';
+import { handleShowPrefixCommandChannelDefaultVersion } from './functions/showChannelDefaultVersion';
+import { handleSetPrefixCommandChannelDefaultVersion } from './functions/setChannelDefaultVersion';
+import { handleUnsetPrefixCommandChannelDefaultVersion } from './functions/unsetChannelDefaultVersion';
 
 const colorChoices = [];
 for (let i = 0; i < Object.keys(constantsConfig.colors).length; i++) {
@@ -45,6 +48,7 @@ const data = slashCommandStructure({
                             description: 'Provide a name for the prefix command category.',
                             type: ApplicationCommandOptionType.String,
                             required: true,
+                            autocomplete: true,
                             max_length: 32,
                         },
                         {
@@ -62,11 +66,12 @@ const data = slashCommandStructure({
                     type: ApplicationCommandOptionType.Subcommand,
                     options: [
                         {
-                            name: 'id',
-                            description: 'Provide the id of the prefix command category.',
+                            name: 'category',
+                            description: 'Provide the category name of the prefix command category.',
                             type: ApplicationCommandOptionType.String,
                             required: true,
-                            max_length: 24,
+                            autocomplete: true,
+                            max_length: 32,
                         },
                         {
                             name: 'name',
@@ -90,11 +95,12 @@ const data = slashCommandStructure({
                     type: ApplicationCommandOptionType.Subcommand,
                     options: [
                         {
-                            name: 'id',
-                            description: 'Provide the id of the prefix command category.',
+                            name: 'category',
+                            description: 'Provide the category name of the prefix command category.',
                             type: ApplicationCommandOptionType.String,
                             required: true,
-                            max_length: 24,
+                            autocomplete: true,
+                            max_length: 32,
                         },
                     ],
                 },
@@ -139,6 +145,13 @@ const data = slashCommandStructure({
                             max_length: 128,
                         },
                         {
+                            name: 'alias',
+                            description: 'Provide an alias for the prefix command version.',
+                            type: ApplicationCommandOptionType.String,
+                            required: true,
+                            max_length: 32,
+                        },
+                        {
                             name: 'is_enabled',
                             description: 'Indicate wether this version is enabled.',
                             type: ApplicationCommandOptionType.Boolean,
@@ -152,11 +165,12 @@ const data = slashCommandStructure({
                     type: ApplicationCommandOptionType.Subcommand,
                     options: [
                         {
-                            name: 'id',
-                            description: 'Provide the id of the prefix command version.',
+                            name: 'version',
+                            description: 'Provide the name of the prefix command version.',
                             type: ApplicationCommandOptionType.String,
                             required: true,
-                            max_length: 24,
+                            autocomplete: true,
+                            max_length: 32,
                         },
                         {
                             name: 'name',
@@ -173,6 +187,13 @@ const data = slashCommandStructure({
                             max_length: 128,
                         },
                         {
+                            name: 'alias',
+                            description: 'Provide an alias for the prefix command version.',
+                            type: ApplicationCommandOptionType.String,
+                            required: false,
+                            max_length: 32,
+                        },
+                        {
                             name: 'is_enabled',
                             description: 'Indicate wether this version is enabled.',
                             type: ApplicationCommandOptionType.Boolean,
@@ -186,11 +207,12 @@ const data = slashCommandStructure({
                     type: ApplicationCommandOptionType.Subcommand,
                     options: [
                         {
-                            name: 'id',
-                            description: 'Provide the id of the prefix command version.',
+                            name: 'version',
+                            description: 'Provide the name of the prefix command version.',
                             type: ApplicationCommandOptionType.String,
                             required: true,
-                            max_length: 24,
+                            autocomplete: true,
+                            max_length: 32,
                         },
                         {
                             name: 'force',
@@ -270,10 +292,11 @@ const data = slashCommandStructure({
                     type: ApplicationCommandOptionType.Subcommand,
                     options: [
                         {
-                            name: 'id',
-                            description: 'Provide the id of the prefix command.',
+                            name: 'command',
+                            description: 'Provide the command name of the prefix command.',
                             type: ApplicationCommandOptionType.String,
                             required: true,
+                            autocomplete: true,
                             max_length: 24,
                         },
                         {
@@ -320,10 +343,11 @@ const data = slashCommandStructure({
                     type: ApplicationCommandOptionType.Subcommand,
                     options: [
                         {
-                            name: 'id',
-                            description: 'Provide the id of the prefix command.',
+                            name: 'command',
+                            description: 'Provide the command name of the prefix command.',
                             type: ApplicationCommandOptionType.String,
                             required: true,
+                            autocomplete: true,
                             max_length: 24,
                         },
                     ],
@@ -401,11 +425,74 @@ const data = slashCommandStructure({
                     type: ApplicationCommandOptionType.Subcommand,
                     options: [
                         {
-                            name: 'id',
-                            description: 'Provide the ID of the prefix command content.',
+                            name: 'command',
+                            description: 'Provide the name of the prefix command.',
                             type: ApplicationCommandOptionType.String,
                             required: true,
-                            max_length: 24,
+                            autocomplete: true,
+                            max_length: 32,
+                        },
+                        {
+                            name: 'version',
+                            description: 'Provide the name of the prefix command version. Use GENERIC for the generic content.',
+                            type: ApplicationCommandOptionType.String,
+                            required: true,
+                            autocomplete: true,
+                            max_length: 32,
+                        },
+                    ],
+                },
+            ],
+        },
+        {
+            name: 'channel-default-version',
+            description: 'Manage prefix command default versions for channels.',
+            type: ApplicationCommandOptionType.SubcommandGroup,
+            options: [
+                {
+                    name: 'show',
+                    description: 'Show the default version for a channel.',
+                    type: ApplicationCommandOptionType.Subcommand,
+                    options: [
+                        {
+                            name: 'channel',
+                            description: 'Provide the channel to show the default version for.',
+                            type: ApplicationCommandOptionType.Channel,
+                            required: true,
+                        },
+                    ],
+                },
+                {
+                    name: 'set',
+                    description: 'Set the default version for a channel.',
+                    type: ApplicationCommandOptionType.Subcommand,
+                    options: [
+                        {
+                            name: 'channel',
+                            description: 'Provide the channel to set the default version for.',
+                            type: ApplicationCommandOptionType.Channel,
+                            required: true,
+                        },
+                        {
+                            name: 'version',
+                            description: 'Provide the version to set as default.',
+                            type: ApplicationCommandOptionType.String,
+                            required: true,
+                            autocomplete: true,
+                            max_length: 32,
+                        },
+                    ],
+                },
+                {
+                    name: 'unset',
+                    description: 'Unset the default version for a channel.',
+                    type: ApplicationCommandOptionType.Subcommand,
+                    options: [
+                        {
+                            name: 'channel',
+                            description: 'Provide the channel to unset the default version for.',
+                            type: ApplicationCommandOptionType.Channel,
+                            required: true,
                         },
                     ],
                 },
@@ -534,6 +621,21 @@ export default slashCommand(data, async ({ interaction }) => {
             break;
         case 'delete':
             await handleDeletePrefixCommandContent(interaction);
+            break;
+        default:
+            await interaction.reply({ content: 'Unknown subcommand', ephemeral: true });
+        }
+        break;
+    case 'channel-default':
+        switch (subcommandName) {
+        case 'show':
+            await handleShowPrefixCommandChannelDefaultVersion(interaction);
+            break;
+        case 'set':
+            await handleSetPrefixCommandChannelDefaultVersion(interaction);
+            break;
+        case 'unset':
+            await handleUnsetPrefixCommandChannelDefaultVersion(interaction);
             break;
         default:
             await interaction.reply({ content: 'Unknown subcommand', ephemeral: true });

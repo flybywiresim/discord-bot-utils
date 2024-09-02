@@ -19,9 +19,9 @@ const categoryNotFoundEmbed = (category: string) => makeEmbed({
     color: Colors.Red,
 });
 
-const doesNotExistsEmbed = (commandId: string) => makeEmbed({
+const doesNotExistsEmbed = (command: string) => makeEmbed({
     title: 'Prefix Commands - Modify Command - Does not exist',
-    description: `The prefix command with id ${commandId} does not exists. Can not modify it.`,
+    description: `The prefix command ${command} does not exists. Can not modify it.`,
     color: Colors.Red,
 });
 
@@ -72,7 +72,7 @@ export async function handleModifyPrefixCommand(interaction: ChatInputCommandInt
         await interaction.followUp({ embeds: [noConnEmbed], ephemeral: true });
     }
 
-    const commandId = interaction.options.getString('id')!;
+    const command = interaction.options.getString('command')!;
     const name = interaction.options.getString('name') || '';
     const category = interaction.options.getString('category') || '';
     const aliasesString = interaction.options.getString('aliases') || '';
@@ -96,9 +96,10 @@ export async function handleModifyPrefixCommand(interaction: ChatInputCommandInt
             return;
         }
     }
-    const existingCommand = await PrefixCommand.findById(commandId);
+    const existingCommand = await PrefixCommand.findOne({ name: command });
 
     if (existingCommand) {
+        const { id: commandId } = existingCommand;
         existingCommand.name = name || existingCommand.name;
         existingCommand.categoryId = foundCategory?.id || existingCommand.categoryId;
         existingCommand.aliases = aliases.length > 0 ? aliases : existingCommand.aliases;
@@ -120,6 +121,6 @@ export async function handleModifyPrefixCommand(interaction: ChatInputCommandInt
             await interaction.followUp({ embeds: [failedEmbed(commandId)], ephemeral: true });
         }
     } else {
-        await interaction.followUp({ embeds: [doesNotExistsEmbed(commandId)], ephemeral: true });
+        await interaction.followUp({ embeds: [doesNotExistsEmbed(command)], ephemeral: true });
     }
 }

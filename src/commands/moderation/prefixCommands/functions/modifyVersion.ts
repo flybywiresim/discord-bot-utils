@@ -13,9 +13,9 @@ const failedEmbed = (versionId: string) => makeEmbed({
     color: Colors.Red,
 });
 
-const doesNotExistsEmbed = (versionId: string) => makeEmbed({
+const doesNotExistsEmbed = (version: string) => makeEmbed({
     title: 'Prefix Commands - Modify Version - Does not exist',
-    description: `The prefix command version with id ${versionId} does not exists. Can not modify it.`,
+    description: `The prefix command version ${version} does not exists. Can not modify it.`,
     color: Colors.Red,
 });
 
@@ -24,7 +24,7 @@ const successEmbed = (version: string, versionId: string) => makeEmbed({
     color: Colors.Green,
 });
 
-const modLogEmbed = (moderator: User, version: string, emoji: string, enabled: boolean, versionId: string) => makeEmbed({
+const modLogEmbed = (moderator: User, version: string, emoji: string, alias: string, enabled: boolean, versionId: string) => makeEmbed({
     title: 'Prefix command version modified',
     fields: [
         {
@@ -38,6 +38,10 @@ const modLogEmbed = (moderator: User, version: string, emoji: string, enabled: b
         {
             name: 'Emoji',
             value: emoji,
+        },
+        {
+            name: 'Alias',
+            value: alias,
         },
         {
             name: 'Enabled',
@@ -63,9 +67,10 @@ export async function handleModifyPrefixCommandVersion(interaction: ChatInputCom
         return;
     }
 
-    const versionId = interaction.options.getString('id')!;
+    const version = interaction.options.getString('version')!;
     const name = interaction.options.getString('name') || '';
     const emoji = interaction.options.getString('emoji') || '';
+    const alias = interaction.options.getString('alias') || '';
     const enabled = interaction.options.getBoolean('is_enabled') || null;
     const moderator = interaction.user;
 
@@ -75,19 +80,21 @@ export async function handleModifyPrefixCommandVersion(interaction: ChatInputCom
         await interaction.followUp({ embeds: [noModLogs], ephemeral: true });
     }
 
-    const existingVersion = await PrefixCommandVersion.findById(versionId);
+    const existingVersion = await PrefixCommandVersion.findOne({ version });
 
     if (existingVersion) {
+        const { id: versionId } = existingVersion;
         existingVersion.name = name || existingVersion.name;
         existingVersion.emoji = emoji || existingVersion.emoji;
+        existingVersion.alias = alias || existingVersion.alias;
         existingVersion.enabled = enabled !== null ? enabled : existingVersion.enabled;
         try {
             await existingVersion.save();
-            const { name, emoji, enabled } = existingVersion;
+            const { name, emoji, alias, enabled } = existingVersion;
             await interaction.followUp({ embeds: [successEmbed(name, versionId)], ephemeral: true });
             if (modLogsChannel) {
                 try {
-                    await modLogsChannel.send({ embeds: [modLogEmbed(moderator, name, emoji, enabled || false, versionId)] });
+                    await modLogsChannel.send({ embeds: [modLogEmbed(moderator, name, emoji, alias, enabled || false, versionId)] });
                 } catch (error) {
                     Logger.error(`Failed to post a message to the mod logs channel: ${error}`);
                 }
@@ -97,6 +104,6 @@ export async function handleModifyPrefixCommandVersion(interaction: ChatInputCom
             await interaction.followUp({ embeds: [failedEmbed(versionId)], ephemeral: true });
         }
     } else {
-        await interaction.followUp({ embeds: [doesNotExistsEmbed(versionId)], ephemeral: true });
+        await interaction.followUp({ embeds: [doesNotExistsEmbed(version)], ephemeral: true });
     }
 }

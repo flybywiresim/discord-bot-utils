@@ -22,7 +22,23 @@ const prefixCommandVersionSchema = new Schema({
         required: true,
         unique: true,
     },
+    alias: {
+        type: String,
+        required: true,
+        unique: true,
+    },
     enabled: Boolean,
+});
+
+const prefixCommandChannelDefaultVersionSchema = new Schema({
+    channelId: {
+        type: String,
+        required: true,
+    },
+    versionId: {
+        type: String,
+        required: true,
+    },
 });
 
 const prefixCommandContentSchema = new Schema({
@@ -36,7 +52,6 @@ const prefixCommandContentSchema = new Schema({
     },
     content: String,
     image: String,
-    autoChannels: [String],
 });
 
 const prefixCommandChannelPermissionSchema = new Schema({
@@ -83,4 +98,5 @@ const prefixCommandSchema = new Schema({
 
 export const PrefixCommandCategory = mongoose.model('PrefixCommandCategory', prefixCommandCategorySchema);
 export const PrefixCommandVersion = mongoose.model('PrefixCommandVersion', prefixCommandVersionSchema);
+export const PrefixCommandChannelDefaultVersion = mongoose.model('PrefixCommandChannelDefaultVersion', prefixCommandChannelDefaultVersionSchema);
 export const PrefixCommand = mongoose.model('PrefixCommand', prefixCommandSchema);

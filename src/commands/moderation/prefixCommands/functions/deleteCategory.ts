@@ -13,9 +13,9 @@ const failedEmbed = (categoryId: string) => makeEmbed({
     color: Colors.Red,
 });
 
-const doesNotExistsEmbed = (categoryId: string) => makeEmbed({
+const doesNotExistsEmbed = (category: string) => makeEmbed({
     title: 'Prefix Commands - Delete Category - Does not exist',
-    description: `The prefix command category with id ${categoryId} does not exists. Can not delete it.`,
+    description: `The prefix command category ${category} does not exists. Can not delete it.`,
     color: Colors.Red,
 });
 
@@ -59,7 +59,7 @@ export async function handleDeletePrefixCommandCategory(interaction: ChatInputCo
         return;
     }
 
-    const categoryId = interaction.options.getString('id')!;
+    const category = interaction.options.getString('category')!;
     const moderator = interaction.user;
 
     //Check if the mod logs channel exists
@@ -68,10 +68,10 @@ export async function handleDeletePrefixCommandCategory(interaction: ChatInputCo
         await interaction.followUp({ embeds: [noModLogs], ephemeral: true });
     }
 
-    const existingCategory = await PrefixCommandCategory.findById(categoryId);
+    const existingCategory = await PrefixCommandCategory.findOne({ name: category });
 
     if (existingCategory) {
-        const { name, emoji } = existingCategory;
+        const { id: categoryId, name, emoji } = existingCategory;
         try {
             await existingCategory.deleteOne();
             await interaction.followUp({ embeds: [successEmbed(name || '', categoryId)], ephemeral: true });
@@ -87,6 +87,6 @@ export async function handleDeletePrefixCommandCategory(interaction: ChatInputCo
             await interaction.followUp({ embeds: [failedEmbed(categoryId)], ephemeral: true });
         }
     } else {
-        await interaction.followUp({ embeds: [doesNotExistsEmbed(categoryId)], ephemeral: true });
+        await interaction.followUp({ embeds: [doesNotExistsEmbed(category)], ephemeral: true });
     }
 }
