@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, Colors, TextChannel, User } from 'discord.js';
-import { constantsConfig, getConn, PrefixCommandVersion, Logger, makeEmbed, PrefixCommandChannelDefaultVersion } from '../../../../lib';
+import { constantsConfig, getConn, PrefixCommandVersion, Logger, makeEmbed, PrefixCommandChannelDefaultVersion, clearSinglePrefixCommandVersionCache } from '../../../../lib';
 
 const noConnEmbed = makeEmbed({
     title: 'Prefix Commands - Delete Version - No Connection',
@@ -110,6 +110,7 @@ export async function handleDeletePrefixCommandVersion(interaction: ChatInputCom
         const { name, emoji, enabled, alias } = existingVersion;
         try {
             await existingVersion.deleteOne();
+            await clearSinglePrefixCommandVersionCache(alias);
             if (foundContents && force) {
                 for (const content of foundContents) {
                     // eslint-disable-next-line no-await-in-loop

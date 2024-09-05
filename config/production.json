@@ -30,6 +30,7 @@
     "1163130801131634868",
     "1021464464928809022"
   ],
+  "prefixCommandPrefix": ".",
   "roleAssignmentIds": [
     {
       "group": "interestedIn",

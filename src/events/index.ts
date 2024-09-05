@@ -7,6 +7,7 @@ import slashCommandHandler from './slashCommandHandler';
 import contextInteractionHandler from './contextInteractionHandler';
 import messageDelete from './logging/messageDelete';
 import messageUpdate from './logging/messageUpdate';
+import messageCreateHandler from './messageCreateHandler';
 import autocompleteHandler from './autocompleteHandler';
 import buttonHandler from './buttonHandlers/buttonHandler';
 
@@ -18,6 +19,7 @@ export default [
     contextInteractionHandler,
     messageDelete,
     messageUpdate,
+    messageCreateHandler,
     autocompleteHandler,
     buttonHandler,
 ] as Event[];

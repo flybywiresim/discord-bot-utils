@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, Colors, TextChannel, User } from 'discord.js';
-import { constantsConfig, getConn, Logger, makeEmbed, PrefixCommand, PrefixCommandVersion } from '../../../../lib';
+import { constantsConfig, getConn, Logger, makeEmbed, PrefixCommand, PrefixCommandVersion, refreshSinglePrefixCommandCache } from '../../../../lib';
 
 const noConnEmbed = makeEmbed({
     title: 'Prefix Commands - Delete Content - No Connection',
@@ -91,7 +91,7 @@ export async function handleDeletePrefixCommandContent(interaction: ChatInputCom
 
     if (foundCommand && existingContent) {
         const { id: contentId, title, content, image } = existingContent;
-        const { name: commandName } = foundCommand;
+        const { name: commandName, aliases: commandAliases } = foundCommand;
         let versionName = '';
         if (versionId !== 'GENERIC') {
             const foundVersion = await PrefixCommandVersion.findById(versionId);
@@ -103,6 +103,7 @@ export async function handleDeletePrefixCommandContent(interaction: ChatInputCom
         try {
             foundCommand.contents.id(contentId)?.deleteOne();
             await foundCommand.save();
+            await refreshSinglePrefixCommandCache(commandName, foundCommand.toObject(), commandName, commandAliases);
             await interaction.followUp({ embeds: [successEmbed(`${commandName}`, `${versionName}`, `${contentId}`)], ephemeral: true });
             if (modLogsChannel) {
                 try {

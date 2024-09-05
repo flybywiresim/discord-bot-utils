@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, Colors, TextChannel, User } from 'discord.js';
-import { constantsConfig, getConn, PrefixCommand, Logger, makeEmbed, PrefixCommandCategory } from '../../../../lib';
+import { constantsConfig, getConn, PrefixCommand, Logger, makeEmbed, PrefixCommandCategory, refreshSinglePrefixCommandCache } from '../../../../lib';
 
 const noConnEmbed = makeEmbed({
     title: 'Prefix Commands - Modify Command - No Connection',
@@ -10,6 +10,12 @@ const noConnEmbed = makeEmbed({
 const failedEmbed = (commandId: string) => makeEmbed({
     title: 'Prefix Commands - Modify Command - Failed',
     description: `Failed to modify the prefix command with id ${commandId}.`,
+    color: Colors.Red,
+});
+
+const wrongFormatEmbed = (invalidString: string) => makeEmbed({
+    title: 'Prefix Commands - Modify Command - Wrong format',
+    description: `The name and aliases of a command can only contain alphanumerical characters, underscores and dashes. "${invalidString}" is invalid.`,
     color: Colors.Red,
 });
 
@@ -81,6 +87,19 @@ export async function handleModifyPrefixCommand(interaction: ChatInputCommandInt
     const embedColor = interaction.options.getString('embed_color') || '';
     const moderator = interaction.user;
 
+    const nameRegex = /^[\w\d-_]+$/;
+    if (name && !nameRegex.test(name)) {
+        await interaction.followUp({ embeds: [wrongFormatEmbed(name)], ephemeral: true });
+        return;
+    }
+    for (const alias of aliases) {
+        if (!nameRegex.test(alias)) {
+            // eslint-disable-next-line no-await-in-loop
+            await interaction.followUp({ embeds: [wrongFormatEmbed(alias)], ephemeral: true });
+            return;
+        }
+    }
+
     //Check if the mod logs channel exists
     const modLogsChannel = interaction.guild.channels.resolve(constantsConfig.channels.MOD_LOGS) as TextChannel;
     if (!modLogsChannel) {
@@ -99,7 +118,7 @@ export async function handleModifyPrefixCommand(interaction: ChatInputCommandInt
     const existingCommand = await PrefixCommand.findOne({ name: command });
 
     if (existingCommand) {
-        const { id: commandId } = existingCommand;
+        const { id: commandId, name: oldName } = existingCommand;
         existingCommand.name = name || existingCommand.name;
         existingCommand.categoryId = foundCategory?.id || existingCommand.categoryId;
         existingCommand.aliases = aliases.length > 0 ? aliases : existingCommand.aliases;
@@ -108,6 +127,7 @@ export async function handleModifyPrefixCommand(interaction: ChatInputCommandInt
         try {
             await existingCommand.save();
             const { name, aliases, isEmbed, embedColor } = existingCommand;
+            await refreshSinglePrefixCommandCache(oldName, existingCommand.toObject(), name, aliases);
             await interaction.followUp({ embeds: [successEmbed(name, commandId)], ephemeral: true });
             if (modLogsChannel) {
                 try {

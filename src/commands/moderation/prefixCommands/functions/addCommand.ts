@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, Colors, TextChannel, User } from 'discord.js';
-import { constantsConfig, getConn, PrefixCommand, Logger, makeEmbed, PrefixCommandCategory } from '../../../../lib';
+import { constantsConfig, getConn, PrefixCommand, Logger, makeEmbed, PrefixCommandCategory, loadSinglePrefixCommandToCache } from '../../../../lib';
 
 const noConnEmbed = makeEmbed({
     title: 'Prefix Commands - Add Command - No Connection',
@@ -10,6 +10,12 @@ const noConnEmbed = makeEmbed({
 const failedEmbed = (command: string) => makeEmbed({
     title: 'Prefix Commands - Add Command - Failed',
     description: `Failed to add the prefix command ${command}.`,
+    color: Colors.Red,
+});
+
+const wrongFormatEmbed = (invalidString: string) => makeEmbed({
+    title: 'Prefix Commands - Add Command - Wrong format',
+    description: `The name and aliases of a command can only contain alphanumerical characters, underscores and dashes. ${invalidString} is invalid.`,
     color: Colors.Red,
 });
 
@@ -82,6 +88,19 @@ export async function handleAddPrefixCommand(interaction: ChatInputCommandIntera
     const embedColor = interaction.options.getString('embed_color') || '';
     const moderator = interaction.user;
 
+    const nameRegex = /^[\w\d-_]+$/;
+    if (!nameRegex.test(name)) {
+        await interaction.followUp({ embeds: [wrongFormatEmbed(name)], ephemeral: true });
+        return;
+    }
+    for (const alias of aliases) {
+        if (!nameRegex.test(alias)) {
+            // eslint-disable-next-line no-await-in-loop
+            await interaction.followUp({ embeds: [wrongFormatEmbed(alias)], ephemeral: true });
+            return;
+        }
+    }
+
     //Check if the mod logs channel exists
     const modLogsChannel = interaction.guild.channels.resolve(constantsConfig.channels.MOD_LOGS) as TextChannel;
     if (!modLogsChannel) {
@@ -110,6 +129,7 @@ export async function handleAddPrefixCommand(interaction: ChatInputCommandIntera
         });
         try {
             await prefixCommand.save();
+            await loadSinglePrefixCommandToCache(prefixCommand.toObject(), name, aliases);
             await interaction.followUp({ embeds: [successEmbed(name)], ephemeral: true });
             if (modLogsChannel) {
                 try {

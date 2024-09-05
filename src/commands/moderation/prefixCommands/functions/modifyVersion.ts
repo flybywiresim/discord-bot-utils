@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, Colors, TextChannel, User } from 'discord.js';
-import { constantsConfig, getConn, PrefixCommandVersion, Logger, makeEmbed } from '../../../../lib';
+import { constantsConfig, getConn, PrefixCommandVersion, Logger, makeEmbed, refreshAllPrefixCommandVersionsCache, refreshSinglePrefixCommandVersionCache } from '../../../../lib';
 
 const noConnEmbed = makeEmbed({
     title: 'Prefix Commands - Modify Version - No Connection',
@@ -10,6 +10,12 @@ const noConnEmbed = makeEmbed({
 const failedEmbed = (versionId: string) => makeEmbed({
     title: 'Prefix Commands - Modify Version - Failed',
     description: `Failed to modify the prefix command version with id ${versionId}.`,
+    color: Colors.Red,
+});
+
+const wrongFormatEmbed = (invalidString: string) => makeEmbed({
+    title: 'Prefix Commands - Modify Version - Wrong format',
+    description: `The name and alias of a version can only contain alphanumerical characters, underscores and dashes. "${invalidString}" is invalid.`,
     color: Colors.Red,
 });
 
@@ -74,16 +80,27 @@ export async function handleModifyPrefixCommandVersion(interaction: ChatInputCom
     const enabled = interaction.options.getBoolean('is_enabled') || null;
     const moderator = interaction.user;
 
+    const nameRegex = /^[\w\d-_]+$/;
+    if (name && !nameRegex.test(name)) {
+        await interaction.followUp({ embeds: [wrongFormatEmbed(name)], ephemeral: true });
+        return;
+    }
+    if (alias && !nameRegex.test(alias)) {
+        // eslint-disable-next-line no-await-in-loop
+        await interaction.followUp({ embeds: [wrongFormatEmbed(alias)], ephemeral: true });
+        return;
+    }
+
     //Check if the mod logs channel exists
     const modLogsChannel = interaction.guild.channels.resolve(constantsConfig.channels.MOD_LOGS) as TextChannel;
     if (!modLogsChannel) {
         await interaction.followUp({ embeds: [noModLogs], ephemeral: true });
     }
 
-    const existingVersion = await PrefixCommandVersion.findOne({ version });
+    const existingVersion = await PrefixCommandVersion.findOne({ name: version });
 
     if (existingVersion) {
-        const { id: versionId } = existingVersion;
+        const { id: versionId, alias: oldAlias } = existingVersion;
         existingVersion.name = name || existingVersion.name;
         existingVersion.emoji = emoji || existingVersion.emoji;
         existingVersion.alias = alias || existingVersion.alias;
@@ -91,6 +108,7 @@ export async function handleModifyPrefixCommandVersion(interaction: ChatInputCom
         try {
             await existingVersion.save();
             const { name, emoji, alias, enabled } = existingVersion;
+            await refreshSinglePrefixCommandVersionCache(oldAlias, existingVersion.toObject(), alias);
             await interaction.followUp({ embeds: [successEmbed(name, versionId)], ephemeral: true });
             if (modLogsChannel) {
                 try {

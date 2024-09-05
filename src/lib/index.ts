@@ -22,3 +22,6 @@ export * from './schemas/prefixCommandSchemas';
 export * from './schedulerJobs/autoDisableSlowMode';
 export * from './schedulerJobs/sendHeartbeat';
 export * from './schedulerJobs/postBirthdays';
+
+//Cache Management
+export * from './cache/cacheManager';

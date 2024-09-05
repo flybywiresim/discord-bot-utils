@@ -1,5 +1,5 @@
 import { ActionRowBuilder, ChatInputCommandInteraction, Colors, ModalBuilder, TextChannel, TextInputBuilder, TextInputStyle, User } from 'discord.js';
-import { constantsConfig, getConn, PrefixCommandVersion, PrefixCommand, Logger, makeEmbed } from '../../../../lib';
+import { constantsConfig, getConn, PrefixCommandVersion, PrefixCommand, Logger, makeEmbed, refreshSinglePrefixCommandCache } from '../../../../lib';
 
 const noConnEmbed = makeEmbed({
     title: 'Prefix Commands - Set Content - No Connection',
@@ -89,7 +89,7 @@ export async function handleSetPrefixCommandContent(interaction: ChatInputComman
     }
 
     const foundCommand = foundCommands[0];
-    const { id: commandId } = foundCommand;
+    const { id: commandId, name: commandName, aliases: commandAliases } = foundCommand;
     let versionId = '';
     let foundVersions = null;
     if (version === 'GENERIC' || version === 'generic') {
@@ -210,6 +210,7 @@ export async function handleSetPrefixCommandContent(interaction: ChatInputComman
 
     try {
         await foundCommand.save();
+        await refreshSinglePrefixCommandCache(commandName, foundCommand.toObject(), commandName, commandAliases);
         const { id: contentId } = foundCommand.contents.find((c) => c.versionId === versionId)!;
         await interaction.followUp({ embeds: [successEmbed(command, version, contentId)], ephemeral: true });
         if (modLogsChannel) {

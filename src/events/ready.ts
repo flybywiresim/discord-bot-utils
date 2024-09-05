@@ -9,6 +9,9 @@ import {
     Logger,
     imageBaseUrl,
     getScheduler,
+    setupInMemoryCache,
+    loadAllPrefixCommandsToCache,
+    loadAllPrefixCommandVersionsToCache,
 } from '../lib';
 import { deployCommands } from '../scripts/deployCommands';
 import commandArray from '../commands';
@@ -49,6 +52,18 @@ export default event(Events.ClientReady, async ({ log }, client) => {
             log('Failed to deploy commands:', error);
         }
     }
+
+    // Setup cache manager
+    let inMemoryCacheSetup = false;
+    let inMemoryCacheError: Error | undefined;
+    await setupInMemoryCache()
+        .then(() => {
+            inMemoryCacheSetup = true;
+        })
+        .catch((error) => {
+            inMemoryCacheError = error;
+            Logger.error(error);
+        });
 
     // Connect to MongoDB and set up scheduler
     let dbConnected = false;
@@ -119,6 +134,28 @@ export default event(Events.ClientReady, async ({ log }, client) => {
         }
     }
 
+    // Loading in-memory cache with prefix commands
+    if (inMemoryCacheSetup && dbConnected) {
+        await loadAllPrefixCommandsToCache()
+            .then(() => {
+                Logger.info('Loaded prefix commands to cache.');
+            })
+            .catch((error) => {
+                Logger.error(`Failed to load prefix commands to cache: ${error}`);
+            });
+    }
+
+    // Loading in-memory cache with prefix command versions
+    if (inMemoryCacheSetup && dbConnected) {
+        await loadAllPrefixCommandVersionsToCache()
+            .then(() => {
+                Logger.info('Loaded prefix command versions to cache.');
+            })
+            .catch((error) => {
+                Logger.error(`Failed to load prefix command versions to cache: ${error}`);
+            });
+    }
+
     // Send bot status message to bot-dev channel
     const botDevChannel = client.channels.resolve(constantsConfig.channels.MOD_LOGS) as TextChannel;
     if (botDevChannel) {
@@ -136,6 +173,11 @@ export default event(Events.ClientReady, async ({ log }, client) => {
         logMessage += ` - Scheduler State: ${schedulerConnected ? 'Connected' : 'Disconnected'}`;
         if (!schedulerConnected && schedulerError) {
             logMessage += ` - Scheduler Error: ${schedulerError.message}`;
+        }
+
+        logMessage += ` - Cache State: ${inMemoryCacheSetup ? 'Setup' : 'Not Setup'}`;
+        if (!inMemoryCacheSetup && inMemoryCacheError) {
+            logMessage += ` - Cache Error: ${inMemoryCacheError.message}`;
         }
 
         await botDevChannel.send({ content: logMessage });
