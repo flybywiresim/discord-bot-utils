@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, Colors, TextChannel, User } from 'discord.js';
-import { constantsConfig, getConn, PrefixCommandVersion, Logger, makeEmbed, refreshAllPrefixCommandVersionsCache, refreshSinglePrefixCommandVersionCache } from '../../../../lib';
+import { constantsConfig, getConn, PrefixCommandVersion, Logger, makeEmbed, refreshSinglePrefixCommandVersionCache } from '../../../../lib';
 
 const noConnEmbed = makeEmbed({
     title: 'Prefix Commands - Modify Version - No Connection',

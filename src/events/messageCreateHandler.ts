@@ -39,12 +39,16 @@ export default event(Events.MessageCreate, async (_, message) => {
     const { id: guildId } = guild;
     Logger.debug(`Processing message ${messageId} from user ${authorId} in channel ${channelId} of server ${guildId}.`);
 
+    // TODO: Permission verification
+    // TODO: If generic, check available versions and show selections
+    // TODO: case-insensitive command matching
+
     const inMemoryCache = getInMemoryCache();
     if (inMemoryCache && content.startsWith(constantsConfig.prefixCommandPrefix)) {
         const commandTextMatch = content.match(`^\\${constantsConfig.prefixCommandPrefix}([\\w\\d-_]+)[^\\w\\d-_]*([\\w\\d-_]+)?`);
         if (commandTextMatch) {
             let [commandText] = commandTextMatch.slice(1);
-            const commandCachedVersion = await inMemoryCache.get(`PF_VERSION:${commandText}`);
+            const commandCachedVersion = await inMemoryCache.get(`PF_VERSION:${commandText.toLowerCase()}`);
             let commandVersionId;
             let commandVersionName;
             let commandVersionEnabled;
@@ -63,7 +67,7 @@ export default event(Events.MessageCreate, async (_, message) => {
                 Logger.debug(`Prefix Command - Version "${commandVersionName}" is disabled - Not executing command "${commandText}"`);
                 return;
             }
-            const cachedCommandDetails = await inMemoryCache.get(`PF_COMMAND:${commandText}`);
+            const cachedCommandDetails = await inMemoryCache.get(`PF_COMMAND:${commandText.toLowerCase()}`);
             if (cachedCommandDetails) {
                 const commandDetails = PrefixCommand.hydrate(cachedCommandDetails);
                 const { name, contents, isEmbed, embedColor, channelPermissions, rolePermissions } = commandDetails;
