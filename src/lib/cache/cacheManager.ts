@@ -5,7 +5,8 @@ let inMemoryCache: Cache;
 const commandCachePrefix = 'PF_COMMAND';
 const commandVersionCachePrefix = 'PF_VERSION';
 const cacheSize = 10000;
-const cacheTTL = 3600 * 1000; // 1 hour
+const cacheRefreshInterval = process.env.CACHE_REFRESH_INTERVAL ? Number(process.env.CACHE_REFRESH_INTERVAL) : 1800;
+const cacheTTL = cacheRefreshInterval * 2 * 1000;
 
 export async function setupInMemoryCache(callback = Logger.error) {
     try {

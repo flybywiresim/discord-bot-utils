@@ -134,6 +134,29 @@ export default event(Events.ClientReady, async ({ log }, client) => {
         }
     }
 
+    const cacheRefreshInterval = process.env.CACHE_REFRESH_INTERVAL ? Number(process.env.CACHE_REFRESH_INTERVAL) : 1800;
+    // Set in memory cache refresh handler
+    if (schedulerConnected && cacheRefreshInterval) {
+        const scheduler = getScheduler();
+        if (scheduler) {
+            const cacheJobList = await scheduler.jobs({ name: 'refreshInMemoryCache' });
+            if (cacheJobList.length === 0) {
+                scheduler.every(`${cacheRefreshInterval} seconds`, 'refreshInMemoryCache', { interval: cacheRefreshInterval });
+                Logger.info(`Cache refresh job scheduled with interval ${cacheRefreshInterval}`);
+            } else {
+                const cacheJob = cacheJobList[0];
+                const { interval } = cacheJob.attrs.data as { interval: number };
+                if (interval !== cacheRefreshInterval) {
+                    await scheduler.cancel({ name: 'refreshInMemoryCache' });
+                    scheduler.every(`${cacheRefreshInterval} seconds`, 'refreshInMemoryCache', { interval: cacheRefreshInterval });
+                    Logger.info(`Cache refresh job rescheduled with new interval ${cacheRefreshInterval}`);
+                } else {
+                    Logger.info('Cache refresh job already scheduled');
+                }
+            }
+        }
+    }
+
     // Loading in-memory cache with prefix commands
     if (inMemoryCacheSetup && dbConnected) {
         await loadAllPrefixCommandsToCache()
