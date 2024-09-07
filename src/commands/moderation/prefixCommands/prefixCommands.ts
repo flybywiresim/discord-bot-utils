@@ -484,8 +484,8 @@ const data = slashCommandStructure({
                     ],
                 },
                 {
-                    name: 'unset',
-                    description: 'Unset the default version for a channel.',
+                    name: 'delete',
+                    description: 'Delete the default version for a channel.',
                     type: ApplicationCommandOptionType.Subcommand,
                     options: [
                         {
@@ -626,7 +626,7 @@ export default slashCommand(data, async ({ interaction }) => {
             await interaction.reply({ content: 'Unknown subcommand', ephemeral: true });
         }
         break;
-    case 'channel-default':
+    case 'channel-default-version':
         switch (subcommandName) {
         case 'show':
             await handleShowPrefixCommandChannelDefaultVersion(interaction);
@@ -634,7 +634,7 @@ export default slashCommand(data, async ({ interaction }) => {
         case 'set':
             await handleSetPrefixCommandChannelDefaultVersion(interaction);
             break;
-        case 'unset':
+        case 'delete':
             await handleDeletePrefixCommandChannelDefaultVersion(interaction);
             break;
         default:

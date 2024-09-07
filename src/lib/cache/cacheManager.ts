@@ -262,10 +262,14 @@ export async function loadAllPrefixCommandChannelDefaultVersionsToCache() {
 
     const PrefixCommandChannelDefaultVersions = await PrefixCommandChannelDefaultVersion.find();
 
-    for (const version of PrefixCommandChannelDefaultVersions) {
-        const { channelId } = version;
+    for (const defaultVersion of PrefixCommandChannelDefaultVersions) {
+        const { channelId, versionId } = defaultVersion;
         // eslint-disable-next-line no-await-in-loop
-        await loadSinglePrefixCommandChannelDefaultVersionToCache(version.toObject(), channelId);
+        const version = await PrefixCommandVersion.findById(versionId);
+        if (version) {
+            // eslint-disable-next-line no-await-in-loop
+            await loadSinglePrefixCommandChannelDefaultVersionToCache(version.toObject(), channelId);
+        }
     }
 }
 

@@ -90,7 +90,9 @@ export async function handleSetPrefixCommandChannelDefaultVersion(interaction: C
         channelDefaultVersion.versionId = versionId;
         try {
             await channelDefaultVersion.save();
-            await refreshSinglePrefixCommandChannelDefaultVersionCache(channelId, channelDefaultVersion.toObject());
+            if (foundVersion) {
+                await refreshSinglePrefixCommandChannelDefaultVersionCache(channelId, foundVersion.toObject());
+            }
             await interaction.followUp({ embeds: [successEmbed(channelName, version, emoji)], ephemeral: true });
             if (modLogsChannel) {
                 try {

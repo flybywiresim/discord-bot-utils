@@ -41,14 +41,15 @@ export default event(Events.MessageCreate, async (_, message) => {
 
     // TODO: Permission verification
     // TODO: If generic, check available versions and show selections
-    // TODO: Categories Cache
-    // TODO: Default Version Cache
 
     const inMemoryCache = getInMemoryCache();
     if (inMemoryCache && content.startsWith(constantsConfig.prefixCommandPrefix)) {
         const commandTextMatch = content.match(`^\\${constantsConfig.prefixCommandPrefix}([\\w\\d-_]+)[^\\w\\d-_]*([\\w\\d-_]+)?`);
         if (commandTextMatch) {
             let [commandText] = commandTextMatch.slice(1);
+            const commandVersionExplicitGeneric = (commandText.toLowerCase() === 'generic');
+
+            // Step 1: Check if the command is actually a version alias
             const commandCachedVersion = await inMemoryCache.get(`PF_VERSION:${commandText.toLowerCase()}`);
             let commandVersionId;
             let commandVersionName;
@@ -61,13 +62,28 @@ export default event(Events.MessageCreate, async (_, message) => {
                 commandVersionName = 'GENERIC';
                 commandVersionEnabled = true;
             }
-            if (commandCachedVersion && commandTextMatch[2]) {
-                [commandText] = commandTextMatch.slice(2);
+
+            // Step 2: Check if there's a default version for the channel if commandVersionName is GENERIC
+            if (commandVersionName === 'GENERIC' && !commandVersionExplicitGeneric) {
+                const channelDefaultVersionCached = await inMemoryCache.get(`PF_CHANNEL_VERSION:${channelId}`);
+                if (channelDefaultVersionCached) {
+                    const channelDefaultVersion = PrefixCommandVersion.hydrate(channelDefaultVersionCached);
+                    ({ id: commandVersionId, name: commandVersionName, enabled: commandVersionEnabled } = channelDefaultVersion);
+                }
             }
+
+            // Drop execution if the version is disabled
             if (!commandVersionEnabled) {
                 Logger.debug(`Prefix Command - Version "${commandVersionName}" is disabled - Not executing command "${commandText}"`);
                 return;
             }
+
+            // Step 2.5: If the first command was actually a version alias, take the actual command as CommandText
+            if ((commandCachedVersion || commandVersionExplicitGeneric) && commandTextMatch[2]) {
+                [commandText] = commandTextMatch.slice(2);
+            }
+
+            // Step 3: Check if the command exists itself and process it
             const cachedCommandDetails = await inMemoryCache.get(`PF_COMMAND:${commandText.toLowerCase()}`);
             if (cachedCommandDetails) {
                 const commandDetails = PrefixCommand.hydrate(cachedCommandDetails);
