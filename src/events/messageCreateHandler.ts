@@ -41,7 +41,8 @@ export default event(Events.MessageCreate, async (_, message) => {
 
     // TODO: Permission verification
     // TODO: If generic, check available versions and show selections
-    // TODO: case-insensitive command matching
+    // TODO: Categories Cache
+    // TODO: Default Version Cache
 
     const inMemoryCache = getInMemoryCache();
     if (inMemoryCache && content.startsWith(constantsConfig.prefixCommandPrefix)) {
