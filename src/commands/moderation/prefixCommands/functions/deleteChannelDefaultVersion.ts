@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, Colors, TextChannel, User } from 'discord.js';
-import { constantsConfig, getConn, PrefixCommandChannelDefaultVersion, Logger, makeEmbed } from '../../../../lib';
+import { constantsConfig, getConn, PrefixCommandChannelDefaultVersion, Logger, makeEmbed, clearSinglePrefixCommandChannelDefaultVersionCache } from '../../../../lib';
 
 const noConnEmbed = makeEmbed({
     title: 'Prefix Commands - Unset Default Channel Version - No Connection',
@@ -45,7 +45,7 @@ const noModLogs = makeEmbed({
     color: Colors.Red,
 });
 
-export async function handleUnsetPrefixCommandChannelDefaultVersion(interaction: ChatInputCommandInteraction<'cached'>) {
+export async function handleDeletePrefixCommandChannelDefaultVersion(interaction: ChatInputCommandInteraction<'cached'>) {
     await interaction.deferReply({ ephemeral: true });
 
     const conn = getConn();
@@ -69,6 +69,7 @@ export async function handleUnsetPrefixCommandChannelDefaultVersion(interaction:
     if (foundChannelDefaultVersions && foundChannelDefaultVersions.length > 0) {
         try {
             await PrefixCommandChannelDefaultVersion.deleteOne({ channelId });
+            await clearSinglePrefixCommandChannelDefaultVersionCache(channelId);
             await interaction.followUp({ embeds: [successEmbed(channelName)], ephemeral: true });
             if (modLogsChannel) {
                 try {

@@ -17,7 +17,7 @@ import { handleSetPrefixCommandContent } from './functions/setContent';
 import { handleDeletePrefixCommandContent } from './functions/deleteContent';
 import { handleShowPrefixCommandChannelDefaultVersion } from './functions/showChannelDefaultVersion';
 import { handleSetPrefixCommandChannelDefaultVersion } from './functions/setChannelDefaultVersion';
-import { handleUnsetPrefixCommandChannelDefaultVersion } from './functions/unsetChannelDefaultVersion';
+import { handleDeletePrefixCommandChannelDefaultVersion } from './functions/deleteChannelDefaultVersion';
 
 const colorChoices = [];
 for (let i = 0; i < Object.keys(constantsConfig.colors).length; i++) {
@@ -635,7 +635,7 @@ export default slashCommand(data, async ({ interaction }) => {
             await handleSetPrefixCommandChannelDefaultVersion(interaction);
             break;
         case 'unset':
-            await handleUnsetPrefixCommandChannelDefaultVersion(interaction);
+            await handleDeletePrefixCommandChannelDefaultVersion(interaction);
             break;
         default:
             await interaction.reply({ content: 'Unknown subcommand', ephemeral: true });

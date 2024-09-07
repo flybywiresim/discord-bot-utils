@@ -1,5 +1,5 @@
 import { Job } from '@hokify/agenda';
-import { Logger, getInMemoryCache, getScheduler, refreshAllPrefixCommandVersionsCache, refreshAllPrefixCommandsCache } from '../index';
+import { Logger, getInMemoryCache, getScheduler, refreshAllPrefixCommandCategoriesCache, refreshAllPrefixCommandChannelDefaultVersionsCache, refreshAllPrefixCommandVersionsCache, refreshAllPrefixCommandsCache } from '../index';
 
 export async function refreshInMemoryCache(job: Job) {
     const scheduler = getScheduler();
@@ -26,6 +26,8 @@ export async function refreshInMemoryCache(job: Job) {
     try {
         await refreshAllPrefixCommandsCache();
         await refreshAllPrefixCommandVersionsCache();
+        await refreshAllPrefixCommandCategoriesCache();
+        await refreshAllPrefixCommandChannelDefaultVersionsCache();
     } catch (error) {
         Logger.error('Failed to refresh the in memory cache:', error);
     }

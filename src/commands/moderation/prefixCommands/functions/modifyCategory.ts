@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, Colors, TextChannel, User } from 'discord.js';
-import { constantsConfig, getConn, PrefixCommandCategory, Logger, makeEmbed } from '../../../../lib';
+import { constantsConfig, getConn, PrefixCommandCategory, Logger, makeEmbed, refreshSinglePrefixCommandCategoryCache } from '../../../../lib';
 
 const noConnEmbed = makeEmbed({
     title: 'Prefix Commands - Modify Category - No Connection',
@@ -73,12 +73,13 @@ export async function handleModifyPrefixCommandCategory(interaction: ChatInputCo
     const existingCategory = await PrefixCommandCategory.findOne({ name: category });
 
     if (existingCategory) {
-        const { id: categoryId } = existingCategory;
+        const { id: categoryId, name: oldName } = existingCategory;
         existingCategory.name = name || existingCategory.name;
         existingCategory.emoji = emoji || existingCategory.emoji;
         try {
             await existingCategory.save();
             const { name, emoji } = existingCategory;
+            await refreshSinglePrefixCommandCategoryCache(oldName, existingCategory.toObject(), name);
             await interaction.followUp({ embeds: [successEmbed(name, categoryId)], ephemeral: true });
             if (modLogsChannel) {
                 try {

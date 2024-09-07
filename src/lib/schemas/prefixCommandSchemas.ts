@@ -34,6 +34,7 @@ const prefixCommandChannelDefaultVersionSchema = new Schema({
     channelId: {
         type: String,
         required: true,
+        unique: true,
     },
     versionId: {
         type: String,

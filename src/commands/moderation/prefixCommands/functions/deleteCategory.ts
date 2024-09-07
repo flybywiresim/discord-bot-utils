@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, Colors, TextChannel, User } from 'discord.js';
-import { constantsConfig, getConn, PrefixCommandCategory, Logger, makeEmbed } from '../../../../lib';
+import { constantsConfig, getConn, PrefixCommandCategory, Logger, makeEmbed, clearSinglePrefixCommandCategoryCache } from '../../../../lib';
 
 const noConnEmbed = makeEmbed({
     title: 'Prefix Commands - Delete Category - No Connection',
@@ -74,6 +74,7 @@ export async function handleDeletePrefixCommandCategory(interaction: ChatInputCo
         const { id: categoryId, name, emoji } = existingCategory;
         try {
             await existingCategory.deleteOne();
+            await clearSinglePrefixCommandCategoryCache(name);
             await interaction.followUp({ embeds: [successEmbed(name || '', categoryId)], ephemeral: true });
             if (modLogsChannel) {
                 try {

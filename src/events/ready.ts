@@ -12,6 +12,8 @@ import {
     setupInMemoryCache,
     loadAllPrefixCommandsToCache,
     loadAllPrefixCommandVersionsToCache,
+    loadAllPrefixCommandCategoriesToCache,
+    loadAllPrefixCommandChannelDefaultVersionsToCache,
 } from '../lib';
 import { deployCommands } from '../scripts/deployCommands';
 import commandArray from '../commands';
@@ -176,6 +178,28 @@ export default event(Events.ClientReady, async ({ log }, client) => {
             })
             .catch((error) => {
                 Logger.error(`Failed to load prefix command versions to cache: ${error}`);
+            });
+    }
+
+    // Loading in-memory cache with prefix command categories
+    if (inMemoryCacheSetup && dbConnected) {
+        await loadAllPrefixCommandCategoriesToCache()
+            .then(() => {
+                Logger.info('Loaded prefix command categories to cache.');
+            })
+            .catch((error) => {
+                Logger.error(`Failed to load prefix command categories to cache: ${error}`);
+            });
+    }
+
+    // Loading in-memory cache with prefix command channel default versions
+    if (inMemoryCacheSetup && dbConnected) {
+        await loadAllPrefixCommandChannelDefaultVersionsToCache()
+            .then(() => {
+                Logger.info('Loaded prefix command channel default versions to cache.');
+            })
+            .catch((error) => {
+                Logger.error(`Failed to load prefix command channel default versions to cache: ${error}`);
             });
     }
 

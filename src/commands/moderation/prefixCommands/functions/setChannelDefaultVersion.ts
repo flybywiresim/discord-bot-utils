@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, Colors, TextChannel, User } from 'discord.js';
-import { constantsConfig, getConn, PrefixCommandVersion, PrefixCommandChannelDefaultVersion, Logger, makeEmbed } from '../../../../lib';
+import { constantsConfig, getConn, PrefixCommandVersion, PrefixCommandChannelDefaultVersion, Logger, makeEmbed, refreshSinglePrefixCommandChannelDefaultVersionCache } from '../../../../lib';
 
 const noConnEmbed = makeEmbed({
     title: 'Prefix Commands - Set Default Channel Version - No Connection',
@@ -90,6 +90,7 @@ export async function handleSetPrefixCommandChannelDefaultVersion(interaction: C
         channelDefaultVersion.versionId = versionId;
         try {
             await channelDefaultVersion.save();
+            await refreshSinglePrefixCommandChannelDefaultVersionCache(channelId, channelDefaultVersion.toObject());
             await interaction.followUp({ embeds: [successEmbed(channelName, version, emoji)], ephemeral: true });
             if (modLogsChannel) {
                 try {
