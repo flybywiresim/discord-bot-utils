@@ -1,11 +1,11 @@
 import { ApplicationCommandOptionChoiceData, ApplicationCommandOptionType, ApplicationCommandType } from 'discord.js';
 import { AutocompleteCallback, constantsConfig, getConn, PrefixCommand, slashCommand, slashCommandStructure } from '../../../lib';
-import { handleListPrefixCommandChannelPermissions } from './functions/listChannelPermissions';
-import { handleListPrefixCommandRolePermissions } from './functions/listRolePermissions';
 import { handleAddPrefixCommandChannelPermission } from './functions/addChannelPermission';
 import { handleAddPrefixCommandRolePermission } from './functions/addRolePermission';
 import { handleRemovePrefixCommandChannelPermission } from './functions/removeChannelPermission';
 import { handleRemovePrefixCommandRolePermission } from './functions/removeRolePermission';
+import { handleSetPrefixCommandPermissionSettings } from './functions/setCommandPermissionSettings';
+import { handleShowPrefixCommandPermissions } from './functions/showCommandPermissions';
 
 const colorChoices = [];
 for (let i = 0; i < Object.keys(constantsConfig.colors).length; i++) {
@@ -22,25 +22,64 @@ const data = slashCommandStructure({
     dm_permission: false,
     options: [
         {
+            name: 'show',
+            description: 'Show the permissions of a prefix command.',
+            type: ApplicationCommandOptionType.Subcommand,
+            options: [
+                {
+                    name: 'command',
+                    description: 'Provide the name of the prefix command.',
+                    type: ApplicationCommandOptionType.String,
+                    required: true,
+                    autocomplete: true,
+                    max_length: 32,
+                },
+            ],
+        },
+        {
+            name: 'settings',
+            description: 'Manage prefix command permission settings.',
+            type: ApplicationCommandOptionType.Subcommand,
+            options: [
+                {
+                    name: 'command',
+                    description: 'Provide the name of the prefix command.',
+                    type: ApplicationCommandOptionType.String,
+                    required: true,
+                    autocomplete: true,
+                    max_length: 32,
+                },
+                {
+                    name: 'roles-blacklist',
+                    description: 'Enable or disable the role blacklist.',
+                    type: ApplicationCommandOptionType.Boolean,
+                    required: false,
+                },
+                {
+                    name: 'channels-blacklist',
+                    description: 'Enable or disable the channel blacklist.',
+                    type: ApplicationCommandOptionType.Boolean,
+                    required: false,
+                },
+                {
+                    name: 'quiet-errors',
+                    description: 'Enable or disable quiet errors.',
+                    type: ApplicationCommandOptionType.Boolean,
+                    required: false,
+                },
+                {
+                    name: 'verbose-errors',
+                    description: 'Enable or disable verbose errors.',
+                    type: ApplicationCommandOptionType.Boolean,
+                    required: false,
+                },
+            ],
+        },
+        {
             name: 'channels',
             description: 'Manage prefix command channel permissions.',
             type: ApplicationCommandOptionType.SubcommandGroup,
             options: [
-                {
-                    name: 'list',
-                    description: 'Get list of prefix command channel permissions.',
-                    type: ApplicationCommandOptionType.Subcommand,
-                    options: [
-                        {
-                            name: 'command',
-                            description: 'Provide the name of the prefix command.',
-                            type: ApplicationCommandOptionType.String,
-                            required: true,
-                            autocomplete: true,
-                            max_length: 32,
-                        },
-                    ],
-                },
                 {
                     name: 'add',
                     description: 'Add a channel permission for a prefix command.',
@@ -59,16 +98,6 @@ const data = slashCommandStructure({
                             description: 'Provide the channel to add or remove from the selected list.',
                             type: ApplicationCommandOptionType.Channel,
                             required: true,
-                        },
-                        {
-                            name: 'type',
-                            description: 'Select the type of the permission, permitted or prohibited',
-                            type: ApplicationCommandOptionType.String,
-                            required: true,
-                            choices: [
-                                { name: 'Permitted', value: 'PERMITTED' },
-                                { name: 'Prohibited', value: 'PROHIBITED' },
-                            ],
                         },
                     ],
                 },
@@ -101,21 +130,6 @@ const data = slashCommandStructure({
             type: ApplicationCommandOptionType.SubcommandGroup,
             options: [
                 {
-                    name: 'list',
-                    description: 'Get list of prefix command role permissions.',
-                    type: ApplicationCommandOptionType.Subcommand,
-                    options: [
-                        {
-                            name: 'command',
-                            description: 'Provide the name of the prefix command.',
-                            type: ApplicationCommandOptionType.String,
-                            required: true,
-                            autocomplete: true,
-                            max_length: 32,
-                        },
-                    ],
-                },
-                {
                     name: 'add',
                     description: 'Add a role permission for a prefix command.',
                     type: ApplicationCommandOptionType.Subcommand,
@@ -133,16 +147,6 @@ const data = slashCommandStructure({
                             description: 'Provide the role to add or remove from the selected list.',
                             type: ApplicationCommandOptionType.Role,
                             required: true,
-                        },
-                        {
-                            name: 'type',
-                            description: 'Select the type of the permission, permitted or prohibited',
-                            type: ApplicationCommandOptionType.String,
-                            required: true,
-                            choices: [
-                                { name: 'Permitted', value: 'PERMITTED' },
-                                { name: 'Prohibited', value: 'PROHIBITED' },
-                            ],
                         },
                     ],
                 },
@@ -202,12 +206,19 @@ export default slashCommand(data, async ({ interaction }) => {
     const subcommandGroup = interaction.options.getSubcommandGroup();
     const subcommandName = interaction.options.getSubcommand();
 
+    switch (subcommandName) {
+    case 'show':
+        await handleShowPrefixCommandPermissions(interaction);
+        return;
+    case 'settings':
+        await handleSetPrefixCommandPermissionSettings(interaction);
+        return;
+    default:
+    }
+
     switch (subcommandGroup) {
     case 'channels':
         switch (subcommandName) {
-        case 'list':
-            await handleListPrefixCommandChannelPermissions(interaction);
-            break;
         case 'add':
             await handleAddPrefixCommandChannelPermission(interaction);
             break;
@@ -220,9 +231,6 @@ export default slashCommand(data, async ({ interaction }) => {
         break;
     case 'roles':
         switch (subcommandName) {
-        case 'list':
-            await handleListPrefixCommandRolePermissions(interaction);
-            break;
         case 'add':
             await handleAddPrefixCommandRolePermission(interaction);
             break;

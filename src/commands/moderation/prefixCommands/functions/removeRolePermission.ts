@@ -1,36 +1,36 @@
 import { ChatInputCommandInteraction, Colors, TextChannel, User } from 'discord.js';
-import { constantsConfig, getConn, PrefixCommand, Logger, makeEmbed } from '../../../../lib';
+import { constantsConfig, getConn, PrefixCommand, Logger, makeEmbed, refreshSinglePrefixCommandCache } from '../../../../lib';
 
 const noConnEmbed = makeEmbed({
-    title: 'Prefix Commands - Remove Role Permission - No Connection',
-    description: 'Could not connect to the database. Unable to remove the prefix command role permission.',
+    title: 'Prefix Commands - Remove Role - No Connection',
+    description: 'Could not connect to the database. Unable to remove the prefix command role.',
     color: Colors.Red,
 });
 
 const noCommandEmbed = (command: string) => makeEmbed({
-    title: 'Prefix Commands - Remove Role Permission - No Command',
-    description: `Failed to remove the prefix command role permission for command ${command} as the command does not exist or there are more than one matching.`,
+    title: 'Prefix Commands - Remove Role - No Command',
+    description: `Failed to remove the prefix command role for command ${command} as the command does not exist or there are more than one matching.`,
     color: Colors.Red,
 });
 
-const failedEmbed = (command: string, roleName: string, type: string) => makeEmbed({
-    title: 'Prefix Commands - Remove Role Permission - Failed',
-    description: `Failed to remove the ${type} prefix command role permission for command ${command} and role ${roleName}.`,
+const failedEmbed = (command: string, roleName: string) => makeEmbed({
+    title: 'Prefix Commands - Remove Role - Failed',
+    description: `Failed to remove the prefix command role ${roleName} for command ${command}.`,
     color: Colors.Red,
 });
 
 const doesNotExistEmbed = (command: string, roleName: string) => makeEmbed({
-    title: 'Prefix Commands - Remove Role Permission - Already exists',
-    description: `A prefix command role permission for command ${command} and role ${roleName} does not exist.`,
+    title: 'Prefix Commands - Remove Role - Already exists',
+    description: `A prefix command role ${roleName} for command ${command} and role does not exist.`,
     color: Colors.Red,
 });
 
-const successEmbed = (command: string, roleName: string, type: string) => makeEmbed({
-    title: `Prefix command role ${type} permission removed for command ${command} and role ${roleName}.`,
+const successEmbed = (command: string, roleName: string) => makeEmbed({
+    title: `Prefix command role ${roleName} removed for command ${command}.`,
     color: Colors.Green,
 });
 
-const modLogEmbed = (moderator: User, command: string, roleName: string, type: string) => makeEmbed({
+const modLogEmbed = (moderator: User, command: string, roleName: string) => makeEmbed({
     title: 'Remove prefix command role permission',
     fields: [
         {
@@ -42,10 +42,6 @@ const modLogEmbed = (moderator: User, command: string, roleName: string, type: s
             value: roleName,
         },
         {
-            name: 'Type',
-            value: type,
-        },
-        {
             name: 'Moderator',
             value: `${moderator}`,
         },
@@ -54,7 +50,7 @@ const modLogEmbed = (moderator: User, command: string, roleName: string, type: s
 });
 
 const noModLogs = makeEmbed({
-    title: 'Prefix Commands - Remove Role Permission - No Mod Log',
+    title: 'Prefix Commands - Remove Role - No Mod Log',
     description: 'I can\'t find the mod logs role. Please check the role still exists.',
     color: Colors.Red,
 });
@@ -89,23 +85,23 @@ export async function handleRemovePrefixCommandRolePermission(interaction: ChatI
     const [foundCommand] = foundCommands;
     const { id: roleId, name: roleName } = role;
 
-    const existingRolePermission = foundCommand.rolePermissions.find((rolePermission) => rolePermission.roleId === roleId);
+    const existingRolePermission = foundCommand.permissions.roles?.includes(roleId);
     if (existingRolePermission) {
-        const { type } = existingRolePermission;
+        foundCommand.permissions.roles = foundCommand.permissions.roles?.filter((id) => id !== roleId);
         try {
-            foundCommand.rolePermissions.find((rolePermission) => rolePermission.roleId === roleId)?.deleteOne();
             await foundCommand.save();
-            await interaction.followUp({ embeds: [successEmbed(command, roleName, type)], ephemeral: true });
+            await refreshSinglePrefixCommandCache(foundCommand, foundCommand);
+            await interaction.followUp({ embeds: [successEmbed(command, roleName)], ephemeral: true });
             if (modLogsRole) {
                 try {
-                    await modLogsRole.send({ embeds: [modLogEmbed(moderator, command, roleName, type)] });
+                    await modLogsRole.send({ embeds: [modLogEmbed(moderator, command, roleName)] });
                 } catch (error) {
                     Logger.error(`Failed to post a message to the mod logs role: ${error}`);
                 }
             }
         } catch (error) {
-            Logger.error(`Failed to remove ${type} prefix command role permission for command ${command} and role ${roleName}: ${error}`);
-            await interaction.followUp({ embeds: [failedEmbed(command, roleName, type)], ephemeral: true });
+            Logger.error(`Failed to remove prefix command role ${roleName} for command ${command}: ${error}`);
+            await interaction.followUp({ embeds: [failedEmbed(command, roleName)], ephemeral: true });
         }
     } else {
         await interaction.followUp({ embeds: [doesNotExistEmbed(command, roleName)], ephemeral: true });

@@ -1,36 +1,36 @@
 import { ChatInputCommandInteraction, Colors, TextChannel, User } from 'discord.js';
-import { constantsConfig, getConn, PrefixCommand, Logger, makeEmbed, PrefixCommandRolePermission, refreshSinglePrefixCommandCache } from '../../../../lib';
+import { constantsConfig, getConn, PrefixCommand, Logger, makeEmbed, refreshSinglePrefixCommandCache } from '../../../../lib';
 
 const noConnEmbed = makeEmbed({
-    title: 'Prefix Commands - Add Role Permission - No Connection',
-    description: 'Could not connect to the database. Unable to add the prefix command role permission.',
+    title: 'Prefix Commands - Add Role - No Connection',
+    description: 'Could not connect to the database. Unable to add the prefix command role.',
     color: Colors.Red,
 });
 
 const noCommandEmbed = (command: string) => makeEmbed({
-    title: 'Prefix Commands - Add Role Permission - No Command',
-    description: `Failed to add the prefix command role permission for command ${command} as the command does not exist or there are more than one matching.`,
+    title: 'Prefix Commands - Add Role - No Command',
+    description: `Failed to add the prefix command role for command ${command} as the command does not exist or there are more than one matching.`,
     color: Colors.Red,
 });
 
-const failedEmbed = (command: string, roleName: string, type: string) => makeEmbed({
-    title: 'Prefix Commands - Add Role Permission - Failed',
-    description: `Failed to add the ${type} prefix command role permission for command ${command} and role ${roleName}.`,
+const failedEmbed = (command: string, roleName: string) => makeEmbed({
+    title: 'Prefix Commands - Add Role - Failed',
+    description: `Failed to add the prefix command role ${roleName} for command ${command}.`,
     color: Colors.Red,
 });
 
 const alreadyExistsEmbed = (command: string, roleName: string) => makeEmbed({
-    title: 'Prefix Commands - Add Role Permission - Already exists',
-    description: `A prefix command role permission for command ${command} and role ${roleName} already exists. Not adding again.`,
+    title: 'Prefix Commands - Add Role - Already exists',
+    description: `A prefix command role ${roleName} for command ${command} already exists. Not adding again.`,
     color: Colors.Red,
 });
 
-const successEmbed = (command: string, roleName: string, type: string) => makeEmbed({
-    title: `Prefix command role ${type} permission added for command ${command} and role ${roleName}.}`,
+const successEmbed = (command: string, roleName: string) => makeEmbed({
+    title: `Prefix command role ${roleName} added for command ${command}.}`,
     color: Colors.Green,
 });
 
-const modLogEmbed = (moderator: User, command: string, roleName: string, type: string) => makeEmbed({
+const modLogEmbed = (moderator: User, command: string, roleName: string) => makeEmbed({
     title: 'Add prefix command role permission',
     fields: [
         {
@@ -42,10 +42,6 @@ const modLogEmbed = (moderator: User, command: string, roleName: string, type: s
             value: roleName,
         },
         {
-            name: 'Type',
-            value: type,
-        },
-        {
             name: 'Moderator',
             value: `${moderator}`,
         },
@@ -54,7 +50,7 @@ const modLogEmbed = (moderator: User, command: string, roleName: string, type: s
 });
 
 const noModLogs = makeEmbed({
-    title: 'Prefix Commands - Add Role Permission - No Mod Log',
+    title: 'Prefix Commands - Add Role - No Mod Log',
     description: 'I can\'t find the mod logs role. Please check the role still exists.',
     color: Colors.Red,
 });
@@ -70,7 +66,6 @@ export async function handleAddPrefixCommandRolePermission(interaction: ChatInpu
 
     const command = interaction.options.getString('command')!;
     const role = interaction.options.getRole('role')!;
-    const type = interaction.options.getString('type')!;
     const moderator = interaction.user;
 
     //Check if the mod logs role exists
@@ -90,27 +85,26 @@ export async function handleAddPrefixCommandRolePermission(interaction: ChatInpu
     const [foundCommand] = foundCommands;
     const { id: roleId, name: roleName } = role;
 
-    const existingRolePermission = foundCommand.rolePermissions.find((rolePermission) => rolePermission.roleId === roleId);
+    const existingRolePermission = foundCommand.permissions.roles?.includes(roleId);
     if (!existingRolePermission) {
-        const newRolePermission = new PrefixCommandRolePermission({
-            roleId,
-            type,
-        });
+        if (!foundCommand.permissions.roles) {
+            foundCommand.permissions.roles = [];
+        }
+        foundCommand.permissions.roles.push(roleId);
         try {
-            foundCommand.rolePermissions.push(newRolePermission);
             await foundCommand.save();
             await refreshSinglePrefixCommandCache(foundCommand, foundCommand);
-            await interaction.followUp({ embeds: [successEmbed(command, roleName, type)], ephemeral: true });
+            await interaction.followUp({ embeds: [successEmbed(command, roleName)], ephemeral: true });
             if (modLogsRole) {
                 try {
-                    await modLogsRole.send({ embeds: [modLogEmbed(moderator, command, roleName, type)] });
+                    await modLogsRole.send({ embeds: [modLogEmbed(moderator, command, roleName)] });
                 } catch (error) {
                     Logger.error(`Failed to post a message to the mod logs role: ${error}`);
                 }
             }
         } catch (error) {
-            Logger.error(`Failed to add ${type} prefix command role permission for command ${command} and role ${roleName}: ${error}`);
-            await interaction.followUp({ embeds: [failedEmbed(command, roleName, type)], ephemeral: true });
+            Logger.error(`Failed to add prefix command role ${roleName} for command ${command}: ${error}`);
+            await interaction.followUp({ embeds: [failedEmbed(command, roleName)], ephemeral: true });
         }
     } else {
         await interaction.followUp({ embeds: [alreadyExistsEmbed(command, roleName)], ephemeral: true });

@@ -81,36 +81,22 @@ const prefixCommandContentSchema = new Schema<IPrefixCommandContent>({
     image: String,
 });
 
-export interface IPrefixCommandChannelPermission extends Document {
-    type: string;
-    channelId: string;
+export interface IPrefixCommandPermissions extends Document {
+    roles?: string[],
+    rolesBlacklist?: boolean,
+    channels?: string[],
+    channelsBlacklist?: boolean,
+    quietErrors?: boolean,
+    verboseErrors?: boolean,
 }
 
-const prefixCommandChannelPermissionSchema = new Schema<IPrefixCommandChannelPermission>({
-    type: {
-        type: String,
-        required: true,
-    },
-    channelId: {
-        type: String,
-        required: true,
-    },
-});
-
-export interface IPrefixCommandRolePermission extends Document {
-    type: string;
-    roleId: string;
-}
-
-const prefixCommandRolePermissionSchema = new Schema<IPrefixCommandRolePermission>({
-    type: {
-        type: String,
-        required: true,
-    },
-    roleId: {
-        type: String,
-        required: true,
-    },
+const prefixCommandPermissionsSchema = new Schema<IPrefixCommandPermissions>({
+    roles: [String],
+    rolesBlacklist: Boolean,
+    channels: [String],
+    channelsBlacklist: Boolean,
+    quietErrors: Boolean,
+    verboseErrors: Boolean,
 });
 
 export interface IPrefixCommand extends Document {
@@ -121,8 +107,7 @@ export interface IPrefixCommand extends Document {
     isEmbed: boolean;
     embedColor?: string;
     contents: IPrefixCommandContent[];
-    channelPermissions: IPrefixCommandChannelPermission[];
-    rolePermissions: IPrefixCommandRolePermission[];
+    permissions: IPrefixCommandPermissions;
 }
 
 const prefixCommandSchema = new Schema<IPrefixCommand>({
@@ -141,14 +126,12 @@ const prefixCommandSchema = new Schema<IPrefixCommand>({
     isEmbed: Boolean,
     embedColor: String,
     contents: [prefixCommandContentSchema],
-    channelPermissions: [prefixCommandChannelPermissionSchema],
-    rolePermissions: [prefixCommandRolePermissionSchema],
+    permissions: prefixCommandPermissionsSchema,
 });
 
 export const PrefixCommandCategory = mongoose.model('PrefixCommandCategory', prefixCommandCategorySchema);
 export const PrefixCommandVersion = mongoose.model('PrefixCommandVersion', prefixCommandVersionSchema);
 export const PrefixCommandContent = mongoose.model('PrefixCommandContent', prefixCommandContentSchema);
-export const PrefixCommandChannelPermission = mongoose.model('PrefixCommandChannelPermission', prefixCommandChannelPermissionSchema);
-export const PrefixCommandRolePermission = mongoose.model('PrefixCommandRolePermission', prefixCommandRolePermissionSchema);
+export const PrefixCommandPermissions = mongoose.model('PrefixCommandPermissions', prefixCommandPermissionsSchema);
 export const PrefixCommandChannelDefaultVersion = mongoose.model('PrefixCommandChannelDefaultVersion', prefixCommandChannelDefaultVersionSchema);
 export const PrefixCommand = mongoose.model('PrefixCommand', prefixCommandSchema);

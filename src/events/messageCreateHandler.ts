@@ -111,7 +111,7 @@ export default event(Events.MessageCreate, async (_, message) => {
             const cachedCommandDetails = await inMemoryCache.get(`PF_COMMAND:${commandText.toLowerCase()}`);
             if (cachedCommandDetails) {
                 const commandDetails = PrefixCommand.hydrate(cachedCommandDetails);
-                const { name, contents, isEmbed, embedColor, channelPermissions, rolePermissions } = commandDetails;
+                const { name, contents, isEmbed, embedColor, permissions } = commandDetails;
                 // TODO: Check permissions
 
                 const commandContentData = contents.find(({ versionId }) => versionId === commandVersionId);
