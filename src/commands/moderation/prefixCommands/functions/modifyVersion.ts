@@ -100,7 +100,8 @@ export async function handleModifyPrefixCommandVersion(interaction: ChatInputCom
     const existingVersion = await PrefixCommandVersion.findOne({ name: version });
 
     if (existingVersion) {
-        const { id: versionId, alias: oldAlias } = existingVersion;
+        const { id: versionId } = existingVersion;
+        const oldVersion = existingVersion.$clone();
         existingVersion.name = name || existingVersion.name;
         existingVersion.emoji = emoji || existingVersion.emoji;
         existingVersion.alias = alias || existingVersion.alias;
@@ -108,7 +109,7 @@ export async function handleModifyPrefixCommandVersion(interaction: ChatInputCom
         try {
             await existingVersion.save();
             const { name, emoji, alias, enabled } = existingVersion;
-            await refreshSinglePrefixCommandVersionCache(oldAlias, existingVersion.toObject(), alias);
+            await refreshSinglePrefixCommandVersionCache(oldVersion, existingVersion);
             await interaction.followUp({ embeds: [successEmbed(name, versionId)], ephemeral: true });
             if (modLogsChannel) {
                 try {

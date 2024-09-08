@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, Colors, TextChannel, User } from 'discord.js';
-import { constantsConfig, getConn, PrefixCommand, Logger, makeEmbed } from '../../../../lib';
+import { constantsConfig, getConn, PrefixCommand, Logger, makeEmbed, PrefixCommandRolePermission, refreshSinglePrefixCommandCache } from '../../../../lib';
 
 const noConnEmbed = makeEmbed({
     title: 'Prefix Commands - Add Role Permission - No Connection',
@@ -25,12 +25,12 @@ const alreadyExistsEmbed = (command: string, roleName: string) => makeEmbed({
     color: Colors.Red,
 });
 
-const successEmbed = (command: string, roleName: string, type: string, rolePermissionId: string) => makeEmbed({
-    title: `Prefix command role ${type} permission added for command ${command} and role ${roleName}. RolePermission ID: ${rolePermissionId}`,
+const successEmbed = (command: string, roleName: string, type: string) => makeEmbed({
+    title: `Prefix command role ${type} permission added for command ${command} and role ${roleName}.}`,
     color: Colors.Green,
 });
 
-const modLogEmbed = (moderator: User, command: string, roleName: string, type: string, commandId: string, rolePermissionId: string) => makeEmbed({
+const modLogEmbed = (moderator: User, command: string, roleName: string, type: string) => makeEmbed({
     title: 'Add prefix command role permission',
     fields: [
         {
@@ -50,7 +50,6 @@ const modLogEmbed = (moderator: User, command: string, roleName: string, type: s
             value: `${moderator}`,
         },
     ],
-    footer: { text: `Command ID: ${commandId} - Role Permission ID: ${rolePermissionId}` },
     color: Colors.Green,
 });
 
@@ -89,24 +88,22 @@ export async function handleAddPrefixCommandRolePermission(interaction: ChatInpu
         return;
     }
     const [foundCommand] = foundCommands;
-    const { id: commandId } = foundCommand;
     const { id: roleId, name: roleName } = role;
 
     const existingRolePermission = foundCommand.rolePermissions.find((rolePermission) => rolePermission.roleId === roleId);
     if (!existingRolePermission) {
-        const newRolePermission = {
-            commandId,
+        const newRolePermission = new PrefixCommandRolePermission({
             roleId,
             type,
-        };
+        });
         try {
             foundCommand.rolePermissions.push(newRolePermission);
             await foundCommand.save();
-            const { id: rolePermissionId } = foundCommand.rolePermissions.find((rolePermission) => rolePermission.roleId === roleId)!;
-            await interaction.followUp({ embeds: [successEmbed(command, roleName, type, rolePermissionId)], ephemeral: true });
+            await refreshSinglePrefixCommandCache(foundCommand, foundCommand);
+            await interaction.followUp({ embeds: [successEmbed(command, roleName, type)], ephemeral: true });
             if (modLogsRole) {
                 try {
-                    await modLogsRole.send({ embeds: [modLogEmbed(moderator, command, roleName, type, commandId, rolePermissionId)] });
+                    await modLogsRole.send({ embeds: [modLogEmbed(moderator, command, roleName, type)] });
                 } catch (error) {
                     Logger.error(`Failed to post a message to the mod logs role: ${error}`);
                 }

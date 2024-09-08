@@ -1,4 +1,4 @@
-import { EmbedBuilder, Message } from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, EmbedBuilder, Interaction, Message } from 'discord.js';
 import { event, getInMemoryCache, Logger, Events, constantsConfig, makeEmbed, makeLines } from '../lib';
 import { PrefixCommand, PrefixCommandVersion } from '../lib/schemas/prefixCommandSchemas';
 
@@ -9,7 +9,7 @@ const commandEmbed = (title: string, description: string, color: string, imageUr
     ...(imageUrl && { image: { url: imageUrl } }),
 });
 
-async function replyWithEmbed(msg: Message, embed: EmbedBuilder) : Promise<Message<boolean>> {
+async function replyWithEmbed(msg: Message, embed: EmbedBuilder, buttonRow?: ActionRowBuilder<ButtonBuilder>) : Promise<Message<boolean>> {
     return msg.fetchReference()
         .then((res) => {
             let existingFooterText = '';
@@ -19,15 +19,42 @@ async function replyWithEmbed(msg: Message, embed: EmbedBuilder) : Promise<Messa
             }
             embed = EmbedBuilder.from(embed.data);
             embed.setFooter({ text: `${existingFooterText}Executed by ${msg.author.tag} - ${msg.author.id}` });
-            return res.reply({ embeds: [embed] });
+            return res.reply({
+                embeds: [embed],
+                components: buttonRow ? [buttonRow] : [],
+            });
         })
-        .catch(() => msg.reply({ embeds: [embed] }));
+        .catch(() => msg.reply({
+            embeds: [embed],
+            components: buttonRow ? [buttonRow] : [],
+        }));
 }
 
-async function replyWithMsg(msg: Message, text: string) : Promise<Message<boolean>> {
+async function replyWithMsg(msg: Message, text: string, buttonRow?:ActionRowBuilder<ButtonBuilder>) : Promise<Message<boolean>> {
     return msg.fetchReference()
-        .then((res) => res.reply(`${text}\n\n\`Executed by ${msg.author.tag} - ${msg.author.id}\``))
-        .catch(() => msg.reply(text));
+        .then((res) => res.reply({
+            content: `${text}\n\n\`Executed by ${msg.author.tag} - ${msg.author.id}\``,
+            components: buttonRow ? [buttonRow] : [],
+        }))
+        .catch(() => msg.reply({
+            content: text,
+            components: buttonRow ? [buttonRow] : [],
+        }));
+}
+
+async function sendReply(message: Message, commandTitle: string, commandContent: string, isEmbed: boolean, embedColor: string, commandImage: string, versionButtonRow?: ActionRowBuilder<ButtonBuilder>) : Promise<Message<boolean>> {
+    try {
+        if (isEmbed) {
+            return replyWithEmbed(message, commandEmbed(commandTitle, commandContent, embedColor, commandImage), versionButtonRow);
+        }
+        return replyWithMsg(message, makeLines([
+            `**${commandTitle}**`,
+            ...(commandContent ? [commandContent] : []),
+        ]), versionButtonRow);
+    } catch (error) {
+        Logger.error(error);
+        return message.reply('An error occurred while processing the command.');
+    }
 }
 
 export default event(Events.MessageCreate, async (_, message) => {
@@ -38,9 +65,6 @@ export default event(Events.MessageCreate, async (_, message) => {
     const { id: channelId, guild } = channel;
     const { id: guildId } = guild;
     Logger.debug(`Processing message ${messageId} from user ${authorId} in channel ${channelId} of server ${guildId}.`);
-
-    // TODO: Permission verification
-    // TODO: If generic, check available versions and show selections
 
     const inMemoryCache = getInMemoryCache();
     if (inMemoryCache && content.startsWith(constantsConfig.prefixCommandPrefix)) {
@@ -88,24 +112,53 @@ export default event(Events.MessageCreate, async (_, message) => {
             if (cachedCommandDetails) {
                 const commandDetails = PrefixCommand.hydrate(cachedCommandDetails);
                 const { name, contents, isEmbed, embedColor, channelPermissions, rolePermissions } = commandDetails;
+                // TODO: Check permissions
+
                 const commandContentData = contents.find(({ versionId }) => versionId === commandVersionId);
                 if (!commandContentData) {
                     Logger.debug(`Prefix Command - Version "${commandVersionName}" not found for command "${name}" based on user command "${commandText}"`);
                     return;
                 }
-                Logger.debug(`Prefix Command - Executing version "${commandVersionName}" for command "${name}" based on user command "${commandText}"`);
                 const { title: commandTitle, content: commandContent, image: commandImage } = commandContentData;
-                try {
-                    if (isEmbed) {
-                        replyWithEmbed(message, commandEmbed(commandTitle, commandContent || '', embedColor || constantsConfig.colors.FBW_CYAN, commandImage || ''));
-                    } else {
-                        replyWithMsg(message, makeLines([
-                            `**${commandTitle}**`,
-                            ...(commandContent ? [commandContent] : []),
-                        ]));
+                // If generic and multiple versions, show the selection
+                if (commandVersionName === 'GENERIC' && contents.length > 1) {
+                    Logger.debug(`Prefix Command - Multiple versions found for command "${name}" based on user command "${commandText}", showing version selection`);
+                    const versionSelectionButtons: ButtonBuilder[] = [];
+                    for (const { versionId: versionIdForButton } of contents) {
+                        // eslint-disable-next-line no-await-in-loop
+                        const versionCached = await inMemoryCache.get(`PF_VERSION:${versionIdForButton}`);
+                        if (versionCached) {
+                            const version = PrefixCommandVersion.hydrate(versionCached);
+                            const { emoji } = version;
+                            versionSelectionButtons.push(
+                                new ButtonBuilder()
+                                    .setCustomId(`${versionIdForButton}`)
+                                    .setEmoji(emoji)
+                                    .setStyle(ButtonStyle.Primary),
+                            );
+                        }
                     }
-                } catch (error) {
-                    Logger.error(error);
+                    const versionSelectButtonRow = new ActionRowBuilder<ButtonBuilder>().addComponents(versionSelectionButtons);
+                    const buttonMessage = await sendReply(message, commandTitle, commandContent || '', isEmbed || false, embedColor || constantsConfig.colors.FBW_CYAN, commandImage || '', versionSelectButtonRow);
+
+                    const filter = (interaction: Interaction) => interaction.user.id === authorId;
+                    const collector = buttonMessage.createMessageComponentCollector({ filter, time: 60_000 });
+                    collector.on('collect', async (collectedInteraction: ButtonInteraction) => {
+                        Logger.debug(`Prefix Command - User selected version "${collectedInteraction.customId}" for command "${name}" based on user command "${commandText}"`);
+                        await collectedInteraction.deferUpdate();
+                        buttonMessage.delete();
+                        const { customId: selectedVersionId } = collectedInteraction;
+                        const commandContentData = contents.find(({ versionId }) => versionId === selectedVersionId);
+                        if (!commandContentData) {
+                            Logger.debug(`Prefix Command - Version ID "${selectedVersionId}" not found for command "${name}" based on user command "${commandText}"`);
+                            return;
+                        }
+                        const { title: commandTitle, content: commandContent, image: commandImage } = commandContentData;
+                        await sendReply(message, commandTitle, commandContent || '', isEmbed || false, embedColor || constantsConfig.colors.FBW_CYAN, commandImage || '');
+                    });
+                } else {
+                    Logger.debug(`Prefix Command - Executing version "${commandVersionName}" for command "${name}" based on user command "${commandText}"`);
+                    await sendReply(message, commandTitle, commandContent || '', isEmbed || false, embedColor || constantsConfig.colors.FBW_CYAN, commandImage || '');
                 }
             }
         }

@@ -81,8 +81,8 @@ export async function handleDeletePrefixCommand(interaction: ChatInputCommandInt
     if (existingCommand) {
         const { id: commandId, name, aliases, isEmbed, embedColor } = existingCommand;
         try {
+            await clearSinglePrefixCommandCache(existingCommand);
             await existingCommand.deleteOne();
-            await clearSinglePrefixCommandCache(name);
             await interaction.followUp({ embeds: [successEmbed(name || '', commandId)], ephemeral: true });
             if (modLogsChannel) {
                 try {

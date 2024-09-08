@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, Colors, TextChannel, User } from 'discord.js';
-import { constantsConfig, getConn, PrefixCommandVersion, Logger, makeEmbed, PrefixCommandChannelDefaultVersion, clearSinglePrefixCommandVersionCache } from '../../../../lib';
+import { constantsConfig, getConn, PrefixCommandVersion, Logger, makeEmbed, PrefixCommandChannelDefaultVersion, clearSinglePrefixCommandVersionCache, PrefixCommand, refreshSinglePrefixCommandCache, clearSinglePrefixCommandChannelDefaultVersionCache } from '../../../../lib';
 
 const noConnEmbed = makeEmbed({
     title: 'Prefix Commands - Delete Version - No Connection',
@@ -95,8 +95,9 @@ export async function handleDeletePrefixCommandVersion(interaction: ChatInputCom
         return;
     }
     const { id: versionId } = existingVersion;
-    const foundContents = await PrefixCommandVersion.find({ versionId });
-    if (foundContents && foundContents.length > 0 && !force) {
+    // Find all PrefixCommands with content where version ID == versionId
+    const foundCommandsWithContent = await PrefixCommand.find({ 'contents.versionId': versionId });
+    if (foundCommandsWithContent && foundCommandsWithContent.length > 0 && !force) {
         await interaction.followUp({ embeds: [contentPresentEmbed], ephemeral: true });
         return;
     }
@@ -109,20 +110,27 @@ export async function handleDeletePrefixCommandVersion(interaction: ChatInputCom
     if (existingVersion) {
         const { name, emoji, enabled, alias } = existingVersion;
         try {
-            await existingVersion.deleteOne();
-            await clearSinglePrefixCommandVersionCache(alias);
-            if (foundContents && force) {
-                for (const content of foundContents) {
+            if (foundCommandsWithContent && force) {
+                for (const command of foundCommandsWithContent) {
+                    const { _id: commandId } = command;
                     // eslint-disable-next-line no-await-in-loop
-                    await content.deleteOne();
+                    const updatedCommand = await PrefixCommand.findOneAndUpdate({ _id: commandId }, { $pull: { contents: { versionId } } }, { new: true });
+                    if (updatedCommand) {
+                        // eslint-disable-next-line no-await-in-loop
+                        await refreshSinglePrefixCommandCache(command, updatedCommand);
+                    }
                 }
             }
             if (foundChannelDefaultVersions && force) {
                 for (const channelDefaultVersion of foundChannelDefaultVersions) {
                     // eslint-disable-next-line no-await-in-loop
+                    await clearSinglePrefixCommandChannelDefaultVersionCache(channelDefaultVersion);
+                    // eslint-disable-next-line no-await-in-loop
                     await channelDefaultVersion.deleteOne();
                 }
             }
+            await clearSinglePrefixCommandVersionCache(existingVersion);
+            await existingVersion.deleteOne();
             await interaction.followUp({ embeds: [successEmbed(name || '', versionId)], ephemeral: true });
             if (modLogsChannel) {
                 try {

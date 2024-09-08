@@ -1,5 +1,5 @@
 import { ActionRowBuilder, ChatInputCommandInteraction, Colors, ModalBuilder, TextChannel, TextInputBuilder, TextInputStyle, User } from 'discord.js';
-import { constantsConfig, getConn, PrefixCommandVersion, PrefixCommand, Logger, makeEmbed, refreshSinglePrefixCommandCache } from '../../../../lib';
+import { constantsConfig, getConn, PrefixCommandVersion, PrefixCommand, Logger, makeEmbed, refreshSinglePrefixCommandCache, PrefixCommandContent } from '../../../../lib';
 
 const noConnEmbed = makeEmbed({
     title: 'Prefix Commands - Set Content - No Connection',
@@ -25,12 +25,12 @@ const failedEmbed = (command: string, version: string) => makeEmbed({
     color: Colors.Red,
 });
 
-const successEmbed = (command: string, version: string, contentId: string) => makeEmbed({
-    title: `Prefix command content set for command ${command} and version ${version}. Content ID: ${contentId}`,
+const successEmbed = (command: string, version: string) => makeEmbed({
+    title: `Prefix command content set for command ${command} and version ${version}.`,
     color: Colors.Green,
 });
 
-const modLogEmbed = (moderator: User, command: string, version: string, title: string, content: string, image: string, commandId: string, versionId: string, contentId: string) => makeEmbed({
+const modLogEmbed = (moderator: User, command: string, version: string, title: string, content: string, image: string, commandId: string, versionId: string) => makeEmbed({
     title: 'Prefix command content set',
     fields: [
         {
@@ -58,7 +58,7 @@ const modLogEmbed = (moderator: User, command: string, version: string, title: s
             value: `${moderator}`,
         },
     ],
-    footer: { text: `Command ID: ${commandId} - Version ID: ${versionId} - Content ID: ${contentId}` },
+    footer: { text: `Command ID: ${commandId} - Version ID: ${versionId}` },
     color: Colors.Green,
 });
 
@@ -89,7 +89,7 @@ export async function handleSetPrefixCommandContent(interaction: ChatInputComman
     }
 
     const foundCommand = foundCommands[0];
-    const { id: commandId, name: commandName, aliases: commandAliases } = foundCommand;
+    const { _id: commandId } = foundCommand;
     let versionId = '';
     let foundVersions = null;
     if (version === 'GENERIC' || version === 'generic') {
@@ -97,7 +97,7 @@ export async function handleSetPrefixCommandContent(interaction: ChatInputComman
     } else {
         foundVersions = await PrefixCommandVersion.find({ name: version });
         if (foundVersions && foundVersions.length === 1) {
-            versionId = foundVersions[0].id;
+            [{ _id: versionId }] = foundVersions;
         } else {
             await interaction.followUp({ embeds: [noVersionEmbed(version)], ephemeral: true });
             return;
@@ -191,7 +191,7 @@ export async function handleSetPrefixCommandContent(interaction: ChatInputComman
     }
 
     if (foundContent) {
-        const foundData = foundCommand.contents.id(foundContent.id);
+        const foundData = foundCommand.contents.find((c) => c.versionId === foundContent.versionId);
         try {
             await foundData?.deleteOne();
         } catch (error) {
@@ -200,22 +200,21 @@ export async function handleSetPrefixCommandContent(interaction: ChatInputComman
             return;
         }
     }
-    const contentData = {
+    const contentData = new PrefixCommandContent({
         versionId,
         title,
         content,
         image,
-    };
+    });
     foundCommand.contents.push(contentData);
 
     try {
         await foundCommand.save();
-        await refreshSinglePrefixCommandCache(commandName, foundCommand.toObject(), commandName, commandAliases);
-        const { id: contentId } = foundCommand.contents.find((c) => c.versionId === versionId)!;
-        await interaction.followUp({ embeds: [successEmbed(command, version, contentId)], ephemeral: true });
+        await refreshSinglePrefixCommandCache(foundCommand, foundCommand);
+        await interaction.followUp({ embeds: [successEmbed(command, version)], ephemeral: true });
         if (modLogsChannel) {
             try {
-                await modLogsChannel.send({ embeds: [modLogEmbed(moderator, command, version, title, content, image, commandId, versionId, contentId)] });
+                await modLogsChannel.send({ embeds: [modLogEmbed(moderator, command, version, title, content, image, commandId, versionId)] });
             } catch (error) {
                 Logger.error(`Failed to post a message to the mod logs channel: ${error}`);
             }

@@ -79,7 +79,7 @@ export async function handleAddPrefixCommandCategory(interaction: ChatInputComma
         });
         try {
             await prefixCommandCategory.save();
-            await loadSinglePrefixCommandCategoryToCache(prefixCommandCategory.toObject(), name);
+            await loadSinglePrefixCommandCategoryToCache(prefixCommandCategory);
             await interaction.followUp({ embeds: [successEmbed(name)], ephemeral: true });
             if (modLogsChannel) {
                 try {

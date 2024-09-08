@@ -64,12 +64,12 @@ export async function handleDeletePrefixCommandChannelDefaultVersion(interaction
     }
 
     const { id: channelId, name: channelName } = channel;
-    const foundChannelDefaultVersions = await PrefixCommandChannelDefaultVersion.find({ channelId });
+    const existingChannelDefaultVersion = await PrefixCommandChannelDefaultVersion.findOne({ channelId });
 
-    if (foundChannelDefaultVersions && foundChannelDefaultVersions.length > 0) {
+    if (existingChannelDefaultVersion) {
         try {
-            await PrefixCommandChannelDefaultVersion.deleteOne({ channelId });
-            await clearSinglePrefixCommandChannelDefaultVersionCache(channelId);
+            await clearSinglePrefixCommandChannelDefaultVersionCache(existingChannelDefaultVersion);
+            await existingChannelDefaultVersion.deleteOne();
             await interaction.followUp({ embeds: [successEmbed(channelName)], ephemeral: true });
             if (modLogsChannel) {
                 try {

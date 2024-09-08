@@ -118,7 +118,8 @@ export async function handleModifyPrefixCommand(interaction: ChatInputCommandInt
     const existingCommand = await PrefixCommand.findOne({ name: command });
 
     if (existingCommand) {
-        const { id: commandId, name: oldName } = existingCommand;
+        const { id: commandId } = existingCommand;
+        const oldCommand = existingCommand.$clone();
         existingCommand.name = name || existingCommand.name;
         existingCommand.categoryId = foundCategory?.id || existingCommand.categoryId;
         existingCommand.aliases = aliases.length > 0 ? aliases : existingCommand.aliases;
@@ -127,7 +128,7 @@ export async function handleModifyPrefixCommand(interaction: ChatInputCommandInt
         try {
             await existingCommand.save();
             const { name, aliases, isEmbed, embedColor } = existingCommand;
-            await refreshSinglePrefixCommandCache(oldName, existingCommand.toObject(), name, aliases);
+            await refreshSinglePrefixCommandCache(oldCommand, existingCommand);
             await interaction.followUp({ embeds: [successEmbed(name, commandId)], ephemeral: true });
             if (modLogsChannel) {
                 try {

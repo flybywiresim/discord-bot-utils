@@ -13,18 +13,18 @@ const noContentEmbed = (command: string, version: string) => makeEmbed({
     color: Colors.Red,
 });
 
-const failedEmbed = (contentId: string) => makeEmbed({
+const failedEmbed = (version: string) => makeEmbed({
     title: 'Prefix Commands - Delete Content - Failed',
-    description: `Failed to delete the prefix command content with id ${contentId}.`,
+    description: `Failed to delete the prefix command content with version ${version}.`,
     color: Colors.Red,
 });
 
-const successEmbed = (command: string, version: string, contentId: string) => makeEmbed({
-    title: `Prefix command content for command ${command} and version ${version} (Content ID: ${contentId}) was deleted successfully.`,
+const successEmbed = (command: string, version: string) => makeEmbed({
+    title: `Prefix command content for command ${command} and version ${version} was deleted successfully.`,
     color: Colors.Green,
 });
 
-const modLogEmbed = (moderator: User, commandName: string, versionName: string, title: string, content: string, image: string, commandId: string, versionId: string, contentId: string) => makeEmbed({
+const modLogEmbed = (moderator: User, commandName: string, versionName: string, title: string, content: string, image: string) => makeEmbed({
     title: 'Prefix command content delete',
     fields: [
         {
@@ -52,7 +52,6 @@ const modLogEmbed = (moderator: User, commandName: string, versionName: string, 
             value: `${moderator}`,
         },
     ],
-    footer: { text: `Command ID: ${commandId} - Version ID: ${versionId} - Content ID: ${contentId}` },
     color: Colors.Green,
 });
 
@@ -81,17 +80,14 @@ export async function handleDeletePrefixCommandContent(interaction: ChatInputCom
         await interaction.followUp({ embeds: [noModLogs], ephemeral: true });
     }
 
-    let versionId = 'GENERIC';
-    if (version !== 'GENERIC') {
-        const foundVersion = await PrefixCommandVersion.findOne({ name: version });
-        versionId = foundVersion?.id;
-    }
-    const foundCommand = await PrefixCommand.findOne({ 'name': command, 'contents.versionId': versionId });
-    const existingContent = foundCommand?.contents.filter((content) => content.versionId === versionId)[0] || null;
+    const foundVersion = await PrefixCommandVersion.findOne({ name: version });
+    const { versionId } = foundVersion ?? { versionId: 'GENERIC' };
+    const foundCommand = await PrefixCommand.findOne({ name: command });
+    const [existingContent] = foundCommand?.contents.filter((content) => content.versionId === versionId) ?? [];
 
     if (foundCommand && existingContent) {
-        const { id: contentId, title, content, image } = existingContent;
-        const { name: commandName, aliases: commandAliases } = foundCommand;
+        const { title, content, image } = existingContent;
+        const { name: commandName } = foundCommand;
         let versionName = '';
         if (versionId !== 'GENERIC') {
             const foundVersion = await PrefixCommandVersion.findById(versionId);
@@ -101,20 +97,20 @@ export async function handleDeletePrefixCommandContent(interaction: ChatInputCom
             versionName = foundVersion.name || '';
         }
         try {
-            foundCommand.contents.id(contentId)?.deleteOne();
+            foundCommand.contents.find((con) => con.versionId === versionId)?.deleteOne();
             await foundCommand.save();
-            await refreshSinglePrefixCommandCache(commandName, foundCommand.toObject(), commandName, commandAliases);
-            await interaction.followUp({ embeds: [successEmbed(`${commandName}`, `${versionName}`, `${contentId}`)], ephemeral: true });
+            await refreshSinglePrefixCommandCache(foundCommand, foundCommand);
+            await interaction.followUp({ embeds: [successEmbed(`${commandName}`, `${versionName}`)], ephemeral: true });
             if (modLogsChannel) {
                 try {
-                    await modLogsChannel.send({ embeds: [modLogEmbed(moderator, `${commandName}`, `${versionName}`, `${title}`, `${content}`, `${image}`, `${foundCommand.id}`, `${versionId}`, `${contentId}`)] });
+                    await modLogsChannel.send({ embeds: [modLogEmbed(moderator, `${commandName}`, `${versionName}`, `${title}`, `${content}`, `${image}`)] });
                 } catch (error) {
                     Logger.error(`Failed to post a message to the mod logs channel: ${error}`);
                 }
             }
         } catch (error) {
-            Logger.error(`Failed to delete a prefix command content with id ${contentId}: ${error}`);
-            await interaction.followUp({ embeds: [failedEmbed(contentId)], ephemeral: true });
+            Logger.error(`Failed to delete a prefix command content with version ${version}: ${error}`);
+            await interaction.followUp({ embeds: [failedEmbed(version)], ephemeral: true });
         }
     } else {
         await interaction.followUp({ embeds: [noContentEmbed(command, version)], ephemeral: true });

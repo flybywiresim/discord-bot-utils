@@ -25,12 +25,12 @@ const doesNotExistEmbed = (command: string, channel: string) => makeEmbed({
     color: Colors.Red,
 });
 
-const successEmbed = (command: string, channel: string, type: string, channelPermissionId: string) => makeEmbed({
-    title: `Prefix command channel ${type} permission removed for command ${command} and channel <#${channel}>. ChannelPermission ID: ${channelPermissionId}`,
+const successEmbed = (command: string, channel: string, type: string) => makeEmbed({
+    title: `Prefix command channel ${type} permission removed for command ${command} and channel <#${channel}>.`,
     color: Colors.Green,
 });
 
-const modLogEmbed = (moderator: User, command: string, channel: string, type: string, commandId: string, channelPermissionId: string) => makeEmbed({
+const modLogEmbed = (moderator: User, command: string, channel: string, type: string) => makeEmbed({
     title: 'Remove prefix command channel permission',
     fields: [
         {
@@ -50,7 +50,6 @@ const modLogEmbed = (moderator: User, command: string, channel: string, type: st
             value: `${moderator}`,
         },
     ],
-    footer: { text: `Command ID: ${commandId} - Channel Permission ID: ${channelPermissionId}` },
     color: Colors.Red,
 });
 
@@ -88,28 +87,27 @@ export async function handleRemovePrefixCommandChannelPermission(interaction: Ch
         return;
     }
     const [foundCommand] = foundCommands;
-    const { id: commandId } = foundCommand;
-    const { id: channelId, name: channelName } = channel;
+    const { id: channelId } = channel;
 
     const existingChannelPermission = foundCommand.channelPermissions.find((channelPermission) => channelPermission.channelId === channelId);
     if (existingChannelPermission) {
-        const { id: channelPermissionId, type } = existingChannelPermission;
+        const { type } = existingChannelPermission;
         try {
-            foundCommand.channelPermissions.id(channelPermissionId)?.deleteOne();
+            foundCommand.channelPermissions.find((channelPermission) => channelPermission.channelId === channelId)?.deleteOne();
             await foundCommand.save();
-            await interaction.followUp({ embeds: [successEmbed(command, channelName, type, channelPermissionId)], ephemeral: true });
+            await interaction.followUp({ embeds: [successEmbed(command, channelId, type)], ephemeral: true });
             if (modLogsChannel) {
                 try {
-                    await modLogsChannel.send({ embeds: [modLogEmbed(moderator, command, channelName, type, commandId, channelPermissionId)] });
+                    await modLogsChannel.send({ embeds: [modLogEmbed(moderator, command, channelId, type)] });
                 } catch (error) {
                     Logger.error(`Failed to post a message to the mod logs channel: ${error}`);
                 }
             }
         } catch (error) {
             Logger.error(`Failed to remove ${type} prefix command channel permission for command ${command} and channel <#${channel}>: ${error}`);
-            await interaction.followUp({ embeds: [failedEmbed(command, channelName, type)], ephemeral: true });
+            await interaction.followUp({ embeds: [failedEmbed(command, channelId, type)], ephemeral: true });
         }
     } else {
-        await interaction.followUp({ embeds: [doesNotExistEmbed(command, channelName)], ephemeral: true });
+        await interaction.followUp({ embeds: [doesNotExistEmbed(command, channelId)], ephemeral: true });
     }
 }

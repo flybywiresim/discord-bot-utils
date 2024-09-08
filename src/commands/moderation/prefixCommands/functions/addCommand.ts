@@ -129,7 +129,7 @@ export async function handleAddPrefixCommand(interaction: ChatInputCommandIntera
         });
         try {
             await prefixCommand.save();
-            await loadSinglePrefixCommandToCache(prefixCommand.toObject(), name, aliases);
+            await loadSinglePrefixCommandToCache(prefixCommand);
             await interaction.followUp({ embeds: [successEmbed(name)], ephemeral: true });
             if (modLogsChannel) {
                 try {

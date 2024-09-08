@@ -85,13 +85,13 @@ export async function handleSetPrefixCommandChannelDefaultVersion(interaction: C
             versionId = foundVersion.id;
             emoji = foundVersion.emoji;
         }
-        const foundChannelDefaultVersions = await PrefixCommandChannelDefaultVersion.find({ channelId });
-        const channelDefaultVersion = foundChannelDefaultVersions.length === 1 ? foundChannelDefaultVersions[0] : new PrefixCommandChannelDefaultVersion({ channelId, versionId });
+        const foundChannelDefaultVersion = await PrefixCommandChannelDefaultVersion.findOne({ channelId });
+        const channelDefaultVersion = foundChannelDefaultVersion || new PrefixCommandChannelDefaultVersion({ channelId, versionId });
         channelDefaultVersion.versionId = versionId;
         try {
             await channelDefaultVersion.save();
             if (foundVersion) {
-                await refreshSinglePrefixCommandChannelDefaultVersionCache(channelId, foundVersion.toObject());
+                await refreshSinglePrefixCommandChannelDefaultVersionCache(channelDefaultVersion, channelDefaultVersion);
             }
             await interaction.followUp({ embeds: [successEmbed(channelName, version, emoji)], ephemeral: true });
             if (modLogsChannel) {

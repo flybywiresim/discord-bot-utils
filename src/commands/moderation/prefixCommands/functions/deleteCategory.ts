@@ -73,8 +73,8 @@ export async function handleDeletePrefixCommandCategory(interaction: ChatInputCo
     if (existingCategory) {
         const { id: categoryId, name, emoji } = existingCategory;
         try {
+            await clearSinglePrefixCommandCategoryCache(existingCategory);
             await existingCategory.deleteOne();
-            await clearSinglePrefixCommandCategoryCache(name);
             await interaction.followUp({ embeds: [successEmbed(name || '', categoryId)], ephemeral: true });
             if (modLogsChannel) {
                 try {

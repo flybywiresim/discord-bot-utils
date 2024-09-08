@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, Colors, TextChannel, User } from 'discord.js';
-import { constantsConfig, getConn, PrefixCommand, Logger, makeEmbed } from '../../../../lib';
+import { constantsConfig, getConn, PrefixCommand, Logger, makeEmbed, PrefixCommandChannelPermission, refreshSinglePrefixCommandCache } from '../../../../lib';
 
 const noConnEmbed = makeEmbed({
     title: 'Prefix Commands - Add Channel Permission - No Connection',
@@ -25,12 +25,12 @@ const alreadyExistsEmbed = (command: string, channel: string) => makeEmbed({
     color: Colors.Red,
 });
 
-const successEmbed = (command: string, channel: string, type: string, channelPermissionId: string) => makeEmbed({
-    title: `Prefix command channel ${type} permission added for command ${command} and channel <#${channel}>. ChannelPermission ID: ${channelPermissionId}`,
+const successEmbed = (command: string, channel: string, type: string) => makeEmbed({
+    title: `Prefix command channel ${type} permission added for command ${command} and channel <#${channel}>.}`,
     color: Colors.Green,
 });
 
-const modLogEmbed = (moderator: User, command: string, channel: string, type: string, commandId: string, channelPermissionId: string) => makeEmbed({
+const modLogEmbed = (moderator: User, command: string, channel: string, type: string) => makeEmbed({
     title: 'Add prefix command channel permission',
     fields: [
         {
@@ -50,7 +50,6 @@ const modLogEmbed = (moderator: User, command: string, channel: string, type: st
             value: `${moderator}`,
         },
     ],
-    footer: { text: `Command ID: ${commandId} - Channel Permission ID: ${channelPermissionId}` },
     color: Colors.Green,
 });
 
@@ -89,33 +88,31 @@ export async function handleAddPrefixCommandChannelPermission(interaction: ChatI
         return;
     }
     const [foundCommand] = foundCommands;
-    const { id: commandId } = foundCommand;
-    const { id: channelId, name: channelName } = channel;
+    const { id: channelId } = channel;
 
     const existingChannelPermission = foundCommand.channelPermissions.find((channelPermission) => channelPermission.channelId === channelId);
     if (!existingChannelPermission) {
-        const newChannelPermission = {
-            commandId,
+        const newChannelPermission = new PrefixCommandChannelPermission({
             channelId,
             type,
-        };
+        });
         try {
             foundCommand.channelPermissions.push(newChannelPermission);
             await foundCommand.save();
-            const { id: channelPermissionId } = foundCommand.channelPermissions.find((channelPermission) => channelPermission.channelId === channelId)!;
-            await interaction.followUp({ embeds: [successEmbed(command, channelName, type, channelPermissionId)], ephemeral: true });
+            await refreshSinglePrefixCommandCache(foundCommand, foundCommand);
+            await interaction.followUp({ embeds: [successEmbed(command, channelId, type)], ephemeral: true });
             if (modLogsChannel) {
                 try {
-                    await modLogsChannel.send({ embeds: [modLogEmbed(moderator, command, channelName, type, commandId, channelPermissionId)] });
+                    await modLogsChannel.send({ embeds: [modLogEmbed(moderator, command, channelId, type)] });
                 } catch (error) {
                     Logger.error(`Failed to post a message to the mod logs channel: ${error}`);
                 }
             }
         } catch (error) {
             Logger.error(`Failed to add ${type} prefix command channel permission for command ${command} and channel <#${channel}>: ${error}`);
-            await interaction.followUp({ embeds: [failedEmbed(command, channelName, type)], ephemeral: true });
+            await interaction.followUp({ embeds: [failedEmbed(command, channelId, type)], ephemeral: true });
         }
     } else {
-        await interaction.followUp({ embeds: [alreadyExistsEmbed(command, channelName)], ephemeral: true });
+        await interaction.followUp({ embeds: [alreadyExistsEmbed(command, channelId)], ephemeral: true });
     }
 }
