@@ -72,8 +72,8 @@ export async function handleSetPrefixCommandPermissionSettings(interaction: Chat
     }
 
     const command = interaction.options.getString('command')!;
-    const rolesBlacklist = interaction.options.getBoolean('role-blacklist') || false;
-    const channelsBlacklist = interaction.options.getBoolean('channel-blacklist') || false;
+    const rolesBlacklist = interaction.options.getBoolean('roles-blacklist') || false;
+    const channelsBlacklist = interaction.options.getBoolean('channels-blacklist') || false;
     const quietErrors = interaction.options.getBoolean('quiet-errors') || false;
     const verboseErrors = interaction.options.getBoolean('verbose-errors') || false;
     const moderator = interaction.user;

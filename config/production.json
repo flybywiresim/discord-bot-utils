@@ -31,6 +31,7 @@
     "1021464464928809022"
   ],
   "prefixCommandPrefix": ".",
+  "prefixCommandPermissionDelay": 10000,
   "roleAssignmentIds": [
     {
       "group": "interestedIn",
