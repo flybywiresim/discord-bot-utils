@@ -1,5 +1,9 @@
 ## Changelog
 
+Update <small>_ September 2024</small>
+
+- fix: TS v5.5 breaks build (09/09/2024)
+
 Update <small>_ August 2024</small>
 
 - feat: add runway information to simbriefdata (08/08/2024)
