@@ -29,6 +29,9 @@ export async function handleGithubPullRequest(interaction: ChatInputCommandInter
         repo: repoName,
         pull_number: cleanedPrNumber,
       });
+
+      // octokit returns untyped data - nothing we can do about
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
       return interaction.reply(response.data.html_url);
     } catch {
       return interaction.reply({ embeds: [invalidEmbed] });
@@ -38,6 +41,9 @@ export async function handleGithubPullRequest(interaction: ChatInputCommandInter
       const response = await request('GET /repos/flybywiresim/a32nx/pulls/{pull_number}', {
         pull_number: cleanedPrNumber,
       });
+
+      // octokit returns untyped data - nothing we can do about
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-member-access
       return interaction.reply(response.data.html_url);
     } catch {
       return interaction.reply({ embeds: [invalidEmbed] });
