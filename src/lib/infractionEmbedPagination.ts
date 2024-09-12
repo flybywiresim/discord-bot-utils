@@ -73,8 +73,8 @@ export async function createPaginatedInfractionEmbedHandler(
   const filter = (interaction: Interaction) => interaction.user.id === user;
   const collector = message.createMessageComponentCollector({ filter, time: 120_000 });
 
-  collector.on('collect', async (collectedInteraction: ButtonInteraction) => {
-    await collectedInteraction.deferUpdate();
+  collector.on('collect', (collectedInteraction: ButtonInteraction) => {
+    void collectedInteraction.deferUpdate();
 
     if (collectedInteraction.customId === 'infractions_about') {
       currentPage = 0;
@@ -92,11 +92,11 @@ export async function createPaginatedInfractionEmbedHandler(
       currentPage = 6;
     }
 
-    await updateEmbed();
+    void updateEmbed();
   });
 
-  collector.on('end', async () => {
-    await handleEmbedExpire();
+  collector.on('end', () => {
+    void handleEmbedExpire();
   });
 
   async function updateEmbed() {
