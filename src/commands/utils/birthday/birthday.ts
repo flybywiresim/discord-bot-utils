@@ -74,7 +74,7 @@ const noConnEmbed = makeEmbed({
 });
 
 export default slashCommand(data, async ({ interaction }) => {
-  const conn = await getConn();
+  const conn = getConn();
 
   if (!conn) {
     await interaction.reply({ embeds: [noConnEmbed], ephemeral: true });
