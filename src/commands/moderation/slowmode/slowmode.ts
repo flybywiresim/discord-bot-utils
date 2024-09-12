@@ -1,14 +1,28 @@
-import { ApplicationCommandOptionType, ApplicationCommandType, Colors, EmbedField, TextChannel } from 'discord.js';
+import {
+  ApplicationCommandOptionType,
+  ApplicationCommandType,
+  CategoryChannel,
+  Colors,
+  EmbedField,
+  ForumChannel,
+  MediaChannel,
+  NewsChannel,
+  PrivateThreadChannel,
+  PublicThreadChannel,
+  StageChannel,
+  TextChannel,
+  VoiceChannel,
+} from 'discord.js';
 import {
   constantsConfig,
-  slashCommand,
-  slashCommandStructure,
-  makeEmbed,
   durationInEnglish,
   getScheduler,
+  makeEmbed,
+  slashCommand,
+  slashCommandStructure,
 } from '../../../lib';
-import { handleSetSlowmode } from './functions/set';
 import { handleDisableSlowmode } from './functions/disable';
+import { handleSetSlowmode } from './functions/set';
 
 const data = slashCommandStructure({
   name: 'slowmode',
@@ -86,6 +100,17 @@ const data = slashCommandStructure({
   ],
 });
 
+export type SlowmodeChannel =
+  | CategoryChannel
+  | NewsChannel
+  | StageChannel
+  | TextChannel
+  | PrivateThreadChannel
+  | PublicThreadChannel<boolean>
+  | VoiceChannel
+  | ForumChannel
+  | MediaChannel;
+
 const noSchedulerEmbed = makeEmbed({
   title: 'Slow Mode - No scheduler',
   description: 'Could not find an active scheduler. No automatic disable can be scheduled.',
@@ -99,7 +124,7 @@ const failedEmbed = (action: string, channel: string) =>
     color: Colors.Red,
   });
 
-const modLogEmbed = (action: string, fields: any, color: number) =>
+const modLogEmbed = (action: string, fields: EmbedField[], color: number) =>
   makeEmbed({
     title: `Slow Mode - ${action}`,
     fields,

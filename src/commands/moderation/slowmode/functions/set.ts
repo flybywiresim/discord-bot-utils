@@ -1,17 +1,19 @@
-import { ChannelType, ChatInputCommandInteraction, Colors } from 'discord.js';
+import { Agenda } from '@hokify/agenda';
+import { ChannelType, ChatInputCommandInteraction, Colors, EmbedBuilder, EmbedField, TextChannel } from 'discord.js';
+import { SlowmodeChannel } from '../slowmode';
 
 export async function handleSetSlowmode(
   interaction: ChatInputCommandInteraction<'cached'>,
   duration: number,
-  slowmodeChannel: any,
-  autoDisable: any,
-  modLogsChannel: any,
-  scheduler: any,
-  failedEmbed: any,
-  noChannelEmbed: any,
-  successEmbed: any,
-  modLogEmbed: any,
-  slowModeEmbedField: any,
+  slowmodeChannel: SlowmodeChannel,
+  autoDisable: number | null,
+  modLogsChannel: TextChannel,
+  scheduler: Agenda | null,
+  failedEmbed: (action: string, channel: string) => EmbedBuilder,
+  noChannelEmbed: (action: string, channel: string) => EmbedBuilder,
+  successEmbed: (action: string, channel: string) => EmbedBuilder,
+  modLogEmbed: (action: string, fields: EmbedField[], color: number) => EmbedBuilder,
+  slowModeEmbedField: (moderator: string, channel: string, duration: number, autoDisable: string) => EmbedField[],
 ) {
   try {
     if (
@@ -43,7 +45,7 @@ export async function handleSetSlowmode(
             interaction.user.toString(),
             slowmodeChannel.id,
             duration,
-            autoDisable && scheduler ? autoDisable.toString() : 0,
+            autoDisable && scheduler ? autoDisable.toString() : '0',
           ),
           Colors.Green,
         ),
