@@ -45,7 +45,7 @@ export default slashCommand(data, async ({ interaction }) => {
       name: targetMember.user.username,
       iconURL: targetMember.user.avatarURL()!,
     },
-    description: `${targetMember}`,
+    description: `${targetMember.toString()}`,
     thumbnail: { url: targetMember.user.avatarURL()! },
     fields: [
       {
