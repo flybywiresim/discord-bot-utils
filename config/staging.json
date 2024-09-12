@@ -1,120 +1,101 @@
 {
-  "aircraftTypeList": {
-    "a32nx": "32:1044695612337168494",
-    "a380x": "38:1044695718348210177"
-  },
-  "channels": {
-    "A32NX_SUPPORT": "1162805236390449202",
-    "FAQ": "1162805304396877995",
-    "FLIGHT_SCHOOL": "1162805386378747934",
-    "KNOWN_ISSUES": "1162805409250291803",
-    "MOD_ALERTS": "1208403625672450089",
-    "MOD_LOGS": "1162804981338996756",
-    "ROLES": "1162805319966138519",
-    "SCAM_REPORT_LOGS": "1162805088813854932",
-    "TEAM": "1162805139363610664",
-    "USER_LOGS": "1162805003728212040",
-    "VIDEOS": "1162821497795133500"
-  },
-  "colors": {
-    "FBW_CYAN": "0x00E0FE"
-  },
-  "commandPermission": {
-    "MANAGE_SERVER": "32"
-  },
-  "guildId": "1162804406681608252",
-  "modLogExclude": [
-    "628400349979344919",
-    "910632773117702185",
-    "1195041929570832475",
-    "1195045377431322754",
-    "1163130801131634868",
-    "1021464464928809022"
-  ],
-  "roleAssignmentIds": [
-    {
-      "group": "interestedIn",
-      "roles": [
-        {
-          "id": "TESTER",
-          "label": "Tester"
-        },
-        {
-          "id": "BOT_DEVELOPER",
-          "label": "Bot Developer"
-        },
-        {
-          "id": "INTERESTED_IN_PROGRAMMING",
-          "label": "Interested in Programming"
-        }
-      ]
+    "aircraftTypeList": {
+        "a32nx": "32:1044695612337168494",
+        "a380x": "38:1044695718348210177"
     },
-    {
-      "group": "mediaAnnouncements",
-      "roles": [
+    "channels": {
+        "A32NX_SUPPORT": "1162805236390449202",
+        "FAQ": "1162805304396877995",
+        "FLIGHT_SCHOOL": "1162805386378747934",
+        "KNOWN_ISSUES": "1162805409250291803",
+        "MOD_ALERTS": "1208403625672450089",
+        "MOD_LOGS": "1162804981338996756",
+        "ROLES": "1162805319966138519",
+        "SCAM_REPORT_LOGS": "1162805088813854932",
+        "TEAM": "1162805139363610664",
+        "USER_LOGS": "1162805003728212040",
+        "VIDEOS": "1162821497795133500"
+    },
+    "colors": {
+        "FBW_CYAN": "0x00E0FE"
+    },
+    "commandPermission": {
+        "MANAGE_SERVER": "32"
+    },
+    "guildId": "1162804406681608252",
+    "modLogExclude": [
+        "628400349979344919",
+        "910632773117702185",
+        "1195041929570832475",
+        "1195045377431322754",
+        "1163130801131634868",
+        "1021464464928809022"
+    ],
+    "roleAssignmentIds": [
         {
-          "id": "SERVER_ANNOUNCEMENT",
-          "label": "Server Announcements"
+            "group": "interestedIn",
+            "roles": [
+                {
+                    "id": "TESTER",
+                    "label": "Tester"
+                },
+                {
+                    "id": "BOT_DEVELOPER",
+                    "label": "Bot Developer"
+                },
+                {
+                    "id": "INTERESTED_IN_PROGRAMMING",
+                    "label": "Interested in Programming"
+                }
+            ]
         },
         {
-          "id": "PROGRESS_ANNOUNCEMENT",
-          "label": "Progress Announcements"
+            "group": "mediaAnnouncements",
+            "roles": [
+                {
+                    "id": "SERVER_ANNOUNCEMENT",
+                    "label": "Server Announcements"
+                },
+                {
+                    "id": "PROGRESS_ANNOUNCEMENT",
+                    "label": "Progress Announcements"
+                }
+            ]
         }
-      ]
-    }
-  ],
-  "roleGroups": {
-    "BOT": [
-      "ADMIN_TEAM",
-      "MODERATION_TEAM",
-      "BOT_DEVELOPER"
     ],
-    "STAFF": [
-      "ADMIN_TEAM",
-      "MODERATION_TEAM"
-    ],
-    "SUPPORT": [
-      "ADMIN_TEAM",
-      "MODERATION_TEAM",
-      "DEVELOPMENT_TEAM",
-      "MEDIA_TEAM",
-      "COMMUNITY_SUPPORT"
-    ],
-    "TEAM": [
-      "ADMIN_TEAM",
-      "MODERATION_TEAM",
-      "DEVELOPMENT_TEAM",
-      "MEDIA_TEAM",
-      "FBW_EMERITUS"
+    "roleGroups": {
+        "BOT": ["ADMIN_TEAM", "MODERATION_TEAM", "BOT_DEVELOPER"],
+        "STAFF": ["ADMIN_TEAM", "MODERATION_TEAM"],
+        "SUPPORT": ["ADMIN_TEAM", "MODERATION_TEAM", "DEVELOPMENT_TEAM", "MEDIA_TEAM", "COMMUNITY_SUPPORT"],
+        "TEAM": ["ADMIN_TEAM", "MODERATION_TEAM", "DEVELOPMENT_TEAM", "MEDIA_TEAM", "FBW_EMERITUS"]
+    },
+    "roles": {
+        "ADMIN_TEAM": "1162821800225419272",
+        "BOT_DEVELOPER": "1162822853306101901",
+        "COMMUNITY_SUPPORT": "1162822911745347594",
+        "DEVELOPMENT_TEAM": "1162822704248930455",
+        "FBW_EMERITUS": "1162822804832522290",
+        "INTERESTED_IN_PROGRAMMING": "1162823114753855559",
+        "MEDIA_TEAM": "1162822767079588000",
+        "MODERATION_TEAM": "1162821885202006188",
+        "PROGRESS_ANNOUNCEMENT": "1162823072089387150",
+        "SERVER_ANNOUNCEMENT": "1162823032092495892",
+        "TESTER": "1162822140391850006"
+    },
+    "threads": {
+        "BIRTHDAY_THREAD": "1162805202487873596",
+        "COUNT_THREAD": "1162805582961594438"
+    },
+    "units": {
+        "CELSIUS": "\u2103",
+        "DEGREES": "\u00B0"
+    },
+    "userLogExclude": [
+        "628400349979344919",
+        "910632773117702185",
+        "1195041929570832475",
+        "1195045377431322754",
+        "1163130801131634868",
+        "1021464464928809022"
     ]
-  },
-  "roles": {
-    "ADMIN_TEAM": "1162821800225419272",
-    "BOT_DEVELOPER": "1162822853306101901",
-    "COMMUNITY_SUPPORT": "1162822911745347594",
-    "DEVELOPMENT_TEAM": "1162822704248930455",
-    "FBW_EMERITUS": "1162822804832522290",
-    "INTERESTED_IN_PROGRAMMING": "1162823114753855559",
-    "MEDIA_TEAM": "1162822767079588000",
-    "MODERATION_TEAM": "1162821885202006188",
-    "PROGRESS_ANNOUNCEMENT": "1162823072089387150",
-    "SERVER_ANNOUNCEMENT": "1162823032092495892",
-    "TESTER": "1162822140391850006"
-  },
-  "threads": {
-    "BIRTHDAY_THREAD": "1162805202487873596",
-    "COUNT_THREAD": "1162805582961594438"
-  },
-  "units": {
-    "CELSIUS": "\u2103",
-    "DEGREES": "\u00B0"
-  },
-  "userLogExclude": [
-    "628400349979344919",
-    "910632773117702185",
-    "1195041929570832475",
-    "1195045377431322754",
-    "1163130801131634868",
-    "1021464464928809022"
-  ]
 }

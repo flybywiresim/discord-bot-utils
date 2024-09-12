@@ -1,61 +1,86 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, CommandInteraction, ComponentType, EmbedBuilder, Interaction, InteractionResponse, Message } from 'discord.js';
+import {
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonInteraction,
+  ButtonStyle,
+  CommandInteraction,
+  ComponentType,
+  EmbedBuilder,
+  Interaction,
+  InteractionResponse,
+  Message,
+} from 'discord.js';
 
-export async function createPaginatedEmbedHandler(initialInteraction: CommandInteraction, embeds: EmbedBuilder[]): Promise<void> {
-    let currentPage = 0;
+export async function createPaginatedEmbedHandler(
+  initialInteraction: CommandInteraction,
+  embeds: EmbedBuilder[],
+): Promise<void> {
+  let currentPage = 0;
 
-    const nextButton = new ButtonBuilder()
-        .setCustomId('pagination_nextPage')
-        .setLabel('Next')
-        .setStyle(ButtonStyle.Primary);
+  const nextButton = new ButtonBuilder()
+    .setCustomId('pagination_nextPage')
+    .setLabel('Next')
+    .setStyle(ButtonStyle.Primary);
 
-    const prevButton = new ButtonBuilder()
-        .setCustomId('pagination_prevPage')
-        .setLabel('Previous')
-        .setStyle(ButtonStyle.Primary);
+  const prevButton = new ButtonBuilder()
+    .setCustomId('pagination_prevPage')
+    .setLabel('Previous')
+    .setStyle(ButtonStyle.Primary);
+
+  setButtonDisabledStates();
+
+  const buttonRow = new ActionRowBuilder<ButtonBuilder>().addComponents(prevButton, nextButton);
+
+  let message: Message | InteractionResponse;
+  if (initialInteraction.deferred || initialInteraction.replied) {
+    message = await initialInteraction.editReply({ embeds: [embeds[currentPage]], components: [buttonRow] });
+  } else {
+    message = await initialInteraction.reply({ embeds: [embeds[currentPage]], components: [buttonRow] });
+  }
+
+  const filter = (buttonInteraction: Interaction) => initialInteraction.user.id === buttonInteraction.user.id;
+  const collector = message.createMessageComponentCollector({
+    filter,
+    componentType: ComponentType.Button,
+    time: 120_000,
+  });
+
+  collector.on('collect', (collectedInteraction: ButtonInteraction) => {
+    void collectedInteraction.deferUpdate();
+
+    if (collectedInteraction.customId === 'pagination_nextPage') {
+      currentPage++;
+    } else if (collectedInteraction.customId === 'pagination_prevPage') {
+      currentPage--;
+    }
 
     setButtonDisabledStates();
 
-    const buttonRow = new ActionRowBuilder<ButtonBuilder>().addComponents(prevButton, nextButton);
+    void updateEmbed();
+  });
 
-    let message: Message | InteractionResponse;
-    if (initialInteraction.deferred || initialInteraction.replied) {
-        message = await initialInteraction.editReply({ embeds: [embeds[currentPage]], components: [buttonRow] });
-    } else {
-        message = await initialInteraction.reply({ embeds: [embeds[currentPage]], components: [buttonRow] });
-    }
+  collector.on('end', () => {
+    void handleEmbedExpire();
+  });
 
-    const filter = (buttonInteraction: Interaction) => initialInteraction.user.id === buttonInteraction.user.id;
-    const collector = message.createMessageComponentCollector({ filter, componentType: ComponentType.Button, time: 120_000 });
+  async function updateEmbed() {
+    await initialInteraction.editReply({ embeds: [embeds[currentPage]], components: [buttonRow] });
+  }
 
-    collector.on('collect', async (collectedInteraction: ButtonInteraction) => {
-        await collectedInteraction.deferUpdate();
-
-        if (collectedInteraction.customId === 'pagination_nextPage') {
-            currentPage++;
-        } else if (collectedInteraction.customId === 'pagination_prevPage') {
-            currentPage--;
-        }
-
-        setButtonDisabledStates();
-
-        updateEmbed();
+  async function handleEmbedExpire() {
+    const embed = embeds[currentPage];
+    await initialInteraction.editReply({
+      embeds: [
+        embed.setFooter({
+          text: `${embed.data.footer ? `${embed.data.footer.text} - ` : ''}This embed has expired.`,
+        }),
+      ],
+      components: [],
     });
+  }
 
-    collector.on('end', async () => {
-        handleEmbedExpire();
-    });
-
-    function updateEmbed() {
-        initialInteraction.editReply({ embeds: [embeds[currentPage]], components: [buttonRow] });
-    }
-
-    function handleEmbedExpire() {
-        const embed = embeds[currentPage];
-        initialInteraction.editReply({ embeds: [embed.setFooter({ text: `${embed.data.footer ? `${embed.data.footer.text} - ` : ''}This embed has expired.` })], components: [] });
-    }
-
-    function setButtonDisabledStates() {
-        prevButton.setDisabled(currentPage <= 0);
-        nextButton.setDisabled(currentPage >= embeds.length - 1);
-    }
+  function setButtonDisabledStates() {
+    prevButton.setDisabled(currentPage <= 0);
+    nextButton.setDisabled(currentPage >= embeds.length - 1);
+  }
 }

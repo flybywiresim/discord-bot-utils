@@ -11,13 +11,13 @@ import autocompleteHandler from './autocompleteHandler';
 import buttonHandler from './buttonHandlers/buttonHandler';
 
 export default [
-    ready,
-    scamLogs,
-    detectBan,
-    slashCommandHandler,
-    contextInteractionHandler,
-    messageDelete,
-    messageUpdate,
-    autocompleteHandler,
-    buttonHandler,
+  ready,
+  scamLogs,
+  detectBan,
+  slashCommandHandler,
+  contextInteractionHandler,
+  messageDelete,
+  messageUpdate,
+  autocompleteHandler,
+  buttonHandler,
 ] as Event[];

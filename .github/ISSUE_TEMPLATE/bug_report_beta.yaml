@@ -4,7 +4,7 @@ labels: [Bug]
 body:
   - type: markdown
     attributes:
-      value: "# FlyByWire Discord bot Bug Report Form"
+      value: '# FlyByWire Discord bot Bug Report Form'
   - type: dropdown
     id: type
     attributes:

@@ -183,7 +183,7 @@ Some commands may require additional tokens. If you would like to test them out 
 
 ## Adding a New Command
 
->Please note, this will only show the basics of adding a command.
+> Please note, this will only show the basics of adding a command.
 
 1. Create a new file in the relevant folder within `src/commands/` and name it appropriately. `yourcommand.ts`.
 2. Create your command.
@@ -224,42 +224,49 @@ import { ApplicationCommandOptionType, ApplicationCommandType } from 'discord.js
 import { slashCommand, slashCommandStructure, AutocompleteCallback, makeEmbed } from '../../lib';
 
 const data = slashCommandStructure({
-    name: 'ping',
-    description: 'Ping the bot for a response.',
-    type: ApplicationCommandType.ChatInput,
-    default_member_permissions: constantsConfig.commandPermission.MANAGE_SERVER, //Optional command permission - always use MANAGE_SERVER and add a comment to specify overrides needed (roles, channels etc.)
-    dm_permission: false, // Optional, this sets if commands can be run in DMs (global commands only)
-    options: [{ // Optional, this is where you can add options to your command
-        name: 'message',
-        description: 'Provide some text to send back.',
-        type: ApplicationCommandOptionType.String,
-        max_length: 100,
-        required: false,
-        autocomplete: true, // Optional - This is only required if you plan on using autocomplete for your command.
-    }],
+  name: 'ping',
+  description: 'Ping the bot for a response.',
+  type: ApplicationCommandType.ChatInput,
+  default_member_permissions: constantsConfig.commandPermission.MANAGE_SERVER, //Optional command permission - always use MANAGE_SERVER and add a comment to specify overrides needed (roles, channels etc.)
+  dm_permission: false, // Optional, this sets if commands can be run in DMs (global commands only)
+  options: [
+    {
+      // Optional, this is where you can add options to your command
+      name: 'message',
+      description: 'Provide some text to send back.',
+      type: ApplicationCommandOptionType.String,
+      max_length: 100,
+      required: false,
+      autocomplete: true, // Optional - This is only required if you plan on using autocomplete for your command.
+    },
+  ],
 });
 
 // Optional - This is only required if you plan on using autocomplete for your command.
 const autocompleteCallback: AutocompleteCallback = ({ interaction }) => {
-    // Autocomplete logic goes here
-    const choices = [
-        {
-            name: 'Display Name',
-            value: 'Value that is actually sent to your bot.'
-        },
-    ];
+  // Autocomplete logic goes here
+  const choices = [
+    {
+      name: 'Display Name',
+      value: 'Value that is actually sent to your bot.',
+    },
+  ];
 
-    // If you can't autocomplete anything respond with an empty array.
-    return interaction.respond(choices);
+  // If you can't autocomplete anything respond with an empty array.
+  return interaction.respond(choices);
 };
 
-export default slashCommand(data, async ({ interaction }) => {
+export default slashCommand(
+  data,
+  async ({ interaction }) => {
     const msg = interaction.options.getString('message') ?? 'Pong 🏓';
 
     const pongEmbed = makeEmbed({ description: msg });
 
     return interaction.reply({ embeds: [pongEmbed] });
-}, autocompleteCallback); // Optional - This is only required if you plan on using autocomplete for your command.
+  },
+  autocompleteCallback,
+); // Optional - This is only required if you plan on using autocomplete for your command.
 ```
 
 ## Command Permissions
