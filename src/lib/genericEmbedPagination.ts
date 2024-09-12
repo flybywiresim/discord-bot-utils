@@ -45,8 +45,8 @@ export async function createPaginatedEmbedHandler(
     time: 120_000,
   });
 
-  collector.on('collect', async (collectedInteraction: ButtonInteraction) => {
-    await collectedInteraction.deferUpdate();
+  collector.on('collect', (collectedInteraction: ButtonInteraction) => {
+    void collectedInteraction.deferUpdate();
 
     if (collectedInteraction.customId === 'pagination_nextPage') {
       currentPage++;
@@ -56,11 +56,11 @@ export async function createPaginatedEmbedHandler(
 
     setButtonDisabledStates();
 
-    await updateEmbed();
+    void updateEmbed();
   });
 
-  collector.on('end', async () => {
-    await handleEmbedExpire();
+  collector.on('end', () => {
+    void handleEmbedExpire();
   });
 
   async function updateEmbed() {
