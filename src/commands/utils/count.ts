@@ -34,7 +34,7 @@ export default slashCommand(data, async ({ interaction }) => {
 
   const countNumber = interaction.options.getInteger('number');
 
-  await countThread.send(`${interaction.user} says ${countNumber}`);
+  await countThread.send(`${interaction.user.toString()} says ${countNumber}`);
 
   await interaction.reply({ content: 'Counted!', ephemeral: true });
 });

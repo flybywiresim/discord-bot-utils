@@ -91,8 +91,13 @@ export default slashCommand(data, async ({ interaction }) => {
     }
   }
 
+  interface ReportedIssue {
+    id: string;
+    title: string | null;
+  }
+
   try {
-    const reportedIssues: any = [];
+    const reportedIssues: ReportedIssue[] = [];
     const dom = await JSDOM.fromURL(`${FBW_DOCS_REPORTED_ISSUES_URL}`);
     const { document } = dom.window;
     const h3Elements = document.querySelectorAll('h3');
@@ -111,15 +116,25 @@ export default slashCommand(data, async ({ interaction }) => {
     }
 
     const fields = reportedIssues
-      .map((sectionElement: any) => subsectionLinkEmbedField(sectionElement.id, sectionElement.title))
+      .map((sectionElement) => subsectionLinkEmbedField(sectionElement.id, sectionElement.title ?? ''))
       .flat();
     return interaction.reply({ embeds: [issueInSubsectionEmbed(fields)] });
-  } catch (error: any) {
+  } catch (error) {
     Logger.error(error);
-    Logger.error(error.stack);
+    if (error instanceof Error) {
+      Logger.error(error.stack);
+
+      const errorEmbed = makeEmbed({
+        title: 'Error | Reported Issues',
+        description: error.message,
+        color: Colors.Red,
+      });
+      return interaction.reply({ embeds: [errorEmbed] });
+    }
+
     const errorEmbed = makeEmbed({
       title: 'Error | Reported Issues',
-      description: error.message,
+      description: 'An unknown error occurred.',
       color: Colors.Red,
     });
     return interaction.reply({ embeds: [errorEmbed] });

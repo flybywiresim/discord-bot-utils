@@ -35,7 +35,7 @@ export default slashCommand(data, async ({ interaction }) => {
         color: Colors.Red,
       });
       return interaction.reply({ embeds: [URLEmbed] });
-    } catch (_) {
+    } catch {
       /**/
     }
 
