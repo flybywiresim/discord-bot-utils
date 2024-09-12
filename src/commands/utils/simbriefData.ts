@@ -61,12 +61,12 @@ const simbriefEmbed = (flightplan: any) =>
   makeEmbed({
     title: 'SimBrief Data',
     description: makeLines([
-        `**Generated at**: ${moment(flightplan.params.time_generated * 1000).format('DD.MM.YYYY, HH:mm:ss')}`,
-        `**AirFrame**: ${flightplan.aircraft.name} ${flightplan.aircraft.internal_id} ${(flightplan.aircraft.internal_id === FBW_AIRFRAME_ID) ? '(provided by FBW)' : ''}`,
-        `**AIRAC Cycle**: ${flightplan.params.airac}`,
-        `**Origin**: ${flightplan.origin.icao_code} ${flightplan.origin.plan_rwy}`,
-        `**Destination**: ${flightplan.destination.icao_code} ${flightplan.destination.plan_rwy}`,
-        `**Route**: ${flightplan.general.route}`,
+      `**Generated at**: ${moment(flightplan.params.time_generated * 1000).format('DD.MM.YYYY, HH:mm:ss')}`,
+      `**AirFrame**: ${flightplan.aircraft.name} ${flightplan.aircraft.internal_id} ${flightplan.aircraft.internal_id === FBW_AIRFRAME_ID ? '(provided by FBW)' : ''}`,
+      `**AIRAC Cycle**: ${flightplan.params.airac}`,
+      `**Origin**: ${flightplan.origin.icao_code} ${flightplan.origin.plan_rwy}`,
+      `**Destination**: ${flightplan.destination.icao_code} ${flightplan.destination.plan_rwy}`,
+      `**Route**: ${flightplan.general.route}`,
     ]),
   });
 

@@ -8,7 +8,7 @@ const birthdayListEmbed = (fields: EmbedField[]) =>
     fields,
   });
 
-export async function handleListBirthday(interaction: ChatInputCommandInteraction<'cached'>) { 
+export async function handleListBirthday(interaction: ChatInputCommandInteraction<'cached'>) {
   await interaction.deferReply();
 
   try {
