@@ -1,3 +1,4 @@
+import { ButtonComponent } from 'discord.js';
 import { event, Events } from '../../lib';
 import { handleRoleAssignment } from './functions/handleRoleAssignment';
 
@@ -6,9 +7,10 @@ export default event(Events.InteractionCreate, async ({ log }, interaction) => {
 
   log('Button Handler: Button pressed');
 
-  const { customId, component, user } = interaction;
+  const component = interaction.component as ButtonComponent;
+  const { customId, user } = interaction;
 
-  const buttonLabel = component?.label;
+  const buttonLabel = component.label;
 
   try {
     const [prefix, ...params] = interaction.customId.split('_');
