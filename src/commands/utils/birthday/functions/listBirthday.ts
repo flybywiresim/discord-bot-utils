@@ -1,4 +1,4 @@
-import { APIEmbedField, ChatInputCommandInteraction, EmbedField } from 'discord.js';
+import { ChatInputCommandInteraction, EmbedField } from 'discord.js';
 import { Birthday, Logger, makeEmbed } from '../../../../lib';
 
 const birthdayListEmbed = (fields: EmbedField[]) =>
