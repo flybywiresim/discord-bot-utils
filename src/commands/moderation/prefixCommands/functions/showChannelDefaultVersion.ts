@@ -53,7 +53,7 @@ export async function handleShowPrefixCommandChannelDefaultVersion(interaction: 
     const channel = interaction.options.getChannel('channel')!;
     const { id: channelId, name: channelName } = channel;
     const foundChannelDefaultVersions = await PrefixCommandChannelDefaultVersion.find({ channelId });
-    if (!foundChannelDefaultVersions || foundChannelDefaultVersions.length > 1) {
+    if (!foundChannelDefaultVersions || foundChannelDefaultVersions.length === 0 || foundChannelDefaultVersions.length > 1) {
         await interaction.followUp({ embeds: [noChannelDefaultVersionEmbed(channelName)], ephemeral: true });
         return;
     }
