@@ -199,6 +199,7 @@ export default event(Events.MessageCreate, async (_, message) => {
                 // If the version is not found, try to find the generic version
                 if (!commandContentData) {
                     commandContentData = contents.find(({ versionId }) => versionId === 'GENERIC');
+                    commandVersionName = 'GENERIC';
                 }
                 // If the generic version is not found, drop execution
                 if (!commandContentData) {
