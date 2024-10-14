@@ -126,9 +126,9 @@ export async function handleSetPrefixCommandContent(interaction: ChatInputComman
         .setLabel('Content')
         .setPlaceholder('Provide the content for the command.')
         .setStyle(TextInputStyle.Paragraph)
-        .setMaxLength(2047)
+        .setMaxLength(2048)
         .setMinLength(0)
-        .setRequired(true)
+        .setRequired(false)
         .setValue(foundContent && foundContent.content ? foundContent.content : '');
 
     const commandContentImageUrl = new TextInputBuilder()
