@@ -34,6 +34,7 @@ import locate from './utils/locate/locate';
 import prefixCommands from './moderation/prefixCommands/prefixCommands';
 import prefixCommandPermissions from './moderation/prefixCommands/prefixCommandPermissions';
 import prefixCommandCacheUpdate from './moderation/prefixCommands/prefixCommandCacheUpdate';
+import prefixHelp from './utils/prefixHelp';
 
 const commandArray: SlashCommand[] = [
     ping,
@@ -71,6 +72,7 @@ const commandArray: SlashCommand[] = [
     prefixCommands,
     prefixCommandPermissions,
     prefixCommandCacheUpdate,
+    prefixHelp,
 ];
 
 export default commandArray;
