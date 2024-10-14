@@ -142,8 +142,9 @@ export default slashCommand(data, async ({ interaction }) => {
             descriptionLines.push('');
         }
 
+        const { name: categoryName, emoji: categoryEmoji } = category;
         const embed = makeEmbed({
-            title: `Prefix Commands - ${category.name} (${page + 1}/${totalPages})`,
+            title: `${categoryEmoji || ''}${categoryName} Commands (${page + 1}/${totalPages})`,
             description: makeLines(descriptionLines),
         });
 
