@@ -36,7 +36,7 @@ const successEmbed = (command: string, commandId: string) => makeEmbed({
     color: Colors.Green,
 });
 
-const modLogEmbed = (moderator: User, command: string, aliases: string[], isEmbed: boolean, embedColor: string, commandId: string) => makeEmbed({
+const modLogEmbed = (moderator: User, command: string, aliases: string[], description: string, isEmbed: boolean, embedColor: string, commandId: string) => makeEmbed({
     title: 'Prefix command modified',
     fields: [
         {
@@ -50,6 +50,10 @@ const modLogEmbed = (moderator: User, command: string, aliases: string[], isEmbe
         {
             name: 'Aliases',
             value: aliases.join(','),
+        },
+        {
+            name: 'Description',
+            value: description,
         },
         {
             name: 'Is Embed',
@@ -81,6 +85,7 @@ export async function handleModifyPrefixCommand(interaction: ChatInputCommandInt
     const command = interaction.options.getString('command')!;
     const name = interaction.options.getString('name') || '';
     const category = interaction.options.getString('category') || '';
+    const description = interaction.options.getString('description') || '';
     const aliasesString = interaction.options.getString('aliases') || '';
     const aliases = aliasesString !== '' ? aliasesString.split(',') : [];
     const isEmbed = interaction.options.getBoolean('is_embed') || null;
@@ -122,6 +127,7 @@ export async function handleModifyPrefixCommand(interaction: ChatInputCommandInt
         const oldCommand = existingCommand.$clone();
         existingCommand.name = name || existingCommand.name;
         existingCommand.categoryId = foundCategory?.id || existingCommand.categoryId;
+        existingCommand.description = description || existingCommand.description;
         existingCommand.aliases = aliases.length > 0 ? aliases : existingCommand.aliases;
         existingCommand.isEmbed = isEmbed !== null ? isEmbed : existingCommand.isEmbed;
         existingCommand.embedColor = embedColor || existingCommand.embedColor;
@@ -132,7 +138,7 @@ export async function handleModifyPrefixCommand(interaction: ChatInputCommandInt
             await interaction.followUp({ embeds: [successEmbed(name, commandId)], ephemeral: true });
             if (modLogsChannel) {
                 try {
-                    await modLogsChannel.send({ embeds: [modLogEmbed(moderator, name, aliases, isEmbed || false, embedColor || '', existingCommand.id)] });
+                    await modLogsChannel.send({ embeds: [modLogEmbed(moderator, name, aliases, description, isEmbed || false, embedColor || '', existingCommand.id)] });
                 } catch (error) {
                     Logger.error(`Failed to post a message to the mod logs channel: ${error}`);
                 }

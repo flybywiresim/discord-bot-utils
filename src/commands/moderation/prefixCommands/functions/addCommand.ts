@@ -36,7 +36,7 @@ const successEmbed = (command: string) => makeEmbed({
     color: Colors.Green,
 });
 
-const modLogEmbed = (moderator: User, command: string, aliases: string[], isEmbed: boolean, embedColor: string, commandId: string) => makeEmbed({
+const modLogEmbed = (moderator: User, command: string, aliases: string[], description: string, isEmbed: boolean, embedColor: string, commandId: string) => makeEmbed({
     title: 'Prefix command added',
     fields: [
         {
@@ -50,6 +50,10 @@ const modLogEmbed = (moderator: User, command: string, aliases: string[], isEmbe
         {
             name: 'Aliases',
             value: aliases.join(','),
+        },
+        {
+            name: 'Description',
+            value: description,
         },
         {
             name: 'Is Embed',
@@ -82,6 +86,7 @@ export async function handleAddPrefixCommand(interaction: ChatInputCommandIntera
 
     const name = interaction.options.getString('name')!;
     const category = interaction.options.getString('category')!;
+    const description = interaction.options.getString('description')!;
     const aliasesString = interaction.options.getString('aliases') || '';
     const aliases = aliasesString !== '' ? aliasesString.split(',') : [];
     const isEmbed = interaction.options.getBoolean('is_embed') || false;
@@ -121,6 +126,7 @@ export async function handleAddPrefixCommand(interaction: ChatInputCommandIntera
             name,
             categoryId,
             aliases,
+            description,
             isEmbed,
             embedColor,
             contents: [],
@@ -133,7 +139,7 @@ export async function handleAddPrefixCommand(interaction: ChatInputCommandIntera
             await interaction.followUp({ embeds: [successEmbed(name)], ephemeral: true });
             if (modLogsChannel) {
                 try {
-                    await modLogsChannel.send({ embeds: [modLogEmbed(moderator, name, aliases, isEmbed, embedColor, prefixCommand.id)] });
+                    await modLogsChannel.send({ embeds: [modLogEmbed(moderator, name, aliases, description, isEmbed, embedColor, prefixCommand.id)] });
                 } catch (error) {
                     Logger.error(`Failed to post a message to the mod logs channel: ${error}`);
                 }

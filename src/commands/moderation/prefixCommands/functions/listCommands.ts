@@ -41,10 +41,10 @@ export async function handleListPrefixCommands(interaction: ChatInputCommandInte
         const embedFields: APIEmbedField[] = [];
         for (let i = 0; i < foundCommands.length; i++) {
             const command = foundCommands[i];
-            const { id, name, aliases, isEmbed, embedColor } = command;
+            const { name, description, aliases, isEmbed, embedColor } = command;
             embedFields.push({
                 name: `${name} - ${aliases.join(',')} - ${isEmbed ? 'Embed' : 'No Embed'} - ${embedColor || 'No Color'}`,
-                value: `${id}`,
+                value: `${description}`,
             });
         }
         try {

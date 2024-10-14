@@ -103,6 +103,7 @@ export interface IPrefixCommand extends Document {
     commandId: mongoose.Schema.Types.ObjectId;
     categoryId: mongoose.Schema.Types.ObjectId;
     name: string;
+    description: string;
     aliases: string[];
     isEmbed: boolean;
     embedColor?: string;
@@ -122,6 +123,7 @@ const prefixCommandSchema = new Schema<IPrefixCommand>({
         required: true,
         unique: true,
     },
+    description: String,
     aliases: [{ type: String }],
     isEmbed: Boolean,
     embedColor: String,

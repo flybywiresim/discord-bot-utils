@@ -264,6 +264,13 @@ const data = slashCommandStructure({
                             max_length: 32,
                         },
                         {
+                            name: 'description',
+                            description: 'Provide a description for the prefix command.',
+                            type: ApplicationCommandOptionType.String,
+                            required: true,
+                            max_length: 255,
+                        },
+                        {
                             name: 'aliases',
                             description: 'Provide a comma separated list of aliases for the prefix command.',
                             type: ApplicationCommandOptionType.String,
@@ -313,6 +320,13 @@ const data = slashCommandStructure({
                             required: false,
                             autocomplete: true,
                             max_length: 32,
+                        },
+                        {
+                            name: 'description',
+                            description: 'Provide a description for the prefix command.',
+                            type: ApplicationCommandOptionType.String,
+                            required: false,
+                            max_length: 255,
                         },
                         {
                             name: 'aliases',
@@ -504,7 +518,7 @@ const data = slashCommandStructure({
 const autocompleteCallback: AutocompleteCallback = async ({ interaction }) => {
     const autoCompleteOption = interaction.options.getFocused(true);
     const { name: optionName, value: searchText } = autoCompleteOption;
-    let choices: ApplicationCommandOptionChoiceData<string>[] = [];
+    const choices: ApplicationCommandOptionChoiceData<string>[] = [];
 
     const conn = getConn();
 
@@ -532,9 +546,7 @@ const autocompleteCallback: AutocompleteCallback = async ({ interaction }) => {
         }
         break;
     case 'version':
-        choices = [
-            { name: 'GENERIC', value: 'GENERIC' },
-        ];
+        choices.push({ name: 'GENERIC', value: 'GENERIC' });
         if (!conn) {
             return interaction.respond(choices);
         }
@@ -546,7 +558,7 @@ const autocompleteCallback: AutocompleteCallback = async ({ interaction }) => {
         }
         break;
     default:
-        choices = [];
+        break;
     }
 
     return interaction.respond(choices);

@@ -24,7 +24,7 @@ const successEmbed = (command: string, commandId: string) => makeEmbed({
     color: Colors.Green,
 });
 
-const modLogEmbed = (moderator: User, command: string, aliases: string[], isEmbed: boolean, embedColor: string, commandId: string) => makeEmbed({
+const modLogEmbed = (moderator: User, command: string, aliases: string[], description: string, isEmbed: boolean, embedColor: string, commandId: string) => makeEmbed({
     title: 'Prefix command deleted',
     fields: [
         {
@@ -40,6 +40,10 @@ const modLogEmbed = (moderator: User, command: string, aliases: string[], isEmbe
             value: aliases.join(','),
         },
         {
+            name: 'Description',
+            value: description,
+        },
+        {
             name: 'Is Embed',
             value: isEmbed ? 'Yes' : 'No',
         },
@@ -49,7 +53,7 @@ const modLogEmbed = (moderator: User, command: string, aliases: string[], isEmbe
         },
     ],
     footer: { text: `Command ID: ${commandId}` },
-    color: Colors.Green,
+    color: Colors.Red,
 });
 
 const noModLogs = makeEmbed({
@@ -79,14 +83,14 @@ export async function handleDeletePrefixCommand(interaction: ChatInputCommandInt
     const existingCommand = await PrefixCommand.findOne({ name: command });
 
     if (existingCommand) {
-        const { id: commandId, name, aliases, isEmbed, embedColor } = existingCommand;
+        const { id: commandId, name, description, aliases, isEmbed, embedColor } = existingCommand;
         try {
             await clearSinglePrefixCommandCache(existingCommand);
             await existingCommand.deleteOne();
             await interaction.followUp({ embeds: [successEmbed(name || '', commandId)], ephemeral: true });
             if (modLogsChannel) {
                 try {
-                    await modLogsChannel.send({ embeds: [modLogEmbed(moderator, name || '', aliases, isEmbed || false, embedColor || '', commandId)] });
+                    await modLogsChannel.send({ embeds: [modLogEmbed(moderator, name || '', aliases, description, isEmbed || false, embedColor || '', commandId)] });
                 } catch (error) {
                     Logger.error(`Failed to post a message to the mod logs channel: ${error}`);
                 }
