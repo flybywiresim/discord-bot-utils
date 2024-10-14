@@ -83,18 +83,18 @@ const prefixCommandContentSchema = new Schema<IPrefixCommandContent>({
 
 export interface IPrefixCommandPermissions extends Document {
     roles?: string[],
-    rolesBlacklist?: boolean,
+    rolesBlocklist?: boolean,
     channels?: string[],
-    channelsBlacklist?: boolean,
+    channelsBlocklist?: boolean,
     quietErrors?: boolean,
     verboseErrors?: boolean,
 }
 
 const prefixCommandPermissionsSchema = new Schema<IPrefixCommandPermissions>({
     roles: [String],
-    rolesBlacklist: Boolean,
+    rolesBlocklist: Boolean,
     channels: [String],
-    channelsBlacklist: Boolean,
+    channelsBlocklist: Boolean,
     quietErrors: Boolean,
     verboseErrors: Boolean,
 });

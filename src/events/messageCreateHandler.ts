@@ -148,31 +148,31 @@ export default event(Events.MessageCreate, async (_, message) => {
             if (cachedCommandDetails) {
                 const commandDetails = PrefixCommand.hydrate(cachedCommandDetails);
                 const { name, contents, isEmbed, embedColor, permissions } = commandDetails;
-                const { roles: permRoles, rolesBlacklist, channels: permChannels, channelsBlacklist, quietErrors, verboseErrors } = permissions;
+                const { roles: permRoles, rolesBlocklist, channels: permChannels, channelsBlocklist, quietErrors, verboseErrors } = permissions;
                 const authorMember = await guild.members.fetch(authorId);
 
                 // Check permissions
                 const hasAnyRole = permRoles && permRoles.some((role) => authorMember.roles.cache.has(role));
                 const isInChannel = permChannels && permChannels.includes(channelId);
                 const meetsRoleRequirements = !permRoles || permRoles.length === 0
-                    || (hasAnyRole && !rolesBlacklist)
-                    || (!hasAnyRole && rolesBlacklist);
+                    || (hasAnyRole && !rolesBlocklist)
+                    || (!hasAnyRole && rolesBlocklist);
                 const meetsChannelRequirements = !permChannels || permChannels.length === 0
-                    || (isInChannel && !channelsBlacklist)
-                    || (!isInChannel && channelsBlacklist);
+                    || (isInChannel && !channelsBlocklist)
+                    || (!isInChannel && channelsBlocklist);
 
                 if (!meetsRoleRequirements) {
                     Logger.debug(`Prefix Command - User does not meet role requirements for command "${name}" based on user command "${commandText}"`);
                     if (quietErrors) return;
                     let errorText = '';
-                    if (verboseErrors && !rolesBlacklist) {
+                    if (verboseErrors && !rolesBlocklist) {
                         errorText = `You do not have the required role to execute this command. Required roles: ${permRoles.map((role) => guild.roles.cache.get(role)?.name).join(', ')}.`;
-                    } else if (verboseErrors && rolesBlacklist) {
-                        errorText = `You have a blacklisted role for this command. Blacklisted roles: ${permRoles.map((role) => guild.roles.cache.get(role)?.name).join(', ')}.`;
-                    } else if (!verboseErrors && !rolesBlacklist) {
+                    } else if (verboseErrors && rolesBlocklist) {
+                        errorText = `You have a blocklisted role for this command. Blocklisted roles: ${permRoles.map((role) => guild.roles.cache.get(role)?.name).join(', ')}.`;
+                    } else if (!verboseErrors && !rolesBlocklist) {
                         errorText = 'You do not have the required role to execute this command.';
                     } else {
-                        errorText = 'You have a blacklisted role for this command.';
+                        errorText = 'You have a blocklisted role for this command.';
                     }
                     await sendPermError(message, errorText);
                     return;
@@ -182,14 +182,14 @@ export default event(Events.MessageCreate, async (_, message) => {
                     Logger.debug(`Prefix Command - Message does not meet channel requirements for command "${name}" based on user command "${commandText}"`);
                     if (quietErrors) return;
                     let errorText = '';
-                    if (verboseErrors && !channelsBlacklist) {
+                    if (verboseErrors && !channelsBlocklist) {
                         errorText = `This command is not available in this channel. Required channels: ${permChannels.map((channel) => guild.channels.cache.get(channel)?.toString()).join(', ')}.`;
-                    } else if (verboseErrors && channelsBlacklist) {
-                        errorText = `This command is blacklisted in this channel. Blacklisted channels: ${permChannels.map((channel) => guild.channels.cache.get(channel)?.toString()).join(', ')}.`;
-                    } else if (!verboseErrors && !channelsBlacklist) {
+                    } else if (verboseErrors && channelsBlocklist) {
+                        errorText = `This command is blocklisted in this channel. Blocklisted channels: ${permChannels.map((channel) => guild.channels.cache.get(channel)?.toString()).join(', ')}.`;
+                    } else if (!verboseErrors && !channelsBlocklist) {
                         errorText = 'This command is not available in this channel.';
                     } else {
-                        errorText = 'This command is blacklisted in this channel.';
+                        errorText = 'This command is blocklisted in this channel.';
                     }
                     await sendPermError(message, errorText);
                     return;

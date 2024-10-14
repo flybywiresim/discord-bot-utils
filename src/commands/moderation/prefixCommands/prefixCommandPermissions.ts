@@ -50,14 +50,14 @@ const data = slashCommandStructure({
                     max_length: 32,
                 },
                 {
-                    name: 'roles-blacklist',
-                    description: 'Enable or disable the role blacklist.',
+                    name: 'roles-blocklist',
+                    description: 'Enable or disable the role blocklist.',
                     type: ApplicationCommandOptionType.Boolean,
                     required: false,
                 },
                 {
-                    name: 'channels-blacklist',
-                    description: 'Enable or disable the channel blacklist.',
+                    name: 'channels-blocklist',
+                    description: 'Enable or disable the channel blocklist.',
                     type: ApplicationCommandOptionType.Boolean,
                     required: false,
                 },

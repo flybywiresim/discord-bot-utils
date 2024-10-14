@@ -19,7 +19,7 @@ const failedEmbed = (command: string) => makeEmbed({
     color: Colors.Red,
 });
 
-const permissionEmbed = (command: string, roles: string[], rolesBlacklist: boolean, channels: string[], channelsBlacklist: boolean, quietErrors: boolean, verboseErrors: boolean) => makeEmbed({
+const permissionEmbed = (command: string, roles: string[], rolesBlocklist: boolean, channels: string[], channelsBlocklist: boolean, quietErrors: boolean, verboseErrors: boolean) => makeEmbed({
     title: `Prefix Commands - Show Command Permissions - ${command}`,
     fields: [
         {
@@ -27,16 +27,16 @@ const permissionEmbed = (command: string, roles: string[], rolesBlacklist: boole
             value: roles.length > 0 ? roles.join(', ') : 'None',
         },
         {
-            name: 'Roles Blacklist',
-            value: rolesBlacklist ? 'Enabled' : 'Disabled',
+            name: 'Roles Blocklist',
+            value: rolesBlocklist ? 'Enabled' : 'Disabled',
         },
         {
             name: 'Channels',
             value: channels.length > 0 ? channels.join(', ') : 'None',
         },
         {
-            name: 'Channels Blacklist',
-            value: channelsBlacklist ? 'Enabled' : 'Disabled',
+            name: 'Channels Blocklist',
+            value: channelsBlocklist ? 'Enabled' : 'Disabled',
         },
         {
             name: 'Quiet Errors',
@@ -71,7 +71,7 @@ export async function handleShowPrefixCommandPermissions(interaction: ChatInputC
 
     const [foundCommand] = foundCommands;
     const { permissions } = foundCommand;
-    const { roles, rolesBlacklist, channels, channelsBlacklist, quietErrors, verboseErrors } = permissions;
+    const { roles, rolesBlocklist, channels, channelsBlocklist, quietErrors, verboseErrors } = permissions;
     const roleNames = [];
     const channelNames = [];
     if (roles) {
@@ -96,7 +96,7 @@ export async function handleShowPrefixCommandPermissions(interaction: ChatInputC
     }
 
     try {
-        await interaction.followUp({ embeds: [permissionEmbed(command, roleNames, rolesBlacklist || false, channelNames, channelsBlacklist || false, quietErrors || false, verboseErrors || false)], ephemeral: false });
+        await interaction.followUp({ embeds: [permissionEmbed(command, roleNames, rolesBlocklist || false, channelNames, channelsBlocklist || false, quietErrors || false, verboseErrors || false)], ephemeral: false });
     } catch (error) {
         Logger.error(`Failed to show prefix command content for command ${command}: ${error}`);
         await interaction.followUp({ embeds: [failedEmbed(command)], ephemeral: true });

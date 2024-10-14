@@ -24,7 +24,7 @@ const successEmbed = (command: string) => makeEmbed({
     color: Colors.Green,
 });
 
-const modLogEmbed = (moderator: User, command: string, rolesBlacklist: boolean, channelsBlacklist: boolean, quietErrors: boolean, verboseErrors: boolean) => makeEmbed({
+const modLogEmbed = (moderator: User, command: string, rolesBlocklist: boolean, channelsBlocklist: boolean, quietErrors: boolean, verboseErrors: boolean) => makeEmbed({
     title: 'Prefix command version added',
     fields: [
         {
@@ -32,12 +32,12 @@ const modLogEmbed = (moderator: User, command: string, rolesBlacklist: boolean, 
             value: command,
         },
         {
-            name: 'Roles Blacklist',
-            value: rolesBlacklist ? 'Enabled' : 'Disabled',
+            name: 'Roles Blocklist',
+            value: rolesBlocklist ? 'Enabled' : 'Disabled',
         },
         {
-            name: 'Channels Blacklist',
-            value: channelsBlacklist ? 'Enabled' : 'Disabled',
+            name: 'Channels Blocklist',
+            value: channelsBlocklist ? 'Enabled' : 'Disabled',
         },
         {
             name: 'Quiet Errors',
@@ -72,8 +72,8 @@ export async function handleSetPrefixCommandPermissionSettings(interaction: Chat
     }
 
     const command = interaction.options.getString('command')!;
-    const rolesBlacklist = interaction.options.getBoolean('roles-blacklist') || false;
-    const channelsBlacklist = interaction.options.getBoolean('channels-blacklist') || false;
+    const rolesBlocklist = interaction.options.getBoolean('roles-blocklist') || false;
+    const channelsBlocklist = interaction.options.getBoolean('channels-blocklist') || false;
     const quietErrors = interaction.options.getBoolean('quiet-errors') || false;
     const verboseErrors = interaction.options.getBoolean('verbose-errors') || false;
     const moderator = interaction.user;
@@ -98,8 +98,8 @@ export async function handleSetPrefixCommandPermissionSettings(interaction: Chat
         if (!foundCommand.permissions) {
             foundCommand.permissions = new PrefixCommandPermissions();
         }
-        foundCommand.permissions.rolesBlacklist = rolesBlacklist;
-        foundCommand.permissions.channelsBlacklist = channelsBlacklist;
+        foundCommand.permissions.rolesBlocklist = rolesBlocklist;
+        foundCommand.permissions.channelsBlocklist = channelsBlocklist;
         foundCommand.permissions.quietErrors = quietErrors;
         foundCommand.permissions.verboseErrors = verboseErrors;
         try {
@@ -108,7 +108,7 @@ export async function handleSetPrefixCommandPermissionSettings(interaction: Chat
             await interaction.followUp({ embeds: [successEmbed(command)], ephemeral: true });
             if (modLogsChannel) {
                 try {
-                    await modLogsChannel.send({ embeds: [modLogEmbed(moderator, command, rolesBlacklist, channelsBlacklist, quietErrors, verboseErrors)] });
+                    await modLogsChannel.send({ embeds: [modLogEmbed(moderator, command, rolesBlocklist, channelsBlocklist, quietErrors, verboseErrors)] });
                 } catch (error) {
                     Logger.error(`Failed to post a message to the mod logs channel: ${error}`);
                 }
