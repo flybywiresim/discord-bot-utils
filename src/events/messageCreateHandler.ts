@@ -1,5 +1,5 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, EmbedBuilder, Interaction, Message } from 'discord.js';
-import { event, getInMemoryCache, Logger, Events, constantsConfig, makeEmbed, makeLines } from '../lib';
+import { event, getInMemoryCache, memoryCachePrefixCommand, memoryCachePrefixVersion, memoryCachePrefixChannelDefaultVersion, Logger, Events, constantsConfig, makeEmbed, makeLines } from '../lib';
 import { PrefixCommand, PrefixCommandVersion } from '../lib/schemas/prefixCommandSchemas';
 
 const commandEmbed = (title: string, description: string, color: string, imageUrl: string = '') => makeEmbed({
@@ -12,13 +12,8 @@ const commandEmbed = (title: string, description: string, color: string, imageUr
 async function replyWithEmbed(msg: Message, embed: EmbedBuilder, buttonRow?: ActionRowBuilder<ButtonBuilder>) : Promise<Message<boolean>> {
     return msg.fetchReference()
         .then((res) => {
-            let existingFooterText = '';
-            const existingFooter = embed.data.footer;
-            if (existingFooter) {
-                existingFooterText = `${existingFooter.text}\n\n`;
-            }
             embed = EmbedBuilder.from(embed.data);
-            embed.setFooter({ text: `${existingFooterText}Executed by ${msg.author.tag} - ${msg.author.id}` });
+            embed.setFooter({ text: `Executed by ${msg.author.tag} - ${msg.author.id}` });
             return res.reply({
                 embeds: [embed],
                 components: buttonRow ? [buttonRow] : [],
@@ -57,6 +52,30 @@ async function sendReply(message: Message, commandTitle: string, commandContent:
     }
 }
 
+async function expireChoiceReply(message: Message, commandTitle: string, commandContent: string, isEmbed: boolean, embedColor: string, commandImage: string) : Promise<Message<boolean>> {
+    try {
+        if (isEmbed) {
+            const commandEmbedData = commandEmbed(commandTitle, commandContent, embedColor, commandImage);
+            const { footer } = message.embeds[0];
+            const newFooter = footer?.text ? `${footer.text} - The choice has expired.` : 'The choice has expired.';
+            commandEmbedData.setFooter({ text: newFooter });
+            return message.edit({ embeds: [commandEmbedData], components: [] });
+        }
+
+        return message.edit({
+            content: makeLines([
+                `**${commandTitle}**`,
+                ...(commandContent ? [commandContent] : []),
+                '\n`The choice has expired.`',
+            ]),
+            components: [],
+        });
+    } catch (error) {
+        Logger.error(error);
+        return message.reply('An error occurred while updating the message.');
+    }
+}
+
 async function sendPermError(message: Message, errorText: string) {
     if (constantsConfig.prefixCommandPermissionDelay > 0) {
         errorText += `\n\nThis message & the original command message will be deleted in ${constantsConfig.prefixCommandPermissionDelay / 1000} seconds.`;
@@ -91,7 +110,7 @@ export default event(Events.MessageCreate, async (_, message) => {
             const commandVersionExplicitGeneric = (commandText.toLowerCase() === 'generic');
 
             // Step 1: Check if the command is actually a version alias
-            const commandCachedVersion = await inMemoryCache.get(`PF_VERSION:${commandText.toLowerCase()}`);
+            const commandCachedVersion = await inMemoryCache.get(`${memoryCachePrefixVersion}:${commandText.toLowerCase()}`);
             let commandVersionId;
             let commandVersionName;
             let commandVersionEnabled;
@@ -106,7 +125,7 @@ export default event(Events.MessageCreate, async (_, message) => {
 
             // Step 2: Check if there's a default version for the channel if commandVersionName is GENERIC
             if (commandVersionName === 'GENERIC' && !commandVersionExplicitGeneric) {
-                const channelDefaultVersionCached = await inMemoryCache.get(`PF_CHANNEL_VERSION:${channelId}`);
+                const channelDefaultVersionCached = await inMemoryCache.get(`${memoryCachePrefixChannelDefaultVersion}:${channelId}`);
                 if (channelDefaultVersionCached) {
                     const channelDefaultVersion = PrefixCommandVersion.hydrate(channelDefaultVersionCached);
                     ({ id: commandVersionId, name: commandVersionName, enabled: commandVersionEnabled } = channelDefaultVersion);
@@ -125,7 +144,7 @@ export default event(Events.MessageCreate, async (_, message) => {
             }
 
             // Step 3: Check if the command exists itself and process it
-            const cachedCommandDetails = await inMemoryCache.get(`PF_COMMAND:${commandText.toLowerCase()}`);
+            const cachedCommandDetails = await inMemoryCache.get(`${memoryCachePrefixCommand}:${commandText.toLowerCase()}`);
             if (cachedCommandDetails) {
                 const commandDetails = PrefixCommand.hydrate(cachedCommandDetails);
                 const { name, contents, isEmbed, embedColor, permissions } = commandDetails;
@@ -176,35 +195,44 @@ export default event(Events.MessageCreate, async (_, message) => {
                     return;
                 }
 
-                const commandContentData = contents.find(({ versionId }) => versionId === commandVersionId);
+                let commandContentData = contents.find(({ versionId }) => versionId === commandVersionId);
+                // If the version is not found, try to find the generic version
+                if (!commandContentData) {
+                    commandContentData = contents.find(({ versionId }) => versionId === 'GENERIC');
+                }
+                // If the generic version is not found, drop execution
                 if (!commandContentData) {
                     Logger.debug(`Prefix Command - Version "${commandVersionName}" not found for command "${name}" based on user command "${commandText}"`);
                     return;
                 }
                 const { title: commandTitle, content: commandContent, image: commandImage } = commandContentData;
-                // If generic and multiple versions, show the selection
+                // If generic requested and multiple versions, show the selection
+                // Note that this only applies if GENERIC is the version explicitly requested
+                // Otherwise, the options are not shown
                 if (commandVersionName === 'GENERIC' && contents.length > 1) {
                     Logger.debug(`Prefix Command - Multiple versions found for command "${name}" based on user command "${commandText}", showing version selection`);
-                    const versionSelectionButtons: ButtonBuilder[] = [];
+                    const versionSelectionButtonData: { [key: string]: ButtonBuilder } = {};
                     for (const { versionId: versionIdForButton } of contents) {
                         // eslint-disable-next-line no-await-in-loop
-                        const versionCached = await inMemoryCache.get(`PF_VERSION:${versionIdForButton}`);
+                        const versionCached = await inMemoryCache.get(`${memoryCachePrefixVersion}:${versionIdForButton}`);
                         if (versionCached) {
                             const version = PrefixCommandVersion.hydrate(versionCached);
                             const { emoji } = version;
-                            versionSelectionButtons.push(
-                                new ButtonBuilder()
-                                    .setCustomId(`${versionIdForButton}`)
-                                    .setEmoji(emoji)
-                                    .setStyle(ButtonStyle.Primary),
-                            );
+                            versionSelectionButtonData[emoji] = new ButtonBuilder()
+                                .setCustomId(`${versionIdForButton}`)
+                                .setEmoji(emoji)
+                                .setStyle(ButtonStyle.Primary);
                         }
                     }
+                    const versionSelectionButtons: ButtonBuilder[] = Object.keys(versionSelectionButtonData)
+                        .sort()
+                        .map((key: string) => versionSelectionButtonData[key]);
                     const versionSelectButtonRow = new ActionRowBuilder<ButtonBuilder>().addComponents(versionSelectionButtons);
                     const buttonMessage = await sendReply(message, commandTitle, commandContent || '', isEmbed || false, embedColor || constantsConfig.colors.FBW_CYAN, commandImage || '', versionSelectButtonRow);
 
                     const filter = (interaction: Interaction) => interaction.user.id === authorId;
                     const collector = buttonMessage.createMessageComponentCollector({ filter, time: 60_000 });
+                    let buttonClicked = false;
                     collector.on('collect', async (collectedInteraction: ButtonInteraction) => {
                         Logger.debug(`Prefix Command - User selected version "${collectedInteraction.customId}" for command "${name}" based on user command "${commandText}"`);
                         await collectedInteraction.deferUpdate();
@@ -216,7 +244,15 @@ export default event(Events.MessageCreate, async (_, message) => {
                             return;
                         }
                         const { title: commandTitle, content: commandContent, image: commandImage } = commandContentData;
+                        buttonClicked = true;
                         await sendReply(message, commandTitle, commandContent || '', isEmbed || false, embedColor || constantsConfig.colors.FBW_CYAN, commandImage || '');
+                    });
+
+                    collector.on('end', async () => {
+                        if (!buttonClicked) {
+                            Logger.debug(`Prefix Command - User did not select a version for command "${name}" based on user command "${commandText}"`);
+                            await expireChoiceReply(buttonMessage, commandTitle, commandContent || '', isEmbed || false, embedColor || constantsConfig.colors.FBW_CYAN, commandImage || '');
+                        }
                     });
                 } else {
                     Logger.debug(`Prefix Command - Executing version "${commandVersionName}" for command "${name}" based on user command "${commandText}"`);
