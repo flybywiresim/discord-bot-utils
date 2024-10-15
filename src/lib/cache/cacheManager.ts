@@ -59,20 +59,6 @@ export async function clearSinglePrefixCommandCache(command: IPrefixCommand) {
     await inMemoryCache.del(`${memoryCachePrefixCommand}:${name.toLowerCase()}`);
 }
 
-export async function clearAllPrefixCommandsCache() {
-    const inMemoryCache = getInMemoryCache();
-    if (!inMemoryCache) return;
-
-    const keys = await inMemoryCache.store.keys();
-    for (const key of keys) {
-        if (key.startsWith(`${memoryCachePrefixCommand}:`)) {
-            Logger.debug(`Clearing cache for command or alias "${key}"`);
-            // eslint-disable-next-line no-await-in-loop
-            await inMemoryCache.del(key);
-        }
-    }
-}
-
 export async function loadSinglePrefixCommandToCache(command: IPrefixCommand) {
     const inMemoryCache = getInMemoryCache();
     if (!inMemoryCache) return;
@@ -104,8 +90,40 @@ export async function refreshSinglePrefixCommandCache(oldCommand: IPrefixCommand
 }
 
 export async function refreshAllPrefixCommandsCache() {
-    await clearAllPrefixCommandsCache();
-    await loadAllPrefixCommandsToCache();
+    const conn = getConn();
+    const inMemoryCache = getInMemoryCache();
+    if (!conn || !inMemoryCache) return;
+
+    // Step 1: Get all commands from the database
+    const prefixCommands = await PrefixCommand.find();
+    // Step 2: Get all commands from the cache
+    const cacheKeys = await inMemoryCache.store.keys();
+    // Step 3: Loop over cached commands
+    for (const key of cacheKeys) {
+        if (key.startsWith(`${memoryCachePrefixCommand}:`)) {
+            const checkCommand = key.split(':')[1];
+            // Step 3.a: Check if cached command exists in the database list
+            let found = false;
+            for (const dbCommand of prefixCommands) {
+                const { name: dbCommandName, aliases: dbCommandAliases } = dbCommand;
+                if (dbCommandName.toLowerCase() === checkCommand.toLowerCase() || dbCommandAliases.includes(checkCommand)) {
+                    found = true;
+                    break;
+                }
+            }
+            // Step 3.b: If not found, remove from cache
+            if (!found) {
+                Logger.debug(`Removing command or alias ${checkCommand} from cache`);
+                // eslint-disable-next-line no-await-in-loop
+                await inMemoryCache.del(key);
+            }
+        }
+    }
+    // Step 4: Loop over database commands and update cache
+    for (const dbCommand of prefixCommands) {
+        // eslint-disable-next-line no-await-in-loop
+        await loadSinglePrefixCommandToCache(dbCommand);
+    }
 }
 
 /**
@@ -120,20 +138,6 @@ export async function clearSinglePrefixCommandVersionCache(version: IPrefixComma
     Logger.debug(`Clearing cache for command version alias "${alias}"`);
     await inMemoryCache.del(`${memoryCachePrefixVersion}:${alias.toLowerCase()}`);
     await inMemoryCache.del(`${memoryCachePrefixVersion}:${versionId}`);
-}
-
-export async function clearAllPrefixCommandVersionsCache() {
-    const inMemoryCache = getInMemoryCache();
-    if (!inMemoryCache) return;
-
-    const keys = await inMemoryCache.store.keys();
-    for (const key of keys) {
-        if (key.startsWith(`${memoryCachePrefixVersion}:`)) {
-            Logger.debug(`Clearing cache for command version alias/id "${key}"`);
-            // eslint-disable-next-line no-await-in-loop
-            await inMemoryCache.del(key);
-        }
-    }
 }
 
 export async function loadSinglePrefixCommandVersionToCache(version: IPrefixCommandVersion) {
@@ -164,8 +168,40 @@ export async function refreshSinglePrefixCommandVersionCache(oldVersion: IPrefix
 }
 
 export async function refreshAllPrefixCommandVersionsCache() {
-    await clearAllPrefixCommandVersionsCache();
-    await loadAllPrefixCommandVersionsToCache();
+    const conn = getConn();
+    const inMemoryCache = getInMemoryCache();
+    if (!conn || !inMemoryCache) return;
+
+    // Step 1: Get all versions from the database
+    const prefixCommandVersions = await PrefixCommandVersion.find();
+    // Step 2: Get all versions from the cache
+    const cacheKeys = await inMemoryCache.store.keys();
+    // Step 3: Loop over cached versions
+    for (const key of cacheKeys) {
+        if (key.startsWith(`${memoryCachePrefixVersion}:`)) {
+            const checkVersion = key.split(':')[1];
+            // Step 3.a: Check if cached version exists in the database list
+            let found = false;
+            for (const dbVersion of prefixCommandVersions) {
+                const { _id: dbVersionId, alias } = dbVersion;
+                if (dbVersionId.toString().toLowerCase() === checkVersion.toLowerCase() || alias.toLowerCase() === checkVersion.toLowerCase()) {
+                    found = true;
+                    break;
+                }
+            }
+            // Step 3.b: If not found, remove from cache
+            if (!found) {
+                Logger.debug(`Removing version with id ${checkVersion} from cache`);
+                // eslint-disable-next-line no-await-in-loop
+                await inMemoryCache.del(key);
+            }
+        }
+    }
+    // Step 4: Loop over database versions and update cache
+    for (const dbVersion of prefixCommandVersions) {
+        // eslint-disable-next-line no-await-in-loop
+        await loadSinglePrefixCommandVersionToCache(dbVersion);
+    }
 }
 
 /**
@@ -179,20 +215,6 @@ export async function clearSinglePrefixCommandCategoryCache(category: IPrefixCom
     const { name } = category;
     Logger.debug(`Clearing cache for command category "${name}"`);
     await inMemoryCache.del(`${memoryCachePrefixCategory}:${name.toLowerCase()}`);
-}
-
-export async function clearAllPrefixCommandCategoriesCache() {
-    const inMemoryCache = getInMemoryCache();
-    if (!inMemoryCache) return;
-
-    const keys = await inMemoryCache.store.keys();
-    for (const key of keys) {
-        if (key.startsWith(`${memoryCachePrefixCategory}:`)) {
-            Logger.debug(`Clearing cache for command category "${key}"`);
-            // eslint-disable-next-line no-await-in-loop
-            await inMemoryCache.del(key);
-        }
-    }
 }
 
 export async function loadSinglePrefixCommandCategoryToCache(category: IPrefixCommandCategory) {
@@ -222,8 +244,40 @@ export async function refreshSinglePrefixCommandCategoryCache(oldCategory: IPref
 }
 
 export async function refreshAllPrefixCommandCategoriesCache() {
-    await clearAllPrefixCommandCategoriesCache();
-    await loadAllPrefixCommandCategoriesToCache();
+    const conn = getConn();
+    const inMemoryCache = getInMemoryCache();
+    if (!conn || !inMemoryCache) return;
+
+    // Step 1: Get all catagories from the database
+    const prefixCommandCategories = await PrefixCommandCategory.find();
+    // Step 2: Get all categories from the cache
+    const cacheKeys = await inMemoryCache.store.keys();
+    // Step 3: Loop over cached categories
+    for (const key of cacheKeys) {
+        if (key.startsWith(`${memoryCachePrefixCategory}:`)) {
+            const categoryName = key.split(':')[1];
+            // Step 3.a: Check if cached category exists in the database list
+            let found = false;
+            for (const dbCategory of prefixCommandCategories) {
+                const { name: dbCategoryName } = dbCategory;
+                if (dbCategoryName.toLowerCase() === categoryName.toLowerCase()) {
+                    found = true;
+                    break;
+                }
+            }
+            // Step 3.b: If not found, remove from cache
+            if (!found) {
+                Logger.debug(`Removing category ${categoryName} from cache`);
+                // eslint-disable-next-line no-await-in-loop
+                await inMemoryCache.del(key);
+            }
+        }
+    }
+    // Step 4: Loop over database categories and update cache
+    for (const dbCategory of prefixCommandCategories) {
+        // eslint-disable-next-line no-await-in-loop
+        await loadSinglePrefixCommandCategoryToCache(dbCategory);
+    }
 }
 
 /**
@@ -280,7 +334,8 @@ export async function refreshAllPrefixCommandChannelDefaultVersionsCache() {
             // Step 3.a: Check if cached channel default version exists in the database list
             let found = false;
             for (const dbChannelDefaultVersion of prefixCommandChannelDefaultVersions) {
-                if (dbChannelDefaultVersion.channelId.toString().toLocaleLowerCase() === channelId.toLocaleLowerCase()) {
+                const { channelId: dbChannelId } = dbChannelDefaultVersion;
+                if (dbChannelId.toString().toLowerCase() === channelId.toLowerCase()) {
                     found = true;
                     break;
                 }
