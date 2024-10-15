@@ -239,20 +239,6 @@ export async function clearSinglePrefixCommandChannelDefaultVersionCache(channel
     await inMemoryCache.del(`${memoryCachePrefixChannelDefaultVersion}:${channelId}`);
 }
 
-export async function clearAllPrefixCommandChannelDefaultVersionsCache() {
-    const inMemoryCache = getInMemoryCache();
-    if (!inMemoryCache) return;
-
-    const keys = await inMemoryCache.store.keys();
-    for (const key of keys) {
-        if (key.startsWith(`${memoryCachePrefixChannelDefaultVersion}:`)) {
-            Logger.debug(`Clearing cache for channel default version for channel "${key}"`);
-            // eslint-disable-next-line no-await-in-loop
-            await inMemoryCache.del(key);
-        }
-    }
-}
-
 export async function loadSinglePrefixCommandChannelDefaultVersionToCache(channelDefaultVersion: IPrefixCommandChannelDefaultVersion) {
     const inMemoryCache = getInMemoryCache();
     if (!inMemoryCache) return;
@@ -278,12 +264,38 @@ export async function loadAllPrefixCommandChannelDefaultVersionsToCache() {
     }
 }
 
-export async function refreshSinglePrefixCommandChannelDefaultVersionCache(oldChannelDefaultVersion: IPrefixCommandChannelDefaultVersion, newChannelDefaultVersion: IPrefixCommandChannelDefaultVersion) {
-    await clearSinglePrefixCommandChannelDefaultVersionCache(oldChannelDefaultVersion);
-    await loadSinglePrefixCommandChannelDefaultVersionToCache(newChannelDefaultVersion);
-}
-
 export async function refreshAllPrefixCommandChannelDefaultVersionsCache() {
-    await clearAllPrefixCommandChannelDefaultVersionsCache();
-    await loadAllPrefixCommandChannelDefaultVersionsToCache();
+    const conn = getConn();
+    const inMemoryCache = getInMemoryCache();
+    if (!conn || !inMemoryCache) return;
+
+    // Step 1: Get all channel default versions from the database
+    const prefixCommandChannelDefaultVersions = await PrefixCommandChannelDefaultVersion.find();
+    // Step 2: Get all channel default versions from the cache
+    const cacheKeys = await inMemoryCache.store.keys();
+    // Step 3: Loop over cached channel default versions
+    for (const key of cacheKeys) {
+        if (key.startsWith(`${memoryCachePrefixChannelDefaultVersion}:`)) {
+            const channelId = key.split(':')[1];
+            // Step 3.a: Check if cached channel default version exists in the database list
+            let found = false;
+            for (const dbChannelDefaultVersion of prefixCommandChannelDefaultVersions) {
+                if (dbChannelDefaultVersion.channelId.toString().toLocaleLowerCase() === channelId.toLocaleLowerCase()) {
+                    found = true;
+                    break;
+                }
+            }
+            // Step 3.b: If not found, remove from cache
+            if (!found) {
+                Logger.debug(`Removing channel default version for channel ${channelId} from cache`);
+                // eslint-disable-next-line no-await-in-loop
+                await inMemoryCache.del(key);
+            }
+        }
+    }
+    // Step 4: Loop over database channel default versions and update cache
+    for (const dbChannelDefaultVersion of prefixCommandChannelDefaultVersions) {
+        // eslint-disable-next-line no-await-in-loop
+        await loadSinglePrefixCommandChannelDefaultVersionToCache(dbChannelDefaultVersion);
+    }
 }
