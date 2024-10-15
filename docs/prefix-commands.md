@@ -506,14 +506,13 @@ Every time a channel default version is added, modified or deleted, the cache is
 
 Periodically, the cache will be updated automatically using the scheduler. The interval is configurable using an environment variable `CACHE_REFRESH_INTERVAL`.
 
-When doing so, first all entries are purged to make sure items that no longer exist, do not remain. Then all items are recreated.
+When the cache is refreshed, it will do the following steps:
 
-TODO: This is not an ideal solution and has the risk that by emptying the cache first, prefix commands might temporarily not work. Therefor this will be adjusted in the short term with a mechanism where the following actions are taken in steps, for each type of object cached:
-
-- Fetch all existing items from the DB.
-- Fetch all keys from the cache.
-- Update or Add all objects from the DB.
-- Compare all keys found in the cache, and check if they still exist in the DB data, if not, remove them from the cache.
+1. Fetch all existing items from the DB.
+2. Fetch all keys from the cache.
+3. Loop over all keys found in cache.
+   1. Verify the item still exists in the items from the DB. If not, delete the cache key.
+4. Update or Add all objects from the DB.
 
 ### Message Handler
 
