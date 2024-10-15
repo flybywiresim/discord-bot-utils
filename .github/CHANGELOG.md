@@ -2,6 +2,7 @@
 
 Update <small>_ October 2024</small>
 
+- feat: Prefix Command Management (23/10/2024)
 - fix: role assignment typo for server announcements (22/10/2024)
 
 Update <small>_ August 2024</small>
