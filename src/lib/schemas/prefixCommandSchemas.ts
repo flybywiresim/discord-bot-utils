@@ -73,10 +73,7 @@ const prefixCommandContentSchema = new Schema<IPrefixCommandContent>({
         type: String,
         required: true,
     },
-    title: {
-        type: String,
-        required: true,
-    },
+    title: String,
     content: String,
     image: String,
 }, { autoCreate: false });

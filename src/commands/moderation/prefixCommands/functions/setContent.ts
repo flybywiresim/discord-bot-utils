@@ -118,7 +118,7 @@ export async function handleSetPrefixCommandContent(interaction: ChatInputComman
         .setStyle(TextInputStyle.Short)
         .setMaxLength(255)
         .setMinLength(0)
-        .setRequired(true)
+        .setRequired(false)
         .setValue(foundContent ? foundContent.title : '');
 
     const commandContentContent = new TextInputBuilder()

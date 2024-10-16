@@ -94,7 +94,7 @@ export async function handleShowPrefixCommandContent(interaction: ChatInputComma
     }
     const { id: contentId, title, content, image } = foundContent;
     try {
-        await interaction.followUp({ embeds: [contentEmbed(command, version, `${title}`, `${content}`, `${image}`, `${commandId}`, `${versionId}`, `${contentId}`)], ephemeral: false });
+        await interaction.followUp({ embeds: [contentEmbed(command, version, title || '', content || '', image || '', `${commandId}`, `${versionId}`, `${contentId}`)], ephemeral: false });
     } catch (error) {
         Logger.error(`Failed to show prefix command content for command ${command} and version ${version}: ${error}`);
         await interaction.followUp({ embeds: [failedEmbed(command, version)], ephemeral: true });

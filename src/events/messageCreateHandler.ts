@@ -1,6 +1,6 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, EmbedBuilder, Interaction, Message } from 'discord.js';
 import { event, getInMemoryCache, memoryCachePrefixCommand, memoryCachePrefixVersion, memoryCachePrefixChannelDefaultVersion, Logger, Events, constantsConfig, makeEmbed, makeLines } from '../lib';
-import { PrefixCommand, PrefixCommandVersion } from '../lib/schemas/prefixCommandSchemas';
+import { PrefixCommand, PrefixCommandPermissions, PrefixCommandVersion } from '../lib/schemas/prefixCommandSchemas';
 
 const commandEmbed = (title: string, description: string, color: string, imageUrl: string = '') => makeEmbed({
     title,
@@ -42,10 +42,14 @@ async function sendReply(message: Message, commandTitle: string, commandContent:
         if (isEmbed) {
             return replyWithEmbed(message, commandEmbed(commandTitle, commandContent, embedColor, commandImage), versionButtonRow);
         }
-        return replyWithMsg(message, makeLines([
-            `**${commandTitle}**`,
-            ...(commandContent ? [commandContent] : []),
-        ]), versionButtonRow);
+        const content: string[] = [];
+        if (commandTitle) {
+            content.push(`**${commandTitle}**`);
+        }
+        if (commandContent) {
+            content.push(commandContent);
+        }
+        return replyWithMsg(message, makeLines(content), versionButtonRow);
     } catch (error) {
         Logger.error(error);
         return message.reply('An error occurred while processing the command.');
@@ -62,12 +66,16 @@ async function expireChoiceReply(message: Message, commandTitle: string, command
             return message.edit({ embeds: [commandEmbedData], components: [] });
         }
 
+        const content: string[] = [];
+        if (commandTitle) {
+            content.push(`**${commandTitle}**`);
+        }
+        if (commandContent) {
+            content.push(commandContent);
+        }
+        content.push('\n`The choice has expired.`');
         return message.edit({
-            content: makeLines([
-                `**${commandTitle}**`,
-                ...(commandContent ? [commandContent] : []),
-                '\n`The choice has expired.`',
-            ]),
+            content: makeLines(content),
             components: [],
         });
     } catch (error) {
@@ -148,7 +156,7 @@ export default event(Events.MessageCreate, async (_, message) => {
             if (cachedCommandDetails) {
                 const commandDetails = PrefixCommand.hydrate(cachedCommandDetails);
                 const { name, contents, isEmbed, embedColor, permissions } = commandDetails;
-                const { roles: permRoles, rolesBlocklist, channels: permChannels, channelsBlocklist, quietErrors, verboseErrors } = permissions;
+                const { roles: permRoles, rolesBlocklist, channels: permChannels, channelsBlocklist, quietErrors, verboseErrors } = permissions ?? new PrefixCommandPermissions();
                 const authorMember = await guild.members.fetch(authorId);
 
                 // Check permissions
