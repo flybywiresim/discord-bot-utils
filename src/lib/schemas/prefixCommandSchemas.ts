@@ -79,7 +79,7 @@ const prefixCommandContentSchema = new Schema<IPrefixCommandContent>({
     },
     content: String,
     image: String,
-});
+}, { autoCreate: false });
 
 export interface IPrefixCommandPermissions extends Document {
     roles?: string[],
@@ -97,7 +97,7 @@ const prefixCommandPermissionsSchema = new Schema<IPrefixCommandPermissions>({
     channelsBlocklist: Boolean,
     quietErrors: Boolean,
     verboseErrors: Boolean,
-});
+}, { autoCreate: false });
 
 export interface IPrefixCommand extends Document {
     commandId: mongoose.Schema.Types.ObjectId;
