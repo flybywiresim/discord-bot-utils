@@ -39,16 +39,18 @@ async function replyWithMsg(msg: Message, text: string, buttonRow?:ActionRowBuil
 
 async function sendReply(message: Message, commandTitle: string, commandContent: string, isEmbed: boolean, embedColor: string, commandImage: string, versionButtonRow?: ActionRowBuilder<ButtonBuilder>) : Promise<Message<boolean>> {
     try {
+        let actualCommandContent = commandContent;
+        if (!commandTitle && !commandContent && !commandImage) {
+            actualCommandContent = 'No content available.';
+        }
         if (isEmbed) {
-            return replyWithEmbed(message, commandEmbed(commandTitle, commandContent, embedColor, commandImage), versionButtonRow);
+            return replyWithEmbed(message, commandEmbed(commandTitle, actualCommandContent, embedColor, commandImage), versionButtonRow);
         }
         const content: string[] = [];
         if (commandTitle) {
             content.push(`**${commandTitle}**`);
         }
-        if (commandContent) {
-            content.push(commandContent);
-        }
+        content.push(actualCommandContent);
         return replyWithMsg(message, makeLines(content), versionButtonRow);
     } catch (error) {
         Logger.error(error);
@@ -58,8 +60,12 @@ async function sendReply(message: Message, commandTitle: string, commandContent:
 
 async function expireChoiceReply(message: Message, commandTitle: string, commandContent: string, isEmbed: boolean, embedColor: string, commandImage: string) : Promise<Message<boolean>> {
     try {
+        let actualCommandContent = commandContent;
+        if (!commandTitle && !commandContent && !commandImage) {
+            actualCommandContent = 'No content available.';
+        }
         if (isEmbed) {
-            const commandEmbedData = commandEmbed(commandTitle, commandContent, embedColor, commandImage);
+            const commandEmbedData = commandEmbed(commandTitle, actualCommandContent, embedColor, commandImage);
             const { footer } = message.embeds[0];
             const newFooter = footer?.text ? `${footer.text} - The choice has expired.` : 'The choice has expired.';
             commandEmbedData.setFooter({ text: newFooter });
@@ -70,9 +76,7 @@ async function expireChoiceReply(message: Message, commandTitle: string, command
         if (commandTitle) {
             content.push(`**${commandTitle}**`);
         }
-        if (commandContent) {
-            content.push(commandContent);
-        }
+        content.push(actualCommandContent);
         content.push('\n`The choice has expired.`');
         return message.edit({
             content: makeLines(content),
