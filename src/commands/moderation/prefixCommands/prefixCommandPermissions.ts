@@ -188,7 +188,9 @@ const autocompleteCallback: AutocompleteCallback = async ({ interaction }) => {
         if (!conn) {
             return interaction.respond(choices);
         }
-        const foundCommands = await PrefixCommand.find({ name: { $regex: searchText, $options: 'i' } });
+        const foundCommands = await PrefixCommand.find({ name: { $regex: searchText, $options: 'i' } })
+            .sort({ name: 1 })
+            .limit(25);
         for (let i = 0; i < foundCommands.length; i++) {
             const command = foundCommands[i];
             const { name } = command;
