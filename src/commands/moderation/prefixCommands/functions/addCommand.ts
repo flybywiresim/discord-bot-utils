@@ -130,8 +130,14 @@ export async function handleAddPrefixCommand(interaction: ChatInputCommandIntera
             isEmbed,
             embedColor,
             contents: [],
-            channelPermissions: [],
-            rolePermissions: [],
+            permissions: {
+                roles: [],
+                rolesBlocklist: false,
+                channels: [],
+                channelsBlocklist: false,
+                quietErrors: false,
+                verboseErrors: false,
+            },
         });
         try {
             await prefixCommand.save();
