@@ -88,7 +88,7 @@ export async function handleModifyPrefixCommand(interaction: ChatInputCommandInt
     const description = interaction.options.getString('description') || '';
     const aliasesString = interaction.options.getString('aliases') || '';
     const aliases = aliasesString !== '' ? aliasesString.split(',') : [];
-    const isEmbed = interaction.options.getBoolean('is_embed') || null;
+    const isEmbed = interaction.options.getBoolean('is_embed');
     const embedColor = interaction.options.getString('embed_color') || '';
     const moderator = interaction.user;
 
