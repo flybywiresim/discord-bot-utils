@@ -207,10 +207,12 @@ export default event(Events.MessageCreate, async (_, message) => {
                 }
 
                 let commandContentData = contents.find(({ versionId }) => versionId === commandVersionId);
+                let enableButtons = true;
                 // If the version is not found, try to find the generic version
                 if (!commandContentData) {
                     commandContentData = contents.find(({ versionId }) => versionId === 'GENERIC');
                     commandVersionName = 'GENERIC';
+                    enableButtons = false;
                 }
                 // If the generic version is not found, drop execution
                 if (!commandContentData) {
@@ -221,7 +223,7 @@ export default event(Events.MessageCreate, async (_, message) => {
                 // If generic requested and multiple versions, show the selection
                 // Note that this only applies if GENERIC is the version explicitly requested
                 // Otherwise, the options are not shown
-                if (commandVersionName === 'GENERIC' && contents.length > 1) {
+                if (enableButtons && commandVersionName === 'GENERIC' && contents.length > 1) {
                     Logger.debug(`Prefix Command - Multiple versions found for command "${name}" based on user command "${commandText}", showing version selection`);
                     const versionSelectionButtonData: { [key: string]: ButtonBuilder } = {};
                     for (const { versionId: versionIdForButton } of contents) {
