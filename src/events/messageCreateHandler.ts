@@ -260,8 +260,8 @@ export default event(Events.MessageCreate, async (_, message) => {
                         await sendReply(message, commandTitle, commandContent || '', isEmbed || false, embedColor || constantsConfig.colors.FBW_CYAN, commandImage || '');
                     });
 
-                    collector.on('end', async () => {
-                        if (!buttonClicked) {
+                    collector.on('end', async (_: ButtonInteraction, reason: string) => {
+                        if (!buttonClicked && reason === 'time') {
                             Logger.debug(`Prefix Command - User did not select a version for command "${name}" based on user command "${commandText}"`);
                             await expireChoiceReply(buttonMessage, commandTitle, commandContent || '', isEmbed || false, embedColor || constantsConfig.colors.FBW_CYAN, commandImage || '');
                         }
