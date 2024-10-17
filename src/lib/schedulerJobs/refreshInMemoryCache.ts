@@ -24,9 +24,9 @@ export async function refreshInMemoryCache(job: Job) {
 
     const start = new Date().getTime();
     try {
-        await refreshAllPrefixCommandsCache();
         await refreshAllPrefixCommandVersionsCache();
         await refreshAllPrefixCommandCategoriesCache();
+        await refreshAllPrefixCommandsCache();
         await refreshAllPrefixCommandChannelDefaultVersionsCache();
     } catch (error) {
         Logger.error('Failed to refresh the in memory cache:', error);
