@@ -246,8 +246,9 @@ export default event(Events.MessageCreate, async (_, message) => {
                     const collector = buttonMessage.createMessageComponentCollector({ filter, time: 60_000 });
                     let buttonClicked = false;
                     collector.on('collect', async (collectedInteraction: ButtonInteraction) => {
-                        Logger.debug(`Prefix Command - User selected version "${collectedInteraction.customId}" for command "${name}" based on user command "${commandText}"`);
+                        buttonClicked = true;
                         await collectedInteraction.deferUpdate();
+                        Logger.debug(`Prefix Command - User selected version "${collectedInteraction.customId}" for command "${name}" based on user command "${commandText}"`);
                         await buttonMessage.delete();
                         const { customId: selectedVersionId } = collectedInteraction;
                         const commandContentData = contents.find(({ versionId }) => versionId === selectedVersionId);
@@ -256,7 +257,6 @@ export default event(Events.MessageCreate, async (_, message) => {
                             return;
                         }
                         const { title: commandTitle, content: commandContent, image: commandImage } = commandContentData;
-                        buttonClicked = true;
                         await sendReply(message, commandTitle, commandContent || '', isEmbed || false, embedColor || constantsConfig.colors.FBW_CYAN, commandImage || '');
                     });
 
