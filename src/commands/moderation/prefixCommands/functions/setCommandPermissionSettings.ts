@@ -25,7 +25,7 @@ const successEmbed = (command: string) => makeEmbed({
 });
 
 const modLogEmbed = (moderator: User, command: string, rolesBlocklist: boolean, channelsBlocklist: boolean, quietErrors: boolean, verboseErrors: boolean) => makeEmbed({
-    title: 'Prefix command version added',
+    title: 'Prefix command permission set',
     fields: [
         {
             name: 'Command',

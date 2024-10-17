@@ -92,7 +92,7 @@ export async function handleModifyPrefixCommand(interaction: ChatInputCommandInt
     const embedColor = interaction.options.getString('embed_color') || '';
     const moderator = interaction.user;
 
-    const nameRegex = /^[\w\d-_]+$/;
+    const nameRegex = /^[\w-]+$/;
     if (name && !nameRegex.test(name)) {
         await interaction.followUp({ embeds: [wrongFormatEmbed(name)], ephemeral: true });
         return;
@@ -133,7 +133,7 @@ export async function handleModifyPrefixCommand(interaction: ChatInputCommandInt
         existingCommand.embedColor = embedColor || existingCommand.embedColor;
         try {
             await existingCommand.save();
-            const { name, aliases, isEmbed, embedColor } = existingCommand;
+            const { name, description, aliases, isEmbed, embedColor } = existingCommand;
             await refreshSinglePrefixCommandCache(oldCommand, existingCommand);
             await interaction.followUp({ embeds: [successEmbed(name, commandId)], ephemeral: true });
             if (modLogsChannel) {

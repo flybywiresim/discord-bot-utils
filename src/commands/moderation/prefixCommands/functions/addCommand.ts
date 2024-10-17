@@ -93,7 +93,7 @@ export async function handleAddPrefixCommand(interaction: ChatInputCommandIntera
     const embedColor = interaction.options.getString('embed_color') || '';
     const moderator = interaction.user;
 
-    const nameRegex = /^[\w\d-_]+$/;
+    const nameRegex = /^[\w-]+$/;
     if (!nameRegex.test(name)) {
         await interaction.followUp({ embeds: [wrongFormatEmbed(name)], ephemeral: true });
         return;

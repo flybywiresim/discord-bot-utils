@@ -25,7 +25,7 @@ const successEmbed = (channel: string, version: string, emoji: string) => makeEm
 });
 
 const modLogEmbed = (moderator: User, channel: string, version: string, emoji: string) => makeEmbed({
-    title: 'Prefix command version added',
+    title: 'Prefix channel default version set',
     fields: [
         {
             name: 'Channel',

@@ -1,6 +1,5 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, EmbedBuilder, Interaction, Message } from 'discord.js';
-import { event, getInMemoryCache, memoryCachePrefixCommand, memoryCachePrefixVersion, memoryCachePrefixChannelDefaultVersion, Logger, Events, constantsConfig, makeEmbed, makeLines } from '../lib';
-import { PrefixCommand, PrefixCommandPermissions, PrefixCommandVersion } from '../lib/schemas/prefixCommandSchemas';
+import { event, getInMemoryCache, memoryCachePrefixCommand, memoryCachePrefixVersion, memoryCachePrefixChannelDefaultVersion, Logger, Events, constantsConfig, makeEmbed, makeLines, PrefixCommand, PrefixCommandPermissions, PrefixCommandVersion } from '../lib';
 
 const commandEmbed = (title: string, description: string, color: string, imageUrl: string = '') => makeEmbed({
     title,
@@ -249,7 +248,7 @@ export default event(Events.MessageCreate, async (_, message) => {
                     collector.on('collect', async (collectedInteraction: ButtonInteraction) => {
                         Logger.debug(`Prefix Command - User selected version "${collectedInteraction.customId}" for command "${name}" based on user command "${commandText}"`);
                         await collectedInteraction.deferUpdate();
-                        buttonMessage.delete();
+                        await buttonMessage.delete();
                         const { customId: selectedVersionId } = collectedInteraction;
                         const commandContentData = contents.find(({ versionId }) => versionId === selectedVersionId);
                         if (!commandContentData) {

@@ -80,7 +80,7 @@ export async function handleModifyPrefixCommandVersion(interaction: ChatInputCom
     const enabled = interaction.options.getBoolean('is_enabled');
     const moderator = interaction.user;
 
-    const nameRegex = /^[\w\d-_]+$/;
+    const nameRegex = /^[\w-]+$/;
     if (name && !nameRegex.test(name)) {
         await interaction.followUp({ embeds: [wrongFormatEmbed(name)], ephemeral: true });
         return;

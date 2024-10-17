@@ -26,7 +26,7 @@ const alreadyExistsEmbed = (command: string, roleName: string) => makeEmbed({
 });
 
 const successEmbed = (command: string, roleName: string) => makeEmbed({
-    title: `Prefix command role ${roleName} added for command ${command}.}`,
+    title: `Prefix command role ${roleName} added for command ${command}.`,
     color: Colors.Green,
 });
 

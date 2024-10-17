@@ -14,7 +14,7 @@ const noCommandEmbed = (command: string) => makeEmbed({
 });
 
 const failedEmbed = (command: string, channel: string) => makeEmbed({
-    title: 'Prefix Commands - Add Channel Permission - Failed',
+    title: 'Prefix Commands - Add Channel - Failed',
     description: `Failed to add the prefix command channel <#${channel}> for command ${command}.`,
     color: Colors.Red,
 });
@@ -26,7 +26,7 @@ const alreadyExistsEmbed = (command: string, channel: string) => makeEmbed({
 });
 
 const successEmbed = (command: string, channel: string) => makeEmbed({
-    title: `Prefix command channel <#${channel}> added for command ${command}.}`,
+    title: `Prefix command channel <#${channel}> added for command ${command}.`,
     color: Colors.Green,
 });
 
