@@ -1,6 +1,5 @@
 import { ApplicationCommandOptionChoiceData, ApplicationCommandOptionType, ApplicationCommandType } from 'discord.js';
-import { makeEmbed, createPaginatedEmbedHandler, slashCommand, slashCommandStructure, getInMemoryCache, memoryCachePrefixCommand, AutocompleteCallback, memoryCachePrefixCategory, makeLines, memoryCachePrefixVersion, Logger } from '../../lib';
-import { PrefixCommand, PrefixCommandVersion, PrefixCommandCategory, IPrefixCommand } from '../../lib/schemas/prefixCommandSchemas';
+import { makeEmbed, createPaginatedEmbedHandler, slashCommand, slashCommandStructure, getInMemoryCache, memoryCachePrefixCommand, AutocompleteCallback, memoryCachePrefixCategory, makeLines, memoryCachePrefixVersion, Logger, PrefixCommand, PrefixCommandVersion, PrefixCommandCategory, IPrefixCommand } from '../../lib';
 
 const data = slashCommandStructure({
     name: 'prefix-help',
@@ -43,6 +42,9 @@ const autocompleteCallback: AutocompleteCallback = async ({ interaction }) => {
                         const category = PrefixCommandCategory.hydrate(categoryCached);
                         const { name } = category;
                         choices.push({ name, value: name });
+                        if (choices.length >= 25) {
+                            break;
+                        }
                     }
                 }
             }
@@ -56,6 +58,9 @@ const autocompleteCallback: AutocompleteCallback = async ({ interaction }) => {
                     // Explicitly does not use the cache to hydrate the command to also capture aliases, resulting in commands
                     const commandName = key.split(':')[1];
                     choices.push({ name: commandName, value: commandName });
+                    if (choices.length >= 25) {
+                        break;
+                    }
                 }
             }
         }
