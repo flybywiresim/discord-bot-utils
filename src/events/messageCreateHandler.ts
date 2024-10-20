@@ -135,18 +135,26 @@ export default event(Events.MessageCreate, async (_, message) => {
             }
 
             // Step 2: Check if there's a default version for the channel if commandVersionName is GENERIC
+            let channelDefaultVersionUsed = false;
             if (commandVersionName === 'GENERIC' && !commandVersionExplicitGeneric) {
                 const channelDefaultVersionCached = await inMemoryCache.get(`${memoryCachePrefixChannelDefaultVersion}:${channelId}`);
                 if (channelDefaultVersionCached) {
                     const channelDefaultVersion = PrefixCommandVersion.hydrate(channelDefaultVersionCached);
                     ({ id: commandVersionId, name: commandVersionName, enabled: commandVersionEnabled } = channelDefaultVersion);
+                    channelDefaultVersionUsed = true;
                 }
             }
 
-            // Drop execution if the version is disabled
-            if (!commandVersionEnabled) {
+            // Drop execution if the version is disabled and we aren't using the default version for a channel
+            if (!commandVersionEnabled && !channelDefaultVersionUsed) {
                 Logger.debug(`Prefix Command - Version "${commandVersionName}" is disabled - Not executing command "${commandText}"`);
                 return;
+            }
+            // If the version is disabled and we are using the default version for a channel, switch to the generic version
+            if (!commandVersionEnabled && channelDefaultVersionUsed) {
+                commandVersionId = 'GENERIC';
+                commandVersionName = 'GENERIC';
+                commandVersionEnabled = true;
             }
 
             // Step 2.5: If the first command was actually a version alias, take the actual command as CommandText
@@ -231,11 +239,13 @@ export default event(Events.MessageCreate, async (_, message) => {
                         const versionCached = await inMemoryCache.get(`${memoryCachePrefixVersion}:${versionIdForButton}`);
                         if (versionCached) {
                             const version = PrefixCommandVersion.hydrate(versionCached);
-                            const { emoji } = version;
-                            versionSelectionButtonData[emoji] = new ButtonBuilder()
-                                .setCustomId(`${versionIdForButton}`)
-                                .setEmoji(emoji)
-                                .setStyle(ButtonStyle.Primary);
+                            const { emoji, enabled } = version;
+                            if (enabled) {
+                                versionSelectionButtonData[emoji] = new ButtonBuilder()
+                                    .setCustomId(`${versionIdForButton}`)
+                                    .setEmoji(emoji)
+                                    .setStyle(ButtonStyle.Primary);
+                            }
                         }
                     }
                     const versionSelectionButtons: ButtonBuilder[] = Object.keys(versionSelectionButtonData)
