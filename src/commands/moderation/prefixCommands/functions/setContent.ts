@@ -166,14 +166,21 @@ export async function handleSetPrefixCommandContent(interaction: ChatInputComman
             time: 120000,
         });
 
+        title = modalSubmitInteraction.fields.getTextInputValue('commandContentTitle').trim();
+        content = modalSubmitInteraction.fields.getTextInputValue('commandContentContent').trim();
+        image = modalSubmitInteraction.fields.getTextInputValue('commandContentImageUrl').trim();
+
+        if (!title && !content && !image) {
+            await modalSubmitInteraction.reply({
+                content: 'You did not provide any content information and the change was not made.',
+                ephemeral: true,
+            });
+            return;
+        }
         await modalSubmitInteraction.reply({
             content: 'Processing command content data.',
             ephemeral: true,
         });
-
-        title = modalSubmitInteraction.fields.getTextInputValue('commandContentTitle').trim();
-        content = modalSubmitInteraction.fields.getTextInputValue('commandContentContent').trim();
-        image = modalSubmitInteraction.fields.getTextInputValue('commandContentImageUrl').trim();
     } catch (error) {
         //Handle the error if the user does not respond in time
         Logger.error(error);
