@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, Colors, TextChannel, User } from 'discord.js';
-import { constantsConfig, getConn, PrefixCommand, Logger, makeEmbed, PrefixCommandCategory, loadSinglePrefixCommandToCache } from '../../../../lib';
+import { constantsConfig, getConn, PrefixCommand, Logger, makeEmbed, PrefixCommandCategory, loadSinglePrefixCommandToCache, PrefixCommandVersion } from '../../../../lib';
 
 const noConnEmbed = makeEmbed({
     title: 'Prefix Commands - Add Command - No Connection',
@@ -25,9 +25,9 @@ const categoryNotFoundEmbed = (category: string) => makeEmbed({
     color: Colors.Red,
 });
 
-const alreadyExistsEmbed = (command: string) => makeEmbed({
+const alreadyExistsEmbed = (command: string, reason: string) => makeEmbed({
     title: 'Prefix Commands - Add Command - Already exists',
-    description: `The prefix command ${command} already exists. Not adding again.`,
+    description: `The prefix command ${command} can not be added: ${reason}`,
     color: Colors.Red,
 });
 
@@ -83,10 +83,10 @@ export async function handleAddPrefixCommand(interaction: ChatInputCommandIntera
         return;
     }
 
-    const name = interaction.options.getString('name')!;
+    const name = interaction.options.getString('name')?.toLowerCase()!;
     const category = interaction.options.getString('category')!;
     const description = interaction.options.getString('description')!;
-    const aliasesString = interaction.options.getString('aliases') || '';
+    const aliasesString = interaction.options.getString('aliases')?.toLowerCase() || '';
     const aliases = aliasesString !== '' ? aliasesString.split(',') : [];
     const isEmbed = interaction.options.getBoolean('is_embed') || false;
     const embedColor = interaction.options.getString('embed_color') || '';
@@ -105,6 +105,30 @@ export async function handleAddPrefixCommand(interaction: ChatInputCommandIntera
         }
     }
 
+    // Check if command name and alias are unique, additionally check if they do not exist as a version alias.
+    const foundCommandName = await PrefixCommand.findOne({
+        $or: [
+            { name },
+            { name: { $in: aliases } },
+            { aliases: name },
+            { aliases: { $in: aliases } },
+        ],
+    });
+    if (foundCommandName) {
+        await interaction.followUp({ embeds: [alreadyExistsEmbed(name, `${name} already exists as a command or alias, or one of the aliases already exists as a command or alias.`)], ephemeral: true });
+        return;
+    }
+    const foundVersion = await PrefixCommandVersion.findOne({
+        $or: [
+            { alias: name },
+            { alias: { $in: aliases } },
+        ],
+    });
+    if (foundVersion) {
+        await interaction.followUp({ embeds: [alreadyExistsEmbed(name, `${name} already exists as a version alias, or one of the aliases already exists as a version alias.`)], ephemeral: true });
+        return;
+    }
+
     //Check if the mod logs channel exists
     const modLogsChannel = interaction.guild.channels.resolve(constantsConfig.channels.MOD_LOGS) as TextChannel;
     if (!modLogsChannel) {
@@ -118,42 +142,37 @@ export async function handleAddPrefixCommand(interaction: ChatInputCommandIntera
     }
     const { id: categoryId } = foundCategory;
     Logger.info(`categoryId: ${categoryId}`);
-    const existingCommand = await PrefixCommand.findOne({ name });
 
-    if (!existingCommand) {
-        const prefixCommand = new PrefixCommand({
-            name,
-            categoryId,
-            aliases,
-            description,
-            isEmbed,
-            embedColor,
-            contents: [],
-            permissions: {
-                roles: [],
-                rolesBlocklist: false,
-                channels: [],
-                channelsBlocklist: false,
-                quietErrors: false,
-                verboseErrors: false,
-            },
-        });
-        try {
-            await prefixCommand.save();
-            await loadSinglePrefixCommandToCache(prefixCommand);
-            await interaction.followUp({ embeds: [successEmbed(name)], ephemeral: true });
-            if (modLogsChannel) {
-                try {
-                    await modLogsChannel.send({ embeds: [modLogEmbed(moderator, name, aliases, description, isEmbed, embedColor, prefixCommand.id)] });
-                } catch (error) {
-                    Logger.error(`Failed to post a message to the mod logs channel: ${error}`);
-                }
+    const prefixCommand = new PrefixCommand({
+        name,
+        categoryId,
+        aliases,
+        description,
+        isEmbed,
+        embedColor,
+        contents: [],
+        permissions: {
+            roles: [],
+            rolesBlocklist: false,
+            channels: [],
+            channelsBlocklist: false,
+            quietErrors: false,
+            verboseErrors: false,
+        },
+    });
+    try {
+        await prefixCommand.save();
+        await loadSinglePrefixCommandToCache(prefixCommand);
+        await interaction.followUp({ embeds: [successEmbed(name)], ephemeral: true });
+        if (modLogsChannel) {
+            try {
+                await modLogsChannel.send({ embeds: [modLogEmbed(moderator, name, aliases, description, isEmbed, embedColor, prefixCommand.id)] });
+            } catch (error) {
+                Logger.error(`Failed to post a message to the mod logs channel: ${error}`);
             }
-        } catch (error) {
-            Logger.error(`Failed to add a prefix command ${name}: ${error}`);
-            await interaction.followUp({ embeds: [failedEmbed(name)], ephemeral: true });
         }
-    } else {
-        await interaction.followUp({ embeds: [alreadyExistsEmbed(name)], ephemeral: true });
+    } catch (error) {
+        Logger.error(`Failed to add a prefix command ${name}: ${error}`);
+        await interaction.followUp({ embeds: [failedEmbed(name)], ephemeral: true });
     }
 }

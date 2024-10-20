@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, Colors, TextChannel, User } from 'discord.js';
-import { constantsConfig, getConn, PrefixCommand, Logger, makeEmbed, PrefixCommandCategory, refreshSinglePrefixCommandCache } from '../../../../lib';
+import { constantsConfig, getConn, PrefixCommand, Logger, makeEmbed, PrefixCommandCategory, refreshSinglePrefixCommandCache, PrefixCommandVersion } from '../../../../lib';
 
 const noConnEmbed = makeEmbed({
     title: 'Prefix Commands - Modify Command - No Connection',
@@ -28,6 +28,12 @@ const categoryNotFoundEmbed = (category: string) => makeEmbed({
 const doesNotExistsEmbed = (command: string) => makeEmbed({
     title: 'Prefix Commands - Modify Command - Does not exist',
     description: `The prefix command ${command} does not exists. Can not modify it.`,
+    color: Colors.Red,
+});
+
+const alreadyExistsEmbed = (command: string, reason: string) => makeEmbed({
+    title: 'Prefix Commands - Modify Command - Already exists',
+    description: `The prefix command ${command} can not be modified: ${reason}`,
     color: Colors.Red,
 });
 
@@ -84,10 +90,10 @@ export async function handleModifyPrefixCommand(interaction: ChatInputCommandInt
     }
 
     const command = interaction.options.getString('command')!;
-    const name = interaction.options.getString('name') || '';
+    const name = interaction.options.getString('name')?.toLowerCase() || '';
     const category = interaction.options.getString('category') || '';
     const description = interaction.options.getString('description') || '';
-    const aliasesString = interaction.options.getString('aliases') || '';
+    const aliasesString = interaction.options.getString('aliases')?.toLowerCase() || '';
     const aliases = aliasesString !== '' ? aliasesString.split(',') : [];
     const isEmbed = interaction.options.getBoolean('is_embed');
     const embedColor = interaction.options.getString('embed_color') || '';
@@ -102,6 +108,51 @@ export async function handleModifyPrefixCommand(interaction: ChatInputCommandInt
         if (!nameRegex.test(alias)) {
             // eslint-disable-next-line no-await-in-loop
             await interaction.followUp({ embeds: [wrongFormatEmbed(alias)], ephemeral: true });
+            return;
+        }
+    }
+    // Check if command name and alias are unique, additionally check if they do not exist as a version alias.
+    if (name) {
+        const foundCommandName = await PrefixCommand.findOne({
+            name: { $ne: command },
+            $or: [
+                { name },
+                { aliases: name },
+            ],
+        });
+        if (foundCommandName) {
+            await interaction.followUp({ embeds: [alreadyExistsEmbed(command, `${name} already exists as a different command or alias.`)], ephemeral: true });
+            return;
+        }
+        const foundVersion = await PrefixCommandVersion.findOne({
+            $or: [
+                { alias: name },
+            ],
+        });
+        if (foundVersion) {
+            await interaction.followUp({ embeds: [alreadyExistsEmbed(command, `${name} already exists as a version alias.`)], ephemeral: true });
+            return;
+        }
+    }
+    if (aliases.length > 0) {
+        const foundCommandName = await PrefixCommand.findOne({
+            name: { $ne: command },
+            $or: [
+                { name: { $in: aliases } },
+                { aliases: { $in: aliases } },
+            ],
+        });
+        if (foundCommandName) {
+            await interaction.followUp({ embeds: [alreadyExistsEmbed(command, 'The new aliases contain an alias that already exists as a different command or alias.')], ephemeral: true });
+            return;
+        }
+        const foundVersion = await PrefixCommandVersion.findOne({
+            $or: [
+                { alias: { $in: aliases } },
+            ],
+        });
+        if (foundVersion) {
+            await interaction.followUp({ embeds: [alreadyExistsEmbed(command, 'The new aliases contain an alias that already exists as a version alias.')], ephemeral: true });
             return;
         }
     }

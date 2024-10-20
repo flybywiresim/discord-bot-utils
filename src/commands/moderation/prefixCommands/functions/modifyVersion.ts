@@ -76,7 +76,7 @@ export async function handleModifyPrefixCommandVersion(interaction: ChatInputCom
     const version = interaction.options.getString('version')!;
     const name = interaction.options.getString('name') || '';
     const emoji = interaction.options.getString('emoji') || '';
-    const alias = interaction.options.getString('alias') || '';
+    const alias = interaction.options.getString('alias')?.toLowerCase() || '';
     const enabled = interaction.options.getBoolean('is_enabled');
     const moderator = interaction.user;
 
