@@ -13,6 +13,18 @@ const noContentEmbed = (command: string, version: string) => makeEmbed({
     color: Colors.Red,
 });
 
+const noCommandEmbed = (command: string) => makeEmbed({
+    title: 'Prefix Commands - Delete Content - No Command',
+    description: `Failed to delete command content for command ${command} as the command does not exist or there are more than one matching.`,
+    color: Colors.Red,
+});
+
+const noVersionEmbed = (version: string) => makeEmbed({
+    title: 'Prefix Commands - Delete Content - No Version',
+    description: `Failed to delete command content for version ${version} as the version does not exist or there are more than one matching.`,
+    color: Colors.Red,
+});
+
 const failedEmbed = (version: string) => makeEmbed({
     title: 'Prefix Commands - Delete Content - Failed',
     description: `Failed to delete the prefix command content with version ${version}.`,
@@ -52,7 +64,7 @@ const modLogEmbed = (moderator: User, commandName: string, versionName: string, 
             value: `${moderator}`,
         },
     ],
-    color: Colors.Green,
+    color: Colors.Red,
 });
 
 const noModLogs = makeEmbed({
@@ -80,10 +92,25 @@ export async function handleDeletePrefixCommandContent(interaction: ChatInputCom
         await interaction.followUp({ embeds: [noModLogs], ephemeral: true });
     }
 
-    const foundVersion = await PrefixCommandVersion.findOne({ name: version });
-    const { versionId } = foundVersion ?? { versionId: 'GENERIC' };
     const foundCommand = await PrefixCommand.findOne({ name: command });
-    const [existingContent] = foundCommand?.contents.filter((content) => content.versionId === versionId) ?? [];
+    if (!foundCommand) {
+        await interaction.followUp({ embeds: [noCommandEmbed(command)], ephemeral: true });
+        return;
+    }
+    let versionId = '';
+    let foundVersions = null;
+    if (version === 'GENERIC' || version === 'generic') {
+        versionId = 'GENERIC';
+    } else {
+        foundVersions = await PrefixCommandVersion.find({ name: version });
+        if (foundVersions && foundVersions.length === 1) {
+            [{ _id: versionId }] = foundVersions;
+        } else {
+            await interaction.followUp({ embeds: [noVersionEmbed(version)], ephemeral: true });
+            return;
+        }
+    }
+    const existingContent = foundCommand.contents.find((content) => content.versionId.toString() === versionId.toString());
 
     if (foundCommand && existingContent) {
         const { title, content, image } = existingContent;
@@ -97,7 +124,7 @@ export async function handleDeletePrefixCommandContent(interaction: ChatInputCom
             versionName = foundVersion.name || '';
         }
         try {
-            foundCommand.contents.find((con) => con.versionId === versionId)?.deleteOne();
+            foundCommand.contents.find((con) => con.versionId.toString() === versionId.toString())?.deleteOne();
             await foundCommand.save();
             await refreshSinglePrefixCommandCache(foundCommand, foundCommand);
             await interaction.followUp({ embeds: [successEmbed(`${commandName}`, `${versionName}`)], ephemeral: true });

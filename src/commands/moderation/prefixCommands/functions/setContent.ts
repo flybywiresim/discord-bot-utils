@@ -69,8 +69,6 @@ const noModLogs = makeEmbed({
 });
 
 export async function handleSetPrefixCommandContent(interaction: ChatInputCommandInteraction<'cached'>) {
-    await interaction.deferReply({ ephemeral: true });
-
     const conn = getConn();
     if (!conn) {
         await interaction.reply({ embeds: [noConnEmbed], ephemeral: true });
@@ -86,7 +84,7 @@ export async function handleSetPrefixCommandContent(interaction: ChatInputComman
         foundCommands = await PrefixCommand.find({ aliases: { $in: [command] } });
     }
     if (!foundCommands || foundCommands.length !== 1) {
-        await interaction.followUp({ embeds: [noCommandEmbed(command)], ephemeral: true });
+        await interaction.reply({ embeds: [noCommandEmbed(command)], ephemeral: true });
         return;
     }
 
@@ -101,13 +99,12 @@ export async function handleSetPrefixCommandContent(interaction: ChatInputComman
         if (foundVersions && foundVersions.length === 1) {
             [{ _id: versionId }] = foundVersions;
         } else {
-            await interaction.followUp({ embeds: [noVersionEmbed(version)], ephemeral: true });
+            await interaction.reply({ embeds: [noVersionEmbed(version)], ephemeral: true });
             return;
         }
     }
 
-    const foundContent = foundCommand.contents.find((c) => c.versionId === versionId);
-
+    const foundContent = foundCommand.contents.find((c) => c.versionId.toString() === versionId.toString());
     const contentModal = new ModalBuilder({
         customId: 'commandContentModal',
         title: `Content for ${command} - ${version}`,
