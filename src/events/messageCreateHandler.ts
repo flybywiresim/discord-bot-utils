@@ -147,6 +147,9 @@ export default event(Events.MessageCreate, async (_, message) => {
 
             // Drop execution if the version is disabled and we aren't using the default version for a channel
             if (!commandVersionEnabled && !channelDefaultVersionUsed) {
+                if ((commandCachedVersion || commandVersionExplicitGeneric) && commandTextMatch[2]) {
+                    [commandText] = commandTextMatch.slice(2);
+                }
                 Logger.debug(`Prefix Command - Version "${commandVersionName}" is disabled - Not executing command "${commandText}"`);
                 return;
             }
@@ -252,6 +255,13 @@ export default event(Events.MessageCreate, async (_, message) => {
                         .sort()
                         .map((key: string) => versionSelectionButtonData[key]);
                     const versionSelectButtonRow = new ActionRowBuilder<ButtonBuilder>().addComponents(versionSelectionButtons);
+
+                    if (versionSelectButtonRow.components.length < 1) {
+                        Logger.debug(`Prefix Command - No enabled versions found for command "${name}" based on user command "${commandText}"`);
+                        Logger.debug(`Prefix Command - Executing version "${commandVersionName}" for command "${name}" based on user command "${commandText}"`);
+                        await sendReply(message, commandTitle, commandContent || '', isEmbed || false, embedColor || constantsConfig.colors.FBW_CYAN, commandImage || '');
+                        return;
+                    }
                     const buttonMessage = await sendReply(message, commandTitle, commandContent || '', isEmbed || false, embedColor || constantsConfig.colors.FBW_CYAN, commandImage || '', versionSelectButtonRow);
 
                     const filter = (interaction: Interaction) => interaction.user.id === authorId;
