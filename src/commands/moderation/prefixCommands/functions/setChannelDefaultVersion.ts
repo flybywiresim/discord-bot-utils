@@ -53,7 +53,6 @@ export async function handleSetPrefixCommandChannelDefaultVersion(interaction: C
     await interaction.deferReply({ ephemeral: true });
 
     const conn = getConn();
-
     if (!conn) {
         await interaction.followUp({ embeds: [noConnEmbed], ephemeral: true });
         return;

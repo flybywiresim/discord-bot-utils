@@ -78,7 +78,6 @@ export async function handleAddPrefixCommand(interaction: ChatInputCommandIntera
     await interaction.deferReply({ ephemeral: true });
 
     const conn = getConn();
-
     if (!conn) {
         await interaction.followUp({ embeds: [noConnEmbed], ephemeral: true });
         return;

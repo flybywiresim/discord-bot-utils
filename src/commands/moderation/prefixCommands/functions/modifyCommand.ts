@@ -80,6 +80,7 @@ export async function handleModifyPrefixCommand(interaction: ChatInputCommandInt
     const conn = getConn();
     if (!conn) {
         await interaction.followUp({ embeds: [noConnEmbed], ephemeral: true });
+        return;
     }
 
     const command = interaction.options.getString('command')!;

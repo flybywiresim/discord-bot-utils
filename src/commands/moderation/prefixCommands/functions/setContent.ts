@@ -69,6 +69,8 @@ const noModLogs = makeEmbed({
 });
 
 export async function handleSetPrefixCommandContent(interaction: ChatInputCommandInteraction<'cached'>) {
+    await interaction.deferReply({ ephemeral: true });
+
     const conn = getConn();
     if (!conn) {
         await interaction.reply({ embeds: [noConnEmbed], ephemeral: true });

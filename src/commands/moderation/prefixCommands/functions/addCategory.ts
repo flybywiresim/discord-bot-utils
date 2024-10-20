@@ -54,9 +54,9 @@ export async function handleAddPrefixCommandCategory(interaction: ChatInputComma
     await interaction.deferReply({ ephemeral: true });
 
     const conn = getConn();
-
     if (!conn) {
         await interaction.followUp({ embeds: [noConnEmbed], ephemeral: true });
+        return;
     }
 
     const name = interaction.options.getString('name')!;
