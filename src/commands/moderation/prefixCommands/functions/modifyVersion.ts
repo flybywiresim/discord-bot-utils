@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, Colors, TextChannel, User } from 'discord.js';
-import { constantsConfig, getConn, PrefixCommandVersion, Logger, makeEmbed, refreshSinglePrefixCommandVersionCache } from '../../../../lib';
+import { constantsConfig, getConn, PrefixCommandVersion, Logger, makeEmbed, refreshSinglePrefixCommandVersionCache, PrefixCommand } from '../../../../lib';
 
 const noConnEmbed = makeEmbed({
     title: 'Prefix Commands - Modify Version - No Connection',
@@ -22,6 +22,12 @@ const wrongFormatEmbed = (invalidString: string) => makeEmbed({
 const doesNotExistsEmbed = (version: string) => makeEmbed({
     title: 'Prefix Commands - Modify Version - Does not exist',
     description: `The prefix command version ${version} does not exists. Can not modify it.`,
+    color: Colors.Red,
+});
+
+const alreadyExistsEmbed = (version: string, reason: string) => makeEmbed({
+    title: 'Prefix Commands - Add Version - Already exists',
+    description: `The prefix command version ${version} already exists: ${reason}`,
     color: Colors.Red,
 });
 
@@ -89,6 +95,38 @@ export async function handleModifyPrefixCommandVersion(interaction: ChatInputCom
         // eslint-disable-next-line no-await-in-loop
         await interaction.followUp({ embeds: [wrongFormatEmbed(alias)], ephemeral: true });
         return;
+    }
+    if (name) {
+        const foundVersion = await PrefixCommandVersion.findOne({
+            name: {
+                $ne: version,
+                $eq: name,
+            },
+        });
+        if (foundVersion || name.toLowerCase() === 'generic') {
+            await interaction.followUp({ embeds: [alreadyExistsEmbed(version, `${name} already exists as a version.`)], ephemeral: true });
+            return;
+        }
+    }
+    if (alias) {
+        const foundVersion = await PrefixCommandVersion.findOne({
+            name: { $ne: version },
+            alias,
+        });
+        if (foundVersion || alias === 'generic') {
+            await interaction.followUp({ embeds: [alreadyExistsEmbed(version, `${alias} already exists as a version alias.`)], ephemeral: true });
+            return;
+        }
+        const foundCommandName = await PrefixCommand.findOne({
+            $or: [
+                { name: alias },
+                { aliases: alias },
+            ],
+        });
+        if (foundCommandName) {
+            await interaction.followUp({ embeds: [alreadyExistsEmbed(version, `${alias} already exists as a command or command alias.`)], ephemeral: true });
+            return;
+        }
     }
 
     //Check if the mod logs channel exists

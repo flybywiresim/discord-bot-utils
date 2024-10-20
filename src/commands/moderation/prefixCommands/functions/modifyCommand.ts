@@ -90,10 +90,10 @@ export async function handleModifyPrefixCommand(interaction: ChatInputCommandInt
     }
 
     const command = interaction.options.getString('command')!;
-    const name = interaction.options.getString('name')?.toLowerCase() || '';
+    const name = interaction.options.getString('name')?.toLowerCase().trim() || '';
     const category = interaction.options.getString('category') || '';
     const description = interaction.options.getString('description') || '';
-    const aliasesString = interaction.options.getString('aliases')?.toLowerCase() || '';
+    const aliasesString = interaction.options.getString('aliases')?.toLowerCase().trim() || '';
     const aliases = aliasesString !== '' ? aliasesString.split(',') : [];
     const isEmbed = interaction.options.getBoolean('is_embed');
     const embedColor = interaction.options.getString('embed_color') || '';
@@ -129,7 +129,7 @@ export async function handleModifyPrefixCommand(interaction: ChatInputCommandInt
                 { alias: name },
             ],
         });
-        if (foundVersion) {
+        if (foundVersion || name === 'generic') {
             await interaction.followUp({ embeds: [alreadyExistsEmbed(command, `${name} already exists as a version alias.`)], ephemeral: true });
             return;
         }
@@ -151,7 +151,7 @@ export async function handleModifyPrefixCommand(interaction: ChatInputCommandInt
                 { alias: { $in: aliases } },
             ],
         });
-        if (foundVersion) {
+        if (foundVersion || aliases.includes('generic')) {
             await interaction.followUp({ embeds: [alreadyExistsEmbed(command, 'The new aliases contain an alias that already exists as a version alias.')], ephemeral: true });
             return;
         }

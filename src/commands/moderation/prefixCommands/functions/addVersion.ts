@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, Colors, TextChannel, User } from 'discord.js';
-import { constantsConfig, getConn, PrefixCommandVersion, Logger, makeEmbed, loadSinglePrefixCommandVersionToCache } from '../../../../lib';
+import { constantsConfig, getConn, PrefixCommandVersion, Logger, makeEmbed, loadSinglePrefixCommandVersionToCache, PrefixCommand } from '../../../../lib';
 
 const noConnEmbed = makeEmbed({
     title: 'Prefix Commands - Add Version - No Connection',
@@ -19,9 +19,9 @@ const wrongFormatEmbed = (invalidString: string) => makeEmbed({
     color: Colors.Red,
 });
 
-const alreadyExistsEmbed = (version: string) => makeEmbed({
+const alreadyExistsEmbed = (version: string, reason: string) => makeEmbed({
     title: 'Prefix Commands - Add Version - Already exists',
-    description: `The prefix command version ${version} already exists. Not adding again.`,
+    description: `The prefix command version ${version} already exists: ${reason}`,
     color: Colors.Red,
 });
 
@@ -75,7 +75,7 @@ export async function handleAddPrefixCommandVersion(interaction: ChatInputComman
 
     const name = interaction.options.getString('name')!;
     const emoji = interaction.options.getString('emoji')!;
-    const alias = interaction.options.getString('alias')!;
+    const alias = interaction.options.getString('alias')!.toLowerCase();
     const enabled = interaction.options.getBoolean('is_enabled') || false;
     const moderator = interaction.user;
 
@@ -90,37 +90,53 @@ export async function handleAddPrefixCommandVersion(interaction: ChatInputComman
         return;
     }
 
+    // Check if a command or version exists with the same name or alias
+    const foundCommandName = await PrefixCommand.findOne({
+        $or: [
+            { name: alias },
+            { aliases: alias },
+        ],
+    });
+    if (foundCommandName) {
+        await interaction.followUp({ embeds: [alreadyExistsEmbed(name, `${alias} already exists as a command or alias.`)], ephemeral: true });
+        return;
+    }
+    const foundVersion = await PrefixCommandVersion.findOne({
+        $or: [
+            { name },
+            { alias },
+        ],
+    });
+    if (foundVersion || name.toLowerCase() === 'generic' || alias === 'generic') {
+        await interaction.followUp({ embeds: [alreadyExistsEmbed(name, `${alias} already exists as a version alias.`)], ephemeral: true });
+        return;
+    }
+
     //Check if the mod logs channel exists
     const modLogsChannel = interaction.guild.channels.resolve(constantsConfig.channels.MOD_LOGS) as TextChannel;
     if (!modLogsChannel) {
         await interaction.followUp({ embeds: [noModLogs], ephemeral: true });
     }
 
-    const existingVersion = await PrefixCommandVersion.findOne({ name });
-
-    if (!existingVersion) {
-        const prefixCommandVersion = new PrefixCommandVersion({
-            name,
-            emoji,
-            enabled,
-            alias,
-        });
-        try {
-            await prefixCommandVersion.save();
-            await loadSinglePrefixCommandVersionToCache(prefixCommandVersion);
-            await interaction.followUp({ embeds: [successEmbed(name)], ephemeral: true });
-            if (modLogsChannel) {
-                try {
-                    await modLogsChannel.send({ embeds: [modLogEmbed(moderator, name, emoji, alias, enabled, prefixCommandVersion.id)] });
-                } catch (error) {
-                    Logger.error(`Failed to post a message to the mod logs channel: ${error}`);
-                }
+    const prefixCommandVersion = new PrefixCommandVersion({
+        name,
+        emoji,
+        enabled,
+        alias,
+    });
+    try {
+        await prefixCommandVersion.save();
+        await loadSinglePrefixCommandVersionToCache(prefixCommandVersion);
+        await interaction.followUp({ embeds: [successEmbed(name)], ephemeral: true });
+        if (modLogsChannel) {
+            try {
+                await modLogsChannel.send({ embeds: [modLogEmbed(moderator, name, emoji, alias, enabled, prefixCommandVersion.id)] });
+            } catch (error) {
+                Logger.error(`Failed to post a message to the mod logs channel: ${error}`);
             }
-        } catch (error) {
-            Logger.error(`Failed to add a prefix command category ${name}: ${error}`);
-            await interaction.followUp({ embeds: [failedEmbed(name)], ephemeral: true });
         }
-    } else {
-        await interaction.followUp({ embeds: [alreadyExistsEmbed(name)], ephemeral: true });
+    } catch (error) {
+        Logger.error(`Failed to add a prefix command category ${name}: ${error}`);
+        await interaction.followUp({ embeds: [failedEmbed(name)], ephemeral: true });
     }
 }

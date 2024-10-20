@@ -83,10 +83,10 @@ export async function handleAddPrefixCommand(interaction: ChatInputCommandIntera
         return;
     }
 
-    const name = interaction.options.getString('name')?.toLowerCase()!;
+    const name = interaction.options.getString('name')?.toLowerCase().trim()!;
     const category = interaction.options.getString('category')!;
     const description = interaction.options.getString('description')!;
-    const aliasesString = interaction.options.getString('aliases')?.toLowerCase() || '';
+    const aliasesString = interaction.options.getString('aliases')?.toLowerCase().trim() || '';
     const aliases = aliasesString !== '' ? aliasesString.split(',') : [];
     const isEmbed = interaction.options.getBoolean('is_embed') || false;
     const embedColor = interaction.options.getString('embed_color') || '';
@@ -124,7 +124,7 @@ export async function handleAddPrefixCommand(interaction: ChatInputCommandIntera
             { alias: { $in: aliases } },
         ],
     });
-    if (foundVersion) {
+    if (foundVersion || name.toLowerCase() === 'generic' || aliases.includes('generic')) {
         await interaction.followUp({ embeds: [alreadyExistsEmbed(name, `${name} already exists as a version alias, or one of the aliases already exists as a version alias.`)], ephemeral: true });
         return;
     }
