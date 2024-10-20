@@ -270,7 +270,7 @@ export default event(Events.MessageCreate, async (_, message) => {
                     collector.on('collect', async (collectedInteraction: ButtonInteraction) => {
                         buttonClicked = true;
                         await collectedInteraction.deferUpdate();
-                        Logger.debug(`Prefix Command - User selected version "${collectedInteraction.customId}" for command "${name}" based on user command "${commandText}"`);
+                        Logger.debug(`Prefix Command - User selected button "${collectedInteraction.customId}" for command "${name}" based on user command "${commandText}"`);
                         await buttonMessage.delete();
                         const { customId: selectedVersionId } = collectedInteraction;
                         const commandContentData = contents.find(({ versionId }) => versionId === selectedVersionId);
