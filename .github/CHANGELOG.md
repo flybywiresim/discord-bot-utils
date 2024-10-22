@@ -1,5 +1,9 @@
 ## Changelog
 
+Update <small>_ October 2024</small>
+
+- fix: role assignment typo for server announcements (22/10/2024)
+
 Update <small>_ August 2024</small>
 
 - feat: add runway information to simbriefdata (08/08/2024)
