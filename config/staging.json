@@ -53,7 +53,7 @@
       "group": "mediaAnnouncements",
       "roles": [
         {
-          "id": "SERVER_ANNOUNCEMENT",
+          "id": "SERVER_ANNOUNCEMENTS",
           "label": "Server Announcements"
         },
         {
