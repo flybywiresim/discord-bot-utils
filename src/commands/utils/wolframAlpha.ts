@@ -1,5 +1,9 @@
 import { ApplicationCommandOptionType, ApplicationCommandType, Colors } from 'discord.js';
-import { slashCommand, slashCommandStructure, makeEmbed, makeLines, Logger } from '../../lib';
+import { z, ZodError } from 'zod';
+import { fetchForeignAPI, Logger, makeEmbed, makeLines, slashCommand, slashCommandStructure, WolframAlphaData, WolframAlphaDataSchema, WolframAlphaPodSchema, WolframAlphaSubpodSchema } from '../../lib';
+
+type Pod = z.infer<typeof WolframAlphaPodSchema>;
+type Subpod = z.infer<typeof WolframAlphaSubpodSchema>;
 
 const data = slashCommandStructure({
     name: 'wolframalpha',
@@ -19,6 +23,12 @@ const noQueryEmbed = makeEmbed({
     color: Colors.Red,
 });
 
+const errorEmbed = (error: string) => makeEmbed({
+    title: 'Wolfram Alpha Error',
+    description: error,
+    color: Colors.Red,
+});
+
 const WOLFRAMALPHA_API_URL = 'https://api.wolframalpha.com/v2/query?';
 const WOLFRAMALPHA_QUERY_URL = 'https://www.wolframalpha.com/input/?';
 
@@ -33,12 +43,12 @@ export default slashCommand(data, async ({ interaction }) => {
             description: 'Wolfram Alpha token not found.',
             color: Colors.Red,
         });
-        return interaction.followUp({ embeds: [noTokenEmbed], ephemeral: true });
+        return interaction.editReply({ embeds: [noTokenEmbed] });
     }
 
     const query = interaction.options.getString('query');
 
-    if (!query) return interaction.followUp({ embeds: [noQueryEmbed], ephemeral: true });
+    if (!query) return interaction.editReply({ embeds: [noQueryEmbed] });
 
     const params = {
         appid: wolframAlphaToken,
@@ -49,72 +59,62 @@ export default slashCommand(data, async ({ interaction }) => {
 
     const searchParams = new URLSearchParams(params);
 
+    let response: WolframAlphaData;
     try {
-        const response = await fetch(`${WOLFRAMALPHA_API_URL}${searchParams.toString()}`)
-            .then((res) => res.json());
-
-        if (response.error) {
-            const errorEmbed = makeEmbed({
-                title: 'Wolfram Alpha Error',
-                description: response.error,
-                color: Colors.Red,
-            });
-            return interaction.followUp({ embeds: [errorEmbed], ephemeral: true });
+        response = await fetchForeignAPI(`${WOLFRAMALPHA_API_URL}${searchParams.toString()}`, WolframAlphaDataSchema);
+    } catch (e) {
+        if (e instanceof ZodError) {
+            return interaction.editReply({ embeds: [errorEmbed('Wolfram Alpha returned unknown data.')] });
         }
+        Logger.error(`Error while fetching from Wolfram Alpha: ${String(e)}`);
+        return interaction.editReply({ embeds: [errorEmbed('An error occurred while fetching from Wolfram Alpha.')] });
+    }
 
-        if (response.queryresult.success === true) {
-            const podTexts: string[] = [];
-            response.queryresult.pods.forEach((pod: any) => {
-                if (pod.id !== 'Input' && pod.primary === true) {
-                    const results: string[] = [];
-                    pod.subpods.forEach((subpod: any) => {
-                        results.push(subpod.plaintext);
-                    });
-                    if (results.length > 0) {
-                        podTexts.push(`**${pod.title}:** \n${results.join('\n')}`);
-                    }
-                }
-            });
-            if (podTexts.length > 0) {
-                const result = podTexts.join('\n\n');
-                const queryParams = new URLSearchParams({ i: query });
-
-                const waEmbed = makeEmbed({
-                    description: makeLines([
-                        `**Query:** ${query}`,
-                        '',
-                        result,
-                        '',
-                        `[Web Result](${WOLFRAMALPHA_QUERY_URL}${queryParams.toString()})`,
-                    ]),
+    if (response.queryresult.success === true) {
+        const podTexts: string[] = [];
+        response.queryresult.pods.forEach((pod: Pod) => {
+            if (pod.id !== 'Input' && pod.primary === true) {
+                const results: string[] = [];
+                pod.subpods.forEach((subpod: Subpod) => {
+                    results.push(subpod.plaintext);
                 });
-
-                return interaction.followUp({ embeds: [waEmbed] });
+                if (results.length > 0) {
+                    podTexts.push(`**${pod.title}:** \n${results.join('\n')}`);
+                }
             }
-            const noResultsEmbed = makeEmbed({
-                title: 'Wolfram Alpha Error | No Results',
+        });
+        if (podTexts.length > 0) {
+            const result = podTexts.join('\n\n');
+            const queryParams = new URLSearchParams({ i: query });
+
+            const waEmbed = makeEmbed({
                 description: makeLines([
-                    'No results were found for your query.',
+                    `**Query:** ${query}`,
+                    '',
+                    result,
+                    '',
+                    `[Web Result](${WOLFRAMALPHA_QUERY_URL}${queryParams.toString()})`,
                 ]),
-                color: Colors.Red,
             });
-            return interaction.followUp({ embeds: [noResultsEmbed], ephemeral: true });
+
+            return interaction.editReply({ embeds: [waEmbed] });
         }
-        const obscureQueryEmbed = makeEmbed({
-            title: 'Wolfram Alpha Error | Could not understand query',
+        const noResultsEmbed = makeEmbed({
+            title: 'Wolfram Alpha Error | No Results',
             description: makeLines([
-                'Wolfram Alpha could not understand your query.',
+                'No results were found for your query.',
             ]),
             color: Colors.Red,
         });
-        return interaction.followUp({ embeds: [obscureQueryEmbed], ephemeral: true });
-    } catch (e) {
-        Logger.error('wolframalpha:', e);
-        const fetchErrorEmbed = makeEmbed({
-            title: 'Wolfram Alpha | Fetch Error',
-            description: 'There was an error fetching your request. Please try again later.',
-            color: Colors.Red,
-        });
-        return interaction.followUp({ embeds: [fetchErrorEmbed], ephemeral: true });
+        return interaction.editReply({ embeds: [noResultsEmbed] });
     }
+
+    const obscureQueryEmbed = makeEmbed({
+        title: 'Wolfram Alpha Error | Could not understand query',
+        description: makeLines([
+            'Wolfram Alpha could not understand your query.',
+        ]),
+        color: Colors.Red,
+    });
+    return interaction.editReply({ embeds: [obscureQueryEmbed] });
 });

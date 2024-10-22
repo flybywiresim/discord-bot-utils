@@ -1,6 +1,7 @@
 import { ApplicationCommandOptionType, ApplicationCommandType, Colors } from 'discord.js';
 import moment from 'moment';
-import { slashCommand, makeEmbed, makeLines, slashCommandStructure } from '../../lib';
+import { ZodError } from 'zod';
+import { fetchForeignAPI, Logger, makeEmbed, makeLines, SimbriefFlightPlan, SimbriefFlightPlanSchema, slashCommand, slashCommandStructure } from '../../lib';
 
 const data = slashCommandStructure({
     name: 'simbrief-data',
@@ -40,9 +41,9 @@ const simbriefdatarequestEmbed = makeEmbed({
     ]),
 });
 
-const errorEmbed = (errorMessage: any) => makeEmbed({
+const errorEmbed = (error: string) => makeEmbed({
     title: 'SimBrief Error',
-    description: makeLines(['SimBrief data could not be read.', errorMessage]),
+    description: error,
     color: Colors.Red,
 });
 
@@ -53,10 +54,10 @@ const simbriefIdMismatchEmbed = (enteredId: any, flightplanId: any) => makeEmbed
     ]),
 });
 
-const simbriefEmbed = (flightplan: any) => makeEmbed({
+const simbriefEmbed = (flightplan: SimbriefFlightPlan) => makeEmbed({
     title: 'SimBrief Data',
     description: makeLines([
-        `**Generated at**: ${moment(flightplan.params.time_generated * 1000).format('DD.MM.YYYY, HH:mm:ss')}`,
+        `**Generated at**: ${moment(Number.parseInt(flightplan.params.time_generated) * 1000).format('DD.MM.YYYY, HH:mm:ss')}`,
         `**AirFrame**: ${flightplan.aircraft.name} ${flightplan.aircraft.internal_id} ${(flightplan.aircraft.internal_id === FBW_AIRFRAME_ID) ? '(provided by FBW)' : ''}`,
         `**AIRAC Cycle**: ${flightplan.params.airac}`,
         `**Origin**: ${flightplan.origin.icao_code} ${flightplan.origin.plan_rwy}`,
@@ -71,23 +72,33 @@ export default slashCommand(data, async ({ interaction }) => {
         return interaction.reply({ embeds: [simbriefdatarequestEmbed] });
     }
 
+    await interaction.deferReply();
+
     if (interaction.options.getSubcommand() === 'retrieve') {
         const simbriefId = interaction.options.getString('pilot_id');
-        if (!simbriefId) return interaction.reply({ content: 'Invalid pilot ID!', ephemeral: true });
+        if (!simbriefId) return interaction.editReply({ content: 'Invalid pilot ID!' });
 
-        const flightplan = await fetch(`https://www.simbrief.com/api/xml.fetcher.php?json=1&userid=${simbriefId}&username=${simbriefId}`).then((res) => res.json());
+        let flightplan: SimbriefFlightPlan;
+        try {
+            flightplan = await fetchForeignAPI<SimbriefFlightPlan>(`https://www.simbrief.com/api/xml.fetcher.php?json=1&userid=${simbriefId}&username=${simbriefId}`, SimbriefFlightPlanSchema);
+        } catch (e) {
+            if (e instanceof ZodError) {
+                return interaction.editReply({ embeds: [errorEmbed('The API returned unknown data.')] });
+            }
+            Logger.error(`Error while fetching SimBrief flightplan: ${String(e)}`);
+            return interaction.editReply({ embeds: [errorEmbed('An error occurred while fetching the SimBrief flightplan.')] });
+        }
 
         if (flightplan.fetch.status !== 'Success') {
-            interaction.reply({ embeds: [errorEmbed(flightplan.fetch.status)], ephemeral: true });
-            return Promise.resolve();
+            return interaction.editReply({ embeds: [errorEmbed(flightplan.fetch.status)] });
         }
 
         if (!simbriefId.match(/\D/) && simbriefId !== flightplan.params.user_id) {
-            interaction.reply({ embeds: [simbriefIdMismatchEmbed(simbriefId, flightplan.params.user_id)] });
+            return interaction.editReply({ embeds: [simbriefIdMismatchEmbed(simbriefId, flightplan.params.user_id)] });
         }
-        interaction.reply({ embeds: [simbriefEmbed(flightplan)] });
 
-        return Promise.resolve();
+        return interaction.editReply({ embeds: [simbriefEmbed(flightplan)] });
     }
-    return Promise.resolve();
+
+    return interaction.editReply({ content: 'Unknown subcommand.' });
 });
