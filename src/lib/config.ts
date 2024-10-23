@@ -49,6 +49,8 @@ interface Config {
     roleGroups: {
         [x: string]: string[],
     },
+    prefixCommandPrefix: string,
+    prefixCommandPermissionDelay: number,
     roles: {
         ADMIN_TEAM: string,
         BOT_DEVELOPER: string,

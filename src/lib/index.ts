@@ -16,8 +16,13 @@ export * from './autocomplete';
 export * from './schemas/infractionSchema';
 export * from './schemas/faqSchema';
 export * from './schemas/birthdaySchema';
+export * from './schemas/prefixCommandSchemas';
 
 //Scheduler Jobs
 export * from './schedulerJobs/autoDisableSlowMode';
 export * from './schedulerJobs/sendHeartbeat';
 export * from './schedulerJobs/postBirthdays';
+export * from './schedulerJobs/refreshInMemoryCache';
+
+//Cache Management
+export * from './cache/cacheManager';
