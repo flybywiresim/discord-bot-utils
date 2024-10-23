@@ -161,7 +161,6 @@ export async function handleModifyPrefixCommand(interaction: ChatInputCommandInt
     const modLogsChannel = interaction.guild.channels.resolve(constantsConfig.channels.MOD_LOGS) as TextChannel;
     if (!modLogsChannel) {
         await interaction.followUp({ embeds: [noModLogs], ephemeral: true });
-        return;
     }
 
     let foundCategory;

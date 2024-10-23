@@ -67,7 +67,6 @@ export async function handleAddPrefixCommandCategory(interaction: ChatInputComma
     const modLogsChannel = interaction.guild.channels.resolve(constantsConfig.channels.MOD_LOGS) as TextChannel;
     if (!modLogsChannel) {
         await interaction.followUp({ embeds: [noModLogs], ephemeral: true });
-        return;
     }
 
     const existingCategory = await PrefixCommandCategory.findOne({ name });
