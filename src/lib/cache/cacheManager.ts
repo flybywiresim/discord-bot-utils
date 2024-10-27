@@ -54,10 +54,7 @@ export async function clearSinglePrefixCommandCache(command: IPrefixCommand) {
 
     const { name, aliases } = command;
     Logger.debug(`Clearing cache for command or alias "${name}"`);
-    for (const alias of aliases) {
-        // eslint-disable-next-line no-await-in-loop
-        await inMemoryCache.del(`${MemoryCachePrefix.COMMAND}:${alias.toLowerCase()}`);
-    }
+    await Promise.all(aliases.map((alias) => inMemoryCache.del(`${MemoryCachePrefix.COMMAND}:${alias.toLowerCase()}`)));
     await inMemoryCache.del(`${MemoryCachePrefix.COMMAND}:${name.toLowerCase()}`);
 }
 
@@ -68,10 +65,7 @@ export async function loadSinglePrefixCommandToCache(command: IPrefixCommand) {
     const { name, aliases } = command;
     Logger.debug(`Loading command ${name} to cache`);
     await inMemoryCache.set(`${MemoryCachePrefix.COMMAND}:${name.toLowerCase()}`, command.toObject());
-    for (const alias of aliases) {
-        // eslint-disable-next-line no-await-in-loop
-        await inMemoryCache.set(`${MemoryCachePrefix.COMMAND}:${alias.toLowerCase()}`, command.toObject());
-    }
+    await Promise.all(aliases.map((alias) => inMemoryCache.set(`${MemoryCachePrefix.COMMAND}:${alias.toLowerCase()}`, command.toObject())));
 }
 
 export async function loadAllPrefixCommandsToCache() {
@@ -80,10 +74,7 @@ export async function loadAllPrefixCommandsToCache() {
     if (!conn || !inMemoryCache) return;
 
     const prefixCommands = await PrefixCommand.find();
-    for (const command of prefixCommands) {
-        // eslint-disable-next-line no-await-in-loop
-        await loadSinglePrefixCommandToCache(command);
-    }
+    await Promise.all(prefixCommands.map((command) => loadSinglePrefixCommandToCache(command)));
 }
 
 export async function refreshSinglePrefixCommandCache(oldCommand: IPrefixCommand, newCommand: IPrefixCommand) {
@@ -122,10 +113,7 @@ export async function refreshAllPrefixCommandsCache() {
         }
     }
     // Step 4: Loop over database commands and update cache
-    for (const dbCommand of prefixCommands) {
-        // eslint-disable-next-line no-await-in-loop
-        await loadSinglePrefixCommandToCache(dbCommand);
-    }
+    await Promise.all(prefixCommands.map((dbCommand) => loadSinglePrefixCommandToCache(dbCommand)));
 }
 
 /**
@@ -158,10 +146,7 @@ export async function loadAllPrefixCommandVersionsToCache() {
     if (!conn || !inMemoryCache) return;
 
     const prefixCommandVersions = await PrefixCommandVersion.find();
-    for (const version of prefixCommandVersions) {
-        // eslint-disable-next-line no-await-in-loop
-        await loadSinglePrefixCommandVersionToCache(version);
-    }
+    await Promise.all(prefixCommandVersions.map((version) => loadSinglePrefixCommandVersionToCache(version)));
 }
 
 export async function refreshSinglePrefixCommandVersionCache(oldVersion: IPrefixCommandVersion, newVersion: IPrefixCommandVersion) {
@@ -200,10 +185,7 @@ export async function refreshAllPrefixCommandVersionsCache() {
         }
     }
     // Step 4: Loop over database versions and update cache
-    for (const dbVersion of prefixCommandVersions) {
-        // eslint-disable-next-line no-await-in-loop
-        await loadSinglePrefixCommandVersionToCache(dbVersion);
-    }
+    await Promise.all(prefixCommandVersions.map((dbVersion) => loadSinglePrefixCommandVersionToCache(dbVersion)));
 }
 
 /**
@@ -234,10 +216,7 @@ export async function loadAllPrefixCommandCategoriesToCache() {
     if (!conn || !inMemoryCache) return;
 
     const prefixCommandCategories = await PrefixCommandCategory.find();
-    for (const category of prefixCommandCategories) {
-        // eslint-disable-next-line no-await-in-loop
-        await loadSinglePrefixCommandCategoryToCache(category);
-    }
+    await Promise.all(prefixCommandCategories.map((category) => loadSinglePrefixCommandCategoryToCache(category)));
 }
 
 export async function refreshSinglePrefixCommandCategoryCache(oldCategory: IPrefixCommandCategory, newCategory: IPrefixCommandCategory) {
@@ -276,10 +255,7 @@ export async function refreshAllPrefixCommandCategoriesCache() {
         }
     }
     // Step 4: Loop over database categories and update cache
-    for (const dbCategory of prefixCommandCategories) {
-        // eslint-disable-next-line no-await-in-loop
-        await loadSinglePrefixCommandCategoryToCache(dbCategory);
-    }
+    await Promise.all(prefixCommandCategories.map((dbCategory) => loadSinglePrefixCommandCategoryToCache(dbCategory)));
 }
 
 /**
@@ -313,11 +289,7 @@ export async function loadAllPrefixCommandChannelDefaultVersionsToCache() {
     if (!conn || !inMemoryCache) return;
 
     const PrefixCommandChannelDefaultVersions = await PrefixCommandChannelDefaultVersion.find();
-
-    for (const defaultVersion of PrefixCommandChannelDefaultVersions) {
-        // eslint-disable-next-line no-await-in-loop
-        await loadSinglePrefixCommandChannelDefaultVersionToCache(defaultVersion);
-    }
+    await Promise.all(PrefixCommandChannelDefaultVersions.map((channelDefaultVersion) => loadSinglePrefixCommandChannelDefaultVersionToCache(channelDefaultVersion)));
 }
 
 export async function refreshAllPrefixCommandChannelDefaultVersionsCache() {
@@ -351,8 +323,5 @@ export async function refreshAllPrefixCommandChannelDefaultVersionsCache() {
         }
     }
     // Step 4: Loop over database channel default versions and update cache
-    for (const dbChannelDefaultVersion of prefixCommandChannelDefaultVersions) {
-        // eslint-disable-next-line no-await-in-loop
-        await loadSinglePrefixCommandChannelDefaultVersionToCache(dbChannelDefaultVersion);
-    }
+    await Promise.all(prefixCommandChannelDefaultVersions.map((dbChannelDefaultVersion) => loadSinglePrefixCommandChannelDefaultVersionToCache(dbChannelDefaultVersion)));
 }
