@@ -185,7 +185,7 @@ export async function handleSetPrefixCommandContent(interaction: ChatInputComman
         //Handle the error if the user does not respond in time
         Logger.error(error);
         await interaction.followUp({
-            content: 'You did not provide the necessary content information and the change was not made.',
+            content: 'You did not provide the necessary content information in time (2 minutes) and the change was not made.',
             ephemeral: true,
         });
         return;
