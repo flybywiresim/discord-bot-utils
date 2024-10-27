@@ -27,7 +27,7 @@ const categoryNotFoundEmbed = (category: string) => makeEmbed({
 
 const doesNotExistsEmbed = (command: string) => makeEmbed({
     title: 'Prefix Commands - Modify Command - Does not exist',
-    description: `The prefix command ${command} does not exists. Can not modify it.`,
+    description: `The prefix command ${command} does not exists. Cannot modify it.`,
     color: Colors.Red,
 });
 
