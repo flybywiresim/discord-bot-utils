@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, Colors, TextChannel, User } from 'discord.js';
+import { ChatInputCommandInteraction, Colors, User } from 'discord.js';
 import { constantsConfig, getConn, PrefixCommandChannelDefaultVersion, Logger, makeEmbed, clearSinglePrefixCommandChannelDefaultVersionCache } from '../../../../lib';
 
 const noConnEmbed = makeEmbed({

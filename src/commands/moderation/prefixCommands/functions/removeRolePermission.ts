@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, Colors, TextChannel, User } from 'discord.js';
+import { ChatInputCommandInteraction, Colors, User } from 'discord.js';
 import { constantsConfig, getConn, PrefixCommand, Logger, makeEmbed, refreshSinglePrefixCommandCache } from '../../../../lib';
 
 const noConnEmbed = makeEmbed({
@@ -69,8 +69,9 @@ export async function handleRemovePrefixCommandRolePermission(interaction: ChatI
     const moderator = interaction.user;
 
     //Check if the mod logs role exists
-    const modLogsRole = interaction.guild.channels.resolve(constantsConfig.channels.MOD_LOGS) as TextChannel;
-    if (!modLogsRole) {
+    let modLogsChannel = interaction.guild.channels.resolve(constantsConfig.channels.MOD_LOGS);
+    if (!modLogsChannel || !modLogsChannel.isTextBased()) {
+        modLogsChannel = null;
         await interaction.followUp({ embeds: [noModLogs], ephemeral: true });
     }
 
@@ -92,9 +93,9 @@ export async function handleRemovePrefixCommandRolePermission(interaction: ChatI
             await foundCommand.save();
             await refreshSinglePrefixCommandCache(foundCommand, foundCommand);
             await interaction.followUp({ embeds: [successEmbed(command, roleName)], ephemeral: true });
-            if (modLogsRole) {
+            if (modLogsChannel) {
                 try {
-                    await modLogsRole.send({ embeds: [modLogEmbed(moderator, command, roleName)] });
+                    await modLogsChannel.send({ embeds: [modLogEmbed(moderator, command, roleName)] });
                 } catch (error) {
                     Logger.error(`Failed to post a message to the mod logs role: ${error}`);
                 }

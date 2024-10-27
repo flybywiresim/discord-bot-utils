@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, Colors, TextChannel, User } from 'discord.js';
+import { ChatInputCommandInteraction, Colors, User } from 'discord.js';
 import { constantsConfig, getConn, PrefixCommandVersion, Logger, makeEmbed, PrefixCommandChannelDefaultVersion, clearSinglePrefixCommandVersionCache, PrefixCommand, refreshSinglePrefixCommandCache, clearSinglePrefixCommandChannelDefaultVersionCache } from '../../../../lib';
 
 const noConnEmbed = makeEmbed({
@@ -84,10 +84,10 @@ export async function handleDeletePrefixCommandVersion(interaction: ChatInputCom
     const moderator = interaction.user;
 
     //Check if the mod logs channel exists
-    const modLogsChannel = interaction.guild.channels.resolve(constantsConfig.channels.MOD_LOGS) as TextChannel;
     let modLogsChannel = interaction.guild.channels.resolve(constantsConfig.channels.MOD_LOGS);
     if (!modLogsChannel || !modLogsChannel.isTextBased()) {
         modLogsChannel = null;
+        await interaction.followUp({ embeds: [noModLogs], ephemeral: true });
     }
 
     const existingVersion = await PrefixCommandVersion.findOne({ name: version });

@@ -1,4 +1,4 @@
-import { ActionRowBuilder, ChatInputCommandInteraction, Colors, ModalBuilder, TextChannel, TextInputBuilder, TextInputStyle, User } from 'discord.js';
+import { ActionRowBuilder, ChatInputCommandInteraction, Colors, ModalBuilder, TextInputBuilder, TextInputStyle, User } from 'discord.js';
 import { constantsConfig, getConn, PrefixCommandVersion, PrefixCommand, Logger, makeEmbed, refreshSinglePrefixCommandCache, PrefixCommandContent } from '../../../../lib';
 
 const noConnEmbed = makeEmbed({
