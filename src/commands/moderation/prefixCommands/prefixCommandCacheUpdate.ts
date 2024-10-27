@@ -1,4 +1,4 @@
-import { ApplicationCommandType, Colors, EmbedField, TextChannel, User } from 'discord.js';
+import { APIEmbedField, ApplicationCommandType, Colors, EmbedField, TextChannel, User } from 'discord.js';
 import { constantsConfig, slashCommand, slashCommandStructure, makeEmbed, refreshAllPrefixCommandsCache, refreshAllPrefixCommandVersionsCache, refreshAllPrefixCommandCategoriesCache, refreshAllPrefixCommandChannelDefaultVersionsCache } from '../../../lib';
 
 const data = slashCommandStructure({
@@ -10,7 +10,7 @@ const data = slashCommandStructure({
     options: [],
 });
 
-const cacheUpdateEmbed = (fields: any, color: number) => makeEmbed({
+const cacheUpdateEmbed = (fields: APIEmbedField[], color: number) => makeEmbed({
     title: 'Prefix Command Cache Update',
     fields,
     color,
