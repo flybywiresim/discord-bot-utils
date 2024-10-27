@@ -15,7 +15,7 @@ const failedEmbed = (commandId: string) => makeEmbed({
 
 const doesNotExistsEmbed = (command: string) => makeEmbed({
     title: 'Prefix Commands - Delete Command - Does not exist',
-    description: `The prefix command ${command} does not exists. Can not delete it.`,
+    description: `The prefix command ${command} does not exists. Cannot delete it.`,
     color: Colors.Red,
 });
 
