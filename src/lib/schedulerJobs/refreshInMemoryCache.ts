@@ -24,10 +24,12 @@ export async function refreshInMemoryCache(job: Job) {
 
     const start = new Date().getTime();
     try {
-        await refreshAllPrefixCommandVersionsCache();
-        await refreshAllPrefixCommandCategoriesCache();
-        await refreshAllPrefixCommandsCache();
-        await refreshAllPrefixCommandChannelDefaultVersionsCache();
+        await Promise.all([
+            refreshAllPrefixCommandVersionsCache(),
+            refreshAllPrefixCommandCategoriesCache(),
+            refreshAllPrefixCommandsCache(),
+            refreshAllPrefixCommandChannelDefaultVersionsCache(),
+        ]);
     } catch (error) {
         Logger.error('Failed to refresh the in memory cache:', error);
     }

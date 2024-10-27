@@ -40,11 +40,17 @@ export default slashCommand(data, async ({ interaction }) => {
 
     const modLogsChannel = interaction.guild.channels.resolve(constantsConfig.channels.MOD_LOGS) as TextChannel;
     const start = new Date().getTime();
-
-    await refreshAllPrefixCommandVersionsCache();
-    await refreshAllPrefixCommandCategoriesCache();
-    await refreshAllPrefixCommandsCache();
-    await refreshAllPrefixCommandChannelDefaultVersionsCache();
+    try {
+        await Promise.all([
+            refreshAllPrefixCommandVersionsCache(),
+            refreshAllPrefixCommandCategoriesCache(),
+            refreshAllPrefixCommandsCache(),
+            refreshAllPrefixCommandChannelDefaultVersionsCache(),
+        ]);
+    } catch (error) {
+        await interaction.editReply({ content: `An error occurred while updating the cache: ${error}` });
+        return;
+    }
 
     const duration = ((new Date().getTime() - start) / 1000).toFixed(2);
 
