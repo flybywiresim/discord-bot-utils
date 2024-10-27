@@ -87,8 +87,9 @@ export async function handleDeletePrefixCommandContent(interaction: ChatInputCom
     const moderator = interaction.user;
 
     //Check if the mod logs channel exists
-    const modLogsChannel = interaction.guild.channels.resolve(constantsConfig.channels.MOD_LOGS) as TextChannel;
-    if (!modLogsChannel) {
+    let modLogsChannel = interaction.guild.channels.resolve(constantsConfig.channels.MOD_LOGS);
+    if (!modLogsChannel || !modLogsChannel.isTextBased()) {
+        modLogsChannel = null;
         await interaction.followUp({ embeds: [noModLogs], ephemeral: true });
     }
 
