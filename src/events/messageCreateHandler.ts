@@ -122,9 +122,9 @@ export default event(Events.MessageCreate, async (_, message) => {
 
             // Step 1: Check if the command is actually a version alias
             const commandCachedVersion = await inMemoryCache.get(`${MemoryCachePrefix.VERSION}:${commandText.toLowerCase()}`);
-            let commandVersionId;
-            let commandVersionName;
-            let commandVersionEnabled;
+            let commandVersionId: string;
+            let commandVersionName: string;
+            let commandVersionEnabled: boolean;
             if (commandCachedVersion) {
                 const commandVersion = PrefixCommandVersion.hydrate(commandCachedVersion);
                 ({ id: commandVersionId, name: commandVersionName, enabled: commandVersionEnabled } = commandVersion);
