@@ -7,13 +7,6 @@ import { handleRemovePrefixCommandRolePermission } from './functions/removeRoleP
 import { handleSetPrefixCommandPermissionSettings } from './functions/setCommandPermissionSettings';
 import { handleShowPrefixCommandPermissions } from './functions/showCommandPermissions';
 
-const colorChoices = [];
-for (let i = 0; i < Object.keys(constantsConfig.colors).length; i++) {
-    const name = Object.keys(constantsConfig.colors)[i];
-    const value = constantsConfig.colors[name];
-    colorChoices.push({ name, value });
-}
-
 const data = slashCommandStructure({
     name: 'prefix-command-permissions',
     description: 'Command to manage the permissions of prefix based commands.',
