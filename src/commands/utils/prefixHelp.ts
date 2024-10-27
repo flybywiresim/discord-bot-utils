@@ -1,5 +1,5 @@
 import { ApplicationCommandOptionChoiceData, ApplicationCommandOptionType, ApplicationCommandType } from 'discord.js';
-import { makeEmbed, createPaginatedEmbedHandler, slashCommand, slashCommandStructure, getInMemoryCache, memoryCachePrefixCommand, AutocompleteCallback, memoryCachePrefixCategory, makeLines, memoryCachePrefixVersion, Logger, PrefixCommand, PrefixCommandVersion, PrefixCommandCategory, IPrefixCommand } from '../../lib';
+import { makeEmbed, createPaginatedEmbedHandler, slashCommand, slashCommandStructure, getInMemoryCache, MemoryCachePrefix, AutocompleteCallback, makeLines, Logger, PrefixCommand, PrefixCommandVersion, PrefixCommandCategory, IPrefixCommand } from '../../lib';
 
 const data = slashCommandStructure({
     name: 'prefix-help',
@@ -35,7 +35,7 @@ const autocompleteCallback: AutocompleteCallback = async ({ interaction }) => {
         if (inMemoryCache) {
             const foundCategories = await inMemoryCache.store.keys();
             for (const key of foundCategories) {
-                if (key.startsWith(memoryCachePrefixCategory) && key.includes(searchText.toLowerCase())) {
+                if (key.startsWith(MemoryCachePrefix.CATEGORY) && key.includes(searchText.toLowerCase())) {
                     // eslint-disable-next-line no-await-in-loop
                     const categoryCached = await inMemoryCache.get(key);
                     if (categoryCached) {
@@ -54,7 +54,7 @@ const autocompleteCallback: AutocompleteCallback = async ({ interaction }) => {
         if (inMemoryCache) {
             const foundCommands = await inMemoryCache.store.keys();
             for (const key of foundCommands) {
-                if (key.startsWith(memoryCachePrefixCommand) && key.includes(searchText.toLowerCase())) {
+                if (key.startsWith(MemoryCachePrefix.COMMAND) && key.includes(searchText.toLowerCase())) {
                     // Explicitly does not use the cache to hydrate the command to also capture aliases, resulting in commands
                     const commandName = key.split(':')[1];
                     choices.push({ name: commandName, value: commandName });
@@ -86,7 +86,7 @@ export default slashCommand(data, async ({ interaction }) => {
         });
     }
 
-    const categoryCached = await inMemoryCache.get(`${memoryCachePrefixCategory}:${categoryName.toLowerCase()}`);
+    const categoryCached = await inMemoryCache.get(`${MemoryCachePrefix.CATEGORY}:${categoryName.toLowerCase()}`);
     if (!categoryCached) {
         return interaction.reply({
             content: 'Invalid category, please select an existing category.',
@@ -98,7 +98,7 @@ export default slashCommand(data, async ({ interaction }) => {
     const commands: { [key: string]: IPrefixCommand } = {};
     const keys = await inMemoryCache.store.keys();
     for (const key of keys) {
-        if (key.startsWith(memoryCachePrefixCommand) && key.includes(search.toLowerCase())) {
+        if (key.startsWith(MemoryCachePrefix.COMMAND) && key.includes(search.toLowerCase())) {
             // eslint-disable-next-line no-await-in-loop
             const commandCached = await inMemoryCache.get(key);
             if (commandCached) {
@@ -131,7 +131,7 @@ export default slashCommand(data, async ({ interaction }) => {
                 if (versionId !== 'GENERIC') {
                     Logger.debug(`Fetching version ${versionId} for command ${name}`);
                     // eslint-disable-next-line no-await-in-loop
-                    const versionCached = await inMemoryCache.get(`${memoryCachePrefixVersion}:${versionId}`);
+                    const versionCached = await inMemoryCache.get(`${MemoryCachePrefix.VERSION}:${versionId}`);
                     if (versionCached) {
                         const version = PrefixCommandVersion.hydrate(versionCached);
                         const { emoji } = version;

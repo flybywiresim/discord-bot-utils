@@ -10,10 +10,12 @@ const cacheTTL = cacheRefreshInterval * 2 * 1000;
  * Cache Prefixes
  */
 
-export const memoryCachePrefixCommand = 'PF_COMMAND';
-export const memoryCachePrefixVersion = 'PF_VERSION';
-export const memoryCachePrefixCategory = 'PF_CATEGORY';
-export const memoryCachePrefixChannelDefaultVersion = 'PF_CHANNEL_VERSION';
+export enum MemoryCachePrefix {
+    COMMAND = 'PF_COMMAND',
+    VERSION = 'PF_VERSION',
+    CATEGORY = 'PF_CATEGORY',
+    CHANNEL_DEFAULT_VERSION = 'PF_CHANNEL_VERSION',
+}
 
 /**
  * Cache Management Functions
@@ -54,9 +56,9 @@ export async function clearSinglePrefixCommandCache(command: IPrefixCommand) {
     Logger.debug(`Clearing cache for command or alias "${name}"`);
     for (const alias of aliases) {
         // eslint-disable-next-line no-await-in-loop
-        await inMemoryCache.del(`${memoryCachePrefixCommand}:${alias.toLowerCase()}`);
+        await inMemoryCache.del(`${MemoryCachePrefix.COMMAND}:${alias.toLowerCase()}`);
     }
-    await inMemoryCache.del(`${memoryCachePrefixCommand}:${name.toLowerCase()}`);
+    await inMemoryCache.del(`${MemoryCachePrefix.COMMAND}:${name.toLowerCase()}`);
 }
 
 export async function loadSinglePrefixCommandToCache(command: IPrefixCommand) {
@@ -65,10 +67,10 @@ export async function loadSinglePrefixCommandToCache(command: IPrefixCommand) {
 
     const { name, aliases } = command;
     Logger.debug(`Loading command ${name} to cache`);
-    await inMemoryCache.set(`${memoryCachePrefixCommand}:${name.toLowerCase()}`, command.toObject());
+    await inMemoryCache.set(`${MemoryCachePrefix.COMMAND}:${name.toLowerCase()}`, command.toObject());
     for (const alias of aliases) {
         // eslint-disable-next-line no-await-in-loop
-        await inMemoryCache.set(`${memoryCachePrefixCommand}:${alias.toLowerCase()}`, command.toObject());
+        await inMemoryCache.set(`${MemoryCachePrefix.COMMAND}:${alias.toLowerCase()}`, command.toObject());
     }
 }
 
@@ -100,7 +102,7 @@ export async function refreshAllPrefixCommandsCache() {
     const cacheKeys = await inMemoryCache.store.keys();
     // Step 3: Loop over cached commands
     for (const key of cacheKeys) {
-        if (key.startsWith(`${memoryCachePrefixCommand}:`)) {
+        if (key.startsWith(`${MemoryCachePrefix.COMMAND}:`)) {
             const checkCommand = key.split(':')[1];
             // Step 3.a: Check if cached command exists in the database list
             let found = false;
@@ -136,8 +138,8 @@ export async function clearSinglePrefixCommandVersionCache(version: IPrefixComma
 
     const { alias, _id: versionId } = version;
     Logger.debug(`Clearing cache for command version alias "${alias}"`);
-    await inMemoryCache.del(`${memoryCachePrefixVersion}:${alias.toLowerCase()}`);
-    await inMemoryCache.del(`${memoryCachePrefixVersion}:${versionId}`);
+    await inMemoryCache.del(`${MemoryCachePrefix.VERSION}:${alias.toLowerCase()}`);
+    await inMemoryCache.del(`${MemoryCachePrefix.VERSION}:${versionId}`);
 }
 
 export async function loadSinglePrefixCommandVersionToCache(version: IPrefixCommandVersion) {
@@ -146,8 +148,8 @@ export async function loadSinglePrefixCommandVersionToCache(version: IPrefixComm
 
     const { alias, _id: versionId } = version;
     Logger.debug(`Loading version with alias ${alias} to cache`);
-    await inMemoryCache.set(`${memoryCachePrefixVersion}:${alias.toLowerCase()}`, version.toObject());
-    await inMemoryCache.set(`${memoryCachePrefixVersion}:${versionId}`, version.toObject());
+    await inMemoryCache.set(`${MemoryCachePrefix.VERSION}:${alias.toLowerCase()}`, version.toObject());
+    await inMemoryCache.set(`${MemoryCachePrefix.VERSION}:${versionId}`, version.toObject());
 }
 
 export async function loadAllPrefixCommandVersionsToCache() {
@@ -178,7 +180,7 @@ export async function refreshAllPrefixCommandVersionsCache() {
     const cacheKeys = await inMemoryCache.store.keys();
     // Step 3: Loop over cached versions
     for (const key of cacheKeys) {
-        if (key.startsWith(`${memoryCachePrefixVersion}:`)) {
+        if (key.startsWith(`${MemoryCachePrefix.VERSION}:`)) {
             const checkVersion = key.split(':')[1];
             // Step 3.a: Check if cached version exists in the database list
             let found = false;
@@ -214,7 +216,7 @@ export async function clearSinglePrefixCommandCategoryCache(category: IPrefixCom
 
     const { name } = category;
     Logger.debug(`Clearing cache for command category "${name}"`);
-    await inMemoryCache.del(`${memoryCachePrefixCategory}:${name.toLowerCase()}`);
+    await inMemoryCache.del(`${MemoryCachePrefix.CATEGORY}:${name.toLowerCase()}`);
 }
 
 export async function loadSinglePrefixCommandCategoryToCache(category: IPrefixCommandCategory) {
@@ -223,7 +225,7 @@ export async function loadSinglePrefixCommandCategoryToCache(category: IPrefixCo
 
     const { name } = category;
     Logger.debug(`Loading category ${name} to cache`);
-    await inMemoryCache.set(`${memoryCachePrefixCategory}:${name.toLowerCase()}`, category.toObject());
+    await inMemoryCache.set(`${MemoryCachePrefix.CATEGORY}:${name.toLowerCase()}`, category.toObject());
 }
 
 export async function loadAllPrefixCommandCategoriesToCache() {
@@ -254,7 +256,7 @@ export async function refreshAllPrefixCommandCategoriesCache() {
     const cacheKeys = await inMemoryCache.store.keys();
     // Step 3: Loop over cached categories
     for (const key of cacheKeys) {
-        if (key.startsWith(`${memoryCachePrefixCategory}:`)) {
+        if (key.startsWith(`${MemoryCachePrefix.CATEGORY}:`)) {
             const categoryName = key.split(':')[1];
             // Step 3.a: Check if cached category exists in the database list
             let found = false;
@@ -290,7 +292,7 @@ export async function clearSinglePrefixCommandChannelDefaultVersionCache(channel
 
     const { channelId } = channelDefaultVersion;
     Logger.debug(`Clearing cache for channel default version for channel "${channelId}"`);
-    await inMemoryCache.del(`${memoryCachePrefixChannelDefaultVersion}:${channelId}`);
+    await inMemoryCache.del(`${MemoryCachePrefix.CHANNEL_DEFAULT_VERSION}:${channelId}`);
 }
 
 export async function loadSinglePrefixCommandChannelDefaultVersionToCache(channelDefaultVersion: IPrefixCommandChannelDefaultVersion) {
@@ -301,7 +303,7 @@ export async function loadSinglePrefixCommandChannelDefaultVersionToCache(channe
     const version = await PrefixCommandVersion.findById(versionId);
     if (version) {
         Logger.debug(`Loading default version for channel ${channelId} to cache`);
-        await inMemoryCache.set(`${memoryCachePrefixChannelDefaultVersion}:${channelId}`, version.toObject());
+        await inMemoryCache.set(`${MemoryCachePrefix.CHANNEL_DEFAULT_VERSION}:${channelId}`, version.toObject());
     }
 }
 
@@ -329,7 +331,7 @@ export async function refreshAllPrefixCommandChannelDefaultVersionsCache() {
     const cacheKeys = await inMemoryCache.store.keys();
     // Step 3: Loop over cached channel default versions
     for (const key of cacheKeys) {
-        if (key.startsWith(`${memoryCachePrefixChannelDefaultVersion}:`)) {
+        if (key.startsWith(`${MemoryCachePrefix.CHANNEL_DEFAULT_VERSION}:`)) {
             const channelId = key.split(':')[1];
             // Step 3.a: Check if cached channel default version exists in the database list
             let found = false;

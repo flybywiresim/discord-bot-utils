@@ -1,5 +1,5 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, EmbedBuilder, Interaction, Message } from 'discord.js';
-import { event, getInMemoryCache, memoryCachePrefixCommand, memoryCachePrefixVersion, memoryCachePrefixChannelDefaultVersion, Logger, Events, constantsConfig, makeEmbed, makeLines, PrefixCommand, PrefixCommandPermissions, PrefixCommandVersion } from '../lib';
+import { event, getInMemoryCache, MemoryCachePrefix, Logger, Events, constantsConfig, makeEmbed, makeLines, PrefixCommand, PrefixCommandPermissions, PrefixCommandVersion } from '../lib';
 
 const commandEmbed = (title: string, description: string, color: string, imageUrl: string = '') => makeEmbed({
     title,
@@ -121,7 +121,7 @@ export default event(Events.MessageCreate, async (_, message) => {
             const commandVersionExplicitGeneric = (commandText.toLowerCase() === 'generic');
 
             // Step 1: Check if the command is actually a version alias
-            const commandCachedVersion = await inMemoryCache.get(`${memoryCachePrefixVersion}:${commandText.toLowerCase()}`);
+            const commandCachedVersion = await inMemoryCache.get(`${MemoryCachePrefix.VERSION}:${commandText.toLowerCase()}`);
             let commandVersionId;
             let commandVersionName;
             let commandVersionEnabled;
@@ -137,7 +137,7 @@ export default event(Events.MessageCreate, async (_, message) => {
             // Step 2: Check if there's a default version for the channel if commandVersionName is GENERIC
             let channelDefaultVersionUsed = false;
             if (commandVersionName === 'GENERIC' && !commandVersionExplicitGeneric) {
-                const channelDefaultVersionCached = await inMemoryCache.get(`${memoryCachePrefixChannelDefaultVersion}:${channelId}`);
+                const channelDefaultVersionCached = await inMemoryCache.get(`${MemoryCachePrefix.CHANNEL_DEFAULT_VERSION}:${channelId}`);
                 if (channelDefaultVersionCached) {
                     const channelDefaultVersion = PrefixCommandVersion.hydrate(channelDefaultVersionCached);
                     ({ id: commandVersionId, name: commandVersionName, enabled: commandVersionEnabled } = channelDefaultVersion);
@@ -166,7 +166,7 @@ export default event(Events.MessageCreate, async (_, message) => {
             }
 
             // Step 3: Check if the command exists itself and process it
-            const cachedCommandDetails = await inMemoryCache.get(`${memoryCachePrefixCommand}:${commandText.toLowerCase()}`);
+            const cachedCommandDetails = await inMemoryCache.get(`${MemoryCachePrefix.COMMAND}:${commandText.toLowerCase()}`);
             if (cachedCommandDetails) {
                 const commandDetails = PrefixCommand.hydrate(cachedCommandDetails);
                 const { name, contents, isEmbed, embedColor, permissions } = commandDetails;
@@ -239,7 +239,7 @@ export default event(Events.MessageCreate, async (_, message) => {
                     const versionSelectionButtonData: { [key: string]: ButtonBuilder } = {};
                     for (const { versionId: versionIdForButton } of contents) {
                         // eslint-disable-next-line no-await-in-loop
-                        const versionCached = await inMemoryCache.get(`${memoryCachePrefixVersion}:${versionIdForButton}`);
+                        const versionCached = await inMemoryCache.get(`${MemoryCachePrefix.VERSION}:${versionIdForButton}`);
                         if (versionCached) {
                             const version = PrefixCommandVersion.hydrate(versionCached);
                             const { emoji, enabled } = version;
