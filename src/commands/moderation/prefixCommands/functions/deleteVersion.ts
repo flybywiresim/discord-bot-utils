@@ -85,8 +85,9 @@ export async function handleDeletePrefixCommandVersion(interaction: ChatInputCom
 
     //Check if the mod logs channel exists
     const modLogsChannel = interaction.guild.channels.resolve(constantsConfig.channels.MOD_LOGS) as TextChannel;
-    if (!modLogsChannel) {
-        await interaction.followUp({ embeds: [noModLogs], ephemeral: true });
+    let modLogsChannel = interaction.guild.channels.resolve(constantsConfig.channels.MOD_LOGS);
+    if (!modLogsChannel || !modLogsChannel.isTextBased()) {
+        modLogsChannel = null;
     }
 
     const existingVersion = await PrefixCommandVersion.findOne({ name: version });
