@@ -92,7 +92,6 @@ export async function handleModifyPrefixCommandVersion(interaction: ChatInputCom
         return;
     }
     if (alias && !nameRegex.test(alias)) {
-        // eslint-disable-next-line no-await-in-loop
         await interaction.followUp({ embeds: [wrongFormatEmbed(alias)], ephemeral: true });
         return;
     }
