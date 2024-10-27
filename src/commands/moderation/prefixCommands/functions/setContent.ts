@@ -1,4 +1,4 @@
-import { ActionRowBuilder, ChatInputCommandInteraction, Colors, ModalBuilder, TextInputBuilder, TextInputStyle, User } from 'discord.js';
+import { ActionRowBuilder, ChatInputCommandInteraction, Colors, ModalBuilder, ModalSubmitInteraction, TextInputBuilder, TextInputStyle, User } from 'discord.js';
 import { constantsConfig, getConn, PrefixCommandVersion, PrefixCommand, Logger, makeEmbed, refreshSinglePrefixCommandCache, PrefixCommandContent } from '../../../../lib';
 
 const noConnEmbed = makeEmbed({
@@ -125,7 +125,7 @@ export async function handleSetPrefixCommandContent(interaction: ChatInputComman
         .setLabel('Content')
         .setPlaceholder('Provide the content for the command.')
         .setStyle(TextInputStyle.Paragraph)
-        .setMaxLength(4096)
+        .setMaxLength(4000)
         .setMinLength(0)
         .setRequired(false)
         .setValue(foundContent && foundContent.content ? foundContent.content : '');
@@ -150,10 +150,7 @@ export async function handleSetPrefixCommandContent(interaction: ChatInputComman
 
     await interaction.showModal(contentModal);
 
-    const filter = (interaction: {
-        customId: string;
-        user: { id: any; };
-    }) => interaction.customId === 'commandContentModal' && interaction.user.id;
+    const filter = (interaction: ModalSubmitInteraction) => interaction.customId === 'commandContentModal' && interaction.user.id === moderator.id;
 
     let title = '';
     let content = '';
