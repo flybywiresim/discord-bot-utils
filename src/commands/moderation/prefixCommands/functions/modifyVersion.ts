@@ -21,7 +21,7 @@ const wrongFormatEmbed = (invalidString: string) => makeEmbed({
 
 const doesNotExistsEmbed = (version: string) => makeEmbed({
     title: 'Prefix Commands - Modify Version - Does not exist',
-    description: `The prefix command version ${version} does not exists. Can not modify it.`,
+    description: `The prefix command version ${version} does not exists. Cannot modify it.`,
     color: Colors.Red,
 });
 
