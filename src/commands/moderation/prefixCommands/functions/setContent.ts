@@ -125,7 +125,7 @@ export async function handleSetPrefixCommandContent(interaction: ChatInputComman
         .setLabel('Content')
         .setPlaceholder('Provide the content for the command.')
         .setStyle(TextInputStyle.Paragraph)
-        .setMaxLength(2048)
+        .setMaxLength(4096)
         .setMinLength(0)
         .setRequired(false)
         .setValue(foundContent && foundContent.content ? foundContent.content : '');
@@ -135,7 +135,7 @@ export async function handleSetPrefixCommandContent(interaction: ChatInputComman
         .setLabel('Image URL')
         .setPlaceholder('Provide an optional Image URL for the command.')
         .setStyle(TextInputStyle.Short)
-        .setMaxLength(255)
+        .setMaxLength(2048)
         .setMinLength(0)
         .setRequired(false)
         .setValue(foundContent && foundContent.image ? foundContent.image : '');
