@@ -79,8 +79,8 @@ export async function loadAllPrefixCommandsToCache() {
     const inMemoryCache = getInMemoryCache();
     if (!conn || !inMemoryCache) return;
 
-    const PrefixCommands = await PrefixCommand.find();
-    for (const command of PrefixCommands) {
+    const prefixCommands = await PrefixCommand.find();
+    for (const command of prefixCommands) {
         // eslint-disable-next-line no-await-in-loop
         await loadSinglePrefixCommandToCache(command);
     }
@@ -157,8 +157,8 @@ export async function loadAllPrefixCommandVersionsToCache() {
     const inMemoryCache = getInMemoryCache();
     if (!conn || !inMemoryCache) return;
 
-    const PrefixCommandVersions = await PrefixCommandVersion.find();
-    for (const version of PrefixCommandVersions) {
+    const prefixCommandVersions = await PrefixCommandVersion.find();
+    for (const version of prefixCommandVersions) {
         // eslint-disable-next-line no-await-in-loop
         await loadSinglePrefixCommandVersionToCache(version);
     }
@@ -233,8 +233,8 @@ export async function loadAllPrefixCommandCategoriesToCache() {
     const inMemoryCache = getInMemoryCache();
     if (!conn || !inMemoryCache) return;
 
-    const PrefixCommandCategories = await PrefixCommandCategory.find();
-    for (const category of PrefixCommandCategories) {
+    const prefixCommandCategories = await PrefixCommandCategory.find();
+    for (const category of prefixCommandCategories) {
         // eslint-disable-next-line no-await-in-loop
         await loadSinglePrefixCommandCategoryToCache(category);
     }
