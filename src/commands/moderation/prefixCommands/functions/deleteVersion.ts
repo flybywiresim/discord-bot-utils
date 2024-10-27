@@ -27,7 +27,7 @@ const failedEmbed = (versionId: string) => makeEmbed({
 
 const doesNotExistsEmbed = (version: string) => makeEmbed({
     title: 'Prefix Commands - Delete Version - Does not exist',
-    description: `The prefix command version ${version} does not exists. Can not delete it.`,
+    description: `The prefix command version ${version} does not exists. Cannot delete it.`,
     color: Colors.Red,
 });
 
