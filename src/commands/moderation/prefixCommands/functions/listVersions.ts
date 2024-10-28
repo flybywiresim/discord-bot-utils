@@ -20,7 +20,7 @@ const noResultsEmbed = (searchText: string) => makeEmbed({
 
 const successEmbed = (searchText: string, fields: APIEmbedField[]) => makeEmbed({
     title: 'Prefix Commands - Versions',
-    description: searchText ? `Matching search: ${searchText}` : undefined,
+    description: searchText ? `Matching search: ${searchText} - Maximum of 20 shown` : 'Maximum of 20 shown',
     fields,
     color: Colors.Green,
 });
@@ -39,7 +39,7 @@ export async function handleListPrefixCommandVersions(interaction: ChatInputComm
 
     if (foundVersions) {
         const embedFields: APIEmbedField[] = [];
-        for (let i = 0; i < foundVersions.length; i++) {
+        for (let i = 0; i < foundVersions.length && i < 20; i++) {
             const version = foundVersions[i];
             const { id, name, emoji, enabled, alias } = version;
             embedFields.push({
