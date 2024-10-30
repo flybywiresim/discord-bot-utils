@@ -227,7 +227,11 @@ export default event(Events.ClientReady, async ({ log }, client) => {
             logMessage += ` - Cache Error: ${inMemoryCacheError.message}`;
         }
 
-        await botDevChannel.send({ content: logMessage });
+        try {
+            await botDevChannel.send({ content: logMessage });
+        } catch (error) {
+            log('READY, EXCEPT - Failed to send bot status message to bot-dev channel:', error);
+        }
     } else {
         log('Unable to find bot-dev channel. Cannot send bot status message.');
     }
