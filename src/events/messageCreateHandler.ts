@@ -1,4 +1,4 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, EmbedBuilder, Interaction, Message } from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, EmbedBuilder, Interaction, Message, PermissionsBitField } from 'discord.js';
 import { event, getInMemoryCache, MemoryCachePrefix, Logger, Events, constantsConfig, makeEmbed, makeLines, PrefixCommand, PrefixCommandPermissions, PrefixCommandVersion } from '../lib';
 
 const commandEmbed = (title: string, description: string, color: string, imageUrl: string = '') => makeEmbed({
@@ -36,7 +36,7 @@ async function replyWithMsg(msg: Message, text: string, buttonRow?:ActionRowBuil
         }));
 }
 
-async function sendReply(message: Message, commandTitle: string, commandContent: string, isEmbed: boolean, embedColor: string, commandImage: string, versionButtonRow?: ActionRowBuilder<ButtonBuilder>) : Promise<Message<boolean>> {
+async function sendReply(message: Message, commandTitle: string, commandContent: string, isEmbed: boolean, embedColor: string, commandImage: string, versionButtonRow?: ActionRowBuilder<ButtonBuilder>) : Promise<Message<boolean> | undefined> {
     try {
         let actualCommandContent = commandContent;
         if (!commandTitle && !commandContent && !commandImage) {
@@ -52,12 +52,12 @@ async function sendReply(message: Message, commandTitle: string, commandContent:
         content.push(actualCommandContent);
         return replyWithMsg(message, makeLines(content), versionButtonRow);
     } catch (error) {
-        Logger.error(error);
-        return message.reply('An error occurred while processing the command.');
+        Logger.error(`Error processing the reply: ${error}`);
+        return undefined;
     }
 }
 
-async function expireChoiceReply(message: Message, commandTitle: string, commandContent: string, isEmbed: boolean, embedColor: string, commandImage: string) : Promise<Message<boolean>> {
+async function expireChoiceReply(message: Message, commandTitle: string, commandContent: string, isEmbed: boolean, embedColor: string, commandImage: string) : Promise<Message<boolean> | undefined> {
     try {
         let actualCommandContent = commandContent;
         if (!commandTitle && !commandContent && !commandImage) {
@@ -82,8 +82,8 @@ async function expireChoiceReply(message: Message, commandTitle: string, command
             components: [],
         });
     } catch (error) {
-        Logger.error(error);
-        return message.reply('An error occurred while updating the message.');
+        Logger.error(`Error processing the expiration reply: ${error}`);
+        return undefined;
     }
 }
 
@@ -92,6 +92,7 @@ async function sendPermError(message: Message, errorText: string) {
         errorText += `\n\nThis message & the original command message will be deleted in ${constantsConfig.prefixCommandPermissionDelay / 1000} seconds.`;
     }
     const permReply = await sendReply(message, 'Permission Error', errorText, true, constantsConfig.colors.FBW_RED, '');
+    if (!permReply) return;
     if (constantsConfig.prefixCommandPermissionDelay > 0) {
         setTimeout(() => {
             try {
@@ -105,12 +106,24 @@ async function sendPermError(message: Message, errorText: string) {
 }
 
 export default event(Events.MessageCreate, async (_, message) => {
-    const { id: messageId, author, channel, content } = message;
+    const { id: messageId, author, channel, content, guild } = message;
     const { id: authorId, bot } = author;
 
-    if (bot || channel.isDMBased()) return;
-    const { id: channelId, guild } = channel;
+    if (bot || !guild || channel.isDMBased() || !channel.isTextBased()) return;
+    const thisBot = guild.members.me;
+    if (!thisBot) return;
+    const { id: channelId, name: channelName } = channel;
     const { id: guildId } = guild;
+    const botPermissions = channel.permissionsFor(thisBot);
+    const requiredBotPermissions = [
+        PermissionsBitField.Flags.SendMessages,
+        PermissionsBitField.Flags.ReadMessageHistory,
+    ];
+    // No point in continuing if the bot can't post a message or reply to a message
+    if (!botPermissions || !botPermissions.has(requiredBotPermissions)) {
+        Logger.info(`Bot does not have required permissions in channel ${channelName} (${channelId}) of server ${guildId}. Unable to process message ${messageId} from user ${authorId}.`);
+        return;
+    }
     Logger.debug(`Processing message ${messageId} from user ${authorId} in channel ${channelId} of server ${guildId}.`);
 
     const inMemoryCache = getInMemoryCache();
@@ -230,6 +243,7 @@ export default event(Events.MessageCreate, async (_, message) => {
                     Logger.debug(`Prefix Command - Version "${commandVersionName}" not found for command "${name}" based on user command "${commandText}"`);
                     return;
                 }
+                Logger.info(`Prefix Command - Executing command "${name}" and version "${commandVersionName}" based on user command "${commandText}" in channel ${channelName}.`);
                 const { title: commandTitle, content: commandContent, image: commandImage } = commandContentData;
                 // If generic requested and multiple versions, show the selection
                 // Note that this only applies if GENERIC is the version explicitly requested
@@ -263,6 +277,7 @@ export default event(Events.MessageCreate, async (_, message) => {
                         return;
                     }
                     const buttonMessage = await sendReply(message, commandTitle, commandContent || '', isEmbed || false, embedColor || constantsConfig.colors.FBW_CYAN, commandImage || '', versionSelectButtonRow);
+                    if (!buttonMessage) return;
 
                     const filter = (interaction: Interaction) => interaction.user.id === authorId;
                     const collector = buttonMessage.createMessageComponentCollector({ filter, time: 60_000 });
@@ -271,7 +286,11 @@ export default event(Events.MessageCreate, async (_, message) => {
                         buttonClicked = true;
                         await collectedInteraction.deferUpdate();
                         Logger.debug(`Prefix Command - User selected button "${collectedInteraction.customId}" for command "${name}" based on user command "${commandText}"`);
-                        await buttonMessage.delete();
+                        try {
+                            await buttonMessage.delete();
+                        } catch (error) {
+                            Logger.error(`Failed to delete the version selection message: ${error}`);
+                        }
                         const { customId: selectedVersionId } = collectedInteraction;
                         const commandContentData = contents.find(({ versionId }) => versionId === selectedVersionId);
                         if (!commandContentData) {
