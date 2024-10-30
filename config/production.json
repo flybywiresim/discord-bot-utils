@@ -54,8 +54,8 @@
           "label": "Server Announcements"
         },
         {
-          "id": "A32NX_RELEASES",
-          "label": "A32NX Releases"
+          "id": "AIRCRAFT_RELEASES",
+          "label": "Aircraft Releases"
         },
         {
           "id": "PROGRESS",
@@ -94,7 +94,7 @@
     ]
   },
   "roles": {
-    "A32NX_RELEASES": "748938423045193728",
+    "AIRCRAFT_RELEASES": "748938423045193728",
     "ADMIN_TEAM": "738864824305319936",
     "BOT_DEVELOPER": "768888763929591818",
     "COMMUNITY_SUPPORT": "870394933926830100",

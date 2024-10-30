@@ -59,6 +59,10 @@
           "label": "Server Announcements"
         },
         {
+          "id": "AIRCRAFT_RELEASES",
+          "label": "Aircraft Releases"
+        },
+        {
           "id": "PROGRESS_ANNOUNCEMENT",
           "label": "Progress Announcements"
         }
@@ -91,6 +95,7 @@
     ]
   },
   "roles": {
+    "AIRCRAFT_RELEASES": "1301308639453384704",
     "ADMIN_TEAM": "1162821800225419272",
     "BOT_DEVELOPER": "1162822853306101901",
     "COMMUNITY_SUPPORT": "1162822911745347594",
