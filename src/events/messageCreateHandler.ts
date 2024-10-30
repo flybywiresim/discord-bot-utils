@@ -114,16 +114,6 @@ export default event(Events.MessageCreate, async (_, message) => {
     if (!thisBot) return;
     const { id: channelId, name: channelName } = channel;
     const { id: guildId } = guild;
-    const botPermissions = channel.permissionsFor(thisBot);
-    const requiredBotPermissions = [
-        PermissionsBitField.Flags.SendMessages,
-        PermissionsBitField.Flags.ReadMessageHistory,
-    ];
-    // No point in continuing if the bot can't post a message or reply to a message
-    if (!botPermissions || !botPermissions.has(requiredBotPermissions)) {
-        Logger.info(`Bot does not have required permissions in channel ${channelName} (${channelId}) of server ${guildId}. Unable to process message ${messageId} from user ${authorId}.`);
-        return;
-    }
     Logger.debug(`Processing message ${messageId} from user ${authorId} in channel ${channelId} of server ${guildId}.`);
 
     const inMemoryCache = getInMemoryCache();
@@ -181,6 +171,17 @@ export default event(Events.MessageCreate, async (_, message) => {
             // Step 3: Check if the command exists itself and process it
             const cachedCommandDetails = await inMemoryCache.get(`${MemoryCachePrefix.COMMAND}:${commandText.toLowerCase()}`);
             if (cachedCommandDetails) {
+                // Checking if the bos has proper permissions
+                const botPermissions = channel.permissionsFor(thisBot);
+                const requiredBotPermissions = [
+                    PermissionsBitField.Flags.SendMessages,
+                    PermissionsBitField.Flags.ReadMessageHistory,
+                ];
+                // No point in continuing if the bot can't post a message or reply to a message
+                if (!botPermissions || !botPermissions.has(requiredBotPermissions)) {
+                    Logger.info(`Bot does not have required permissions in channel ${channelName} (${channelId}) of server ${guildId}. Unable to process message ${messageId} from user ${authorId}.`);
+                    return;
+                }
                 const commandDetails = PrefixCommand.hydrate(cachedCommandDetails);
                 const { name, contents, isEmbed, embedColor, permissions } = commandDetails;
                 const { roles: permRoles, rolesBlocklist, channels: permChannels, channelsBlocklist, quietErrors, verboseErrors } = permissions ?? new PrefixCommandPermissions();
@@ -308,7 +309,6 @@ export default event(Events.MessageCreate, async (_, message) => {
                         }
                     });
                 } else {
-                    Logger.debug(`Prefix Command - Executing version "${commandVersionName}" for command "${name}" based on user command "${commandText}"`);
                     await sendReply(message, commandTitle, commandContent || '', isEmbed || false, embedColor || constantsConfig.colors.FBW_CYAN, commandImage || '');
                 }
             }
