@@ -30,7 +30,7 @@ export default event(Events.ClientReady, async ({ log }, client) => {
             client.user?.setUsername('FlyByWire Simulations Utilities');
             client.user?.setActivity('the A380X', { type: ActivityType.Watching });
             client.user?.setStatus('online');
-            client.user?.setAvatar(`${imageBaseUrl}/fbw_tail.png`);
+            client.user?.setAvatar(`${imageBaseUrl}/fbw_tail_utils.png`);
         } catch (error) {
             log('Failed to set username, activity, status and avatar:', error);
         }
