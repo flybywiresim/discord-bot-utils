@@ -21,7 +21,7 @@
     "@octokit/request": "^8.1.1",
     "bad-words": "^3.0.4",
     "cache-manager": "^5.7.6",
-    "config": "^3.3.9",
+    "config": "^3.3.12",
     "discord.js": "^14.16.1",
     "jsdom": "^23.2.0",
     "moment": "^2.29.4",
