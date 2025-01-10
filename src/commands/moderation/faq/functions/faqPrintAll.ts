@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction } from 'discord.js';
-import { constantsConfig, imageBaseUrl, Logger, makeEmbed, FAQ } from '../../../../lib';
+import { constantsConfig, imageBaseUrl, Logger, makeEmbed, FAQ, makeLines } from '../../../../lib';
 
 const FLIGHT_DECK_IMAGE_URL = `${imageBaseUrl}/moderation/faq.png`;
 
@@ -8,11 +8,15 @@ const linksEmbed = makeEmbed({
     fields: [
         {
             name: '**Docs FAQ**',
-            value: 'https://docs.flybywiresim.com/fbw-a32nx/faq/',
+            value: 'https://docs.flybywiresim.com/aircraft/faq/',
         },
         {
             name: '**Beginners Guide**',
-            value: 'https://docs.flybywiresim.com/pilots-corner/beginner-guide/overview/',
+            value: makeLines([
+                'A32NX: https://docs.flybywiresim.com/pilots-corner/a32nx/a32nx-beginner-guide/overview/',
+                '',
+                'A380X: https://docs.flybywiresim.com/pilots-corner/a380x/a380x-beginner-guide/overview/',
+            ]),
         },
         {
             name: '**Flight School**',
