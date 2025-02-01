@@ -18,7 +18,7 @@
     "@aws-sdk/client-s3": "^3.499.0",
     "@aws-sdk/lib-storage": "^3.499.0",
     "@hokify/agenda": "^6.0.0",
-    "@octokit/request": "^8.1.1",
+    "@octokit/request": "^9.2.0",
     "bad-words": "^3.0.4",
     "cache-manager": "^5.7.6",
     "config": "^3.3.9",
