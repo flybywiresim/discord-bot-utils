@@ -39,7 +39,7 @@
     "@typescript-eslint/eslint-plugin": "^6.18.0",
     "@typescript-eslint/parser": "^6.18.0",
     "dotenv": "^16.0.0",
-    "eslint": "^7.29.0",
+    "eslint": "^9.19.0",
     "nodemon": "^3.0.2",
     "ts-node": "^10.4.0",
     "typescript": "^5.5.4"
