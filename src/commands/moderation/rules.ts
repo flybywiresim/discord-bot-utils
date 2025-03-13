@@ -52,7 +52,7 @@ const DISCUSSION_EMBED = makeEmbed({
         '- Do not send multiple unsolicited DM\'s',
         '- No troll or insensitive messaging, including insensitive inside jokes',
         '- Inappropriate/offensive profile information/picture will not be tolerated',
-        '- Certain topics like politics, religion and other sensitive subjects will only be tolerated if a careful and respectful conversation is held',
+        '- Discussion of politics is prohibited to maintain a neutral and welcoming environment. Moderators have full discretion to shut down any discussion they deem sensitive, disruptive, or moving into political territory',
         `- Self promotion is not permitted except in the case of YouTube/Twitch content etc. which can be promoted in <#${constantsConfig.channels.VIDEOS}>`,
         '- To help with moderation and set a standard the server language is English',
         '',
