@@ -1,5 +1,8 @@
 ## Changelog
 
+Update <small>_ March 2025</small>
+
+- feat: rule update (13/03/2025)
 
 Update <small>_ November 2024</small>
 
