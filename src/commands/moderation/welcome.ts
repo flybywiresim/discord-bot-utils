@@ -19,11 +19,9 @@ const WELCOME_EMBED = makeEmbed({
     description: makeLines([
         'Welcome to the **Official Discord Server** of **FlyByWire Simulations!**',
         '',
-        'The A32NX Project is a community-driven open source project to create a free Airbus A320neo in Microsoft Flight Simulator that is as close to reality as possible. It started out as an enhancement project to the default A320neo and is now proceeding as an independent add-on project aiming to bring the FlyByWire A32NX up to payware-level systems depth and functionality, all for free.',
+        'FlyByWire Simulations is a community-driven, open-source project aimed at creating realistic Airbus A320neo and Airbus A380 aircraft for Microsoft Flight Simulator. Originally launched as an enhancement project for the default A320neo, it has evolved into an independent add-on project that strives to bring both aircraft to a payware-level standard in terms of systems depth and functionality - all for free',
         '',
-        'We are also developing an A380 from scratch which will be aiming to produce a high fidelity freeware aircraft.',
-        '',
-        `Feel free to download, test, and share your feedback, or if you are interested in developing, assign your <#${constantsConfig.channels.ROLES}>, and get cracking!`,
+        `Feel free to download, test, and share your feedback. If you are interested in developing, assign your <#${constantsConfig.channels.ROLES}>, and get cracking!`,
     ]),
 
 });
@@ -86,13 +84,12 @@ const HELP_EMBED = makeEmbed({
         },
         {
             name: 'FAQ',
-            value: `Always check <#${constantsConfig.channels.FAQ}>, <#${constantsConfig.channels.KNOWN_ISSUES}>, and our documentation site to see if your question has already been answered. If not head over to <#${constantsConfig.channels.A32NX_SUPPORT}> for assistance.`,
+            value: `Always check <#${constantsConfig.channels.FAQ}>, <#${constantsConfig.channels.KNOWN_ISSUES}>, and our documentation site to see if your question has already been answered. If not head over to <#${constantsConfig.channels.A32NX_SUPPORT}> or <#${constantsConfig.channels.A380X_SUPPORT}> for assistance.`,
         },
         {
             name: 'Flight School',
-            value: `We've opened our <#${constantsConfig.channels.FLIGHT_SCHOOL}> channel for any questions you have pertaining to the operation of the A32NX in the simulator.`,
+            value: `We've opened our <#${constantsConfig.channels.FLIGHT_SCHOOL}> channel for any questions you have pertaining to the operation of our aircraft in the simulator.`,
         },
-
     ],
 });
 

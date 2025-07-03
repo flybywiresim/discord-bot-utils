@@ -23,6 +23,7 @@ interface Config {
     },
     channels: {
         A32NX_SUPPORT: string,
+        A380X_SUPPORT: string;
         FAQ: string,
         FLIGHT_SCHOOL: string,
         KNOWN_ISSUES: string,
