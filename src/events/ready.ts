@@ -1,4 +1,4 @@
-import { ActivityType, TextChannel } from 'discord.js';
+import { TextChannel } from 'discord.js';
 import moment from 'moment';
 import {
     constantsConfig,
@@ -7,7 +7,6 @@ import {
     connect,
     setupScheduler,
     Logger,
-    imageBaseUrl,
     getScheduler,
     setupInMemoryCache,
     loadAllPrefixCommandsToCache,
@@ -28,6 +27,8 @@ export default event(Events.ClientReady, async ({ log }, client) => {
         }
     });
 
+    /**
+    // Disabling as this should be done through the Discord Developer Portal
     // Set username, activity, status and avatar
     if (process.env.NODE_ENV === 'production') {
         Logger.info('Production environment detected, setting username, activity, status and avatar.');
@@ -41,6 +42,7 @@ export default event(Events.ClientReady, async ({ log }, client) => {
             Logger.error('Failed to set username, activity, status and avatar:', error);
         }
     }
+    */
 
     // Deploy commands and contexts
     if (process.env.DEPLOY === 'true') {
