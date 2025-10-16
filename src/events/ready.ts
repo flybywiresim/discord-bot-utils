@@ -212,6 +212,9 @@ export default event(Events.ClientReady, async ({ log }, client) => {
     // Send bot status message to bot-dev channel
     const botDevChannel = client.channels.resolve(constantsConfig.channels.MOD_LOGS) as TextChannel;
     if (botDevChannel) {
+        if (botDevChannel.guildId !== constantsConfig.guildId) {
+            Logger.warn(`Bot-dev channel is in unknown guild: ${botDevChannel.guildId}, different from configured guild: ${constantsConfig.guildId}`);
+        }
         const currentDate = new Date();
         const formattedDate = moment(currentDate)
             .utcOffset(0)
