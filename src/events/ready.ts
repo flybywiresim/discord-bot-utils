@@ -20,11 +20,17 @@ import commandArray from '../commands';
 import contextArray from '../commands/context';
 
 export default event(Events.ClientReady, async ({ log }, client) => {
-    log(`Logged in as ${client.user.username}!`);
+    await client.guilds.fetch(constantsConfig.guildId);
+    client.guilds.cache.forEach((guild) => {
+        Logger.info(`Logged in as ${client.user.username} in ${guild.name}!`);
+        if (guild.id !== constantsConfig.guildId) {
+            Logger.warn(`Logged in as ${client.user.username} in UNKNOWN GUILD: ${guild.name}!`);
+        }
+    });
 
     // Set username, activity, status and avatar
     if (process.env.NODE_ENV === 'production') {
-        log('Production environment detected, setting username, activity, status and avatar.');
+        Logger.info('Production environment detected, setting username, activity, status and avatar.');
 
         try {
             client.user?.setUsername('FlyByWire Simulations Utilities');
@@ -32,13 +38,13 @@ export default event(Events.ClientReady, async ({ log }, client) => {
             client.user?.setStatus('online');
             client.user?.setAvatar(`${imageBaseUrl}/fbw_tail.png`);
         } catch (error) {
-            log('Failed to set username, activity, status and avatar:', error);
+            Logger.error('Failed to set username, activity, status and avatar:', error);
         }
     }
 
     // Deploy commands and contexts
     if (process.env.DEPLOY === 'true') {
-        log('DEPLOY variable set to true, deploying commands and contexts.');
+        Logger.info('DEPLOY variable set to true, deploying commands and contexts.');
         try {
             await deployCommands(commandArray, contextArray)
                 .then(async (user) => {
@@ -48,10 +54,10 @@ export default event(Events.ClientReady, async ({ log }, client) => {
                         ? `Deployed ${commandArray.length} commands and ${contextArray.length} contexts globally as ${bot}!`
                         : `Deployed ${commandArray.length} commands and ${contextArray.length} contexts to \`<@${constantsConfig.guildId}>\` as ${bot}!`;
 
-                    log(response);
+                    Logger.info(response);
                 });
         } catch (error) {
-            log('Failed to deploy commands:', error);
+            Logger.error('Failed to deploy commands:', error);
         }
     }
 
