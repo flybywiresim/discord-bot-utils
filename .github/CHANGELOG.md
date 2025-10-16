@@ -1,5 +1,9 @@
 ## Changelog
 
+Update <small>_ October 2025</small>
+
+- feat: Logging improvement for clarity
+
 Update <small>_ March 2025</small>
 
 - fix: Update FAQ links (13/03/2025)
