@@ -2,6 +2,7 @@
 
 Update <small>_ October 2025</small>
 
+- fix: Username and avatar configuration rate limit fix. These can be set through developer console instead.
 - feat: Logging improvement for clarity
 
 Update <small>_ March 2025</small>
