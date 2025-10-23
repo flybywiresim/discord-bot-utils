@@ -1,6 +1,7 @@
 import { ApplicationCommandOptionType, ApplicationCommandType, Colors } from 'discord.js';
-import fetch from 'node-fetch';
-import { constantsConfig, slashCommand, slashCommandStructure, makeEmbed, makeLines, Logger } from '../../lib';
+import { Request } from 'node-fetch';
+import { ZodError } from 'zod';
+import { Logger, TAF, TafSchema, fetchForeignAPI, makeEmbed, makeLines, slashCommand, slashCommandStructure } from '../../lib';
 
 const data = slashCommandStructure({
     name: 'taf',
@@ -19,6 +20,12 @@ const data = slashCommandStructure({
 const noQueryEmbed = makeEmbed({
     title: 'TAF Error | Missing Query',
     description: 'You must provide an airport ICAO code.',
+    color: Colors.Red,
+});
+
+const errorEmbed = (error: string) => makeEmbed({
+    title: 'TAF Error',
+    description: error,
     color: Colors.Red,
 });
 
@@ -42,61 +49,37 @@ export default slashCommand(data, async ({ interaction }) => {
         return interaction.editReply({ embeds: [noQueryEmbed] });
     }
 
+    let taf: TAF;
     try {
-        const tafReport: any = await fetch(`https://avwx.rest/api/taf/${icao}`, {
+        taf = await fetchForeignAPI(new Request(`https://avwx.rest/api/taf/${icao}`, {
             method: 'GET',
             headers: { Authorization: tafToken },
-        }).then((res) => res.json());
-
-        if (tafReport.error) {
-            const invalidEmbed = makeEmbed({
-                title: `TAF Error | ${icao.toUpperCase()}`,
-                description: tafReport.error,
-                color: Colors.Red,
-            });
-            return interaction.editReply({ embeds: [invalidEmbed] });
+        }), TafSchema);
+    } catch (e) {
+        if (e instanceof ZodError) {
+            return interaction.editReply({ embeds: [errorEmbed('The API returned unknown data.')] });
         }
-        const getClouds = (clouds: any) => {
-            const retClouds = [];
-            for (const cloud of clouds) {
-                retClouds.push(cloud.repr);
-            }
-            return retClouds.join(', ');
-        };
-        const tafEmbed = makeEmbed({
-            title: `TAF Report | ${tafReport.station}`,
-            description: makeLines([
-                '**Raw Report**',
-                tafReport.raw,
-
-                '',
-                '**Basic Report:**',
-                `**Time Forecasted:** ${tafReport.time.dt}`,
-                `**Forecast Start Time:** ${tafReport.start_time.dt}`,
-                `**Forecast End Time:** ${tafReport.end_time.dt}`,
-                `**Visibility:** ${tafReport.forecast[0].visibility.repr} ${Number.isNaN(+tafReport.forecast[0].visibility.repr) ? '' : tafReport.units.visibility}`,
-                `**Wind:** ${tafReport.forecast[0].wind_direction.repr}${tafReport.forecast[0].wind_direction.repr === 'VRB' ? '' : constantsConfig.units.DEGREES} at ${tafReport.forecast[0].wind_speed.repr} ${tafReport.units.wind_speed}`,
-                `**Clouds:** ${getClouds(tafReport.forecast[0].clouds)}`,
-                `**Flight Rules:** ${tafReport.forecast[0].flight_rules}`,
-            ]),
-            fields: [
-                {
-                    name: 'Unsure of how to read the raw report?',
-                    value: 'Please refer to our guide [here.](https://docs.flybywiresim.com/pilots-corner/airliner-flying-guide/weather/#taf-example-decoded)',
-                    inline: false,
-                },
-            ],
-            footer: { text: 'This TAF report is only a forecast, and may not accurately reflect weather in the simulator.' },
-        });
-
-        return interaction.editReply({ embeds: [tafEmbed] });
-    } catch (error) {
-        Logger.error('taf:', error);
-        const fetchErrorEmbed = makeEmbed({
-            title: 'TAF Error | Fetch Error',
-            description: 'There was an error fetching the TAF report. Please try again later.',
-            color: Colors.Red,
-        });
-        return interaction.editReply({ embeds: [fetchErrorEmbed] });
+        Logger.error(`Error while fetching TAF from AVWX: ${e}`);
+        return interaction.editReply({ embeds: [errorEmbed(`An error occurred while fetching the latest TAF for ${icao.toUpperCase()}.`)] });
     }
+
+    const tafEmbed = makeEmbed({
+        title: `TAF Report | ${taf.station}`,
+        description: makeLines(['**Raw Report**', ...taf.forecast.map((forecast, i) => {
+            if (i === 0) {
+                return `${taf.station} ${forecast.raw}`;
+            }
+            return forecast.raw;
+        })]),
+        fields: [
+            {
+                name: 'Unsure of how to read the report?',
+                value: `Please refer to our guide [here](https://docs.flybywiresim.com/pilots-corner/airliner-flying-guide/weather/#taf-example-decoded) or see above report decoded [here](https://e6bx.com/weather/${taf.station}/?showDecoded=1&focuspoint=tafdecoder).`,
+                inline: false,
+            },
+        ],
+        footer: { text: 'This TAF report is only a forecast, and may not accurately reflect weather in the simulator.' },
+    });
+
+    return interaction.editReply({ embeds: [tafEmbed] });
 });

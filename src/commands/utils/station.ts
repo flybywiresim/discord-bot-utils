@@ -1,6 +1,9 @@
 import { ApplicationCommandOptionType, ApplicationCommandType, Colors } from 'discord.js';
-import fetch from 'node-fetch';
-import { slashCommand, slashCommandStructure, makeEmbed, Logger, makeLines } from '../../lib';
+import { Request } from 'node-fetch';
+import { z, ZodError } from 'zod';
+import { AVWXRunwaySchema, AVWXStation, AVWXStationSchema, fetchForeignAPI, Logger, makeEmbed, makeLines, slashCommand, slashCommandStructure } from '../../lib';
+
+type Runway = z.infer<typeof AVWXRunwaySchema>;
 
 const data = slashCommandStructure({
     name: 'station',
@@ -22,6 +25,12 @@ const noQueryEmbed = makeEmbed({
     color: Colors.Red,
 });
 
+const errorEmbed = (error: string) => makeEmbed({
+    title: 'Station Error',
+    description: error,
+    color: Colors.Red,
+});
+
 export default slashCommand(data, async ({ interaction }) => {
     await interaction.deferReply();
 
@@ -40,54 +49,44 @@ export default slashCommand(data, async ({ interaction }) => {
 
     if (!icao) return interaction.editReply({ embeds: [noQueryEmbed] });
 
+    let station: AVWXStation;
     try {
-        const stationReport: any = await fetch(`https://avwx.rest/api/station/${icao}`, {
+        station = await fetchForeignAPI(new Request(`https://avwx.rest/api/station/${icao}`, {
             method: 'GET',
             headers: { Authorization: stationToken },
-        }).then((res) => res.json());
-
-        if (stationReport.error) {
-            const invalidEmbed = makeEmbed({
-                title: `Station Error | ${icao.toUpperCase()}`,
-                description: stationReport.error,
-                color: Colors.Red,
-            });
-            return interaction.editReply({ embeds: [invalidEmbed] });
+        }), AVWXStationSchema);
+    } catch (e) {
+        if (e instanceof ZodError) {
+            return interaction.editReply({ embeds: [errorEmbed('The API returned unknown data.')] });
         }
-
-        const runwayIdents = stationReport.runways.map((runways: any) => `**${runways.ident1}/${runways.ident2}:** `
-            + `${runways.length_ft} ft x ${runways.width_ft} ft / `
-            + `${Math.round(runways.length_ft * 0.3048)} m x ${Math.round(runways.width_ft * 0.3048)} m`);
-
-        const stationEmbed = makeEmbed({
-            title: `Station Info | ${stationReport.icao}`,
-            description: makeLines([
-                '**Station Information:**',
-                `**Name:** ${stationReport.name}`,
-                `**Country:** ${stationReport.country}`,
-                `**City:** ${stationReport.city}`,
-                `**Latitude:** ${stationReport.latitude}°`,
-                `**Longitude:** ${stationReport.longitude}°`,
-                `**Elevation:** ${stationReport.elevation_m} m/${stationReport.elevation_ft} ft`,
-                '',
-                '**Runways (Ident1/Ident2: Length x Width):**',
-                `${runwayIdents.toString().replace(/,/g, '\n')}`,
-                '',
-                `**Type:** ${stationReport.type.replace(/_/g, ' ')}`,
-                `**Website:** ${stationReport.website}`,
-                `**Wiki:** ${stationReport.wiki}`,
-            ]),
-            footer: { text: 'Due to limitations of the API, not all links may be up to date at all times.' },
-        });
-
-        return interaction.editReply({ embeds: [stationEmbed] });
-    } catch (error) {
-        Logger.error('station:', error);
-        const fetchErrorEmbed = makeEmbed({
-            title: 'Station Error | Fetch Error',
-            description: 'There was an error fetching the station report. Please try again later.',
-            color: Colors.Red,
-        });
-        return interaction.editReply({ embeds: [fetchErrorEmbed] });
+        Logger.error(`Error while fetching station info from AVWX: ${e}`);
+        return interaction.editReply({ embeds: [errorEmbed(`An error occurred while fetching the station information for ${icao.toUpperCase()}.`)] });
     }
+
+    const runwayIdents = station.runways ? station.runways.map((runways: Runway) => `**${runways.ident1}/${runways.ident2}:** `
+        + `${runways.length_ft} ft x ${runways.width_ft} ft / `
+        + `${Math.round(runways.length_ft * 0.3048)} m x ${Math.round(runways.width_ft * 0.3048)} m`) : null;
+
+    const stationEmbed = makeEmbed({
+        title: `Station Info | ${station.icao}`,
+        description: makeLines([
+            '**Station Information:**',
+            `**Name:** ${station.name}`,
+            `**Country:** ${station.country}`,
+            `**City:** ${station.city}`,
+            `**Latitude:** ${station.latitude}°`,
+            `**Longitude:** ${station.longitude}°`,
+            `**Elevation:** ${station.elevation_m} m/${station.elevation_ft} ft`,
+            '',
+            '**Runways (Length x Width):**',
+            `${runwayIdents ? runwayIdents.toString().replace(/,/g, '\n') : 'N/A'}`,
+            '',
+            `**Type:** ${station.type.replace(/_/g, ' ')}`,
+            `**Website:** ${station.website ?? 'N/A'}`,
+            `**Wiki:** ${station.wiki ?? 'N/A'}`,
+        ]),
+        footer: { text: 'Due to limitations of the API, not all links may be up to date at all times.' },
+    });
+
+    return interaction.editReply({ embeds: [stationEmbed] });
 });

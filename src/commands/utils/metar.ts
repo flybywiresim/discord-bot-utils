@@ -1,6 +1,7 @@
 import { ApplicationCommandOptionType, ApplicationCommandType, Colors } from 'discord.js';
-import fetch from 'node-fetch';
-import { constantsConfig, slashCommand, slashCommandStructure, makeEmbed, makeLines, Logger } from '../../lib';
+import { Request } from 'node-fetch';
+import { ZodError } from 'zod';
+import { constantsConfig, fetchForeignAPI, makeEmbed, makeLines, slashCommand, slashCommandStructure, Metar, MetarSchema, Logger } from '../../lib';
 
 const data = slashCommandStructure({
     name: 'metar',
@@ -14,6 +15,12 @@ const data = slashCommandStructure({
         min_length: 4,
         required: true,
     }],
+});
+
+const errorEmbed = (error: string) => makeEmbed({
+    title: 'METAR Error',
+    description: error,
+    color: Colors.Red,
 });
 
 export default slashCommand(data, async ({ interaction }) => {
@@ -32,55 +39,45 @@ export default slashCommand(data, async ({ interaction }) => {
         return interaction.editReply({ embeds: [noTokenEmbed] });
     }
 
+    let metar: Metar;
     try {
-        const metarReport: any = await fetch(`https://avwx.rest/api/metar/${icao}`, {
+        metar = await fetchForeignAPI(new Request(`https://avwx.rest/api/metar/${icao}`, {
             method: 'GET',
             headers: { Authorization: metarToken },
-        })
-            .then((res) => res.json());
-
-        if (metarReport.error) {
-            const invalidEmbed = makeEmbed({
-                title: `Metar Error | ${icao.toUpperCase()}`,
-                description: metarReport.error,
-                color: Colors.Red,
-            });
-            return interaction.editReply({ embeds: [invalidEmbed] });
-        }
-        const metarEmbed = makeEmbed({
-            title: `METAR Report | ${metarReport.station}`,
-            description: makeLines([
-                '**Raw Report**',
-                metarReport.raw,
-                '',
-                '**Basic Report:**',
-                `**Time Observed:** ${metarReport.time.dt}`,
-                `**Station:** ${metarReport.station}`,
-                `**Wind:** ${metarReport.wind_direction.repr}${metarReport.wind_direction.repr === 'VRB' ? '' : constantsConfig.units.DEGREES} at ${metarReport.wind_speed.repr} ${metarReport.units.wind_speed}`,
-                `**Visibility:** ${metarReport.visibility.repr} ${Number.isNaN(+metarReport.visibility.repr) ? '' : metarReport.units.visibility}`,
-                `**Temperature:** ${metarReport.temperature.repr} ${constantsConfig.units.CELSIUS}`,
-                `**Dew Point:** ${metarReport.dewpoint.repr} ${constantsConfig.units.CELSIUS}`,
-                `**Altimeter:** ${metarReport.altimeter.value.toString()} ${metarReport.units.altimeter}`,
-                `**Flight Rules:** ${metarReport.flight_rules}`,
-            ]),
-            fields: [
-                {
-                    name: 'Unsure of how to read the raw report?',
-                    value: 'Please refer to our guide [here.](https://docs.flybywiresim.com/pilots-corner/airliner-flying-guide/weather/)',
-                    inline: false,
-                },
-            ],
-            footer: { text: 'This METAR report may not accurately reflect the weather in the simulator. However, it will always be similar to the current conditions present in the sim.' },
-        });
-
-        return interaction.editReply({ embeds: [metarEmbed] });
+        }), MetarSchema);
     } catch (e) {
-        Logger.error('metar:', e);
-        const fetchErrorEmbed = makeEmbed({
-            title: 'Metar Error | Fetch Error',
-            description: 'There was an error fetching the METAR report. Please try again later.',
-            color: Colors.Red,
-        });
-        return interaction.editReply({ embeds: [fetchErrorEmbed] });
+        if (e instanceof ZodError) {
+            return interaction.editReply({ embeds: [errorEmbed('The API returned unknown data.')] });
+        }
+        Logger.error(`Error occured while fetching METAR: ${String(e)}`);
+        return interaction.editReply({ embeds: [errorEmbed(`An error occurred while fetching the latest METAR for ${icao.toUpperCase()}.`)] });
     }
+
+    const metarEmbed = makeEmbed({
+        title: `METAR Report | ${metar.station}`,
+        description: makeLines([
+            '**Raw Report**',
+            metar.raw,
+            '',
+            '**Basic Report:**',
+            `**Time Observed:** ${metar.time.dt}`,
+            `**Station:** ${metar.station}`,
+            `**Wind:** ${metar.wind_direction.repr}${metar.wind_direction.repr === 'VRB' ? '' : constantsConfig.units.DEGREES} at ${metar.wind_speed.repr} ${metar.units.wind_speed}`,
+            `**Visibility:** ${metar.visibility.repr} ${Number.isNaN(+metar.visibility.repr) ? '' : metar.units.visibility}`,
+            `**Temperature:** ${metar.temperature.repr} ${constantsConfig.units.CELSIUS}`,
+            `**Dew Point:** ${metar.dewpoint.repr} ${constantsConfig.units.CELSIUS}`,
+            `**Altimeter:** ${metar.altimeter.value.toString()} ${metar.units.altimeter}`,
+            `**Flight Rules:** ${metar.flight_rules}`,
+        ]),
+        fields: [
+            {
+                name: 'Unsure of how to read the raw report?',
+                value: 'Please refer to our guide [here](https://docs.flybywiresim.com/pilots-corner/airliner-flying-guide/weather/).',
+                inline: false,
+            },
+        ],
+        footer: { text: 'This METAR report may not accurately reflect the weather in the simulator. However, it will always be similar to the current conditions present in the sim.' },
+    });
+
+    return interaction.editReply({ embeds: [metarEmbed] });
 });

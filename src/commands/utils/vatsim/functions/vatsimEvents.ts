@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, Colors, EmbedField } from 'discord.js';
-import { Logger, makeEmbed } from '../../../../lib';
+import { Logger, VatsimEventsSchema, fetchForeignAPI, makeEmbed } from '../../../../lib';
 
 const BASE_VATSIM_URL = 'https://my.vatsim.net';
 
@@ -15,16 +15,13 @@ const handleLocaleDateString = (date: Date) => date.toLocaleDateString('en-US', 
 });
 
 export async function handleVatsimEvents(interaction: ChatInputCommandInteraction<'cached'>) {
-    await interaction.deferReply();
-
     try {
-        const eventsList = await fetch(`${BASE_VATSIM_URL}/api/v1/events/all`)
-            .then((res) => res.json())
-            .then((res) => res.data)
-            .then((res) => res.filter((event: { type: string; }) => event.type === 'Event'))
-            .then((res) => res.slice(0, 5));
+        const response = await fetchForeignAPI(`${BASE_VATSIM_URL}/api/v1/events/all`, VatsimEventsSchema);
 
-        const fields: EmbedField[] = eventsList.map((event: any) => {
+        const filteredEvents = response.data.filter((event) => event.type === 'Event');
+        const finalList = filteredEvents.slice(0, 5);
+
+        const fields: EmbedField[] = finalList.map((event) => {
             // eslint-disable-next-line camelcase
             const { name, organisers, end_time, start_time, link } = event;
             const { division } = organisers[0];
@@ -71,11 +68,11 @@ export async function handleVatsimEvents(interaction: ChatInputCommandInteractio
         });
 
         return interaction.editReply({ embeds: [eventsEmbed] });
-    } catch (error: any) {
-        Logger.error(error);
+    } catch (e) {
+        Logger.error(e);
         const errorEmbed = makeEmbed({
             title: 'Events Error',
-            description: error.message,
+            description: String(e),
             color: Colors.Red,
         });
         return interaction.editReply({ embeds: [errorEmbed] });
