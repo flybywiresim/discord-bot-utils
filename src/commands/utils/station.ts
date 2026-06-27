@@ -1,5 +1,4 @@
 import { ApplicationCommandOptionType, ApplicationCommandType, Colors } from 'discord.js';
-import fetch from 'node-fetch';
 import { slashCommand, slashCommandStructure, makeEmbed, Logger, makeLines } from '../../lib';
 
 const data = slashCommandStructure({

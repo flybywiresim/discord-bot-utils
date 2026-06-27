@@ -105,7 +105,8 @@ export async function handleDeletePrefixCommandContent(interaction: ChatInputCom
     } else {
         foundVersions = await PrefixCommandVersion.find({ name: version });
         if (foundVersions && foundVersions.length === 1) {
-            [{ _id: versionId }] = foundVersions;
+            const [{ _id: versionObjectId }] = foundVersions;
+            versionId = versionObjectId.toString();
         } else {
             await interaction.followUp({ embeds: [noVersionEmbed(version)], ephemeral: true });
             return;

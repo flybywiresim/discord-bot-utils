@@ -8,43 +8,41 @@
     "start": "node .",
     "dev": "nodemon --config nodemon.json src/index.ts",
     "build": "tsc",
-    "build:digitalocean": "npm ci --include=dev && npm run build",
+    "build:digitalocean": "pnpm install --frozen-lockfile && pnpm run build",
     "lint": "eslint \"src/**/**/*.ts\"",
     "lint-fix": "eslint \"src/**/**/*.ts\" --fix"
   },
   "author": "FlyByWire Simulations",
   "license": "AGPL-3.0",
+  "packageManager": "pnpm@11.5.3",
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.499.0",
-    "@aws-sdk/lib-storage": "^3.499.0",
+    "@aws-sdk/client-s3": "^3.1075.0",
+    "@aws-sdk/lib-storage": "^3.1075.0",
     "@hokify/agenda": "^6.0.0",
-    "@octokit/request": "^8.1.1",
-    "bad-words": "^3.0.4",
+    "@octokit/request": "^10.0.10",
     "cache-manager": "^5.7.6",
-    "config": "^3.3.9",
-    "discord.js": "^14.16.1",
-    "jsdom": "^23.2.0",
+    "config": "^3.3.12",
+    "discord.js": "^14.26.4",
+    "jsdom": "^29.1.1",
     "moment": "^2.29.4",
-    "mongoose": "^8.0.3",
-    "node-fetch": "^2.6.10",
-    "winston": "^3.3.4"
+    "mongoose": "^8.24.1",
+    "obscenity": "^0.4.6",
+    "winston": "^3.19.0"
   },
   "devDependencies": {
     "@flybywiresim/eslint-config": "^0.1.0",
-    "@types/bad-words": "^3.0.3",
-    "@types/config": "^3.3.1",
-    "@types/jsdom": "^21.1.6",
-    "@types/node": "^18.0.0",
-    "@types/node-fetch": "^2.6.10",
+    "@types/config": "^3.3.5",
+    "@types/jsdom": "^28.0.3",
+    "@types/node": "^24.0.0",
     "@typescript-eslint/eslint-plugin": "^6.18.0",
     "@typescript-eslint/parser": "^6.18.0",
-    "dotenv": "^16.0.0",
+    "dotenv": "^17.4.2",
     "eslint": "^7.29.0",
-    "nodemon": "^3.0.2",
+    "nodemon": "^3.1.14",
     "ts-node": "^10.4.0",
-    "typescript": "^5.5.4"
+    "typescript": "^5.9.3"
   },
   "engines": {
-    "node": "18.x"
+    "node": "24.x"
   }
 }

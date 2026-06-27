@@ -93,7 +93,7 @@ export default event(Events.MessageDelete, async (_, msg) => {
                 },
                 {
                     name: 'Deleted by',
-                    value: (deletionLog && deletionLog.target.id === msg.author.id) ? `${deletionLog.executor}` : 'No audit log was found, message was either deleted by author, or a bot',
+                    value: (deletionLog && deletionLog.target && deletionLog.target.id === msg.author.id) ? `${deletionLog.executor}` : 'No audit log was found, message was either deleted by author, or a bot',
                     inline: false,
                 },
                 {

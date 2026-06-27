@@ -12,7 +12,8 @@ Please help other contributors to the project wherever you can, as people all st
 
 ## Prerequisites
 
-- [node](https://nodejs.org/) version >= 18.x
+- [node](https://nodejs.org/) version >= 24.x
+- [pnpm](https://pnpm.io/) (the project uses pnpm; `corepack enable pnpm` will provide the pinned version)
 
 ## Ground Rules
 
@@ -104,8 +105,8 @@ Privileged Gateway Intents must now be enabled within the Discord Developer Port
 
 We recommend running your bot with the development node environment. Set `NODE_ENV=development` in your `.env` file.
 
-1. Run `npm install` to install the dependencies.
-2. Run `npm run dev` to start the development build.
+1. Run `pnpm install` to install the dependencies.
+2. Run `pnpm run dev` to start the development build.
 
 ### Running the Bot for the first time and deploying commands
 

@@ -89,7 +89,8 @@ export async function handleSetPrefixCommandContent(interaction: ChatInputComman
     }
 
     const foundCommand = foundCommands[0];
-    const { _id: commandId } = foundCommand;
+    const { _id: commandObjectId } = foundCommand;
+    const commandId = commandObjectId.toString();
     let versionId = '';
     let foundVersions = null;
     if (version === 'GENERIC' || version === 'generic') {
@@ -97,7 +98,8 @@ export async function handleSetPrefixCommandContent(interaction: ChatInputComman
     } else {
         foundVersions = await PrefixCommandVersion.find({ name: version });
         if (foundVersions && foundVersions.length === 1) {
-            [{ _id: versionId }] = foundVersions;
+            const [{ _id: versionObjectId }] = foundVersions;
+            versionId = versionObjectId.toString();
         } else {
             await interaction.reply({ embeds: [noVersionEmbed(version)], ephemeral: true });
             return;

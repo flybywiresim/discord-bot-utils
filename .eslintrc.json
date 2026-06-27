@@ -10,6 +10,7 @@
         "requireConfigFile": false
     },
     "settings": {
+        "import/core-modules": ["@octokit/request"],
         "import/resolver": {
             "node": {
                 "extensions": [".js", ".jsx", ".ts", ".tsx"]

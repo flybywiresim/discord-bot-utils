@@ -1,6 +1,6 @@
 //This detects non bot bans and sends a message to the mod logs channel
 
-import { AuditLogEvent, bold, Colors, GuildBan, TextChannel, User } from 'discord.js';
+import { AuditLogEvent, bold, Colors, GuildBan, PartialUser, TextChannel, User } from 'discord.js';
 import moment from 'moment/moment';
 import mongoose from 'mongoose';
 import { constantsConfig, event, Events, Infraction, Logger, makeEmbed, makeLines } from '../../lib';
@@ -24,7 +24,7 @@ const noLogEmbed = (user: User, guildName: string) => makeEmbed({
     footer: { text: `User ID: ${user.id}` },
 });
 
-const modLogEmbed = (user: User, executor: User, reason: string, formattedDate: string) => makeEmbed({
+const modLogEmbed = (user: User, executor: User | PartialUser, reason: string, formattedDate: string) => makeEmbed({
     color: Colors.Red,
     author: {
         name: `[BANNED] ${user.tag}`,
