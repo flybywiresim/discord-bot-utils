@@ -12,7 +12,6 @@
         "resolveJsonModule": true,       // Allow importing JSON files as modules
         "lib": ["ES2020", "DOM"],         // Include necessary TypeScript typings
         "types": ["node", "discord.js"],  // Include typings for Node.js and discord.js
-        "baseUrl": ".",                  // Base URL for module resolution
     },
     "include": ["src/**/*.ts"],        // Include TypeScript source files
     "exclude": ["node_modules", "dist"] // Exclude files from compilation
