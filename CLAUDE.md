@@ -14,8 +14,9 @@ This project uses **pnpm** (`pnpm-lock.yaml`, pinned via the `packageManager` fi
 pnpm install           # Install dependencies
 pnpm run dev           # Start dev server with nodemon + ts-node (hot reload; type `rs` to restart)
 pnpm run build         # Compile TypeScript to ./build (tsc, CommonJS, target ES2020)
-pnpm run lint          # ESLint (@flybywiresim/eslint-config, airbnb-based; 4-space indent)
+pnpm run lint          # ESLint 9 flat config + Prettier (eslint.config.mjs, .prettierrc)
 pnpm run lint-fix      # ESLint with auto-fix
+pnpm run format        # Format src/ with Prettier
 pnpm start             # Run compiled production build from ./build
 ```
 

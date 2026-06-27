@@ -10,7 +10,8 @@
     "build": "tsc",
     "build:digitalocean": "pnpm install --frozen-lockfile && pnpm run build",
     "lint": "eslint \"src/**/**/*.ts\"",
-    "lint-fix": "eslint \"src/**/**/*.ts\" --fix"
+    "lint-fix": "eslint \"src/**/**/*.ts\" --fix",
+    "format": "prettier --write \"src/**/*.ts\""
   },
   "author": "FlyByWire Simulations",
   "license": "AGPL-3.0",
