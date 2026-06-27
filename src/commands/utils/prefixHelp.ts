@@ -1,5 +1,5 @@
 import { ApplicationCommandOptionChoiceData, ApplicationCommandOptionType, ApplicationCommandType } from 'discord.js';
-import { makeEmbed, createPaginatedEmbedHandler, slashCommand, slashCommandStructure, getInMemoryCache, MemoryCachePrefix, AutocompleteCallback, makeLines, Logger, PrefixCommand, PrefixCommandVersion, PrefixCommandCategory, IPrefixCommand } from '../../lib';
+import { makeEmbed, createPaginatedEmbedHandler, slashCommand, slashCommandStructure, getInMemoryCache, getInMemoryCacheKeys, MemoryCachePrefix, AutocompleteCallback, makeLines, Logger, PrefixCommand, PrefixCommandVersion, PrefixCommandCategory, IPrefixCommand } from '../../lib';
 
 const data = slashCommandStructure({
     name: 'prefix-help',
@@ -33,7 +33,7 @@ const autocompleteCallback: AutocompleteCallback = async ({ interaction }) => {
     switch (optionName) {
     case 'category':
         if (inMemoryCache) {
-            const foundCategories = await inMemoryCache.store.keys();
+            const foundCategories = await getInMemoryCacheKeys();
             for (const key of foundCategories) {
                 if (key.startsWith(MemoryCachePrefix.CATEGORY) && key.includes(searchText.toLowerCase())) {
                     // eslint-disable-next-line no-await-in-loop
@@ -52,7 +52,7 @@ const autocompleteCallback: AutocompleteCallback = async ({ interaction }) => {
         break;
     case 'search':
         if (inMemoryCache) {
-            const foundCommands = await inMemoryCache.store.keys();
+            const foundCommands = await getInMemoryCacheKeys();
             for (const key of foundCommands) {
                 if (key.startsWith(MemoryCachePrefix.COMMAND) && key.includes(searchText.toLowerCase())) {
                     // Explicitly does not use the cache to hydrate the command to also capture aliases, resulting in commands
@@ -96,7 +96,7 @@ export default slashCommand(data, async ({ interaction }) => {
     const category = PrefixCommandCategory.hydrate(categoryCached);
 
     const commands: { [key: string]: IPrefixCommand } = {};
-    const keys = await inMemoryCache.store.keys();
+    const keys = await getInMemoryCacheKeys();
     for (const key of keys) {
         if (key.startsWith(MemoryCachePrefix.COMMAND) && key.includes(search.toLowerCase())) {
             // eslint-disable-next-line no-await-in-loop
