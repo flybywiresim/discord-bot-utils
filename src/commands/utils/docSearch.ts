@@ -6,13 +6,15 @@ const data = slashCommandStructure({
     name: 'doc-search',
     description: 'Searches the FlyByWire Documentation for a given query.',
     type: ApplicationCommandType.ChatInput,
-    options: [{
-        name: 'query',
-        description: 'The query to search for.',
-        type: ApplicationCommandOptionType.String,
-        max_length: 100,
-        required: true,
-    }],
+    options: [
+        {
+            name: 'query',
+            description: 'The query to search for.',
+            type: ApplicationCommandOptionType.String,
+            max_length: 100,
+            required: true,
+        },
+    ],
 });
 
 const DOCS_BASE_URL = 'https://docs.flybywiresim.com';
@@ -38,7 +40,9 @@ export default slashCommand(data, async ({ interaction }) => {
                 color: Colors.Red,
             });
             return interaction.reply({ embeds: [URLEmbed] });
-        } catch (_) { /**/ }
+        } catch (_) {
+            /**/
+        }
 
         if (profanityMatcher.hasMatch(searchWord)) {
             const profanityEmbed = makeEmbed({

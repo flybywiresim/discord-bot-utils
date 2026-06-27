@@ -1,5 +1,16 @@
 import { ChatInputCommandInteraction, Colors, User } from 'discord.js';
-import { constantsConfig, getConn, PrefixCommandVersion, Logger, makeEmbed, PrefixCommandChannelDefaultVersion, clearSinglePrefixCommandVersionCache, PrefixCommand, refreshSinglePrefixCommandCache, clearSinglePrefixCommandChannelDefaultVersionCache } from '../../../../lib';
+import {
+    constantsConfig,
+    getConn,
+    PrefixCommandVersion,
+    Logger,
+    makeEmbed,
+    PrefixCommandChannelDefaultVersion,
+    clearSinglePrefixCommandVersionCache,
+    PrefixCommand,
+    refreshSinglePrefixCommandCache,
+    clearSinglePrefixCommandChannelDefaultVersionCache,
+} from '../../../../lib';
 
 const noConnEmbed = makeEmbed({
     title: 'Prefix Commands - Delete Version - No Connection',
@@ -9,64 +20,77 @@ const noConnEmbed = makeEmbed({
 
 const contentPresentEmbed = makeEmbed({
     title: 'Prefix Commands - Delete Version - Content Present',
-    description: 'There is content present for this command version. Please delete the content first, or use the `force` option to delete the command version and all the command contents for the version.',
+    description:
+        'There is content present for this command version. Please delete the content first, or use the `force` option to delete the command version and all the command contents for the version.',
     color: Colors.Red,
 });
 
 const channelDefaultVersionPresentEmbed = makeEmbed({
     title: 'Prefix Commands - Delete Version - Default Channel Versions Present',
-    description: 'There is one or more channel with this version selected as its default version. Please change or unset the default version for those channels first, or use the `force` option to delete the command version and all the default channel versions referencing it (making them default back to the GENERIC version).',
+    description:
+        'There is one or more channel with this version selected as its default version. Please change or unset the default version for those channels first, or use the `force` option to delete the command version and all the default channel versions referencing it (making them default back to the GENERIC version).',
     color: Colors.Red,
 });
 
-const failedEmbed = (versionId: string) => makeEmbed({
-    title: 'Prefix Commands - Delete Version - Failed',
-    description: `Failed to delete the prefix command version with id ${versionId}.`,
-    color: Colors.Red,
-});
+const failedEmbed = (versionId: string) =>
+    makeEmbed({
+        title: 'Prefix Commands - Delete Version - Failed',
+        description: `Failed to delete the prefix command version with id ${versionId}.`,
+        color: Colors.Red,
+    });
 
-const doesNotExistsEmbed = (version: string) => makeEmbed({
-    title: 'Prefix Commands - Delete Version - Does not exist',
-    description: `The prefix command version ${version} does not exists. Cannot delete it.`,
-    color: Colors.Red,
-});
+const doesNotExistsEmbed = (version: string) =>
+    makeEmbed({
+        title: 'Prefix Commands - Delete Version - Does not exist',
+        description: `The prefix command version ${version} does not exists. Cannot delete it.`,
+        color: Colors.Red,
+    });
 
-const successEmbed = (version: string, versionId: string) => makeEmbed({
-    title: `Prefix command version ${version} (${versionId}) was deleted successfully.`,
-    color: Colors.Green,
-});
+const successEmbed = (version: string, versionId: string) =>
+    makeEmbed({
+        title: `Prefix command version ${version} (${versionId}) was deleted successfully.`,
+        color: Colors.Green,
+    });
 
-const modLogEmbed = (moderator: User, version: string, emoji: string, alias: string, enabled: boolean, versionId: string) => makeEmbed({
-    title: 'Prefix command version deleted',
-    fields: [
-        {
-            name: 'Version',
-            value: version,
-        },
-        {
-            name: 'Moderator',
-            value: `${moderator}`,
-        },
-        {
-            name: 'Emoji',
-            value: emoji,
-        },
-        {
-            name: 'Alias',
-            value: alias,
-        },
-        {
-            name: 'Enabled',
-            value: enabled ? 'Yes' : 'No',
-        },
-    ],
-    footer: { text: `Version ID: ${versionId}` },
-    color: Colors.Red,
-});
+const modLogEmbed = (
+    moderator: User,
+    version: string,
+    emoji: string,
+    alias: string,
+    enabled: boolean,
+    versionId: string,
+) =>
+    makeEmbed({
+        title: 'Prefix command version deleted',
+        fields: [
+            {
+                name: 'Version',
+                value: version,
+            },
+            {
+                name: 'Moderator',
+                value: `${moderator}`,
+            },
+            {
+                name: 'Emoji',
+                value: emoji,
+            },
+            {
+                name: 'Alias',
+                value: alias,
+            },
+            {
+                name: 'Enabled',
+                value: enabled ? 'Yes' : 'No',
+            },
+        ],
+        footer: { text: `Version ID: ${versionId}` },
+        color: Colors.Red,
+    });
 
 const noModLogs = makeEmbed({
     title: 'Prefix Commands - Delete Version - No Mod Log',
-    description: 'I can\'t find the mod logs channel. Please check the channel still exists.',
+    description: "I can't find the mod logs channel. Please check the channel still exists.",
     color: Colors.Red,
 });
 
@@ -114,19 +138,21 @@ export async function handleDeletePrefixCommandVersion(interaction: ChatInputCom
             if (foundCommandsWithContent && force) {
                 for (const command of foundCommandsWithContent) {
                     const { _id: commandId } = command;
-                    // eslint-disable-next-line no-await-in-loop
-                    const updatedCommand = await PrefixCommand.findOneAndUpdate({ _id: commandId }, { $pull: { contents: { versionId } } }, { new: true });
+
+                    const updatedCommand = await PrefixCommand.findOneAndUpdate(
+                        { _id: commandId },
+                        { $pull: { contents: { versionId } } },
+                        { new: true },
+                    );
                     if (updatedCommand) {
-                        // eslint-disable-next-line no-await-in-loop
                         await refreshSinglePrefixCommandCache(command, updatedCommand);
                     }
                 }
             }
             if (foundChannelDefaultVersions && force) {
                 for (const channelDefaultVersion of foundChannelDefaultVersions) {
-                    // eslint-disable-next-line no-await-in-loop
                     await clearSinglePrefixCommandChannelDefaultVersionCache(channelDefaultVersion);
-                    // eslint-disable-next-line no-await-in-loop
+
                     await channelDefaultVersion.deleteOne();
                 }
             }
@@ -135,7 +161,11 @@ export async function handleDeletePrefixCommandVersion(interaction: ChatInputCom
             await interaction.followUp({ embeds: [successEmbed(name || '', versionId)], ephemeral: true });
             if (modLogsChannel) {
                 try {
-                    await modLogsChannel.send({ embeds: [modLogEmbed(moderator, name || '', emoji || '', alias || '', enabled || false, versionId)] });
+                    await modLogsChannel.send({
+                        embeds: [
+                            modLogEmbed(moderator, name || '', emoji || '', alias || '', enabled || false, versionId),
+                        ],
+                    });
                 } catch (error) {
                     Logger.error(`Failed to post a message to the mod logs channel: ${error}`);
                 }

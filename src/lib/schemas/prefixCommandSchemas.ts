@@ -61,40 +61,46 @@ const prefixCommandChannelDefaultVersionSchema = new Schema<IPrefixCommandChanne
     },
 });
 
-export interface IPrefixCommandContent extends Document{
+export interface IPrefixCommandContent extends Document {
     versionId: string;
     title: string;
     content?: string;
     image?: string;
 }
 
-const prefixCommandContentSchema = new Schema<IPrefixCommandContent>({
-    versionId: {
-        type: String,
-        required: true,
+const prefixCommandContentSchema = new Schema<IPrefixCommandContent>(
+    {
+        versionId: {
+            type: String,
+            required: true,
+        },
+        title: String,
+        content: String,
+        image: String,
     },
-    title: String,
-    content: String,
-    image: String,
-}, { autoCreate: false });
+    { autoCreate: false },
+);
 
 export interface IPrefixCommandPermissions extends Document {
-    roles?: string[],
-    rolesBlocklist?: boolean,
-    channels?: string[],
-    channelsBlocklist?: boolean,
-    quietErrors?: boolean,
-    verboseErrors?: boolean,
+    roles?: string[];
+    rolesBlocklist?: boolean;
+    channels?: string[];
+    channelsBlocklist?: boolean;
+    quietErrors?: boolean;
+    verboseErrors?: boolean;
 }
 
-const prefixCommandPermissionsSchema = new Schema<IPrefixCommandPermissions>({
-    roles: [String],
-    rolesBlocklist: Boolean,
-    channels: [String],
-    channelsBlocklist: Boolean,
-    quietErrors: Boolean,
-    verboseErrors: Boolean,
-}, { autoCreate: false });
+const prefixCommandPermissionsSchema = new Schema<IPrefixCommandPermissions>(
+    {
+        roles: [String],
+        rolesBlocklist: Boolean,
+        channels: [String],
+        channelsBlocklist: Boolean,
+        quietErrors: Boolean,
+        verboseErrors: Boolean,
+    },
+    { autoCreate: false },
+);
 
 export interface IPrefixCommand extends Document {
     commandId: mongoose.Schema.Types.ObjectId;
@@ -132,5 +138,8 @@ export const PrefixCommandCategory = mongoose.model('PrefixCommandCategory', pre
 export const PrefixCommandVersion = mongoose.model('PrefixCommandVersion', prefixCommandVersionSchema);
 export const PrefixCommandContent = mongoose.model('PrefixCommandContent', prefixCommandContentSchema);
 export const PrefixCommandPermissions = mongoose.model('PrefixCommandPermissions', prefixCommandPermissionsSchema);
-export const PrefixCommandChannelDefaultVersion = mongoose.model('PrefixCommandChannelDefaultVersion', prefixCommandChannelDefaultVersionSchema);
+export const PrefixCommandChannelDefaultVersion = mongoose.model(
+    'PrefixCommandChannelDefaultVersion',
+    prefixCommandChannelDefaultVersionSchema,
+);
 export const PrefixCommand = mongoose.model('PrefixCommand', prefixCommandSchema);

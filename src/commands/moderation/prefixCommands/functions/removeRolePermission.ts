@@ -1,5 +1,12 @@
 import { ChatInputCommandInteraction, Colors, User } from 'discord.js';
-import { constantsConfig, getConn, PrefixCommand, Logger, makeEmbed, refreshSinglePrefixCommandCache } from '../../../../lib';
+import {
+    constantsConfig,
+    getConn,
+    PrefixCommand,
+    Logger,
+    makeEmbed,
+    refreshSinglePrefixCommandCache,
+} from '../../../../lib';
 
 const noConnEmbed = makeEmbed({
     title: 'Prefix Commands - Remove Role - No Connection',
@@ -7,51 +14,56 @@ const noConnEmbed = makeEmbed({
     color: Colors.Red,
 });
 
-const noCommandEmbed = (command: string) => makeEmbed({
-    title: 'Prefix Commands - Remove Role - No Command',
-    description: `Failed to remove the prefix command role for command ${command} as the command does not exist or there are more than one matching.`,
-    color: Colors.Red,
-});
+const noCommandEmbed = (command: string) =>
+    makeEmbed({
+        title: 'Prefix Commands - Remove Role - No Command',
+        description: `Failed to remove the prefix command role for command ${command} as the command does not exist or there are more than one matching.`,
+        color: Colors.Red,
+    });
 
-const failedEmbed = (command: string, roleName: string) => makeEmbed({
-    title: 'Prefix Commands - Remove Role - Failed',
-    description: `Failed to remove the prefix command role ${roleName} for command ${command}.`,
-    color: Colors.Red,
-});
+const failedEmbed = (command: string, roleName: string) =>
+    makeEmbed({
+        title: 'Prefix Commands - Remove Role - Failed',
+        description: `Failed to remove the prefix command role ${roleName} for command ${command}.`,
+        color: Colors.Red,
+    });
 
-const doesNotExistEmbed = (command: string, roleName: string) => makeEmbed({
-    title: 'Prefix Commands - Remove Role - Already exists',
-    description: `A prefix command role ${roleName} for command ${command} and role does not exist.`,
-    color: Colors.Red,
-});
+const doesNotExistEmbed = (command: string, roleName: string) =>
+    makeEmbed({
+        title: 'Prefix Commands - Remove Role - Already exists',
+        description: `A prefix command role ${roleName} for command ${command} and role does not exist.`,
+        color: Colors.Red,
+    });
 
-const successEmbed = (command: string, roleName: string) => makeEmbed({
-    title: `Prefix command role ${roleName} removed for command ${command}.`,
-    color: Colors.Green,
-});
+const successEmbed = (command: string, roleName: string) =>
+    makeEmbed({
+        title: `Prefix command role ${roleName} removed for command ${command}.`,
+        color: Colors.Green,
+    });
 
-const modLogEmbed = (moderator: User, command: string, roleName: string) => makeEmbed({
-    title: 'Remove prefix command role permission',
-    fields: [
-        {
-            name: 'Command',
-            value: command,
-        },
-        {
-            name: 'Role',
-            value: roleName,
-        },
-        {
-            name: 'Moderator',
-            value: `${moderator}`,
-        },
-    ],
-    color: Colors.Green,
-});
+const modLogEmbed = (moderator: User, command: string, roleName: string) =>
+    makeEmbed({
+        title: 'Remove prefix command role permission',
+        fields: [
+            {
+                name: 'Command',
+                value: command,
+            },
+            {
+                name: 'Role',
+                value: roleName,
+            },
+            {
+                name: 'Moderator',
+                value: `${moderator}`,
+            },
+        ],
+        color: Colors.Green,
+    });
 
 const noModLogs = makeEmbed({
     title: 'Prefix Commands - Remove Role - No Mod Log',
-    description: 'I can\'t find the mod logs role. Please check the role still exists.',
+    description: "I can't find the mod logs role. Please check the role still exists.",
     color: Colors.Red,
 });
 

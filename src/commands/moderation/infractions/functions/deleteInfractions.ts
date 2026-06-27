@@ -31,35 +31,36 @@ const errorEmbed = makeEmbed({
     color: Colors.Red,
 });
 
-const modLogEmbed = (moderator: string, discordUser: User, infractionType: string, infractionReason: string) => makeEmbed({
-    author: {
-        name: `[INFRACTION DELETE]  ${discordUser.tag}`,
-        iconURL: discordUser.displayAvatarURL(),
-    },
-    fields: [
-        {
-            inline: false,
-            name: 'Deleted by:',
-            value: moderator,
+const modLogEmbed = (moderator: string, discordUser: User, infractionType: string, infractionReason: string) =>
+    makeEmbed({
+        author: {
+            name: `[INFRACTION DELETE]  ${discordUser.tag}`,
+            iconURL: discordUser.displayAvatarURL(),
         },
-        {
-            inline: false,
-            name: 'Infraction user:',
-            value: discordUser.toString(),
-        },
-        {
-            inline: false,
-            name: 'Infraction type:',
-            value: infractionType,
-        },
-        {
-            inline: false,
-            name: 'Reason',
-            value: infractionReason,
-        },
-    ],
-    color: Colors.Green,
-});
+        fields: [
+            {
+                inline: false,
+                name: 'Deleted by:',
+                value: moderator,
+            },
+            {
+                inline: false,
+                name: 'Infraction user:',
+                value: discordUser.toString(),
+            },
+            {
+                inline: false,
+                name: 'Infraction type:',
+                value: infractionType,
+            },
+            {
+                inline: false,
+                name: 'Reason',
+                value: infractionReason,
+            },
+        ],
+        color: Colors.Green,
+    });
 
 export async function handleDeleteInfraction(interaction: ChatInputCommandInteraction<'cached'>) {
     const conn = getConn();
@@ -105,7 +106,9 @@ export async function handleDeleteInfraction(interaction: ChatInputCommandIntera
         const modLogsChannel = interaction.guild.channels.resolve(constantsConfig.channels.MOD_LOGS) as TextChannel;
 
         if (modLogsChannel) {
-            await modLogsChannel.send({ embeds: [modLogEmbed(interaction.user.toString(), discordUser, infractionType, infractionReason)] });
+            await modLogsChannel.send({
+                embeds: [modLogEmbed(interaction.user.toString(), discordUser, infractionType, infractionReason)],
+            });
         }
     } catch (error) {
         await interaction.reply({ embeds: [errorEmbed], ephemeral: true });

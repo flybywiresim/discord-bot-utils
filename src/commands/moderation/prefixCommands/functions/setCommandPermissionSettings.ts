@@ -1,5 +1,13 @@
 import { ChatInputCommandInteraction, Colors, User } from 'discord.js';
-import { constantsConfig, getConn, Logger, makeEmbed, PrefixCommand, PrefixCommandPermissions, refreshSinglePrefixCommandCache } from '../../../../lib';
+import {
+    constantsConfig,
+    getConn,
+    Logger,
+    makeEmbed,
+    PrefixCommand,
+    PrefixCommandPermissions,
+    refreshSinglePrefixCommandCache,
+} from '../../../../lib';
 
 const noConnEmbed = makeEmbed({
     title: 'Prefix Commands - Set Permission Settings - No Connection',
@@ -7,57 +15,68 @@ const noConnEmbed = makeEmbed({
     color: Colors.Red,
 });
 
-const noCommandEmbed = (command: string) => makeEmbed({
-    title: 'Prefix Commands - Set Permission Settings - No Command',
-    description: `Failed to set default channel version for command ${command} as the command does not exist.`,
-    color: Colors.Red,
-});
+const noCommandEmbed = (command: string) =>
+    makeEmbed({
+        title: 'Prefix Commands - Set Permission Settings - No Command',
+        description: `Failed to set default channel version for command ${command} as the command does not exist.`,
+        color: Colors.Red,
+    });
 
-const failedEmbed = (command: string) => makeEmbed({
-    title: 'Prefix Commands - Set Permission Settings - Failed',
-    description: `Failed to set the permission settings for command ${command}.`,
-    color: Colors.Red,
-});
+const failedEmbed = (command: string) =>
+    makeEmbed({
+        title: 'Prefix Commands - Set Permission Settings - Failed',
+        description: `Failed to set the permission settings for command ${command}.`,
+        color: Colors.Red,
+    });
 
-const successEmbed = (command: string) => makeEmbed({
-    title: `Prefix Command permission settings set for command ${command}.`,
-    color: Colors.Green,
-});
+const successEmbed = (command: string) =>
+    makeEmbed({
+        title: `Prefix Command permission settings set for command ${command}.`,
+        color: Colors.Green,
+    });
 
-const modLogEmbed = (moderator: User, command: string, rolesBlocklist: boolean, channelsBlocklist: boolean, quietErrors: boolean, verboseErrors: boolean) => makeEmbed({
-    title: 'Prefix command permission set',
-    fields: [
-        {
-            name: 'Command',
-            value: command,
-        },
-        {
-            name: 'Roles Blocklist',
-            value: rolesBlocklist ? 'Enabled' : 'Disabled',
-        },
-        {
-            name: 'Channels Blocklist',
-            value: channelsBlocklist ? 'Enabled' : 'Disabled',
-        },
-        {
-            name: 'Quiet Errors',
-            value: quietErrors ? 'Enabled' : 'Disabled',
-        },
-        {
-            name: 'Verbose Errors',
-            value: verboseErrors ? 'Enabled' : 'Disabled',
-        },
-        {
-            name: 'Moderator',
-            value: `${moderator}`,
-        },
-    ],
-    color: Colors.Green,
-});
+const modLogEmbed = (
+    moderator: User,
+    command: string,
+    rolesBlocklist: boolean,
+    channelsBlocklist: boolean,
+    quietErrors: boolean,
+    verboseErrors: boolean,
+) =>
+    makeEmbed({
+        title: 'Prefix command permission set',
+        fields: [
+            {
+                name: 'Command',
+                value: command,
+            },
+            {
+                name: 'Roles Blocklist',
+                value: rolesBlocklist ? 'Enabled' : 'Disabled',
+            },
+            {
+                name: 'Channels Blocklist',
+                value: channelsBlocklist ? 'Enabled' : 'Disabled',
+            },
+            {
+                name: 'Quiet Errors',
+                value: quietErrors ? 'Enabled' : 'Disabled',
+            },
+            {
+                name: 'Verbose Errors',
+                value: verboseErrors ? 'Enabled' : 'Disabled',
+            },
+            {
+                name: 'Moderator',
+                value: `${moderator}`,
+            },
+        ],
+        color: Colors.Green,
+    });
 
 const noModLogs = makeEmbed({
     title: 'Prefix Commands - Set Permission Settings - No Mod Log',
-    description: 'I can\'t find the mod logs channel. Please check the channel still exists.',
+    description: "I can't find the mod logs channel. Please check the channel still exists.",
     color: Colors.Red,
 });
 
@@ -108,7 +127,18 @@ export async function handleSetPrefixCommandPermissionSettings(interaction: Chat
             await interaction.followUp({ embeds: [successEmbed(command)], ephemeral: true });
             if (modLogsChannel) {
                 try {
-                    await modLogsChannel.send({ embeds: [modLogEmbed(moderator, command, rolesBlocklist, channelsBlocklist, quietErrors, verboseErrors)] });
+                    await modLogsChannel.send({
+                        embeds: [
+                            modLogEmbed(
+                                moderator,
+                                command,
+                                rolesBlocklist,
+                                channelsBlocklist,
+                                quietErrors,
+                                verboseErrors,
+                            ),
+                        ],
+                    });
                 } catch (error) {
                     Logger.error(`Failed to post a message to the mod logs channel: ${error}`);
                 }

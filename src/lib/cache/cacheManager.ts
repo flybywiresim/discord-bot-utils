@@ -1,6 +1,17 @@
 import { createCache, Cache } from 'cache-manager';
 import { Keyv } from 'keyv';
-import { getConn, IPrefixCommand, IPrefixCommandCategory, IPrefixCommandChannelDefaultVersion, IPrefixCommandVersion, Logger, PrefixCommand, PrefixCommandCategory, PrefixCommandChannelDefaultVersion, PrefixCommandVersion } from '../index';
+import {
+    getConn,
+    IPrefixCommand,
+    IPrefixCommandCategory,
+    IPrefixCommandChannelDefaultVersion,
+    IPrefixCommandVersion,
+    Logger,
+    PrefixCommand,
+    PrefixCommandCategory,
+    PrefixCommandChannelDefaultVersion,
+    PrefixCommandVersion,
+} from '../index';
 
 let inMemoryCache: Cache;
 const cacheRefreshInterval = process.env.CACHE_REFRESH_INTERVAL ? Number(process.env.CACHE_REFRESH_INTERVAL) : 1800;
@@ -48,7 +59,6 @@ export async function getInMemoryCacheKeys(): Promise<string[]> {
     const keys: string[] = [];
     const [store] = inMemoryCache.stores;
     if (store && typeof store.iterator === 'function') {
-        // eslint-disable-next-line no-restricted-syntax
         for await (const [key] of store.iterator(undefined)) {
             keys.push(key);
         }
@@ -77,7 +87,11 @@ export async function loadSinglePrefixCommandToCache(command: IPrefixCommand) {
     const { name, aliases } = command;
     Logger.debug(`Loading command ${name} to cache`);
     await inMemoryCache.set(`${MemoryCachePrefix.COMMAND}:${name.toLowerCase()}`, command.toObject());
-    await Promise.all(aliases.map((alias) => inMemoryCache.set(`${MemoryCachePrefix.COMMAND}:${alias.toLowerCase()}`, command.toObject())));
+    await Promise.all(
+        aliases.map((alias) =>
+            inMemoryCache.set(`${MemoryCachePrefix.COMMAND}:${alias.toLowerCase()}`, command.toObject()),
+        ),
+    );
 }
 
 export async function loadAllPrefixCommandsToCache() {
@@ -111,7 +125,10 @@ export async function refreshAllPrefixCommandsCache() {
             let found = false;
             for (const dbCommand of prefixCommands) {
                 const { name: dbCommandName, aliases: dbCommandAliases } = dbCommand;
-                if (dbCommandName.toLowerCase() === checkCommand.toLowerCase() || dbCommandAliases.includes(checkCommand)) {
+                if (
+                    dbCommandName.toLowerCase() === checkCommand.toLowerCase() ||
+                    dbCommandAliases.includes(checkCommand)
+                ) {
                     found = true;
                     break;
                 }
@@ -119,7 +136,7 @@ export async function refreshAllPrefixCommandsCache() {
             // Step 3.b: If not found, remove from cache
             if (!found) {
                 Logger.debug(`Removing command or alias ${checkCommand} from cache`);
-                // eslint-disable-next-line no-await-in-loop
+
                 await inMemoryCache.del(key);
             }
         }
@@ -161,7 +178,10 @@ export async function loadAllPrefixCommandVersionsToCache() {
     await Promise.all(prefixCommandVersions.map((version) => loadSinglePrefixCommandVersionToCache(version)));
 }
 
-export async function refreshSinglePrefixCommandVersionCache(oldVersion: IPrefixCommandVersion, newVersion: IPrefixCommandVersion) {
+export async function refreshSinglePrefixCommandVersionCache(
+    oldVersion: IPrefixCommandVersion,
+    newVersion: IPrefixCommandVersion,
+) {
     await clearSinglePrefixCommandVersionCache(oldVersion);
     await loadSinglePrefixCommandVersionToCache(newVersion);
 }
@@ -183,7 +203,10 @@ export async function refreshAllPrefixCommandVersionsCache() {
             let found = false;
             for (const dbVersion of prefixCommandVersions) {
                 const { _id: dbVersionId, alias } = dbVersion;
-                if (dbVersionId.toString().toLowerCase() === checkVersion.toLowerCase() || alias.toLowerCase() === checkVersion.toLowerCase()) {
+                if (
+                    dbVersionId.toString().toLowerCase() === checkVersion.toLowerCase() ||
+                    alias.toLowerCase() === checkVersion.toLowerCase()
+                ) {
                     found = true;
                     break;
                 }
@@ -191,7 +214,7 @@ export async function refreshAllPrefixCommandVersionsCache() {
             // Step 3.b: If not found, remove from cache
             if (!found) {
                 Logger.debug(`Removing version with id ${checkVersion} from cache`);
-                // eslint-disable-next-line no-await-in-loop
+
                 await inMemoryCache.del(key);
             }
         }
@@ -231,7 +254,10 @@ export async function loadAllPrefixCommandCategoriesToCache() {
     await Promise.all(prefixCommandCategories.map((category) => loadSinglePrefixCommandCategoryToCache(category)));
 }
 
-export async function refreshSinglePrefixCommandCategoryCache(oldCategory: IPrefixCommandCategory, newCategory: IPrefixCommandCategory) {
+export async function refreshSinglePrefixCommandCategoryCache(
+    oldCategory: IPrefixCommandCategory,
+    newCategory: IPrefixCommandCategory,
+) {
     await clearSinglePrefixCommandCategoryCache(oldCategory);
     await loadSinglePrefixCommandCategoryToCache(newCategory);
 }
@@ -261,7 +287,7 @@ export async function refreshAllPrefixCommandCategoriesCache() {
             // Step 3.b: If not found, remove from cache
             if (!found) {
                 Logger.debug(`Removing category ${categoryName} from cache`);
-                // eslint-disable-next-line no-await-in-loop
+
                 await inMemoryCache.del(key);
             }
         }
@@ -274,7 +300,9 @@ export async function refreshAllPrefixCommandCategoriesCache() {
  * Prefix Command Channel Default Version Cache Management Functions
  */
 
-export async function clearSinglePrefixCommandChannelDefaultVersionCache(channelDefaultVersion: IPrefixCommandChannelDefaultVersion) {
+export async function clearSinglePrefixCommandChannelDefaultVersionCache(
+    channelDefaultVersion: IPrefixCommandChannelDefaultVersion,
+) {
     const inMemoryCache = getInMemoryCache();
     if (!inMemoryCache) return;
 
@@ -283,7 +311,9 @@ export async function clearSinglePrefixCommandChannelDefaultVersionCache(channel
     await inMemoryCache.del(`${MemoryCachePrefix.CHANNEL_DEFAULT_VERSION}:${channelId}`);
 }
 
-export async function loadSinglePrefixCommandChannelDefaultVersionToCache(channelDefaultVersion: IPrefixCommandChannelDefaultVersion) {
+export async function loadSinglePrefixCommandChannelDefaultVersionToCache(
+    channelDefaultVersion: IPrefixCommandChannelDefaultVersion,
+) {
     const inMemoryCache = getInMemoryCache();
     if (!inMemoryCache) return;
 
@@ -301,7 +331,11 @@ export async function loadAllPrefixCommandChannelDefaultVersionsToCache() {
     if (!conn || !inMemoryCache) return;
 
     const PrefixCommandChannelDefaultVersions = await PrefixCommandChannelDefaultVersion.find();
-    await Promise.all(PrefixCommandChannelDefaultVersions.map((channelDefaultVersion) => loadSinglePrefixCommandChannelDefaultVersionToCache(channelDefaultVersion)));
+    await Promise.all(
+        PrefixCommandChannelDefaultVersions.map((channelDefaultVersion) =>
+            loadSinglePrefixCommandChannelDefaultVersionToCache(channelDefaultVersion),
+        ),
+    );
 }
 
 export async function refreshAllPrefixCommandChannelDefaultVersionsCache() {
@@ -329,11 +363,15 @@ export async function refreshAllPrefixCommandChannelDefaultVersionsCache() {
             // Step 3.b: If not found, remove from cache
             if (!found) {
                 Logger.debug(`Removing channel default version for channel ${channelId} from cache`);
-                // eslint-disable-next-line no-await-in-loop
+
                 await inMemoryCache.del(key);
             }
         }
     }
     // Step 4: Loop over database channel default versions and update cache
-    await Promise.all(prefixCommandChannelDefaultVersions.map((dbChannelDefaultVersion) => loadSinglePrefixCommandChannelDefaultVersionToCache(dbChannelDefaultVersion)));
+    await Promise.all(
+        prefixCommandChannelDefaultVersions.map((dbChannelDefaultVersion) =>
+            loadSinglePrefixCommandChannelDefaultVersionToCache(dbChannelDefaultVersion),
+        ),
+    );
 }

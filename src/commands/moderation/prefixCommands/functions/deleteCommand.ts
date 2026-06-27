@@ -1,5 +1,12 @@
 import { ChatInputCommandInteraction, Colors, User } from 'discord.js';
-import { constantsConfig, getConn, PrefixCommand, Logger, makeEmbed, clearSinglePrefixCommandCache } from '../../../../lib';
+import {
+    constantsConfig,
+    getConn,
+    PrefixCommand,
+    Logger,
+    makeEmbed,
+    clearSinglePrefixCommandCache,
+} from '../../../../lib';
 
 const noConnEmbed = makeEmbed({
     title: 'Prefix Commands - Delete Command - No Connection',
@@ -7,58 +14,70 @@ const noConnEmbed = makeEmbed({
     color: Colors.Red,
 });
 
-const failedEmbed = (commandId: string) => makeEmbed({
-    title: 'Prefix Commands - Delete Command - Failed',
-    description: `Failed to delete the prefix command with id ${commandId}.`,
-    color: Colors.Red,
-});
+const failedEmbed = (commandId: string) =>
+    makeEmbed({
+        title: 'Prefix Commands - Delete Command - Failed',
+        description: `Failed to delete the prefix command with id ${commandId}.`,
+        color: Colors.Red,
+    });
 
-const doesNotExistsEmbed = (command: string) => makeEmbed({
-    title: 'Prefix Commands - Delete Command - Does not exist',
-    description: `The prefix command ${command} does not exists. Cannot delete it.`,
-    color: Colors.Red,
-});
+const doesNotExistsEmbed = (command: string) =>
+    makeEmbed({
+        title: 'Prefix Commands - Delete Command - Does not exist',
+        description: `The prefix command ${command} does not exists. Cannot delete it.`,
+        color: Colors.Red,
+    });
 
-const successEmbed = (command: string, commandId: string) => makeEmbed({
-    title: `Prefix command ${command} (${commandId}) was deleted successfully.`,
-    color: Colors.Green,
-});
+const successEmbed = (command: string, commandId: string) =>
+    makeEmbed({
+        title: `Prefix command ${command} (${commandId}) was deleted successfully.`,
+        color: Colors.Green,
+    });
 
-const modLogEmbed = (moderator: User, command: string, aliases: string[], description: string, isEmbed: boolean, embedColor: string, commandId: string) => makeEmbed({
-    title: 'Prefix command deleted',
-    fields: [
-        {
-            name: 'Command',
-            value: command,
-        },
-        {
-            name: 'Moderator',
-            value: `${moderator}`,
-        },
-        {
-            name: 'Aliases',
-            value: aliases.join(','),
-        },
-        {
-            name: 'Description',
-            value: description,
-        },
-        {
-            name: 'Is Embed',
-            value: isEmbed ? 'Yes' : 'No',
-        },
-        {
-            name: 'Embed Color',
-            value: embedColor || '',
-        },
-    ],
-    footer: { text: `Command ID: ${commandId}` },
-    color: Colors.Red,
-});
+const modLogEmbed = (
+    moderator: User,
+    command: string,
+    aliases: string[],
+    description: string,
+    isEmbed: boolean,
+    embedColor: string,
+    commandId: string,
+) =>
+    makeEmbed({
+        title: 'Prefix command deleted',
+        fields: [
+            {
+                name: 'Command',
+                value: command,
+            },
+            {
+                name: 'Moderator',
+                value: `${moderator}`,
+            },
+            {
+                name: 'Aliases',
+                value: aliases.join(','),
+            },
+            {
+                name: 'Description',
+                value: description,
+            },
+            {
+                name: 'Is Embed',
+                value: isEmbed ? 'Yes' : 'No',
+            },
+            {
+                name: 'Embed Color',
+                value: embedColor || '',
+            },
+        ],
+        footer: { text: `Command ID: ${commandId}` },
+        color: Colors.Red,
+    });
 
 const noModLogs = makeEmbed({
     title: 'Prefix Commands - Delete Command - No Mod Log',
-    description: 'I can\'t find the mod logs channel. Please check the channel still exists.',
+    description: "I can't find the mod logs channel. Please check the channel still exists.",
     color: Colors.Red,
 });
 
@@ -91,7 +110,19 @@ export async function handleDeletePrefixCommand(interaction: ChatInputCommandInt
             await interaction.followUp({ embeds: [successEmbed(name || '', commandId)], ephemeral: true });
             if (modLogsChannel) {
                 try {
-                    await modLogsChannel.send({ embeds: [modLogEmbed(moderator, name || '', aliases, description, isEmbed || false, embedColor || '', commandId)] });
+                    await modLogsChannel.send({
+                        embeds: [
+                            modLogEmbed(
+                                moderator,
+                                name || '',
+                                aliases,
+                                description,
+                                isEmbed || false,
+                                embedColor || '',
+                                commandId,
+                            ),
+                        ],
+                    });
                 } catch (error) {
                     Logger.error(`Failed to post a message to the mod logs channel: ${error}`);
                 }

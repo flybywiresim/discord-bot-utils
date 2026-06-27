@@ -7,23 +7,26 @@ const noConnEmbed = makeEmbed({
     color: Colors.Red,
 });
 
-const failedEmbed = (searchText: string) => makeEmbed({
-    title: 'Prefix Commands - List Commands - Failed',
-    description: `Failed to list the prefix commands with search text: ${searchText}.`,
-    color: Colors.Red,
-});
+const failedEmbed = (searchText: string) =>
+    makeEmbed({
+        title: 'Prefix Commands - List Commands - Failed',
+        description: `Failed to list the prefix commands with search text: ${searchText}.`,
+        color: Colors.Red,
+    });
 
-const noResultsEmbed = (searchText: string) => makeEmbed({
-    title: 'Prefix Commands - List Commands - Does not exist',
-    description: `No prefix commands found matching the search text: ${searchText}.`,
-});
+const noResultsEmbed = (searchText: string) =>
+    makeEmbed({
+        title: 'Prefix Commands - List Commands - Does not exist',
+        description: `No prefix commands found matching the search text: ${searchText}.`,
+    });
 
-const successEmbed = (searchText: string, fields: APIEmbedField[]) => makeEmbed({
-    title: 'Prefix Commands',
-    description: searchText ? `Matching search: ${searchText} - Maximum of 20 shown` : 'Maximum of 20 shown',
-    fields,
-    color: Colors.Green,
-});
+const successEmbed = (searchText: string, fields: APIEmbedField[]) =>
+    makeEmbed({
+        title: 'Prefix Commands',
+        description: searchText ? `Matching search: ${searchText} - Maximum of 20 shown` : 'Maximum of 20 shown',
+        fields,
+        color: Colors.Green,
+    });
 
 export async function handleListPrefixCommands(interaction: ChatInputCommandInteraction<'cached'>) {
     await interaction.deferReply({ ephemeral: true });

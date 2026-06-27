@@ -1,5 +1,12 @@
 import { ChatInputCommandInteraction, Colors, User } from 'discord.js';
-import { constantsConfig, getConn, PrefixCommandCategory, Logger, makeEmbed, refreshSinglePrefixCommandCategoryCache } from '../../../../lib';
+import {
+    constantsConfig,
+    getConn,
+    PrefixCommandCategory,
+    Logger,
+    makeEmbed,
+    refreshSinglePrefixCommandCategoryCache,
+} from '../../../../lib';
 
 const noConnEmbed = makeEmbed({
     title: 'Prefix Commands - Modify Category - No Connection',
@@ -7,46 +14,50 @@ const noConnEmbed = makeEmbed({
     color: Colors.Red,
 });
 
-const failedEmbed = (categoryId: string) => makeEmbed({
-    title: 'Prefix Commands - Modify Category - Failed',
-    description: `Failed to modify the prefix command category with id ${categoryId}.`,
-    color: Colors.Red,
-});
+const failedEmbed = (categoryId: string) =>
+    makeEmbed({
+        title: 'Prefix Commands - Modify Category - Failed',
+        description: `Failed to modify the prefix command category with id ${categoryId}.`,
+        color: Colors.Red,
+    });
 
-const doesNotExistsEmbed = (category: string) => makeEmbed({
-    title: 'Prefix Commands - Modify Category - Does not exist',
-    description: `The prefix command category ${category} does not exists. Cannot modify it.`,
-    color: Colors.Red,
-});
+const doesNotExistsEmbed = (category: string) =>
+    makeEmbed({
+        title: 'Prefix Commands - Modify Category - Does not exist',
+        description: `The prefix command category ${category} does not exists. Cannot modify it.`,
+        color: Colors.Red,
+    });
 
-const successEmbed = (category: string, categoryId: string) => makeEmbed({
-    title: `Prefix command category ${category} (${categoryId}) was modified successfully.`,
-    color: Colors.Green,
-});
+const successEmbed = (category: string, categoryId: string) =>
+    makeEmbed({
+        title: `Prefix command category ${category} (${categoryId}) was modified successfully.`,
+        color: Colors.Green,
+    });
 
-const modLogEmbed = (moderator: User, category: string, emoji: string, categoryId: string) => makeEmbed({
-    title: 'Prefix command category modified',
-    fields: [
-        {
-            name: 'Category',
-            value: category,
-        },
-        {
-            name: 'Moderator',
-            value: `${moderator}`,
-        },
-        {
-            name: 'Emoji',
-            value: emoji,
-        },
-    ],
-    footer: { text: `Category ID: ${categoryId}` },
-    color: Colors.Green,
-});
+const modLogEmbed = (moderator: User, category: string, emoji: string, categoryId: string) =>
+    makeEmbed({
+        title: 'Prefix command category modified',
+        fields: [
+            {
+                name: 'Category',
+                value: category,
+            },
+            {
+                name: 'Moderator',
+                value: `${moderator}`,
+            },
+            {
+                name: 'Emoji',
+                value: emoji,
+            },
+        ],
+        footer: { text: `Category ID: ${categoryId}` },
+        color: Colors.Green,
+    });
 
 const noModLogs = makeEmbed({
     title: 'Prefix Commands - Modified Category - No Mod Log',
-    description: 'I can\'t find the mod logs channel. Please check the channel still exists.',
+    description: "I can't find the mod logs channel. Please check the channel still exists.",
     color: Colors.Red,
 });
 

@@ -17,7 +17,7 @@ const data = slashCommandStructure({
 });
 
 export default slashCommand(data, async ({ interaction }) => {
-// check if user has the role
+    // check if user has the role
     const hasRole = interaction.member.roles.cache.has(constantsConfig.roles.BOT_DEVELOPER);
 
     if (!hasRole) {

@@ -1,5 +1,12 @@
 import { ApplicationCommandOptionChoiceData, ApplicationCommandOptionType, ApplicationCommandType } from 'discord.js';
-import { AutocompleteCallback, constantsConfig, getConn, PrefixCommand, slashCommand, slashCommandStructure } from '../../../lib';
+import {
+    AutocompleteCallback,
+    constantsConfig,
+    getConn,
+    PrefixCommand,
+    slashCommand,
+    slashCommandStructure,
+} from '../../../lib';
 import { handleAddPrefixCommandChannelPermission } from './functions/addChannelPermission';
 import { handleAddPrefixCommandRolePermission } from './functions/addRolePermission';
 import { handleRemovePrefixCommandChannelPermission } from './functions/removeChannelPermission';
@@ -177,66 +184,70 @@ const autocompleteCallback: AutocompleteCallback = async ({ interaction }) => {
     const conn = getConn();
 
     switch (optionName) {
-    case 'command':
-        if (!conn) {
-            return interaction.respond(choices);
-        }
-        const foundCommands = await PrefixCommand.find({ name: { $regex: searchText, $options: 'i' } })
-            .sort({ name: 1 })
-            .limit(25);
-        for (let i = 0; i < foundCommands.length; i++) {
-            const command = foundCommands[i];
-            const { name } = command;
-            choices.push({ name, value: name });
-        }
-        break;
-    default:
-        choices = [];
+        case 'command':
+            if (!conn) {
+                return interaction.respond(choices);
+            }
+            const foundCommands = await PrefixCommand.find({ name: { $regex: searchText, $options: 'i' } })
+                .sort({ name: 1 })
+                .limit(25);
+            for (let i = 0; i < foundCommands.length; i++) {
+                const command = foundCommands[i];
+                const { name } = command;
+                choices.push({ name, value: name });
+            }
+            break;
+        default:
+            choices = [];
     }
 
     return interaction.respond(choices);
 };
 
-export default slashCommand(data, async ({ interaction }) => {
-    const subcommandGroup = interaction.options.getSubcommandGroup();
-    const subcommandName = interaction.options.getSubcommand();
+export default slashCommand(
+    data,
+    async ({ interaction }) => {
+        const subcommandGroup = interaction.options.getSubcommandGroup();
+        const subcommandName = interaction.options.getSubcommand();
 
-    switch (subcommandName) {
-    case 'show':
-        await handleShowPrefixCommandPermissions(interaction);
-        return;
-    case 'settings':
-        await handleSetPrefixCommandPermissionSettings(interaction);
-        return;
-    default:
-    }
+        switch (subcommandName) {
+            case 'show':
+                await handleShowPrefixCommandPermissions(interaction);
+                return;
+            case 'settings':
+                await handleSetPrefixCommandPermissionSettings(interaction);
+                return;
+            default:
+        }
 
-    switch (subcommandGroup) {
-    case 'channels':
-        switch (subcommandName) {
-        case 'add':
-            await handleAddPrefixCommandChannelPermission(interaction);
-            break;
-        case 'remove':
-            await handleRemovePrefixCommandChannelPermission(interaction);
-            break;
-        default:
-            await interaction.reply({ content: 'Unknown subcommand', ephemeral: true });
+        switch (subcommandGroup) {
+            case 'channels':
+                switch (subcommandName) {
+                    case 'add':
+                        await handleAddPrefixCommandChannelPermission(interaction);
+                        break;
+                    case 'remove':
+                        await handleRemovePrefixCommandChannelPermission(interaction);
+                        break;
+                    default:
+                        await interaction.reply({ content: 'Unknown subcommand', ephemeral: true });
+                }
+                break;
+            case 'roles':
+                switch (subcommandName) {
+                    case 'add':
+                        await handleAddPrefixCommandRolePermission(interaction);
+                        break;
+                    case 'remove':
+                        await handleRemovePrefixCommandRolePermission(interaction);
+                        break;
+                    default:
+                        await interaction.reply({ content: 'Unknown subcommand', ephemeral: true });
+                }
+                break;
+            default:
+                await interaction.reply({ content: 'Unknown subcommand', ephemeral: true });
         }
-        break;
-    case 'roles':
-        switch (subcommandName) {
-        case 'add':
-            await handleAddPrefixCommandRolePermission(interaction);
-            break;
-        case 'remove':
-            await handleRemovePrefixCommandRolePermission(interaction);
-            break;
-        default:
-            await interaction.reply({ content: 'Unknown subcommand', ephemeral: true });
-        }
-        break;
-    default:
-        await interaction.reply({ content: 'Unknown subcommand', ephemeral: true });
-    }
-}, autocompleteCallback);
+    },
+    autocompleteCallback,
+);

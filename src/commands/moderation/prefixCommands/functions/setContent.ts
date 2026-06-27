@@ -1,5 +1,23 @@
-import { ActionRowBuilder, ChatInputCommandInteraction, Colors, ModalBuilder, ModalSubmitInteraction, TextInputBuilder, TextInputStyle, User } from 'discord.js';
-import { constantsConfig, getConn, PrefixCommandVersion, PrefixCommand, Logger, makeEmbed, refreshSinglePrefixCommandCache, PrefixCommandContent } from '../../../../lib';
+import {
+    ActionRowBuilder,
+    ChatInputCommandInteraction,
+    Colors,
+    ModalBuilder,
+    ModalSubmitInteraction,
+    TextInputBuilder,
+    TextInputStyle,
+    User,
+} from 'discord.js';
+import {
+    constantsConfig,
+    getConn,
+    PrefixCommandVersion,
+    PrefixCommand,
+    Logger,
+    makeEmbed,
+    refreshSinglePrefixCommandCache,
+    PrefixCommandContent,
+} from '../../../../lib';
 
 const noConnEmbed = makeEmbed({
     title: 'Prefix Commands - Set Content - No Connection',
@@ -7,64 +25,78 @@ const noConnEmbed = makeEmbed({
     color: Colors.Red,
 });
 
-const noCommandEmbed = (command: string) => makeEmbed({
-    title: 'Prefix Commands - Set Content - No Command',
-    description: `Failed to set command content for command ${command} as the command does not exist or there are more than one matching.`,
-    color: Colors.Red,
-});
+const noCommandEmbed = (command: string) =>
+    makeEmbed({
+        title: 'Prefix Commands - Set Content - No Command',
+        description: `Failed to set command content for command ${command} as the command does not exist or there are more than one matching.`,
+        color: Colors.Red,
+    });
 
-const noVersionEmbed = (version: string) => makeEmbed({
-    title: 'Prefix Commands - Set Content - No Version',
-    description: `Failed to set command content for version ${version} as the version does not exist or there are more than one matching.`,
-    color: Colors.Red,
-});
+const noVersionEmbed = (version: string) =>
+    makeEmbed({
+        title: 'Prefix Commands - Set Content - No Version',
+        description: `Failed to set command content for version ${version} as the version does not exist or there are more than one matching.`,
+        color: Colors.Red,
+    });
 
-const failedEmbed = (command: string, version: string) => makeEmbed({
-    title: 'Prefix Commands - Set Content - Failed',
-    description: `Failed to set command content for command ${command} and version ${version}.`,
-    color: Colors.Red,
-});
+const failedEmbed = (command: string, version: string) =>
+    makeEmbed({
+        title: 'Prefix Commands - Set Content - Failed',
+        description: `Failed to set command content for command ${command} and version ${version}.`,
+        color: Colors.Red,
+    });
 
-const successEmbed = (command: string, version: string) => makeEmbed({
-    title: `Prefix command content set for command ${command} and version ${version}.`,
-    color: Colors.Green,
-});
+const successEmbed = (command: string, version: string) =>
+    makeEmbed({
+        title: `Prefix command content set for command ${command} and version ${version}.`,
+        color: Colors.Green,
+    });
 
-const modLogEmbed = (moderator: User, command: string, version: string, title: string, content: string, image: string, commandId: string, versionId: string) => makeEmbed({
-    title: 'Prefix command content set',
-    fields: [
-        {
-            name: 'Command',
-            value: command,
-        },
-        {
-            name: 'Version',
-            value: version,
-        },
-        {
-            name: 'Title',
-            value: title,
-        },
-        {
-            name: 'Content',
-            value: content,
-        },
-        {
-            name: 'Image',
-            value: image,
-        },
-        {
-            name: 'Moderator',
-            value: `${moderator}`,
-        },
-    ],
-    footer: { text: `Command ID: ${commandId} - Version ID: ${versionId}` },
-    color: Colors.Green,
-});
+const modLogEmbed = (
+    moderator: User,
+    command: string,
+    version: string,
+    title: string,
+    content: string,
+    image: string,
+    commandId: string,
+    versionId: string,
+) =>
+    makeEmbed({
+        title: 'Prefix command content set',
+        fields: [
+            {
+                name: 'Command',
+                value: command,
+            },
+            {
+                name: 'Version',
+                value: version,
+            },
+            {
+                name: 'Title',
+                value: title,
+            },
+            {
+                name: 'Content',
+                value: content,
+            },
+            {
+                name: 'Image',
+                value: image,
+            },
+            {
+                name: 'Moderator',
+                value: `${moderator}`,
+            },
+        ],
+        footer: { text: `Command ID: ${commandId} - Version ID: ${versionId}` },
+        color: Colors.Green,
+    });
 
 const noModLogs = makeEmbed({
     title: 'Prefix Commands - Set Content - No Mod Log',
-    description: 'I can\'t find the mod logs channel. Please check the channel still exists.',
+    description: "I can't find the mod logs channel. Please check the channel still exists.",
     color: Colors.Red,
 });
 
@@ -152,7 +184,8 @@ export async function handleSetPrefixCommandContent(interaction: ChatInputComman
 
     await interaction.showModal(contentModal);
 
-    const filter = (interaction: ModalSubmitInteraction) => interaction.customId === 'commandContentModal' && interaction.user.id === moderator.id;
+    const filter = (interaction: ModalSubmitInteraction) =>
+        interaction.customId === 'commandContentModal' && interaction.user.id === moderator.id;
 
     let title = '';
     let content = '';
@@ -184,7 +217,8 @@ export async function handleSetPrefixCommandContent(interaction: ChatInputComman
         //Handle the error if the user does not respond in time
         Logger.error(error);
         await interaction.followUp({
-            content: 'You did not provide the necessary content information in time (2 minutes) and the change was not made.',
+            content:
+                'You did not provide the necessary content information in time (2 minutes) and the change was not made.',
             ephemeral: true,
         });
         return;
@@ -201,7 +235,9 @@ export async function handleSetPrefixCommandContent(interaction: ChatInputComman
         try {
             await foundData?.deleteOne();
         } catch (error) {
-            Logger.error(`Failed to delete existing content for prefix command ${command} and version ${version}: ${error}`);
+            Logger.error(
+                `Failed to delete existing content for prefix command ${command} and version ${version}: ${error}`,
+            );
             await interaction.followUp({ embeds: [failedEmbed(command, version)], ephemeral: true });
             return;
         }
@@ -220,7 +256,9 @@ export async function handleSetPrefixCommandContent(interaction: ChatInputComman
         await interaction.followUp({ embeds: [successEmbed(command, version)], ephemeral: true });
         if (modLogsChannel) {
             try {
-                await modLogsChannel.send({ embeds: [modLogEmbed(moderator, command, version, title, content, image, commandId, versionId)] });
+                await modLogsChannel.send({
+                    embeds: [modLogEmbed(moderator, command, version, title, content, image, commandId, versionId)],
+                });
             } catch (error) {
                 Logger.error(`Failed to post a message to the mod logs channel: ${error}`);
             }

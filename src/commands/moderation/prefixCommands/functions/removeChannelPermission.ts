@@ -1,5 +1,12 @@
 import { ChatInputCommandInteraction, Colors, User } from 'discord.js';
-import { constantsConfig, getConn, PrefixCommand, Logger, makeEmbed, refreshSinglePrefixCommandCache } from '../../../../lib';
+import {
+    constantsConfig,
+    getConn,
+    PrefixCommand,
+    Logger,
+    makeEmbed,
+    refreshSinglePrefixCommandCache,
+} from '../../../../lib';
 
 const noConnEmbed = makeEmbed({
     title: 'Prefix Commands - Remove Channel - No Connection',
@@ -7,51 +14,56 @@ const noConnEmbed = makeEmbed({
     color: Colors.Red,
 });
 
-const noCommandEmbed = (command: string) => makeEmbed({
-    title: 'Prefix Commands - Remove Channel - No Command',
-    description: `Failed to remove the prefix command channel for command ${command} as the command does not exist or there are more than one matching.`,
-    color: Colors.Red,
-});
+const noCommandEmbed = (command: string) =>
+    makeEmbed({
+        title: 'Prefix Commands - Remove Channel - No Command',
+        description: `Failed to remove the prefix command channel for command ${command} as the command does not exist or there are more than one matching.`,
+        color: Colors.Red,
+    });
 
-const failedEmbed = (command: string, channel: string) => makeEmbed({
-    title: 'Prefix Commands - Remove Channel- Failed',
-    description: `Failed to remove the prefix command channel <#${channel}> for command ${command}.`,
-    color: Colors.Red,
-});
+const failedEmbed = (command: string, channel: string) =>
+    makeEmbed({
+        title: 'Prefix Commands - Remove Channel- Failed',
+        description: `Failed to remove the prefix command channel <#${channel}> for command ${command}.`,
+        color: Colors.Red,
+    });
 
-const doesNotExistEmbed = (command: string, channel: string) => makeEmbed({
-    title: 'Prefix Commands - Remove Channel - Does not exist',
-    description: `A prefix command channel <#${channel}> for command ${command} does not exist.`,
-    color: Colors.Red,
-});
+const doesNotExistEmbed = (command: string, channel: string) =>
+    makeEmbed({
+        title: 'Prefix Commands - Remove Channel - Does not exist',
+        description: `A prefix command channel <#${channel}> for command ${command} does not exist.`,
+        color: Colors.Red,
+    });
 
-const successEmbed = (command: string, channel: string) => makeEmbed({
-    title: `Prefix command channel <#${channel}> removed for command ${command}.`,
-    color: Colors.Green,
-});
+const successEmbed = (command: string, channel: string) =>
+    makeEmbed({
+        title: `Prefix command channel <#${channel}> removed for command ${command}.`,
+        color: Colors.Green,
+    });
 
-const modLogEmbed = (moderator: User, command: string, channel: string) => makeEmbed({
-    title: 'Remove prefix command channel permission',
-    fields: [
-        {
-            name: 'Command',
-            value: command,
-        },
-        {
-            name: 'Channel',
-            value: `<#${channel}>`,
-        },
-        {
-            name: 'Moderator',
-            value: `${moderator}`,
-        },
-    ],
-    color: Colors.Red,
-});
+const modLogEmbed = (moderator: User, command: string, channel: string) =>
+    makeEmbed({
+        title: 'Remove prefix command channel permission',
+        fields: [
+            {
+                name: 'Command',
+                value: command,
+            },
+            {
+                name: 'Channel',
+                value: `<#${channel}>`,
+            },
+            {
+                name: 'Moderator',
+                value: `${moderator}`,
+            },
+        ],
+        color: Colors.Red,
+    });
 
 const noModLogs = makeEmbed({
     title: 'Prefix Commands - Remove Channel - No Mod Log',
-    description: 'I can\'t find the mod logs channel. Please check the channel still exists.',
+    description: "I can't find the mod logs channel. Please check the channel still exists.",
     color: Colors.Red,
 });
 

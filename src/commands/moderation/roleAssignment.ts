@@ -1,9 +1,4 @@
-import {
-    ActionRowBuilder,
-    ApplicationCommandType,
-    ButtonBuilder,
-    ButtonStyle,
-} from 'discord.js';
+import { ActionRowBuilder, ApplicationCommandType, ButtonBuilder, ButtonStyle } from 'discord.js';
 import { constantsConfig, makeEmbed, slashCommand, slashCommandStructure } from '../../lib';
 
 const data = slashCommandStructure({
@@ -16,7 +11,8 @@ const data = slashCommandStructure({
 
 const interestedInEmbed = makeEmbed({
     title: 'Role Assignment',
-    description: 'Please react below to set your role according to your skill set. If you do not have the skills in any of the available roles, please do not react as this will not benefit the development of the addon.',
+    description:
+        'Please react below to set your role according to your skill set. If you do not have the skills in any of the available roles, please do not react as this will not benefit the development of the addon.',
 });
 
 const mediaAnnouncementsEmbed = makeEmbed({
