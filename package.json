@@ -17,13 +17,13 @@
   "license": "AGPL-3.0",
   "packageManager": "pnpm@11.5.3",
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.1075.0",
-    "@aws-sdk/lib-storage": "^3.1075.0",
+    "@aws-sdk/client-s3": "^3.1085.0",
+    "@aws-sdk/lib-storage": "^3.1085.0",
     "@hokify/agenda": "^6.0.0",
-    "@octokit/request": "^10.0.10",
-    "cache-manager": "^7.2.8",
+    "@octokit/request": "^10.0.11",
+    "cache-manager": "^7.2.9",
     "config": "^3.3.12",
-    "discord.js": "^14.26.4",
+    "discord.js": "^14.26.5",
     "jsdom": "^29.1.1",
     "keyv": "^5.6.0",
     "moment": "^2.29.4",
@@ -32,20 +32,20 @@
     "winston": "^3.19.0"
   },
   "devDependencies": {
-    "@eslint/js": "^9.39.4",
+    "@eslint/js": "^10.0.1",
     "@types/config": "^3.3.5",
     "@types/jsdom": "^28.0.3",
     "@types/node": "^24.0.0",
     "dotenv": "^17.4.2",
-    "eslint": "^9.39.4",
+    "eslint": "^10.7.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.6",
     "globals": "^17.7.0",
     "nodemon": "^3.1.14",
-    "prettier": "^3.8.4",
+    "prettier": "^3.9.5",
     "ts-node": "^10.4.0",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.62.0"
+    "typescript-eslint": "^8.63.0"
   },
   "engines": {
     "node": "24.x"

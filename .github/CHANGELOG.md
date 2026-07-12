@@ -2,11 +2,7 @@
 
 Update <small>_ June 2026</small>
 
-- chore: upgrade to Node 24 and migrate from npm to pnpm (26/06/2026)
-- chore: modernize dependencies — discord.js 14.26, mongoose 8.24, dotenv 17, jsdom 29, @octokit/request 10, TypeScript 6, cache-manager 7 (26/06/2026)
-- chore: replace bad-words with obscenity for profanity filtering (26/06/2026)
-- chore: drop node-fetch in favor of the Node 24 global fetch (26/06/2026)
-- chore: migrate to ESLint 9 flat config with Prettier, aligned with the FlyByWire aircraft repo (26/06/2026)
+- chore: modernize the stack — move to Node 24, pnpm, ESLint 10, Prettier, obscenity (replacing bad-words) and the global fetch (26/06/2026)
 
 Update <small>_ October 2025</small>
 
