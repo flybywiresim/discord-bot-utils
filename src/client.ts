@@ -26,11 +26,10 @@ export const client = new Client({
 
 registerEvents(client, Events);
 
-client.login(process.env.BOT_SECRET)
-    .catch((e) => {
-        Logger.error(e);
-        process.exit(1);
-    });
+client.login(process.env.BOT_SECRET).catch((e) => {
+    Logger.error(e);
+    process.exit(1);
+});
 
 const handleTermination = async () => {
     Logger.info('Terminating bot...');

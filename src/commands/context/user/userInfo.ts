@@ -65,7 +65,11 @@ export default contextMenuCommand(data, async ({ interaction }) => {
             },
             {
                 name: 'Permissions',
-                value: targetMember.permissions.toArray().join(', ').toLowerCase().replace(/_/g, ' ')
+                value: targetMember.permissions
+                    .toArray()
+                    .join(', ')
+                    .toLowerCase()
+                    .replace(/_/g, ' ')
                     .replace(/(^\w)|(\s+\w)/g, (char) => char.toUpperCase()),
             },
         ],

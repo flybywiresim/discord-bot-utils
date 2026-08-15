@@ -1,5 +1,9 @@
 ## Changelog
 
+Update <small>_ August 2026</small>
+
+- chore: modernize the stack — move to Node 24, pnpm, ESLint 10, Prettier, obscenity (replacing bad-words) and the global fetch (26/06/2026)
+
 Update <small>_ October 2025</small>
 
 - fix: Username and avatar configuration rate limit fix. These can be set through developer console instead.

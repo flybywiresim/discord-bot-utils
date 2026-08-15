@@ -1,8 +1,6 @@
 import { Color, SlashCommand, event, Events, Reply, makeEmbed } from '../lib';
 import commandArray from '../commands';
 
-/* eslint-disable no-underscore-dangle */
-
 const commandMap = new Map<string, SlashCommand>();
 
 for (const cmd of commandArray) {
@@ -15,14 +13,12 @@ export default event(Events.InteractionCreate, async ({ log, client }, interacti
     }
 
     if (!interaction.inCachedGuild()) {
-        await interaction.reply(
-            Reply('This bot can only be used in a server!', Color.Error),
-        );
+        await interaction.reply(Reply('This bot can only be used in a server!', Color.Error));
         return;
     }
 
     try {
-        const { commandName, options } = interaction as{
+        const { commandName, options } = interaction as {
             commandName: any;
             options: any;
         };

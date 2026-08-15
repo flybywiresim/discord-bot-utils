@@ -1,5 +1,14 @@
 import { APIEmbedField, ApplicationCommandType, Colors, EmbedField, TextChannel, User } from 'discord.js';
-import { constantsConfig, slashCommand, slashCommandStructure, makeEmbed, refreshAllPrefixCommandsCache, refreshAllPrefixCommandVersionsCache, refreshAllPrefixCommandCategoriesCache, refreshAllPrefixCommandChannelDefaultVersionsCache } from '../../../lib';
+import {
+    constantsConfig,
+    slashCommand,
+    slashCommandStructure,
+    makeEmbed,
+    refreshAllPrefixCommandsCache,
+    refreshAllPrefixCommandVersionsCache,
+    refreshAllPrefixCommandCategoriesCache,
+    refreshAllPrefixCommandChannelDefaultVersionsCache,
+} from '../../../lib';
 
 const data = slashCommandStructure({
     name: 'prefix-commands-cache-update',
@@ -10,17 +19,19 @@ const data = slashCommandStructure({
     options: [],
 });
 
-const cacheUpdateEmbed = (fields: APIEmbedField[], color: number) => makeEmbed({
-    title: 'Prefix Command Cache Update',
-    fields,
-    color,
-});
+const cacheUpdateEmbed = (fields: APIEmbedField[], color: number) =>
+    makeEmbed({
+        title: 'Prefix Command Cache Update',
+        fields,
+        color,
+    });
 
-const noChannelEmbed = (channelName: string) => makeEmbed({
-    title: `Prefix Command Cache Update - No ${channelName} channel`,
-    description: `The command was successful, but no message to ${channelName} was sent. Please check the channel still exists.`,
-    color: Colors.Yellow,
-});
+const noChannelEmbed = (channelName: string) =>
+    makeEmbed({
+        title: `Prefix Command Cache Update - No ${channelName} channel`,
+        description: `The command was successful, but no message to ${channelName} was sent. Please check the channel still exists.`,
+        color: Colors.Yellow,
+    });
 
 const cacheUpdateEmbedField = (moderator: User, duration: string): EmbedField[] => [
     {
@@ -55,26 +66,14 @@ export default slashCommand(data, async ({ interaction }) => {
     const duration = ((new Date().getTime() - start) / 1000).toFixed(2);
 
     await interaction.editReply({
-        embeds: [cacheUpdateEmbed(
-            cacheUpdateEmbedField(
-                interaction.user,
-                duration,
-            ),
-            Colors.Green,
-        )],
+        embeds: [cacheUpdateEmbed(cacheUpdateEmbedField(interaction.user, duration), Colors.Green)],
     });
 
     try {
         await modLogsChannel.send({
-            embeds: [cacheUpdateEmbed(
-                cacheUpdateEmbedField(
-                    interaction.user,
-                    duration,
-                ),
-                Colors.Green,
-            )],
+            embeds: [cacheUpdateEmbed(cacheUpdateEmbedField(interaction.user, duration), Colors.Green)],
         });
-    } catch (error) {
+    } catch {
         await interaction.followUp({ embeds: [noChannelEmbed('mod-log')] });
     }
 });

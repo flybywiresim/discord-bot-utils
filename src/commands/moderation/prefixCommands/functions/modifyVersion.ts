@@ -1,5 +1,13 @@
 import { ChatInputCommandInteraction, Colors, User } from 'discord.js';
-import { constantsConfig, getConn, PrefixCommandVersion, Logger, makeEmbed, refreshSinglePrefixCommandVersionCache, PrefixCommand } from '../../../../lib';
+import {
+    constantsConfig,
+    getConn,
+    PrefixCommandVersion,
+    Logger,
+    makeEmbed,
+    refreshSinglePrefixCommandVersionCache,
+    PrefixCommand,
+} from '../../../../lib';
 
 const noConnEmbed = makeEmbed({
     title: 'Prefix Commands - Modify Version - No Connection',
@@ -7,66 +15,79 @@ const noConnEmbed = makeEmbed({
     color: Colors.Red,
 });
 
-const failedEmbed = (versionId: string) => makeEmbed({
-    title: 'Prefix Commands - Modify Version - Failed',
-    description: `Failed to modify the prefix command version with id ${versionId}.`,
-    color: Colors.Red,
-});
+const failedEmbed = (versionId: string) =>
+    makeEmbed({
+        title: 'Prefix Commands - Modify Version - Failed',
+        description: `Failed to modify the prefix command version with id ${versionId}.`,
+        color: Colors.Red,
+    });
 
-const wrongFormatEmbed = (invalidString: string) => makeEmbed({
-    title: 'Prefix Commands - Modify Version - Wrong format',
-    description: `The name and alias of a version can only contain alphanumerical characters, underscores and dashes. "${invalidString}" is invalid.`,
-    color: Colors.Red,
-});
+const wrongFormatEmbed = (invalidString: string) =>
+    makeEmbed({
+        title: 'Prefix Commands - Modify Version - Wrong format',
+        description: `The name and alias of a version can only contain alphanumerical characters, underscores and dashes. "${invalidString}" is invalid.`,
+        color: Colors.Red,
+    });
 
-const doesNotExistsEmbed = (version: string) => makeEmbed({
-    title: 'Prefix Commands - Modify Version - Does not exist',
-    description: `The prefix command version ${version} does not exists. Cannot modify it.`,
-    color: Colors.Red,
-});
+const doesNotExistsEmbed = (version: string) =>
+    makeEmbed({
+        title: 'Prefix Commands - Modify Version - Does not exist',
+        description: `The prefix command version ${version} does not exists. Cannot modify it.`,
+        color: Colors.Red,
+    });
 
-const alreadyExistsEmbed = (version: string, reason: string) => makeEmbed({
-    title: 'Prefix Commands - Add Version - Already exists',
-    description: `The prefix command version ${version} already exists: ${reason}`,
-    color: Colors.Red,
-});
+const alreadyExistsEmbed = (version: string, reason: string) =>
+    makeEmbed({
+        title: 'Prefix Commands - Add Version - Already exists',
+        description: `The prefix command version ${version} already exists: ${reason}`,
+        color: Colors.Red,
+    });
 
-const successEmbed = (version: string, versionId: string) => makeEmbed({
-    title: `Prefix command version ${version} (${versionId}) was modified successfully.`,
-    color: Colors.Green,
-});
+const successEmbed = (version: string, versionId: string) =>
+    makeEmbed({
+        title: `Prefix command version ${version} (${versionId}) was modified successfully.`,
+        color: Colors.Green,
+    });
 
-const modLogEmbed = (moderator: User, version: string, emoji: string, alias: string, enabled: boolean, versionId: string) => makeEmbed({
-    title: 'Prefix command version modified',
-    fields: [
-        {
-            name: 'Version',
-            value: version,
-        },
-        {
-            name: 'Moderator',
-            value: `${moderator}`,
-        },
-        {
-            name: 'Emoji',
-            value: emoji,
-        },
-        {
-            name: 'Alias',
-            value: alias,
-        },
-        {
-            name: 'Enabled',
-            value: enabled ? 'Yes' : 'No',
-        },
-    ],
-    footer: { text: `Version ID: ${versionId}` },
-    color: Colors.Green,
-});
+const modLogEmbed = (
+    moderator: User,
+    version: string,
+    emoji: string,
+    alias: string,
+    enabled: boolean,
+    versionId: string,
+) =>
+    makeEmbed({
+        title: 'Prefix command version modified',
+        fields: [
+            {
+                name: 'Version',
+                value: version,
+            },
+            {
+                name: 'Moderator',
+                value: `${moderator}`,
+            },
+            {
+                name: 'Emoji',
+                value: emoji,
+            },
+            {
+                name: 'Alias',
+                value: alias,
+            },
+            {
+                name: 'Enabled',
+                value: enabled ? 'Yes' : 'No',
+            },
+        ],
+        footer: { text: `Version ID: ${versionId}` },
+        color: Colors.Green,
+    });
 
 const noModLogs = makeEmbed({
     title: 'Prefix Commands - Modified Version - No Mod Log',
-    description: 'I can\'t find the mod logs channel. Please check the channel still exists.',
+    description: "I can't find the mod logs channel. Please check the channel still exists.",
     color: Colors.Red,
 });
 
@@ -103,7 +124,10 @@ export async function handleModifyPrefixCommandVersion(interaction: ChatInputCom
             },
         });
         if (foundVersion || name.toLowerCase() === 'generic') {
-            await interaction.followUp({ embeds: [alreadyExistsEmbed(version, `${name} already exists as a version.`)], ephemeral: true });
+            await interaction.followUp({
+                embeds: [alreadyExistsEmbed(version, `${name} already exists as a version.`)],
+                ephemeral: true,
+            });
             return;
         }
     }
@@ -113,17 +137,20 @@ export async function handleModifyPrefixCommandVersion(interaction: ChatInputCom
             alias,
         });
         if (foundVersion || alias === 'generic') {
-            await interaction.followUp({ embeds: [alreadyExistsEmbed(version, `${alias} already exists as a version alias.`)], ephemeral: true });
+            await interaction.followUp({
+                embeds: [alreadyExistsEmbed(version, `${alias} already exists as a version alias.`)],
+                ephemeral: true,
+            });
             return;
         }
         const foundCommandName = await PrefixCommand.findOne({
-            $or: [
-                { name: alias },
-                { aliases: alias },
-            ],
+            $or: [{ name: alias }, { aliases: alias }],
         });
         if (foundCommandName) {
-            await interaction.followUp({ embeds: [alreadyExistsEmbed(version, `${alias} already exists as a command or command alias.`)], ephemeral: true });
+            await interaction.followUp({
+                embeds: [alreadyExistsEmbed(version, `${alias} already exists as a command or command alias.`)],
+                ephemeral: true,
+            });
             return;
         }
     }
@@ -151,7 +178,9 @@ export async function handleModifyPrefixCommandVersion(interaction: ChatInputCom
             await interaction.followUp({ embeds: [successEmbed(name, versionId)], ephemeral: true });
             if (modLogsChannel) {
                 try {
-                    await modLogsChannel.send({ embeds: [modLogEmbed(moderator, name, emoji, alias, enabled || false, versionId)] });
+                    await modLogsChannel.send({
+                        embeds: [modLogEmbed(moderator, name, emoji, alias, enabled || false, versionId)],
+                    });
                 } catch (error) {
                     Logger.error(`Failed to post a message to the mod logs channel: ${error}`);
                 }

@@ -1,5 +1,14 @@
 import { ApplicationCommandOptionChoiceData, ApplicationCommandOptionType, ApplicationCommandType } from 'discord.js';
-import { AutocompleteCallback, constantsConfig, getConn, PrefixCommand, PrefixCommandCategory, PrefixCommandVersion, slashCommand, slashCommandStructure } from '../../../lib';
+import {
+    AutocompleteCallback,
+    constantsConfig,
+    getConn,
+    PrefixCommand,
+    PrefixCommandCategory,
+    PrefixCommandVersion,
+    slashCommand,
+    slashCommandStructure,
+} from '../../../lib';
 import { handleAddPrefixCommandCategory } from './functions/addCategory';
 import { handleModifyPrefixCommandCategory } from './functions/modifyCategory';
 import { handleDeletePrefixCommandCategory } from './functions/deleteCategory';
@@ -279,7 +288,8 @@ const data = slashCommandStructure({
                         },
                         {
                             name: 'is_embed',
-                            description: 'Indicate wether this prefix command should print as an embed or regular message.',
+                            description:
+                                'Indicate wether this prefix command should print as an embed or regular message.',
                             type: ApplicationCommandOptionType.Boolean,
                             required: false,
                         },
@@ -337,7 +347,8 @@ const data = slashCommandStructure({
                         },
                         {
                             name: 'is_embed',
-                            description: 'Indicate wether this prefix command should print as an embed or regular message.',
+                            description:
+                                'Indicate wether this prefix command should print as an embed or regular message.',
                             type: ApplicationCommandOptionType.Boolean,
                             required: false,
                         },
@@ -402,7 +413,8 @@ const data = slashCommandStructure({
                         },
                         {
                             name: 'version',
-                            description: 'Provide the name of the prefix command version. Use GENERIC for the generic content.',
+                            description:
+                                'Provide the name of the prefix command version. Use GENERIC for the generic content.',
                             type: ApplicationCommandOptionType.String,
                             required: true,
                             autocomplete: true,
@@ -412,7 +424,7 @@ const data = slashCommandStructure({
                 },
                 {
                     name: 'set',
-                    description: 'Set a prefix command\'s content for a specific version.',
+                    description: "Set a prefix command's content for a specific version.",
                     type: ApplicationCommandOptionType.Subcommand,
                     options: [
                         {
@@ -425,7 +437,8 @@ const data = slashCommandStructure({
                         },
                         {
                             name: 'version',
-                            description: 'Provide the name of the prefix command version. Use GENERIC for the generic content.',
+                            description:
+                                'Provide the name of the prefix command version. Use GENERIC for the generic content.',
                             type: ApplicationCommandOptionType.String,
                             required: true,
                             autocomplete: true,
@@ -435,7 +448,7 @@ const data = slashCommandStructure({
                 },
                 {
                     name: 'delete',
-                    description: 'Delete a prefix command\'s content for a specific version.',
+                    description: "Delete a prefix command's content for a specific version.",
                     type: ApplicationCommandOptionType.Subcommand,
                     options: [
                         {
@@ -448,7 +461,8 @@ const data = slashCommandStructure({
                         },
                         {
                             name: 'version',
-                            description: 'Provide the name of the prefix command version. Use GENERIC for the generic content.',
+                            description:
+                                'Provide the name of the prefix command version. Use GENERIC for the generic content.',
                             type: ApplicationCommandOptionType.String,
                             required: true,
                             autocomplete: true,
@@ -523,143 +537,147 @@ const autocompleteCallback: AutocompleteCallback = async ({ interaction }) => {
     const conn = getConn();
 
     switch (optionName) {
-    case 'category':
-        if (!conn) {
-            return interaction.respond(choices);
-        }
-        const foundCategories = await PrefixCommandCategory.find({ name: { $regex: searchText, $options: 'i' } })
-            .sort({ name: 1 })
-            .limit(25);
-        for (let i = 0; i < foundCategories.length; i++) {
-            const category = foundCategories[i];
-            const { name } = category;
-            choices.push({ name, value: name });
-        }
-        break;
-    case 'command':
-        if (!conn) {
-            return interaction.respond(choices);
-        }
-        const foundCommands = await PrefixCommand.find({ name: { $regex: searchText, $options: 'i' } })
-            .sort({ name: 1 })
-            .limit(25);
-        for (let i = 0; i < foundCommands.length; i++) {
-            const command = foundCommands[i];
-            const { name } = command;
-            choices.push({ name, value: name });
-        }
-        break;
-    case 'version':
-        choices.push({ name: 'GENERIC', value: 'GENERIC' });
-        if (!conn) {
-            return interaction.respond(choices);
-        }
-        const foundVersions = await PrefixCommandVersion.find({ name: { $regex: searchText, $options: 'i' } })
-            .sort({ name: 1 })
-            .limit(25);
-        for (let i = 0; i < foundVersions.length; i++) {
-            const version = foundVersions[i];
-            const { name } = version;
-            choices.push({ name, value: name });
-        }
-        break;
-    default:
-        break;
+        case 'category':
+            if (!conn) {
+                return interaction.respond(choices);
+            }
+            const foundCategories = await PrefixCommandCategory.find({ name: { $regex: searchText, $options: 'i' } })
+                .sort({ name: 1 })
+                .limit(25);
+            for (let i = 0; i < foundCategories.length; i++) {
+                const category = foundCategories[i];
+                const { name } = category;
+                choices.push({ name, value: name });
+            }
+            break;
+        case 'command':
+            if (!conn) {
+                return interaction.respond(choices);
+            }
+            const foundCommands = await PrefixCommand.find({ name: { $regex: searchText, $options: 'i' } })
+                .sort({ name: 1 })
+                .limit(25);
+            for (let i = 0; i < foundCommands.length; i++) {
+                const command = foundCommands[i];
+                const { name } = command;
+                choices.push({ name, value: name });
+            }
+            break;
+        case 'version':
+            choices.push({ name: 'GENERIC', value: 'GENERIC' });
+            if (!conn) {
+                return interaction.respond(choices);
+            }
+            const foundVersions = await PrefixCommandVersion.find({ name: { $regex: searchText, $options: 'i' } })
+                .sort({ name: 1 })
+                .limit(25);
+            for (let i = 0; i < foundVersions.length; i++) {
+                const version = foundVersions[i];
+                const { name } = version;
+                choices.push({ name, value: name });
+            }
+            break;
+        default:
+            break;
     }
 
     return interaction.respond(choices);
 };
 
-export default slashCommand(data, async ({ interaction }) => {
-    const subcommandGroup = interaction.options.getSubcommandGroup();
-    const subcommandName = interaction.options.getSubcommand();
+export default slashCommand(
+    data,
+    async ({ interaction }) => {
+        const subcommandGroup = interaction.options.getSubcommandGroup();
+        const subcommandName = interaction.options.getSubcommand();
 
-    switch (subcommandGroup) {
-    case 'categories':
-        switch (subcommandName) {
-        case 'add':
-            await handleAddPrefixCommandCategory(interaction);
-            break;
-        case 'modify':
-            await handleModifyPrefixCommandCategory(interaction);
-            break;
-        case 'delete':
-            await handleDeletePrefixCommandCategory(interaction);
-            break;
-        case 'list':
-            await handleListPrefixCommandCategories(interaction);
-            break;
-        default:
-            await interaction.reply({ content: 'Unknown subcommand', ephemeral: true });
+        switch (subcommandGroup) {
+            case 'categories':
+                switch (subcommandName) {
+                    case 'add':
+                        await handleAddPrefixCommandCategory(interaction);
+                        break;
+                    case 'modify':
+                        await handleModifyPrefixCommandCategory(interaction);
+                        break;
+                    case 'delete':
+                        await handleDeletePrefixCommandCategory(interaction);
+                        break;
+                    case 'list':
+                        await handleListPrefixCommandCategories(interaction);
+                        break;
+                    default:
+                        await interaction.reply({ content: 'Unknown subcommand', ephemeral: true });
+                }
+                break;
+            case 'versions':
+                switch (subcommandName) {
+                    case 'add':
+                        await handleAddPrefixCommandVersion(interaction);
+                        break;
+                    case 'modify':
+                        await handleModifyPrefixCommandVersion(interaction);
+                        break;
+                    case 'delete':
+                        await handleDeletePrefixCommandVersion(interaction);
+                        break;
+                    case 'list':
+                        await handleListPrefixCommandVersions(interaction);
+                        break;
+                    default:
+                        await interaction.reply({ content: 'Unknown subcommand', ephemeral: true });
+                }
+                break;
+            case 'commands':
+                switch (subcommandName) {
+                    case 'add':
+                        await handleAddPrefixCommand(interaction);
+                        break;
+                    case 'modify':
+                        await handleModifyPrefixCommand(interaction);
+                        break;
+                    case 'delete':
+                        await handleDeletePrefixCommand(interaction);
+                        break;
+                    case 'list':
+                        await handleListPrefixCommands(interaction);
+                        break;
+                    default:
+                        await interaction.reply({ content: 'Unknown subcommand', ephemeral: true });
+                }
+                break;
+            case 'content':
+                switch (subcommandName) {
+                    case 'show':
+                        await handleShowPrefixCommandContent(interaction);
+                        break;
+                    case 'set':
+                        await handleSetPrefixCommandContent(interaction);
+                        break;
+                    case 'delete':
+                        await handleDeletePrefixCommandContent(interaction);
+                        break;
+                    default:
+                        await interaction.reply({ content: 'Unknown subcommand', ephemeral: true });
+                }
+                break;
+            case 'channel-default-version':
+                switch (subcommandName) {
+                    case 'show':
+                        await handleShowPrefixCommandChannelDefaultVersion(interaction);
+                        break;
+                    case 'set':
+                        await handleSetPrefixCommandChannelDefaultVersion(interaction);
+                        break;
+                    case 'delete':
+                        await handleDeletePrefixCommandChannelDefaultVersion(interaction);
+                        break;
+                    default:
+                        await interaction.reply({ content: 'Unknown subcommand', ephemeral: true });
+                }
+                break;
+            default:
+                await interaction.reply({ content: 'Unknown subcommand', ephemeral: true });
         }
-        break;
-    case 'versions':
-        switch (subcommandName) {
-        case 'add':
-            await handleAddPrefixCommandVersion(interaction);
-            break;
-        case 'modify':
-            await handleModifyPrefixCommandVersion(interaction);
-            break;
-        case 'delete':
-            await handleDeletePrefixCommandVersion(interaction);
-            break;
-        case 'list':
-            await handleListPrefixCommandVersions(interaction);
-            break;
-        default:
-            await interaction.reply({ content: 'Unknown subcommand', ephemeral: true });
-        }
-        break;
-    case 'commands':
-        switch (subcommandName) {
-        case 'add':
-            await handleAddPrefixCommand(interaction);
-            break;
-        case 'modify':
-            await handleModifyPrefixCommand(interaction);
-            break;
-        case 'delete':
-            await handleDeletePrefixCommand(interaction);
-            break;
-        case 'list':
-            await handleListPrefixCommands(interaction);
-            break;
-        default:
-            await interaction.reply({ content: 'Unknown subcommand', ephemeral: true });
-        }
-        break;
-    case 'content':
-        switch (subcommandName) {
-        case 'show':
-            await handleShowPrefixCommandContent(interaction);
-            break;
-        case 'set':
-            await handleSetPrefixCommandContent(interaction);
-            break;
-        case 'delete':
-            await handleDeletePrefixCommandContent(interaction);
-            break;
-        default:
-            await interaction.reply({ content: 'Unknown subcommand', ephemeral: true });
-        }
-        break;
-    case 'channel-default-version':
-        switch (subcommandName) {
-        case 'show':
-            await handleShowPrefixCommandChannelDefaultVersion(interaction);
-            break;
-        case 'set':
-            await handleSetPrefixCommandChannelDefaultVersion(interaction);
-            break;
-        case 'delete':
-            await handleDeletePrefixCommandChannelDefaultVersion(interaction);
-            break;
-        default:
-            await interaction.reply({ content: 'Unknown subcommand', ephemeral: true });
-        }
-        break;
-    default:
-        await interaction.reply({ content: 'Unknown subcommand', ephemeral: true });
-    }
-}, autocompleteCallback);
+    },
+    autocompleteCallback,
+);

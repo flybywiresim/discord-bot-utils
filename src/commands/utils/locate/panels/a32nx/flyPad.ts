@@ -7,9 +7,5 @@ export const flyPad: Panel = {
     docsUrl: LOCATE_DOCS_BASE_URLS.a32nx.flypad,
     flightDeckUrl: LOCATE_DOCS_BASE_URLS.a32nx.flightdeck,
     imageUrl: `${LOCATE_IMAGE_BASE_URLS.a32nx.flypad}/efb_downscaled.gif`,
-    identifiers: [
-        'flypad',
-        'efb',
-        'electronic-flight-bag',
-    ],
+    identifiers: ['flypad', 'efb', 'electronic-flight-bag'],
 };

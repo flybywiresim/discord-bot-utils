@@ -1,5 +1,12 @@
 import { ChatInputCommandInteraction, Colors, User } from 'discord.js';
-import { constantsConfig, getConn, PrefixCommandChannelDefaultVersion, Logger, makeEmbed, clearSinglePrefixCommandChannelDefaultVersionCache } from '../../../../lib';
+import {
+    constantsConfig,
+    getConn,
+    PrefixCommandChannelDefaultVersion,
+    Logger,
+    makeEmbed,
+    clearSinglePrefixCommandChannelDefaultVersionCache,
+} from '../../../../lib';
 
 const noConnEmbed = makeEmbed({
     title: 'Prefix Commands - Unset Default Channel Version - No Connection',
@@ -7,45 +14,51 @@ const noConnEmbed = makeEmbed({
     color: Colors.Red,
 });
 
-const failedEmbed = (channel: string) => makeEmbed({
-    title: 'Prefix Commands - Unset Default Channel Version - Failed',
-    description: `Failed to unset the default channel version with for ${channel}.`,
-    color: Colors.Red,
-});
+const failedEmbed = (channel: string) =>
+    makeEmbed({
+        title: 'Prefix Commands - Unset Default Channel Version - Failed',
+        description: `Failed to unset the default channel version with for ${channel}.`,
+        color: Colors.Red,
+    });
 
-const doesNotExistsEmbed = (channel: string) => makeEmbed({
-    title: 'Prefix Commands - Unset Default Channel Version - Does not exist',
-    description: `The default channel version with for ${channel} does not exists. Can not unset it.`,
-    color: Colors.Red,
-});
+const doesNotExistsEmbed = (channel: string) =>
+    makeEmbed({
+        title: 'Prefix Commands - Unset Default Channel Version - Does not exist',
+        description: `The default channel version with for ${channel} does not exists. Can not unset it.`,
+        color: Colors.Red,
+    });
 
-const successEmbed = (channel: string) => makeEmbed({
-    title: `Default channel version for channel ${channel} was unset successfully.`,
-    color: Colors.Green,
-});
+const successEmbed = (channel: string) =>
+    makeEmbed({
+        title: `Default channel version for channel ${channel} was unset successfully.`,
+        color: Colors.Green,
+    });
 
-const modLogEmbed = (moderator: User, channel: string) => makeEmbed({
-    title: 'Prefix Commands - Default Channel Version unset',
-    fields: [
-        {
-            name: 'Channel',
-            value: channel,
-        },
-        {
-            name: 'Moderator',
-            value: `${moderator}`,
-        },
-    ],
-    color: Colors.Red,
-});
+const modLogEmbed = (moderator: User, channel: string) =>
+    makeEmbed({
+        title: 'Prefix Commands - Default Channel Version unset',
+        fields: [
+            {
+                name: 'Channel',
+                value: channel,
+            },
+            {
+                name: 'Moderator',
+                value: `${moderator}`,
+            },
+        ],
+        color: Colors.Red,
+    });
 
 const noModLogs = makeEmbed({
     title: 'Prefix Commands - Unset Default Channel Version - No Mod Log',
-    description: 'I can\'t find the mod logs channel. Please check the channel still exists.',
+    description: "I can't find the mod logs channel. Please check the channel still exists.",
     color: Colors.Red,
 });
 
-export async function handleDeletePrefixCommandChannelDefaultVersion(interaction: ChatInputCommandInteraction<'cached'>) {
+export async function handleDeletePrefixCommandChannelDefaultVersion(
+    interaction: ChatInputCommandInteraction<'cached'>,
+) {
     await interaction.deferReply({ ephemeral: true });
 
     const conn = getConn();

@@ -1,19 +1,20 @@
 import { ApplicationCommandOptionType, ApplicationCommandType, Colors } from 'discord.js';
-import fetch from 'node-fetch';
 import { constantsConfig, slashCommand, slashCommandStructure, makeEmbed, makeLines, Logger } from '../../lib';
 
 const data = slashCommandStructure({
     name: 'taf',
     description: 'Provides the TAF report of the requested airport.',
     type: ApplicationCommandType.ChatInput,
-    options: [{
-        name: 'icao',
-        description: 'Provide an airport ICAO code.',
-        type: ApplicationCommandOptionType.String,
-        max_length: 4,
-        min_length: 4,
-        required: true,
-    }],
+    options: [
+        {
+            name: 'icao',
+            description: 'Provide an airport ICAO code.',
+            type: ApplicationCommandOptionType.String,
+            max_length: 4,
+            min_length: 4,
+            required: true,
+        },
+    ],
 });
 
 const noQueryEmbed = makeEmbed({
@@ -86,7 +87,9 @@ export default slashCommand(data, async ({ interaction }) => {
                     inline: false,
                 },
             ],
-            footer: { text: 'This TAF report is only a forecast, and may not accurately reflect weather in the simulator.' },
+            footer: {
+                text: 'This TAF report is only a forecast, and may not accurately reflect weather in the simulator.',
+            },
         });
 
         return interaction.editReply({ embeds: [tafEmbed] });

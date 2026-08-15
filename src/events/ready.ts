@@ -48,16 +48,16 @@ export default event(Events.ClientReady, async ({ log }, client) => {
     if (process.env.DEPLOY === 'true') {
         Logger.info('DEPLOY variable set to true, deploying commands and contexts.');
         try {
-            await deployCommands(commandArray, contextArray)
-                .then(async (user) => {
-                    const bot = `<@${user.id}>`;
+            await deployCommands(commandArray, contextArray).then(async (user) => {
+                const bot = `<@${user.id}>`;
 
-                    const response = process.env.NODE_ENV === 'production'
+                const response =
+                    process.env.NODE_ENV === 'production'
                         ? `Deployed ${commandArray.length} commands and ${contextArray.length} contexts globally as ${bot}!`
                         : `Deployed ${commandArray.length} commands and ${contextArray.length} contexts to \`<@${constantsConfig.guildId}>\` as ${bot}!`;
 
-                    Logger.info(response);
-                });
+                Logger.info(response);
+            });
         } catch (error) {
             Logger.error('Failed to deploy commands:', error);
         }
@@ -106,14 +106,18 @@ export default event(Events.ClientReady, async ({ log }, client) => {
         if (scheduler) {
             const heartbeatJobList = await scheduler.jobs({ name: 'sendHeartbeat' });
             if (heartbeatJobList.length === 0) {
-                scheduler.every(`${process.env.HEARTBEAT_INTERVAL} seconds`, 'sendHeartbeat', { interval: process.env.HEARTBEAT_INTERVAL });
+                scheduler.every(`${process.env.HEARTBEAT_INTERVAL} seconds`, 'sendHeartbeat', {
+                    interval: process.env.HEARTBEAT_INTERVAL,
+                });
                 Logger.info(`Heartbeat job scheduled with interval ${process.env.HEARTBEAT_INTERVAL}`);
             } else {
                 const heartbeatJob = heartbeatJobList[0];
                 const { interval } = heartbeatJob.attrs.data as { interval: string };
                 if (interval !== process.env.HEARTBEAT_INTERVAL) {
                     await scheduler.cancel({ name: 'sendHeartbeat' });
-                    scheduler.every(`${process.env.HEARTBEAT_INTERVAL} seconds`, 'sendHeartbeat', { interval: process.env.HEARTBEAT_INTERVAL });
+                    scheduler.every(`${process.env.HEARTBEAT_INTERVAL} seconds`, 'sendHeartbeat', {
+                        interval: process.env.HEARTBEAT_INTERVAL,
+                    });
                     Logger.info(`Heartbeat job rescheduled with new interval ${process.env.HEARTBEAT_INTERVAL}`);
                 } else {
                     Logger.info('Heartbeat job already scheduled');
@@ -128,14 +132,18 @@ export default event(Events.ClientReady, async ({ log }, client) => {
         if (scheduler) {
             const birthdayJobList = await scheduler.jobs({ name: 'postBirthdays' });
             if (birthdayJobList.length === 0) {
-                scheduler.every(`${process.env.BIRTHDAY_INTERVAL} seconds`, 'postBirthdays', { interval: process.env.BIRTHDAY_INTERVAL });
+                scheduler.every(`${process.env.BIRTHDAY_INTERVAL} seconds`, 'postBirthdays', {
+                    interval: process.env.BIRTHDAY_INTERVAL,
+                });
                 Logger.info(`Birthday job scheduled with interval ${process.env.BIRTHDAY_INTERVAL}`);
             } else {
                 const birthdayJob = birthdayJobList[0];
                 const { interval } = birthdayJob.attrs.data as { interval: string };
                 if (interval !== process.env.BIRTHDAY_INTERVAL) {
                     await scheduler.cancel({ name: 'postBirthdays' });
-                    scheduler.every(`${process.env.BIRTHDAY_INTERVAL} seconds`, 'postBirthdays', { interval: process.env.BIRTHDAY_INTERVAL });
+                    scheduler.every(`${process.env.BIRTHDAY_INTERVAL} seconds`, 'postBirthdays', {
+                        interval: process.env.BIRTHDAY_INTERVAL,
+                    });
                     Logger.info(`Birthday job rescheduled with new interval ${process.env.BIRTHDAY_INTERVAL}`);
                 } else {
                     Logger.info('Birthday job already scheduled');
@@ -151,14 +159,18 @@ export default event(Events.ClientReady, async ({ log }, client) => {
         if (scheduler) {
             const cacheJobList = await scheduler.jobs({ name: 'refreshInMemoryCache' });
             if (cacheJobList.length === 0) {
-                scheduler.every(`${cacheRefreshInterval} seconds`, 'refreshInMemoryCache', { interval: cacheRefreshInterval });
+                scheduler.every(`${cacheRefreshInterval} seconds`, 'refreshInMemoryCache', {
+                    interval: cacheRefreshInterval,
+                });
                 Logger.info(`Cache refresh job scheduled with interval ${cacheRefreshInterval}`);
             } else {
                 const cacheJob = cacheJobList[0];
                 const { interval } = cacheJob.attrs.data as { interval: number };
                 if (interval !== cacheRefreshInterval) {
                     await scheduler.cancel({ name: 'refreshInMemoryCache' });
-                    scheduler.every(`${cacheRefreshInterval} seconds`, 'refreshInMemoryCache', { interval: cacheRefreshInterval });
+                    scheduler.every(`${cacheRefreshInterval} seconds`, 'refreshInMemoryCache', {
+                        interval: cacheRefreshInterval,
+                    });
                     Logger.info(`Cache refresh job rescheduled with new interval ${cacheRefreshInterval}`);
                 } else {
                     Logger.info('Cache refresh job already scheduled');
@@ -215,12 +227,12 @@ export default event(Events.ClientReady, async ({ log }, client) => {
     const botDevChannel = client.channels.resolve(constantsConfig.channels.MOD_LOGS) as TextChannel;
     if (botDevChannel) {
         if (botDevChannel.guildId !== constantsConfig.guildId) {
-            Logger.warn(`Bot-dev channel is in unknown guild: ${botDevChannel.guildId}, different from configured guild: ${constantsConfig.guildId}`);
+            Logger.warn(
+                `Bot-dev channel is in unknown guild: ${botDevChannel.guildId}, different from configured guild: ${constantsConfig.guildId}`,
+            );
         }
         const currentDate = new Date();
-        const formattedDate = moment(currentDate)
-            .utcOffset(0)
-            .format();
+        const formattedDate = moment(currentDate).utcOffset(0).format();
 
         // Include the database connection and scheduler status in the mod logs message.
         let logMessage = `<@&${constantsConfig.roles.BOT_DEVELOPER}>\n[${formattedDate}] - ${client.user?.username} has connected! - DB State: ${dbConnected ? 'Connected' : 'Disconnected'}`;

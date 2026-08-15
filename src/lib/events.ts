@@ -11,10 +11,7 @@ export interface EventProps {
     log: LogMethods;
 }
 
-export type EventCallback<T extends EventKeys> = (
-    props: EventProps,
-    ...args: ClientEvents[T]
-) => Awaitable<unknown>;
+export type EventCallback<T extends EventKeys> = (props: EventProps, ...args: ClientEvents[T]) => Awaitable<unknown>;
 
 export interface Event<T extends EventKeys = EventKeys> {
     key: T;
@@ -28,7 +25,6 @@ export function event<T extends EventKeys>(key: T, callback: EventCallback<T>): 
 export function registerEvents(client: Client, events: Event[]): void {
     for (const { key, callback } of events) {
         client.on(key, (...args) => {
-            // eslint-disable-next-line no-console
             const log = console.log.bind(Logger, `[Event: ${key}]`);
 
             try {

@@ -16,20 +16,21 @@ const data = slashCommandStructure({
     ],
 });
 
-const noFaqsFoundEmbed = (searchTerm: string) => makeEmbed({
-    title: `No FAQs found - ${searchTerm}`,
-    description: 'No FAQs found matching your search term. Please try again or see the links below.',
-    fields: [
-        {
-            name: '**FAQ Channel**',
-            value: `<#${constantsConfig.channels.FAQ}>`,
-        },
-        {
-            name: '**Docs FAQ**',
-            value: 'https://docs.flybywiresim.com/fbw-a32nx/faq/',
-        },
-    ],
-});
+const noFaqsFoundEmbed = (searchTerm: string) =>
+    makeEmbed({
+        title: `No FAQs found - ${searchTerm}`,
+        description: 'No FAQs found matching your search term. Please try again or see the links below.',
+        fields: [
+            {
+                name: '**FAQ Channel**',
+                value: `<#${constantsConfig.channels.FAQ}>`,
+            },
+            {
+                name: '**Docs FAQ**',
+                value: 'https://docs.flybywiresim.com/fbw-a32nx/faq/',
+            },
+        ],
+    });
 
 export default slashCommand(data, async ({ interaction }) => {
     const searchTerm = interaction.options.getString('search_term') ?? '';
