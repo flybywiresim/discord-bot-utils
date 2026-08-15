@@ -179,7 +179,7 @@ export default event(Events.MessageCreate, async ({ log }, msg) => {
             const newInfraction = {
                 infractionType: 'ScamLog',
                 moderatorID: msg.client.user.id,
-                reason: `Message content: ${msg.content.toString()}`,
+                reason: 'Automatic timeout: @everyone scam detection',
                 date: new Date(),
                 infractionID: new mongoose.Types.ObjectId(),
             };
