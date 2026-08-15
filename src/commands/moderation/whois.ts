@@ -18,27 +18,11 @@ const data = slashCommandStructure({
     ],
 });
 
-const beautifiedStatus: { [key: string]: string } = {
-    ONLINE: 'Online',
-    IDLE: 'Idle',
-    DND: 'Do Not Disturb',
-    OFFLINE: 'Offline',
-};
-
 export default slashCommand(data, async ({ interaction }) => {
     const targetMember = interaction.options.getMember('tag_or_id') ?? interaction.member;
 
     const filteredRoles = targetMember.roles.cache.filter((role) => role.id !== interaction.guild.id);
     const listedRoles = filteredRoles.sort((a, b) => b.position - a.position).map((role) => role.toString());
-
-    const onlineStatus = beautifiedStatus[targetMember.presence?.status?.toUpperCase() ?? 'OFFLINE'];
-
-    let status;
-    if (targetMember.presence == null) {
-        status = 'Offline';
-    } else {
-        status = onlineStatus;
-    }
 
     const whoisEmbed = makeEmbed({
         author: {
@@ -51,11 +35,6 @@ export default slashCommand(data, async ({ interaction }) => {
             {
                 name: 'Username',
                 value: targetMember.user.tag,
-                inline: true,
-            },
-            {
-                name: 'Status',
-                value: status,
                 inline: true,
             },
             {
