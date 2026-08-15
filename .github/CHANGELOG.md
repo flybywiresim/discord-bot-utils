@@ -2,6 +2,8 @@
 
 Update <small>_ August 2026</small>
 
+- fix: Remove the Presence gateway intent and the status field from whois/User Info (15/08/2026)
+- fix: Stop storing scam-flagged message content in the infractions database (15/08/2026)
 - chore: modernize the stack — move to Node 24, pnpm, ESLint 10, Prettier, obscenity (replacing bad-words) and the global fetch (26/06/2026)
 
 Update <small>_ October 2025</small>
