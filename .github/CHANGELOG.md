@@ -1,6 +1,6 @@
 ## Changelog
 
-Update <small>_ June 2026</small>
+Update <small>_ August 2026</small>
 
 - chore: modernize the stack — move to Node 24, pnpm, ESLint 10, Prettier, obscenity (replacing bad-words) and the global fetch (26/06/2026)
 
