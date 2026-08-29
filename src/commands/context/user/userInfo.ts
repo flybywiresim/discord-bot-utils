@@ -9,27 +9,11 @@ const data = contextMenuCommandStructure({
     dm_permission: false,
 });
 
-const beautifiedStatus: { [key: string]: string } = {
-    ONLINE: 'Online',
-    IDLE: 'Idle',
-    DND: 'Do Not Disturb',
-    OFFLINE: 'Offline',
-};
-
 export default contextMenuCommand(data, async ({ interaction }) => {
     const targetMember = interaction.guild?.members.cache.get(interaction.targetId)!;
 
     const filteredRoles = targetMember.roles.cache.filter((role) => role.id !== interaction.guild.id);
     const listedRoles = filteredRoles.sort((a, b) => b.position - a.position).map((role) => role.toString());
-
-    const onlineStatus = beautifiedStatus[targetMember.presence?.status?.toUpperCase() ?? 'OFFLINE'];
-
-    let status;
-    if (targetMember.presence == null) {
-        status = 'Offline';
-    } else {
-        status = onlineStatus;
-    }
 
     const whoisEmbed = makeEmbed({
         author: {
@@ -42,11 +26,6 @@ export default contextMenuCommand(data, async ({ interaction }) => {
             {
                 name: 'Username',
                 value: targetMember.user.tag,
-                inline: true,
-            },
-            {
-                name: 'Status',
-                value: status,
                 inline: true,
             },
             {
