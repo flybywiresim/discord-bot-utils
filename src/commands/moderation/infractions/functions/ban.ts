@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, Colors, MessageFlags, User } from 'discord.js';
-import { banUser, makeEmbed } from '../../../../lib';
+import { banUser, constantsConfig, makeEmbed } from '../../../../lib';
 
 const noConnEmbed = makeEmbed({
     title: 'Ban - No Connection',
@@ -55,7 +55,7 @@ export async function handleBanInfraction(interaction: ChatInputCommandInteracti
     const moderator = interaction.user;
 
     //Check if the user is a moderator
-    if (!discordUser.moderatable) {
+    if (!discordUser.moderatable || discordUser.roles.cache.hasAny(...constantsConfig.roleGroups.STAFF)) {
         await interaction.followUp({ embeds: [moderatableFailEmbed], flags: MessageFlags.Ephemeral });
         return;
     }

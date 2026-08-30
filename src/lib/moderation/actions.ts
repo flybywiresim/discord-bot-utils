@@ -1,4 +1,5 @@
 import { Colors, EmbedBuilder, Guild, GuildMember, User } from 'discord.js';
+import { constantsConfig } from '../config';
 import { durationInEnglish } from '../durationInEnglish';
 import { makeEmbed } from '../embed';
 import { Logger } from '../logger';
@@ -276,6 +277,14 @@ export async function banUser(options: BanUserOptions): Promise<ModerationAction
         MAX_DELETE_MESSAGE_SECONDS,
     );
     const date = new Date();
+
+    // Staff can never be banned, whoever asks
+    const member = await guild.members.fetch(user).catch(() => null);
+    if (member?.roles.cache.hasAny(...constantsConfig.roleGroups.STAFF)) {
+        const error = new Error('Staff members cannot be banned.');
+        Logger.error(`Ban - Refused to ban ${describeActor(user)}: ${error.message}`);
+        return { success: false, error };
+    }
 
     // The DM has to go out before the ban: afterwards the bot and the user share no server anymore.
     const dmSent = notifyUser ? await sendDm(user, banDmEmbed(guild, moderator, reason)) : null;
