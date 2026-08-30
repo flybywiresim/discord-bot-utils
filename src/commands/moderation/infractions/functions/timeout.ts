@@ -66,7 +66,7 @@ export async function handleTimeoutInfraction(interaction: ChatInputCommandInter
     if (result.dmSent === false) {
         await interaction.followUp({ embeds: [DMFailed(discordUser)], flags: MessageFlags.Ephemeral });
     }
-    if (!result.modLogSent) {
+    if (result.modLogSent === false) {
         await interaction.followUp({ embeds: [noModLogs], flags: MessageFlags.Ephemeral });
     }
     if (result.infraction && !result.infraction.saved) {

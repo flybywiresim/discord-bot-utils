@@ -14,7 +14,8 @@ export type ModerationActionResult =
           success: true;
           // null when no DM was attempted (notifyUser false, or the action has no DM).
           dmSent: boolean | null;
-          modLogSent: boolean;
+          // null when no mod log was attempted (notifyModerators false).
+          modLogSent: boolean | null;
           // null when the action records nothing (remove timeout).
           infraction: AddInfractionResult | null;
       }
@@ -30,6 +31,8 @@ interface ModerationActionOptions {
     guild: Guild;
     user: User;
     moderator: User;
+    // Defaults to true. Automated actions that post their own summary set this to false.
+    notifyModerators?: boolean;
 }
 
 export interface TimeoutUserOptions extends ModerationActionOptions {
@@ -202,7 +205,7 @@ const describeActor = (user: User) => `${user.tag} (${user.id})`;
  * Times out a user, DMs them (unless notifyUser is false), posts the mod log and records the infraction.
  */
 export async function timeoutUser(options: TimeoutUserOptions): Promise<ModerationActionResult> {
-    const { guild, user, moderator, reason, durationSeconds, notifyUser = true } = options;
+    const { guild, user, moderator, reason, durationSeconds, notifyUser = true, notifyModerators = true } = options;
     const durationMs = durationSeconds * 1000;
     const date = new Date();
 
@@ -230,10 +233,9 @@ export async function timeoutUser(options: TimeoutUserOptions): Promise<Moderati
               timeoutDmEmbed(guild, moderator, durationMs, reason, updatedMember.communicationDisabledUntil),
           )
         : null;
-    const modLogSent = await sendModLog(
-        guild,
-        timeoutModLogEmbed(moderator, user, reason, durationMs, formatModLogDate(date)),
-    );
+    const modLogSent = notifyModerators
+        ? await sendModLog(guild, timeoutModLogEmbed(moderator, user, reason, durationMs, formatModLogDate(date)))
+        : null;
     const infraction = await addInfraction({
         userID: user.id,
         infractionType: 'Timeout',
@@ -250,7 +252,7 @@ export async function timeoutUser(options: TimeoutUserOptions): Promise<Moderati
  * Removes a user's timeout and posts the mod log. Nothing is recorded in the database.
  */
 export async function removeTimeout(options: RemoveTimeoutOptions): Promise<ModerationActionResult> {
-    const { guild, user, moderator } = options;
+    const { guild, user, moderator, notifyModerators = true } = options;
     const date = new Date();
 
     try {
@@ -262,7 +264,9 @@ export async function removeTimeout(options: RemoveTimeoutOptions): Promise<Mode
     }
     Logger.info(`Remove Timeout - Timeout of ${describeActor(user)} removed by ${describeActor(moderator)}`);
 
-    const modLogSent = await sendModLog(guild, timeoutRemovedModLogEmbed(moderator, user, formatModLogDate(date)));
+    const modLogSent = notifyModerators
+        ? await sendModLog(guild, timeoutRemovedModLogEmbed(moderator, user, formatModLogDate(date)))
+        : null;
 
     return { success: true, dmSent: null, modLogSent, infraction: null };
 }
@@ -271,7 +275,7 @@ export async function removeTimeout(options: RemoveTimeoutOptions): Promise<Mode
  * Bans a user, DMs them beforehand (unless notifyUser is false), posts the mod log and records the infraction.
  */
 export async function banUser(options: BanUserOptions): Promise<ModerationActionResult> {
-    const { guild, user, moderator, reason, notifyUser = true } = options;
+    const { guild, user, moderator, reason, notifyUser = true, notifyModerators = true } = options;
     const deleteMessageSeconds = Math.min(
         Math.max(Math.floor(options.deleteMessageSeconds ?? 0), 0),
         MAX_DELETE_MESSAGE_SECONDS,
@@ -299,10 +303,9 @@ export async function banUser(options: BanUserOptions): Promise<ModerationAction
         `Ban - ${describeActor(user)} banned by ${describeActor(moderator)} (${deleteMessageSeconds} seconds of messages deleted): ${reason}`,
     );
 
-    const modLogSent = await sendModLog(
-        guild,
-        banModLogEmbed(moderator, user, reason, deleteMessageSeconds, formatModLogDate(date)),
-    );
+    const modLogSent = notifyModerators
+        ? await sendModLog(guild, banModLogEmbed(moderator, user, reason, deleteMessageSeconds, formatModLogDate(date)))
+        : null;
     const infraction = await addInfraction({
         userID: user.id,
         infractionType: 'Ban',
@@ -318,7 +321,7 @@ export async function banUser(options: BanUserOptions): Promise<ModerationAction
  * Unbans a user, posts the mod log and records the infraction.
  */
 export async function unbanUser(options: UnbanUserOptions): Promise<ModerationActionResult> {
-    const { guild, user, moderator, reason } = options;
+    const { guild, user, moderator, reason, notifyModerators = true } = options;
     const date = new Date();
 
     try {
@@ -329,7 +332,9 @@ export async function unbanUser(options: UnbanUserOptions): Promise<ModerationAc
     }
     Logger.info(`Unban - ${describeActor(user)} unbanned by ${describeActor(moderator)}: ${reason}`);
 
-    const modLogSent = await sendModLog(guild, unbanModLogEmbed(moderator, user, reason, formatModLogDate(date)));
+    const modLogSent = notifyModerators
+        ? await sendModLog(guild, unbanModLogEmbed(moderator, user, reason, formatModLogDate(date)))
+        : null;
     const infraction = await addInfraction({
         userID: user.id,
         infractionType: 'Unban',
@@ -346,7 +351,7 @@ export async function unbanUser(options: UnbanUserOptions): Promise<ModerationAc
  * nothing else happens.
  */
 export async function warnUser(options: WarnUserOptions): Promise<ModerationActionResult> {
-    const { guild, user, moderator, reason } = options;
+    const { guild, user, moderator, reason, notifyModerators = true } = options;
     const date = new Date();
     const formattedDate = formatModLogDate(date);
 
@@ -363,7 +368,9 @@ export async function warnUser(options: WarnUserOptions): Promise<ModerationActi
     Logger.info(`Warn - ${describeActor(user)} warned by ${describeActor(moderator)}: ${reason}`);
 
     const dmSent = await sendDm(user, warnDmEmbed(guild, formattedDate, moderator, reason));
-    const modLogSent = await sendModLog(guild, warnModLogEmbed(formattedDate, moderator, user, reason));
+    const modLogSent = notifyModerators
+        ? await sendModLog(guild, warnModLogEmbed(formattedDate, moderator, user, reason))
+        : null;
 
     return { success: true, dmSent, modLogSent, infraction };
 }
@@ -373,7 +380,7 @@ export async function warnUser(options: WarnUserOptions): Promise<ModerationActi
  * else happens.
  */
 export async function addUserNote(options: AddUserNoteOptions): Promise<ModerationActionResult> {
-    const { guild, user, moderator, note } = options;
+    const { guild, user, moderator, note, notifyModerators = true } = options;
     const date = new Date();
 
     const infraction = await addInfraction({
@@ -388,7 +395,9 @@ export async function addUserNote(options: AddUserNoteOptions): Promise<Moderati
     }
     Logger.info(`Note - Note added for ${describeActor(user)} by ${describeActor(moderator)}`);
 
-    const modLogSent = await sendModLog(guild, noteModLogEmbed(formatModLogDate(date), moderator, user, note));
+    const modLogSent = notifyModerators
+        ? await sendModLog(guild, noteModLogEmbed(formatModLogDate(date), moderator, user, note))
+        : null;
 
     return { success: true, dmSent: null, modLogSent, infraction };
 }

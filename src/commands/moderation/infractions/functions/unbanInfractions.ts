@@ -48,7 +48,7 @@ export async function handleUnbanInfraction(interaction: ChatInputCommandInterac
         return;
     }
     await interaction.followUp({ embeds: [unbanEmbed(userID)], flags: MessageFlags.Ephemeral });
-    if (!result.modLogSent) {
+    if (result.modLogSent === false) {
         await interaction.followUp({ embeds: [noModLogs], flags: MessageFlags.Ephemeral });
     }
     if (result.infraction && !result.infraction.saved) {

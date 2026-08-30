@@ -52,7 +52,7 @@ export async function handleUserNoteInfraction(interaction: ChatInputCommandInte
         await interaction.reply({ embeds: [noteFailed], flags: MessageFlags.Ephemeral });
         return;
     }
-    if (!result.modLogSent) {
+    if (result.modLogSent === false) {
         await interaction.reply({ embeds: [noModLogs], flags: MessageFlags.Ephemeral });
         return;
     }

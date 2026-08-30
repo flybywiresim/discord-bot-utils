@@ -53,6 +53,8 @@ interface Config {
     modLogExclude: string[];
     roleAssignmentIds: roleAssignmentId[];
     roleGroups: {
+        STAFF: string[];
+        SUPPORT: string[];
         [x: string]: string[];
     };
     prefixCommandPrefix: string;
@@ -103,7 +105,11 @@ try {
             newRoleGroups[group] = groupRoleIds;
         }
     }
-    parsedConfig.roleGroups = newRoleGroups;
+    const { STAFF, SUPPORT } = newRoleGroups;
+    if (!STAFF || !SUPPORT) {
+        throw new Error('The STAFF and SUPPORT role groups are mandatory');
+    }
+    parsedConfig.roleGroups = { ...newRoleGroups, STAFF, SUPPORT };
     // Parsing Role assignment IDs
     const newRoleAssignmentIds: roleAssignmentId[] = [];
     for (let i = 0; i < roleAssignmentIds.length; i++) {

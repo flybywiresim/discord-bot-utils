@@ -15,7 +15,7 @@ import {
 
 type HoneypotConfig = NonNullable<typeof constantsConfig.honeypot>;
 
-const MAX_MESSAGE_LENGTH = 1024;
+const MAX_MESSAGE_LENGTH = 1024 - 8;
 const MAX_ERROR_LENGTH = 200;
 
 const timeoutReason = 'Honeypot - Automatic timeout after posting in the honeypot channel';
@@ -67,7 +67,7 @@ const summaryEmbed = (message: Message<true>, honeypot: HoneypotConfig, outcome:
     let messageContent = message.content;
     let messageContentFieldTitle = 'Message Content';
     if (messageContent.length > MAX_MESSAGE_LENGTH) {
-        messageContent = `${message.content.slice(0, MAX_MESSAGE_LENGTH - 11)}...`;
+        messageContent = `${message.content.slice(0, MAX_MESSAGE_LENGTH - 3)}...`;
         messageContentFieldTitle = 'Message Content (truncated)';
     }
 
@@ -113,13 +113,20 @@ const summaryEmbed = (message: Message<true>, honeypot: HoneypotConfig, outcome:
     });
 };
 
-async function applyActions(message: Message<true>, moderator: User, honeypot: HoneypotConfig, shouldBan: boolean) {
+async function applyActions(
+    message: Message<true>,
+    moderator: User,
+    honeypot: HoneypotConfig,
+    shouldBan: boolean,
+    messageDeleted: boolean,
+) {
     const { author, guild } = message;
     const logPrefix = `Honeypot - User ${author.id}`;
     Logger.info(
         `Honeypot - ${author.tag} (${author.id}) posted message ${message.id}, ${shouldBan ? 'starting softban' : 'timing out support member'}`,
     );
 
+    // The actions post no mod logs of their own, the summary below reports everything at once
     const timeout = await timeoutUser({
         guild,
         user: author,
@@ -127,15 +134,8 @@ async function applyActions(message: Message<true>, moderator: User, honeypot: H
         reason: timeoutReason,
         durationSeconds: honeypot.timeoutDurationSeconds,
         notifyUser: false,
+        notifyModerators: false,
     });
-
-    let messageDeleted = true;
-    try {
-        await message.delete();
-    } catch (error) {
-        messageDeleted = false;
-        Logger.error(`${logPrefix} - Failed to delete message ${message.id}: ${error}`);
-    }
 
     // The DM has to go out before the ban: afterwards the bot and the user share no server anymore
     let dmSent = true;
@@ -154,9 +154,12 @@ async function applyActions(message: Message<true>, moderator: User, honeypot: H
               reason: banReason,
               deleteMessageSeconds: honeypot.deleteWindowSeconds,
               notifyUser: false,
+              notifyModerators: false,
           })
         : undefined;
-    const unban = ban?.success ? await unbanUser({ guild, user: author, moderator, reason: unbanReason }) : undefined;
+    const unban = ban?.success
+        ? await unbanUser({ guild, user: author, moderator, reason: unbanReason, notifyModerators: false })
+        : undefined;
 
     await sendModLog(guild, summaryEmbed(message, honeypot, { timeout, messageDeleted, dmSent, ban, unban }));
 
@@ -168,7 +171,7 @@ async function applyActions(message: Message<true>, moderator: User, honeypot: H
 
 export async function handleHoneypot(client: Client, message: Message) {
     const { honeypot } = constantsConfig;
-    if (!honeypot || !message.inGuild()) {
+    if (!honeypot || !message.inGuild() || message.system) {
         return;
     }
 
@@ -184,6 +187,15 @@ export async function handleHoneypot(client: Client, message: Message) {
             Logger.info(`${logPrefix} - Ignoring, the member is part of the staff`);
             return;
         }
+
+        let messageDeleted = true;
+        try {
+            await message.delete();
+        } catch (error) {
+            messageDeleted = false;
+            Logger.error(`${logPrefix} - Failed to delete the message: ${error}`);
+        }
+
         if (inFlight.has(author.id)) {
             Logger.info(`${logPrefix} - Ignoring, honeypot actions are already in progress for this user`);
             return;
@@ -198,7 +210,7 @@ export async function handleHoneypot(client: Client, message: Message) {
 
         inFlight.add(author.id);
         try {
-            await applyActions(message, moderator, honeypot, shouldBan);
+            await applyActions(message, moderator, honeypot, shouldBan, messageDeleted);
         } finally {
             inFlight.delete(author.id);
         }

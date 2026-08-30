@@ -50,7 +50,7 @@ export async function handleRemoveTimeoutInfraction(interaction: ChatInputComman
         return;
     }
 
-    if (!result.modLogSent) {
+    if (result.modLogSent === false) {
         await interaction.followUp({ embeds: [noModLogs], flags: MessageFlags.Ephemeral });
     }
 

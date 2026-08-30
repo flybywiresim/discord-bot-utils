@@ -1,5 +1,5 @@
 import { ApplicationCommandType, MessageFlags } from 'discord.js';
-import { constantsConfig, slashCommand, slashCommandStructure, makeEmbed, makeLines } from '../../lib';
+import { constantsConfig, Logger, slashCommand, slashCommandStructure, makeEmbed, makeLines } from '../../lib';
 
 const data = slashCommandStructure({
     name: 'honeypot',
@@ -19,14 +19,25 @@ const honeypotEmbed = () => {
 };
 
 export default slashCommand(data, async ({ interaction }) => {
-    if (interaction.channel) {
-        await interaction.channel.send({ embeds: [honeypotEmbed()] });
-    } else {
-        await interaction.reply({
+    await interaction.deferReply({ flags: MessageFlags.Ephemeral });
+
+    if (!interaction.channel) {
+        await interaction.followUp({
             content: 'This command can only be used in a server.',
             flags: MessageFlags.Ephemeral,
         });
         return;
     }
-    await interaction.reply({ content: 'Honeypot warning sent.', flags: MessageFlags.Ephemeral });
+
+    try {
+        await interaction.channel.send({ embeds: [honeypotEmbed()] });
+    } catch (error) {
+        Logger.error(`Honeypot - Failed to post the warning in channel ${interaction.channel.id}: ${error}`);
+        await interaction.followUp({
+            content: 'Failed to post the honeypot warning, check the bot permissions in this channel.',
+            flags: MessageFlags.Ephemeral,
+        });
+        return;
+    }
+    await interaction.followUp({ content: 'Honeypot warning sent.', flags: MessageFlags.Ephemeral });
 });

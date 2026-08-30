@@ -67,7 +67,7 @@ export async function handleWarnInfraction(interaction: ChatInputCommandInteract
     if (result.dmSent === false) {
         await interaction.followUp({ embeds: [noDM(discordUser)], flags: MessageFlags.Ephemeral });
     }
-    if (!result.modLogSent) {
+    if (result.modLogSent === false) {
         await interaction.followUp({ embeds: [noModLogs], flags: MessageFlags.Ephemeral });
     }
 }

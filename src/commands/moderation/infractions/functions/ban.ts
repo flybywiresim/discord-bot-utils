@@ -77,7 +77,7 @@ export async function handleBanInfraction(interaction: ChatInputCommandInteracti
         return;
     }
     await interaction.followUp({ embeds: [banEmbed(discordUser.user)], flags: MessageFlags.Ephemeral });
-    if (!result.modLogSent) {
+    if (result.modLogSent === false) {
         await interaction.followUp({ embeds: [noModLogs], flags: MessageFlags.Ephemeral });
     }
     if (result.infraction && !result.infraction.saved) {
