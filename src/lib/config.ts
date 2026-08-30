@@ -27,6 +27,7 @@ interface Config {
         FAQ: string;
         FLIGHT_SCHOOL: string;
         KNOWN_ISSUES: string;
+        HONEYPOT: string;
         MOD_ALERTS: string;
         MOD_LOGS: string;
         ROLES: string;
@@ -45,6 +46,10 @@ interface Config {
         [x: string]: string;
     };
     guildId: string;
+    honeypot: {
+        timeoutDurationSeconds: number;
+        deleteWindowSeconds: number;
+    };
     modLogExclude: string[];
     roleAssignmentIds: roleAssignmentId[];
     roleGroups: {
