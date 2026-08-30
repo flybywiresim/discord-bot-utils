@@ -282,6 +282,13 @@ export async function banUser(options: BanUserOptions): Promise<ModerationAction
     );
     const date = new Date();
 
+    // The bot can never ban itself
+    if (user.id === guild.client.user.id) {
+        const error = new Error('The bot cannot ban itself.');
+        Logger.error(`Ban - Refused to ban ${describeActor(user)}: ${error.message}`);
+        return { success: false, error };
+    }
+
     // Staff can never be banned, whoever asks
     const member = await guild.members.fetch(user).catch(() => null);
     if (member?.roles.cache.hasAny(...constantsConfig.roleGroups.STAFF)) {
