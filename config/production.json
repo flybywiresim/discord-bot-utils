@@ -9,7 +9,7 @@
     "FAQ": "751774575464939580",
     "FLIGHT_SCHOOL": "887806920252076053",
     "KNOWN_ISSUES": "771435594445226005",
-    "HONEYPOT": "1541230602131349606",
+    "HONEYPOT": "1543545315540607077",
     "MOD_ALERTS": "1058416774716067921",
     "MOD_LOGS": "783996780181585921",
     "ROLES": "751780817772216401",
@@ -26,7 +26,7 @@
   },
   "guildId": "738864299392630914",
   "honeypot": {
-    "timeoutDurationSeconds": 3600,
+    "timeoutDurationSeconds": 86400,
     "deleteWindowSeconds": 21600
   },
   "modLogExclude": [
