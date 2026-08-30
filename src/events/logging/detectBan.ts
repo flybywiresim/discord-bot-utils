@@ -2,8 +2,7 @@
 
 import { AuditLogEvent, bold, Colors, GuildBan, PartialUser, TextChannel, User } from 'discord.js';
 import moment from 'moment/moment';
-import mongoose from 'mongoose';
-import { constantsConfig, event, Events, Infraction, Logger, makeEmbed, makeLines } from '../../lib';
+import { addInfraction, constantsConfig, event, Events, Logger, makeEmbed, makeLines } from '../../lib';
 
 const MAX_RETRIES = 5;
 const SLEEP_TIMER = 0.5 * 1000;
@@ -156,45 +155,27 @@ export default event(Events.GuildBanAdd, async (_, msg) => {
         await modLogsChannel.send({ embeds: [userBannedIncompleteEmbed(guildBanAdd.user, formattedDate)] });
         return;
     }
-    if (executor && !constantsConfig.modLogExclude.includes(executor.id)) {
+
+    if (
+        executor &&
+        executor.id !== guildBanAdd.client.user.id &&
+        !constantsConfig.modLogExclude.includes(executor.id)
+    ) {
         await modLogsChannel.send({
             content: executor.toString(),
             embeds: [modLogEmbed(guildBanAdd.user, executor, reason as string, formattedDate)],
         });
 
         //Log to the DB
-        Logger.info('Starting Infraction process');
-
-        const newInfraction = {
+        const infraction = await addInfraction({
+            userID: target.id,
             infractionType: 'Ban',
             moderatorID: executor ? executor.id : 'Unavailable',
             reason: `This was a non bot ban: ${reason as string}`,
             date: currentDate,
-            infractionID: new mongoose.Types.ObjectId(),
-        };
-
-        let userData = await Infraction.findOne({ userID: target.id });
-
-        Logger.info(userData);
-
-        if (!userData) {
-            userData = new Infraction({
-                userID: target.id,
-                infractions: [newInfraction],
-            });
-            Logger.info(userData);
-            Logger.info('New user data created');
-        } else {
-            userData.infractions.push(newInfraction);
-            Logger.info('User data updated');
-        }
-
-        try {
-            await userData.save();
-            Logger.info('Infraction process complete');
-        } catch (error) {
+        });
+        if (!infraction.saved) {
             await modLogsChannel.send({ embeds: [logFailed] });
-            Logger.error(error);
         }
     }
 

@@ -18,6 +18,11 @@ export * from './schemas/faqSchema';
 export * from './schemas/birthdaySchema';
 export * from './schemas/prefixCommandSchemas';
 
+//Moderation
+export * from './moderation/addInfraction';
+export * from './moderation/modLog';
+export * from './moderation/actions';
+
 //Scheduler Jobs
 export * from './schedulerJobs/autoDisableSlowMode';
 export * from './schedulerJobs/sendHeartbeat';

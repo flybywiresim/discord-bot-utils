@@ -1,6 +1,5 @@
-import { ChatInputCommandInteraction, Colors, TextChannel, User } from 'discord.js';
-import moment from 'moment';
-import { constantsConfig, Logger, makeEmbed } from '../../../../lib';
+import { ChatInputCommandInteraction, Colors, MessageFlags, User } from 'discord.js';
+import { makeEmbed, removeTimeout } from '../../../../lib';
 
 const notTimedOutEmbed = (discordUser: User) =>
     makeEmbed({
@@ -16,33 +15,6 @@ const failedRemoveTimeoutEmbed = (discordUser: User) =>
         color: Colors.Red,
     });
 
-const modLogEmbed = (moderator: User, discordUser: User, date: string) =>
-    makeEmbed({
-        author: {
-            name: `[TIMEOUT REMOVED]  ${discordUser.tag}`,
-            iconURL: discordUser.displayAvatarURL(),
-        },
-        fields: [
-            {
-                inline: true,
-                name: 'Moderator',
-                value: moderator.toString(),
-            },
-            {
-                inline: true,
-                name: 'User',
-                value: discordUser.toString(),
-            },
-            {
-                inline: false,
-                name: 'Date',
-                value: date,
-            },
-        ],
-        footer: { text: `User ID: ${discordUser.id}` },
-        color: Colors.Green,
-    });
-
 const timeoutRemovedEmbed = (discordUser: User) =>
     makeEmbed({
         title: `${discordUser.tag} was successfully removed from timeout`,
@@ -56,35 +28,31 @@ const noModLogs = makeEmbed({
 });
 
 export async function handleRemoveTimeoutInfraction(interaction: ChatInputCommandInteraction<'cached'>) {
-    await interaction.deferReply({ ephemeral: true });
+    await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
     const userID = interaction.options.getUser('tag_or_id')!.id;
     const discordUser = await interaction.guild.members.fetch(userID);
     const moderator = interaction.user;
-    const modLogsChannel = interaction.guild.channels.resolve(constantsConfig.channels.MOD_LOGS) as TextChannel;
-    const currentDate = new Date();
-    const formattedDate: string = moment(currentDate).utcOffset(0).format();
 
     // Check if the user is currently timed out
     if (!discordUser.isCommunicationDisabled()) {
-        await interaction.followUp({ embeds: [notTimedOutEmbed(discordUser.user)], ephemeral: true });
+        await interaction.followUp({ embeds: [notTimedOutEmbed(discordUser.user)], flags: MessageFlags.Ephemeral });
         return;
     }
 
-    // Remove the timeout for the user
-    try {
-        await discordUser.timeout(1); // Set the duration to 0 to remove the timeout
-    } catch (error) {
-        Logger.error(error);
-        await interaction.followUp({ embeds: [failedRemoveTimeoutEmbed(discordUser.user)], ephemeral: true });
+    // Remove the timeout for the user and send the mod log
+    const result = await removeTimeout({ member: discordUser, moderator });
+    if (!result.success) {
+        await interaction.followUp({
+            embeds: [failedRemoveTimeoutEmbed(discordUser.user)],
+            flags: MessageFlags.Ephemeral,
+        });
         return;
     }
 
-    try {
-        await modLogsChannel.send({ embeds: [modLogEmbed(moderator, discordUser.user, formattedDate)] });
-    } catch {
-        await interaction.followUp({ embeds: [noModLogs], ephemeral: true });
+    if (!result.modLogSent) {
+        await interaction.followUp({ embeds: [noModLogs], flags: MessageFlags.Ephemeral });
     }
 
-    await interaction.followUp({ embeds: [timeoutRemovedEmbed(discordUser.user)], ephemeral: true });
+    await interaction.followUp({ embeds: [timeoutRemovedEmbed(discordUser.user)], flags: MessageFlags.Ephemeral });
 }
