@@ -1,25 +1,5 @@
 import { codeBlock, Colors, DMChannel, TextChannel } from 'discord.js';
-import mongoose from 'mongoose';
-import {
-    constantsConfig,
-    makeEmbed,
-    makeLines,
-    event,
-    Events,
-    getConn,
-    Infraction,
-    Logger,
-    imageBaseUrl,
-} from '../../lib';
-
-const excludedRoles = [
-    constantsConfig.roles.ADMIN_TEAM,
-    constantsConfig.roles.MODERATION_TEAM,
-    constantsConfig.roles.DEVELOPMENT_TEAM,
-    constantsConfig.roles.MEDIA_TEAM,
-    constantsConfig.roles.COMMUNITY_SUPPORT,
-    constantsConfig.roles.FBW_EMERITUS,
-];
+import { addInfraction, constantsConfig, makeEmbed, makeLines, event, Events, getConn, imageBaseUrl } from '../../lib';
 
 const noConnEmbed = makeEmbed({
     title: 'Scam Logs - No Connection',
@@ -45,6 +25,11 @@ export default event(Events.MessageCreate, async ({ log }, msg) => {
         return;
     }
 
+    if (msg.channelId === constantsConfig.channels.HONEYPOT) {
+        // The honeypot handler softbans anyone posting there, which supersedes the @everyone timeout
+        return;
+    }
+
     const scamReportLogs = msg.guild.channels.resolve(constantsConfig.channels.SCAM_REPORT_LOGS) as TextChannel | null;
     if (scamReportLogs && msg.content.toLowerCase().includes('@everyone') && !msg.author.bot) {
         const conn = getConn();
@@ -65,17 +50,7 @@ export default event(Events.MessageCreate, async ({ log }, msg) => {
         }
 
         if (!(msg.channel instanceof DMChannel)) {
-            let hasRole = false;
-            try {
-                excludedRoles.forEach((roleList) => {
-                    // @ts-ignore
-                    if (msg.member.roles.cache.some((role) => role.id === roleList)) {
-                        hasRole = true;
-                    }
-                });
-            } catch (e) {
-                log(e);
-            }
+            const hasRole = msg.member?.roles.cache.hasAny(...constantsConfig.roleGroups.SUPPORT) ?? false;
             // Has role, message can stay, log sent
             if (hasRole) {
                 const allowedEmbed = makeEmbed({
@@ -138,7 +113,7 @@ export default event(Events.MessageCreate, async ({ log }, msg) => {
             // Time out
             try {
                 // @ts-ignore
-                await msg.member.timeout(60 * 60 * 24 * 7 * 1000, 'Scam log');
+                await msg.member.timeout(60 * 60 * 24 * 1 * 1000, 'Scam log');
             } catch (e) {
                 log(e);
                 const errorEmbed = makeEmbed({
@@ -173,39 +148,14 @@ export default event(Events.MessageCreate, async ({ log }, msg) => {
             await scamReportLogs.send({ embeds: [notAllowedEmbed] });
 
             // Add infraction to database
-
-            Logger.info('Starting Infraction process');
-
-            const newInfraction = {
+            const infraction = await addInfraction({
+                userID: msg.author.id,
                 infractionType: 'ScamLog',
                 moderatorID: msg.client.user.id,
                 reason: 'Automatic timeout: @everyone scam detection',
-                date: new Date(),
-                infractionID: new mongoose.Types.ObjectId(),
-            };
-
-            let userData = await Infraction.findOne({ UserID: msg.author.id });
-
-            log(userData);
-
-            if (!userData) {
-                userData = new Infraction({
-                    userID: msg.author.id,
-                    infractions: [newInfraction],
-                });
-                Logger.info(userData);
-                Logger.info('New user data created');
-            } else {
-                userData.infractions.push(newInfraction);
-                Logger.info('User data updated');
-            }
-
-            try {
-                await userData.save();
-                Logger.info('Infraction process complete');
-            } catch (error) {
+            });
+            if (!infraction.saved) {
                 await scamReportLogs.send({ embeds: [logFailed] });
-                Logger.error(error);
             }
         }
     }
