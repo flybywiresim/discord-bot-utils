@@ -1,6 +1,6 @@
-import { Client, codeBlock, Colors, GuildMember, Message, User } from 'discord.js';
+import { Client, codeBlock, Colors, Guild, GuildMember, Message, User } from 'discord.js';
 import {
-    banMember,
+    banUser,
     constantsConfig,
     durationInEnglish,
     imageBaseUrl,
@@ -9,7 +9,7 @@ import {
     makeLines,
     ModerationActionResult,
     sendModLog,
-    timeoutMember,
+    timeoutUser,
     unbanUser,
 } from '../../lib';
 
@@ -35,17 +35,9 @@ interface HoneypotOutcome {
     unban?: ModerationActionResult;
 }
 
-const dmEmbed = (
-    member: GuildMember,
-    moderator: User,
-    channelName: string,
-    honeypot: HoneypotConfig,
-    banned: boolean,
-) =>
+const dmEmbed = (guild: Guild, moderator: User, channelName: string, honeypot: HoneypotConfig, banned: boolean) =>
     makeEmbed({
-        title: banned
-            ? `You have been removed from ${member.guild.name}`
-            : `You have been timed out in ${member.guild.name}`,
+        title: banned ? `You have been removed from ${guild.name}` : `You have been timed out in ${guild.name}`,
         description: makeLines([
             `You posted in #${channelName}, a channel that only exists to catch spam bots.`,
             '',
@@ -143,8 +135,9 @@ async function applyActions(
         `Honeypot - ${author.tag} (${author.id}) posted message ${message.id}, ${shouldBan ? 'starting softban' : 'timing out support member'}`,
     );
 
-    const timeout = await timeoutMember({
-        member,
+    const timeout = await timeoutUser({
+        guild,
+        user: author,
         moderator,
         reason: timeoutReason,
         durationSeconds: honeypot.timeoutDurationSeconds,
@@ -162,24 +155,23 @@ async function applyActions(
     // The DM has to go out before the ban: afterwards the bot and the user share no server anymore
     let dmSent = true;
     try {
-        await member.send({ embeds: [dmEmbed(member, moderator, message.channel.name, honeypot, shouldBan)] });
+        await author.send({ embeds: [dmEmbed(guild, moderator, message.channel.name, honeypot, shouldBan)] });
     } catch (error) {
         dmSent = false;
         Logger.warn(`${logPrefix} - DM not sent: ${error}`);
     }
 
     const ban = shouldBan
-        ? await banMember({
-              member,
+        ? await banUser({
+              guild,
+              user: author,
               moderator,
               reason: banReason,
               deleteMessageSeconds: honeypot.deleteWindowSeconds,
               notifyUser: false,
           })
         : undefined;
-    const unban = ban?.success
-        ? await unbanUser({ guild, userID: author.id, moderator, reason: unbanReason })
-        : undefined;
+    const unban = ban?.success ? await unbanUser({ guild, user: author, moderator, reason: unbanReason }) : undefined;
 
     await sendModLog(guild, summaryEmbed(message, honeypot, { timeout, messageDeleted, dmSent, ban, unban }));
 

@@ -41,7 +41,7 @@ export async function handleRemoveTimeoutInfraction(interaction: ChatInputComman
     }
 
     // Remove the timeout for the user and send the mod log
-    const result = await removeTimeout({ member: discordUser, moderator });
+    const result = await removeTimeout({ guild: interaction.guild, user: discordUser.user, moderator });
     if (!result.success) {
         await interaction.followUp({
             embeds: [failedRemoveTimeoutEmbed(discordUser.user)],

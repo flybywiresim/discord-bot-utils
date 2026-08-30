@@ -24,36 +24,41 @@ export type ModerationActionResult =
           dmSent?: boolean;
       };
 
-export interface TimeoutMemberOptions {
-    member: GuildMember;
+// Every action targets a user of a guild and is performed by a moderator (the bot user for automated actions).
+interface ModerationActionOptions {
+    guild: Guild;
+    user: User;
     moderator: User;
+}
+
+export interface TimeoutUserOptions extends ModerationActionOptions {
     reason: string;
     durationSeconds: number;
     // Defaults to true. Automated actions that send their own DM set this to false.
     notifyUser?: boolean;
 }
 
-export interface RemoveTimeoutOptions {
-    member: GuildMember;
-    moderator: User;
-}
+export type RemoveTimeoutOptions = ModerationActionOptions;
 
-export interface BanMemberOptions {
-    member: GuildMember;
-    moderator: User;
+export interface BanUserOptions extends ModerationActionOptions {
     reason: string;
     deleteMessageSeconds?: number;
     notifyUser?: boolean;
 }
 
-export interface UnbanUserOptions {
-    guild: Guild;
-    userID: string;
-    moderator: User;
+export interface UnbanUserOptions extends ModerationActionOptions {
     reason: string;
 }
 
-const userIdFooter = (user: User | string) => ({ text: `User ID: ${typeof user === 'string' ? user : user.id}` });
+export interface WarnUserOptions extends ModerationActionOptions {
+    reason: string;
+}
+
+export interface AddUserNoteOptions extends ModerationActionOptions {
+    note: string;
+}
+
+const userIdFooter = (user: User) => ({ text: `User ID: ${user.id}` });
 
 const timeoutDmEmbed = (guild: Guild, moderator: User, durationMs: number, reason: string, timedOutUntil: Date) =>
     makeEmbed({
@@ -131,25 +136,61 @@ const banModLogEmbed = (
         color: Colors.Red,
     });
 
-const unbanModLogEmbed = (moderator: User, userID: string, reason: string, formattedDate: string) =>
+const unbanModLogEmbed = (moderator: User, user: User, reason: string, formattedDate: string) =>
     makeEmbed({
-        author: { name: `[UNBANNED] ${userID}` },
+        author: { name: `[UNBANNED] ${user.id}` },
         fields: [
-            { name: 'User', value: userID },
+            { name: 'User', value: user.id },
             { name: 'Moderator', value: moderator.toString() },
             { name: 'Reason', value: reason },
             { name: 'Date', value: formattedDate },
         ],
-        footer: userIdFooter(userID),
+        footer: userIdFooter(user),
         color: Colors.Red,
     });
 
-async function sendDm(member: GuildMember, embed: EmbedBuilder): Promise<boolean> {
+const warnDmEmbed = (guild: Guild, formattedDate: string, moderator: User, reason: string) =>
+    makeEmbed({
+        title: `You have been warned in ${guild.name}`,
+        fields: [
+            { inline: false, name: 'Moderator', value: moderator.toString() },
+            { inline: false, name: 'Reason', value: reason },
+            { inline: false, name: 'Date', value: formattedDate },
+        ],
+    });
+
+const warnModLogEmbed = (formattedDate: string, moderator: User, user: User, reason: string) =>
+    makeEmbed({
+        author: { name: `[WARNED]  ${user.tag}`, iconURL: user.displayAvatarURL() },
+        fields: [
+            { inline: false, name: 'User', value: user.toString() },
+            { inline: false, name: 'Moderator', value: moderator.toString() },
+            { inline: false, name: 'Reason', value: reason },
+            { inline: false, name: 'Date', value: formattedDate },
+        ],
+        footer: userIdFooter(user),
+        color: Colors.Red,
+    });
+
+const noteModLogEmbed = (formattedDate: string, moderator: User, user: User, note: string) =>
+    makeEmbed({
+        author: { name: `[NOTE]  ${user.tag}`, iconURL: user.displayAvatarURL() },
+        fields: [
+            { inline: false, name: 'User', value: user.toString() },
+            { inline: false, name: 'Moderator', value: moderator.toString() },
+            { inline: false, name: 'Note', value: note },
+            { inline: false, name: 'Date', value: formattedDate },
+        ],
+        footer: userIdFooter(user),
+        color: Colors.Red,
+    });
+
+async function sendDm(user: User, embed: EmbedBuilder): Promise<boolean> {
     try {
-        await member.send({ embeds: [embed] });
+        await user.send({ embeds: [embed] });
         return true;
     } catch (error) {
-        Logger.debug(`DM not sent to ${member.user.tag} (${member.id}): ${error}`);
+        Logger.debug(`DM not sent to ${user.tag} (${user.id}): ${error}`);
         return false;
     }
 }
@@ -157,42 +198,43 @@ async function sendDm(member: GuildMember, embed: EmbedBuilder): Promise<boolean
 const describeActor = (user: User) => `${user.tag} (${user.id})`;
 
 /**
- * Times out a member, DMs them (unless notifyUser is false), posts the mod log and records the infraction.
+ * Times out a user, DMs them (unless notifyUser is false), posts the mod log and records the infraction.
  */
-export async function timeoutMember(options: TimeoutMemberOptions): Promise<ModerationActionResult> {
-    const { member, moderator, reason, durationSeconds, notifyUser = true } = options;
+export async function timeoutUser(options: TimeoutUserOptions): Promise<ModerationActionResult> {
+    const { guild, user, moderator, reason, durationSeconds, notifyUser = true } = options;
     const durationMs = durationSeconds * 1000;
     const date = new Date();
 
     let updatedMember: GuildMember;
     try {
+        const member = await guild.members.fetch(user);
         updatedMember = await member.timeout(durationMs, reason);
     } catch (error) {
-        Logger.error(`Timeout - Failed to time out ${describeActor(member.user)}: ${error}`);
+        Logger.error(`Timeout - Failed to time out ${describeActor(user)}: ${error}`);
         return { success: false, error };
     }
     // timeout() returns a patched copy; the cached member is only updated once the gateway event arrives.
     if (!updatedMember.isCommunicationDisabled()) {
         const error = new Error('Discord did not report the member as timed out.');
-        Logger.error(`Timeout - Failed to time out ${describeActor(member.user)}: ${error.message}`);
+        Logger.error(`Timeout - Failed to time out ${describeActor(user)}: ${error.message}`);
         return { success: false, error };
     }
     Logger.info(
-        `Timeout - ${describeActor(member.user)} timed out for ${durationInEnglish(durationMs)} by ${describeActor(moderator)}: ${reason}`,
+        `Timeout - ${describeActor(user)} timed out for ${durationInEnglish(durationMs)} by ${describeActor(moderator)}: ${reason}`,
     );
 
     const dmSent = notifyUser
         ? await sendDm(
-              member,
-              timeoutDmEmbed(member.guild, moderator, durationMs, reason, updatedMember.communicationDisabledUntil),
+              user,
+              timeoutDmEmbed(guild, moderator, durationMs, reason, updatedMember.communicationDisabledUntil),
           )
         : null;
     const modLogSent = await sendModLog(
-        member.guild,
-        timeoutModLogEmbed(moderator, member.user, reason, durationMs, formatModLogDate(date)),
+        guild,
+        timeoutModLogEmbed(moderator, user, reason, durationMs, formatModLogDate(date)),
     );
     const infraction = await addInfraction({
-        userID: member.id,
+        userID: user.id,
         infractionType: 'Timeout',
         moderatorID: moderator.id,
         reason,
@@ -204,33 +246,31 @@ export async function timeoutMember(options: TimeoutMemberOptions): Promise<Mode
 }
 
 /**
- * Removes a member's timeout and posts the mod log. Nothing is recorded in the database.
+ * Removes a user's timeout and posts the mod log. Nothing is recorded in the database.
  */
 export async function removeTimeout(options: RemoveTimeoutOptions): Promise<ModerationActionResult> {
-    const { member, moderator } = options;
+    const { guild, user, moderator } = options;
     const date = new Date();
 
     try {
+        const member = await guild.members.fetch(user);
         await member.timeout(null);
     } catch (error) {
-        Logger.error(`Remove Timeout - Failed to remove the timeout of ${describeActor(member.user)}: ${error}`);
+        Logger.error(`Remove Timeout - Failed to remove the timeout of ${describeActor(user)}: ${error}`);
         return { success: false, error };
     }
-    Logger.info(`Remove Timeout - Timeout of ${describeActor(member.user)} removed by ${describeActor(moderator)}`);
+    Logger.info(`Remove Timeout - Timeout of ${describeActor(user)} removed by ${describeActor(moderator)}`);
 
-    const modLogSent = await sendModLog(
-        member.guild,
-        timeoutRemovedModLogEmbed(moderator, member.user, formatModLogDate(date)),
-    );
+    const modLogSent = await sendModLog(guild, timeoutRemovedModLogEmbed(moderator, user, formatModLogDate(date)));
 
     return { success: true, dmSent: null, modLogSent, infraction: null };
 }
 
 /**
- * Bans a member, DMs them beforehand (unless notifyUser is false), posts the mod log and records the infraction.
+ * Bans a user, DMs them beforehand (unless notifyUser is false), posts the mod log and records the infraction.
  */
-export async function banMember(options: BanMemberOptions): Promise<ModerationActionResult> {
-    const { member, moderator, reason, notifyUser = true } = options;
+export async function banUser(options: BanUserOptions): Promise<ModerationActionResult> {
+    const { guild, user, moderator, reason, notifyUser = true } = options;
     const deleteMessageSeconds = Math.min(
         Math.max(Math.floor(options.deleteMessageSeconds ?? 0), 0),
         MAX_DELETE_MESSAGE_SECONDS,
@@ -238,24 +278,24 @@ export async function banMember(options: BanMemberOptions): Promise<ModerationAc
     const date = new Date();
 
     // The DM has to go out before the ban: afterwards the bot and the user share no server anymore.
-    const dmSent = notifyUser ? await sendDm(member, banDmEmbed(member.guild, moderator, reason)) : null;
+    const dmSent = notifyUser ? await sendDm(user, banDmEmbed(guild, moderator, reason)) : null;
 
     try {
-        await member.ban({ deleteMessageSeconds, reason });
+        await guild.members.ban(user, { deleteMessageSeconds, reason });
     } catch (error) {
-        Logger.error(`Ban - Failed to ban ${describeActor(member.user)}: ${error}`);
+        Logger.error(`Ban - Failed to ban ${describeActor(user)}: ${error}`);
         return { success: false, error, dmSent: dmSent ?? undefined };
     }
     Logger.info(
-        `Ban - ${describeActor(member.user)} banned by ${describeActor(moderator)} (${deleteMessageSeconds} seconds of messages deleted): ${reason}`,
+        `Ban - ${describeActor(user)} banned by ${describeActor(moderator)} (${deleteMessageSeconds} seconds of messages deleted): ${reason}`,
     );
 
     const modLogSent = await sendModLog(
-        member.guild,
-        banModLogEmbed(moderator, member.user, reason, deleteMessageSeconds, formatModLogDate(date)),
+        guild,
+        banModLogEmbed(moderator, user, reason, deleteMessageSeconds, formatModLogDate(date)),
     );
     const infraction = await addInfraction({
-        userID: member.id,
+        userID: user.id,
         infractionType: 'Ban',
         moderatorID: moderator.id,
         reason,
@@ -269,25 +309,77 @@ export async function banMember(options: BanMemberOptions): Promise<ModerationAc
  * Unbans a user, posts the mod log and records the infraction.
  */
 export async function unbanUser(options: UnbanUserOptions): Promise<ModerationActionResult> {
-    const { guild, userID, moderator, reason } = options;
+    const { guild, user, moderator, reason } = options;
     const date = new Date();
 
     try {
-        await guild.members.unban(userID, reason);
+        await guild.members.unban(user, reason);
     } catch (error) {
-        Logger.error(`Unban - Failed to unban user ${userID}: ${error}`);
+        Logger.error(`Unban - Failed to unban ${describeActor(user)}: ${error}`);
         return { success: false, error };
     }
-    Logger.info(`Unban - User ${userID} unbanned by ${describeActor(moderator)}: ${reason}`);
+    Logger.info(`Unban - ${describeActor(user)} unbanned by ${describeActor(moderator)}: ${reason}`);
 
-    const modLogSent = await sendModLog(guild, unbanModLogEmbed(moderator, userID, reason, formatModLogDate(date)));
+    const modLogSent = await sendModLog(guild, unbanModLogEmbed(moderator, user, reason, formatModLogDate(date)));
     const infraction = await addInfraction({
-        userID,
+        userID: user.id,
         infractionType: 'Unban',
         moderatorID: moderator.id,
         reason,
         date,
     });
+
+    return { success: true, dmSent: null, modLogSent, infraction };
+}
+
+/**
+ * Records a warning, DMs the user and posts the mod log. The record is the action: when it cannot be saved
+ * nothing else happens.
+ */
+export async function warnUser(options: WarnUserOptions): Promise<ModerationActionResult> {
+    const { guild, user, moderator, reason } = options;
+    const date = new Date();
+    const formattedDate = formatModLogDate(date);
+
+    const infraction = await addInfraction({
+        userID: user.id,
+        infractionType: 'Warn',
+        moderatorID: moderator.id,
+        reason,
+        date,
+    });
+    if (!infraction.saved) {
+        return { success: false, error: infraction.error ?? new Error(infraction.reason) };
+    }
+    Logger.info(`Warn - ${describeActor(user)} warned by ${describeActor(moderator)}: ${reason}`);
+
+    const dmSent = await sendDm(user, warnDmEmbed(guild, formattedDate, moderator, reason));
+    const modLogSent = await sendModLog(guild, warnModLogEmbed(formattedDate, moderator, user, reason));
+
+    return { success: true, dmSent, modLogSent, infraction };
+}
+
+/**
+ * Records a note about a user and posts the mod log. The record is the action: when it cannot be saved nothing
+ * else happens.
+ */
+export async function addUserNote(options: AddUserNoteOptions): Promise<ModerationActionResult> {
+    const { guild, user, moderator, note } = options;
+    const date = new Date();
+
+    const infraction = await addInfraction({
+        userID: user.id,
+        infractionType: 'Note',
+        moderatorID: moderator.id,
+        reason: note,
+        date,
+    });
+    if (!infraction.saved) {
+        return { success: false, error: infraction.error ?? new Error(infraction.reason) };
+    }
+    Logger.info(`Note - Note added for ${describeActor(user)} by ${describeActor(moderator)}`);
+
+    const modLogSent = await sendModLog(guild, noteModLogEmbed(formatModLogDate(date), moderator, user, note));
 
     return { success: true, dmSent: null, modLogSent, infraction };
 }

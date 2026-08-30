@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, Colors, MessageFlags, User } from 'discord.js';
-import { banMember, makeEmbed } from '../../../../lib';
+import { banUser, makeEmbed } from '../../../../lib';
 
 const noConnEmbed = makeEmbed({
     title: 'Ban - No Connection',
@@ -61,8 +61,9 @@ export async function handleBanInfraction(interaction: ChatInputCommandInteracti
     }
 
     //DM the user, ban the user, send the mod log and log to the DB
-    const result = await banMember({
-        member: discordUser,
+    const result = await banUser({
+        guild: interaction.guild,
+        user: discordUser.user,
         moderator,
         reason: banReason,
         deleteMessageSeconds: daysDeletedNumber * 24 * 60 * 60,

@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, Colors, MessageFlags, User } from 'discord.js';
-import { makeEmbed, makeLines, timeoutMember } from '../../../../lib';
+import { makeEmbed, makeLines, timeoutUser } from '../../../../lib';
 
 const noConnEmbed = makeEmbed({
     title: 'Timeout - No Connection',
@@ -42,29 +42,29 @@ const logFailed = makeEmbed({
 export async function handleTimeoutInfraction(interaction: ChatInputCommandInteraction<'cached'>) {
     await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
-    const userID = interaction.options.getUser('tag_or_id')!.id;
+    const discordUser = interaction.options.getUser('tag_or_id')!;
     const timeoutDuration = interaction.options.getNumber('duration')!;
     const timeoutReason = interaction.options.getString('reason')!;
-    const discordUser = await interaction.guild.members.fetch(userID);
     const moderator = interaction.user;
 
     //Timeout the user, send the DM and the mod log and log to the DB
-    const result = await timeoutMember({
-        member: discordUser,
+    const result = await timeoutUser({
+        guild: interaction.guild,
+        user: discordUser,
         moderator,
         reason: timeoutReason,
         durationSeconds: timeoutDuration / 1000,
     });
 
     if (!result.success) {
-        await interaction.editReply({ embeds: [failedTimeoutEmbed(discordUser.user, result.error)] });
+        await interaction.editReply({ embeds: [failedTimeoutEmbed(discordUser, result.error)] });
         return;
     }
 
     //Timeout was successful
-    await interaction.editReply({ embeds: [timeoutEmbed(discordUser.user)] });
+    await interaction.editReply({ embeds: [timeoutEmbed(discordUser)] });
     if (result.dmSent === false) {
-        await interaction.followUp({ embeds: [DMFailed(discordUser.user)], flags: MessageFlags.Ephemeral });
+        await interaction.followUp({ embeds: [DMFailed(discordUser)], flags: MessageFlags.Ephemeral });
     }
     if (!result.modLogSent) {
         await interaction.followUp({ embeds: [noModLogs], flags: MessageFlags.Ephemeral });

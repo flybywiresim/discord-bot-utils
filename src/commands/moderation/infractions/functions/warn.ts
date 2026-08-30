@@ -1,6 +1,5 @@
-import { ChatInputCommandInteraction, Colors, Guild, MessageFlags, TextChannel, User } from 'discord.js';
-import moment from 'moment/moment';
-import { addInfraction, constantsConfig, getConn, makeEmbed } from '../../../../lib';
+import { ChatInputCommandInteraction, Colors, MessageFlags, User } from 'discord.js';
+import { getConn, makeEmbed, warnUser } from '../../../../lib';
 
 const noConnEmbed = makeEmbed({
     title: 'Warn - No Connection',
@@ -15,64 +14,10 @@ const warnFailed = (discordUser: User) =>
         color: Colors.Red,
     });
 
-const dmEmbed = (guild: Guild, formattedDate: any, moderator: User, reason: string) =>
-    makeEmbed({
-        title: `You have been warned in ${guild.name}`,
-        fields: [
-            {
-                inline: false,
-                name: 'Moderator',
-                value: moderator.toString(),
-            },
-            {
-                inline: false,
-                name: 'Reason',
-                value: reason,
-            },
-            {
-                inline: false,
-                name: 'Date',
-                value: formattedDate,
-            },
-        ],
-    });
-
 const noDM = (discordUser: User) =>
     makeEmbed({
         title: 'Warn - DM not sent',
         description: `DM was not sent to ${discordUser.toString()}, they either have DMs closed or share no mutual servers with the bot.`,
-        color: Colors.Red,
-    });
-
-const modLogEmbed = (formattedDate: any, moderator: User, discordUser: User, reason: string) =>
-    makeEmbed({
-        author: {
-            name: `[WARNED]  ${discordUser.tag}`,
-            iconURL: discordUser.displayAvatarURL(),
-        },
-        fields: [
-            {
-                inline: false,
-                name: 'User',
-                value: discordUser.toString(),
-            },
-            {
-                inline: false,
-                name: 'Moderator',
-                value: moderator.toString(),
-            },
-            {
-                inline: false,
-                name: 'Reason',
-                value: reason,
-            },
-            {
-                inline: false,
-                name: 'Date',
-                value: formattedDate,
-            },
-        ],
-        footer: { text: `User ID: ${discordUser.id}` },
         color: Colors.Red,
     });
 
@@ -111,37 +56,18 @@ export async function handleWarnInfraction(interaction: ChatInputCommandInteract
 
     const discordUser = await interaction.client.users.fetch(userID);
     const moderator = interaction.user;
-    const currentDate = new Date();
-    const formattedDate: string = moment(currentDate).utcOffset(0).format();
-    const modLogsChannel = interaction.guild.channels.resolve(constantsConfig.channels.MOD_LOGS) as TextChannel;
 
-    //Try to save to the database
-    const infraction = await addInfraction({
-        userID,
-        infractionType: 'Warn',
-        moderatorID: moderator.id,
-        reason,
-        date: currentDate,
-    });
-
-    if (!infraction.saved) {
+    const result = await warnUser({ guild: interaction.guild, user: discordUser, moderator, reason });
+    if (!result.success) {
         await interaction.editReply({ embeds: [warnFailed(discordUser)] });
         return;
     }
 
     await interaction.editReply({ embeds: [warnEmbed(discordUser)] });
-
-    //Send DM to user
-    try {
-        await discordUser.send({ embeds: [dmEmbed(interaction.guild, formattedDate, moderator, reason)] });
-    } catch {
+    if (result.dmSent === false) {
         await interaction.followUp({ embeds: [noDM(discordUser)], flags: MessageFlags.Ephemeral });
     }
-
-    //Send embed to mod-logs channel
-    try {
-        await modLogsChannel.send({ embeds: [modLogEmbed(formattedDate, moderator, discordUser, reason)] });
-    } catch {
+    if (!result.modLogSent) {
         await interaction.followUp({ embeds: [noModLogs], flags: MessageFlags.Ephemeral });
     }
 }

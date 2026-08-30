@@ -36,11 +36,12 @@ const logFailed = makeEmbed({
 export async function handleUnbanInfraction(interaction: ChatInputCommandInteraction<'cached'>) {
     await interaction.deferReply({ flags: MessageFlags.Ephemeral });
 
-    const userID = interaction.options.getUser('id')!.id;
+    const discordUser = interaction.options.getUser('id')!;
+    const userID = discordUser.id;
     const unbanReason = interaction.options.getString('reason')!;
     const moderator = interaction.user;
 
-    const result = await unbanUser({ guild: interaction.guild, userID, moderator, reason: unbanReason });
+    const result = await unbanUser({ guild: interaction.guild, user: discordUser, moderator, reason: unbanReason });
 
     if (!result.success) {
         await interaction.followUp({ embeds: [failedUnbanEmbed(userID)], flags: MessageFlags.Ephemeral });
