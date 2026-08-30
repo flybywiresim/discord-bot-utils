@@ -19,6 +19,7 @@ import whois from './moderation/whois';
 import faq from './moderation/faq/faq';
 import rules from './moderation/rules';
 import welcome from './moderation/welcome';
+import honeypot from './moderation/honeypot';
 import searchFaq from './utils/searchFaq';
 import roleAssignment from './moderation/roleAssignment';
 import birthday from './utils/birthday/birthday';
@@ -57,6 +58,7 @@ const commandArray: SlashCommand[] = [
     faq,
     rules,
     welcome,
+    honeypot,
     searchFaq,
     roleAssignment,
     birthday,
