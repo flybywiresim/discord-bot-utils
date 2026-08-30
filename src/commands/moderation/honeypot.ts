@@ -1,5 +1,5 @@
 import { ApplicationCommandType, MessageFlags } from 'discord.js';
-import { constantsConfig, slashCommand, slashCommandStructure, makeEmbed } from '../../lib';
+import { constantsConfig, slashCommand, slashCommandStructure, makeEmbed, makeLines } from '../../lib';
 
 const data = slashCommandStructure({
     name: 'honeypot',
@@ -11,8 +11,10 @@ const data = slashCommandStructure({
 
 const honeypotEmbed = () => {
     return makeEmbed({
-        title: 'No Fly Zone - Do not Post',
-        description: 'Do not post in this channel! Any message sent here will result in a softban.',
+        description: makeLines([
+            '## No Fly Zone',
+            'Do not post in this channel! Any message sent here will result in a softban.',
+        ]),
     });
 };
 
