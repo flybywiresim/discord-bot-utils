@@ -1,5 +1,15 @@
 ## Changelog
 
+Update <small>_ September 2026</small>
+
+- feat: /honeypot command to post the honeypot warning (01/09/2026)
+- refactor: Move scam log handling into the message create handler (01/09/2026)
+- refactor: Uniform moderation actions, move warn and note (01/09/2026)
+- feat: Honeypot channel to softban spam users (01/09/2026)
+- fix: Scam logs infractions on the user's record, SUPPORT role group exemptions (01/09/2026)
+- refactor: Shared timeout/ban/unban actions and infraction helper for the infraction commands (01/09/2026)
+- chore: Replace the deprecated GuildBans intent with GuildModeration (01/09/2026)
+
 Update <small>_ August 2026</small>
 
 - fix: Remove the Presence gateway intent and the status field from whois/User Info (15/08/2026)

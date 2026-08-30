@@ -1,9 +1,8 @@
 //This detects non bot bans and sends a message to the mod logs channel
 
-import { AuditLogEvent, bold, Colors, GuildBan, PartialUser, TextChannel, User } from 'discord.js';
+import { AuditLogEvent, bold, Colors, GuildBan, PartialUser, User } from 'discord.js';
 import moment from 'moment/moment';
-import mongoose from 'mongoose';
-import { constantsConfig, event, Events, Infraction, Logger, makeEmbed, makeLines } from '../../lib';
+import { addInfraction, constantsConfig, event, Events, Logger, makeEmbed, makeLines, sendModLog } from '../../lib';
 
 const MAX_RETRIES = 5;
 const SLEEP_TIMER = 0.5 * 1000;
@@ -115,14 +114,6 @@ export default event(Events.GuildBanAdd, async (_, msg) => {
         return;
     }
 
-    const modLogsChannel = (await guildBanAdd.guild.channels.resolve(
-        constantsConfig.channels.MOD_LOGS,
-    )) as TextChannel | null;
-    if (!modLogsChannel) {
-        // Exit as can't post
-        return;
-    }
-
     const currentDate = new Date();
     const formattedDate: string = moment(currentDate).utcOffset(0).format();
 
@@ -136,65 +127,53 @@ export default event(Events.GuildBanAdd, async (_, msg) => {
             await new Promise((f) => setTimeout(f, SLEEP_TIMER));
         }
 
-        const fetchedLogs = await guildBanAdd.guild.fetchAuditLogs({
-            limit: 1,
-            type: AuditLogEvent.MemberBanAdd,
-        });
-        const banLog = fetchedLogs.entries.first();
-        if (banLog) {
-            ({ executor, reason, target } = banLog);
+        try {
+            const fetchedLogs = await guildBanAdd.guild.fetchAuditLogs({
+                limit: 1,
+                type: AuditLogEvent.MemberBanAdd,
+            });
+            const banLog = fetchedLogs.entries.first();
+            if (banLog) {
+                ({ executor, reason, target } = banLog);
+            }
+        } catch (error) {
+            Logger.error(`Ban Handler - Failed to fetch the audit log: ${error}`);
+            break;
         }
 
         retryCount--;
     } while ((!target || target.id !== guildBanAdd.user.id) && retryCount > 0);
 
     if (!target) {
-        await modLogsChannel.send({ embeds: [noLogEmbed(guildBanAdd.user, guildBanAdd.guild.name)] });
+        await sendModLog(guildBanAdd.guild, noLogEmbed(guildBanAdd.user, guildBanAdd.guild.name));
         return;
     }
     if (target.id !== guildBanAdd.user.id) {
-        await modLogsChannel.send({ embeds: [userBannedIncompleteEmbed(guildBanAdd.user, formattedDate)] });
+        await sendModLog(guildBanAdd.guild, userBannedIncompleteEmbed(guildBanAdd.user, formattedDate));
         return;
     }
-    if (executor && !constantsConfig.modLogExclude.includes(executor.id)) {
-        await modLogsChannel.send({
-            content: executor.toString(),
-            embeds: [modLogEmbed(guildBanAdd.user, executor, reason as string, formattedDate)],
-        });
+
+    if (
+        executor &&
+        executor.id !== guildBanAdd.client.user.id &&
+        !constantsConfig.modLogExclude.includes(executor.id)
+    ) {
+        await sendModLog(
+            guildBanAdd.guild,
+            modLogEmbed(guildBanAdd.user, executor, reason as string, formattedDate),
+            executor.toString(),
+        );
 
         //Log to the DB
-        Logger.info('Starting Infraction process');
-
-        const newInfraction = {
+        const infraction = await addInfraction({
+            userID: target.id,
             infractionType: 'Ban',
             moderatorID: executor ? executor.id : 'Unavailable',
             reason: `This was a non bot ban: ${reason as string}`,
             date: currentDate,
-            infractionID: new mongoose.Types.ObjectId(),
-        };
-
-        let userData = await Infraction.findOne({ userID: target.id });
-
-        Logger.info(userData);
-
-        if (!userData) {
-            userData = new Infraction({
-                userID: target.id,
-                infractions: [newInfraction],
-            });
-            Logger.info(userData);
-            Logger.info('New user data created');
-        } else {
-            userData.infractions.push(newInfraction);
-            Logger.info('User data updated');
-        }
-
-        try {
-            await userData.save();
-            Logger.info('Infraction process complete');
-        } catch (error) {
-            await modLogsChannel.send({ embeds: [logFailed] });
-            Logger.error(error);
+        });
+        if (!infraction.saved) {
+            await sendModLog(guildBanAdd.guild, logFailed);
         }
     }
 
