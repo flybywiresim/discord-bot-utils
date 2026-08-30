@@ -22,6 +22,7 @@ import {
     PrefixCommandVersion,
 } from '../lib';
 import { handleHoneypot } from './functions/handleHoneypot';
+import { handleScamLogs } from './functions/handleScamLogs';
 
 const commandEmbed = (title: string, description: string, color: string, imageUrl: string = '') =>
     makeEmbed({
@@ -176,6 +177,12 @@ export default event(Events.MessageCreate, async ({ client }, message) => {
     // Anyone posting in the honeypot channel gets softbanned
     if (channelId === constantsConfig.channels.HONEYPOT) {
         await handleHoneypot(client, message);
+        return;
+    }
+
+    // Messages containing @everyone are potential scams and are never processed as prefix commands
+    if (content.toLowerCase().includes('@everyone')) {
+        await handleScamLogs(message);
         return;
     }
 
