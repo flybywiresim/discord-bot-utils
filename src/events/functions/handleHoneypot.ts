@@ -1,4 +1,4 @@
-import { Client, codeBlock, Colors, Guild, GuildMember, Message, User } from 'discord.js';
+import { Client, codeBlock, Colors, Guild, Message, User } from 'discord.js';
 import {
     banUser,
     constantsConfig,
@@ -35,7 +35,7 @@ interface HoneypotOutcome {
     unban?: ModerationActionResult;
 }
 
-const dmEmbed = (guild: Guild, moderator: User, channelName: string, honeypot: HoneypotConfig, banned: boolean) =>
+const dmEmbed = (guild: Guild, channelName: string, honeypot: HoneypotConfig, banned: boolean) =>
     makeEmbed({
         title: banned ? `You have been removed from ${guild.name}` : `You have been timed out in ${guild.name}`,
         description: makeLines([
@@ -48,12 +48,8 @@ const dmEmbed = (guild: Guild, moderator: User, channelName: string, honeypot: H
                   ]
                 : [`You have been timed out for ${durationInEnglish(honeypot.timeoutDurationSeconds * 1000)}.`]),
             '',
-            'If you believe this was a mistake, please contact the moderation team once you are able to post again.',
+            'If you believe this was a mistake, please contact the moderation team.',
         ]),
-        fields: [
-            { inline: true, name: 'Moderator', value: moderator.toString() },
-            { inline: false, name: 'Reason', value: timeoutReason },
-        ],
         footer: {
             text: `Your timeout will be lifted on ${new Date(Date.now() + honeypot.timeoutDurationSeconds * 1000).toUTCString()}`,
         },
@@ -62,7 +58,7 @@ const dmEmbed = (guild: Guild, moderator: User, channelName: string, honeypot: H
 const describeError = (error: unknown) => `${error}`.slice(0, MAX_ERROR_LENGTH);
 
 const actionLine = (name: string, result: ModerationActionResult, applied: string) =>
-    result.success ? `✅ ${applied}` : `❌ ${name}: ${describeError(result.error)}`;
+    `${name}: ${result.success ? applied : `failed - ${describeError(result.error)}`}`;
 
 const summaryEmbed = (message: Message<true>, honeypot: HoneypotConfig, outcome: HoneypotOutcome) => {
     const { author } = message;
@@ -85,22 +81,22 @@ const summaryEmbed = (message: Message<true>, honeypot: HoneypotConfig, outcome:
               actionLine(
                   'Ban',
                   ban,
-                  `Banned, messages of the last ${durationInEnglish(honeypot.deleteWindowSeconds * 1000)} deleted`,
+                  `applied, messages of the last ${durationInEnglish(honeypot.deleteWindowSeconds * 1000)} deleted`,
               ),
               unban
-                  ? actionLine('Unban', unban, 'Unbanned') + (unban.success ? '' : ' - the user is still banned')
-                  : '⏭️ Unban skipped, the ban failed',
+                  ? actionLine('Unban', unban, 'applied') + (unban.success ? '' : ', the user is still banned')
+                  : 'Unban: skipped, the ban failed',
           ]
-        : ['⏭️ Ban and unban skipped, the user is part of the support team'];
+        : ['Ban and unban: skipped, the user is part of the team'];
 
     const actions = [
-        actionLine('Timeout', timeout, `Timed out for ${durationInEnglish(honeypot.timeoutDurationSeconds * 1000)}`),
-        messageDeleted ? '✅ Message deleted' : '❌ Message not deleted',
-        dmSent ? '✅ DM sent' : '❌ DM not sent, they either have DMs closed or share no mutual servers with the bot',
+        actionLine('Timeout', timeout, `applied for ${durationInEnglish(honeypot.timeoutDurationSeconds * 1000)}`),
+        messageDeleted ? 'Message: deleted' : 'Message: not deleted',
+        dmSent ? 'DM: sent' : 'DM: not sent, they have DMs closed or blocked the bot',
         ...banLines,
         unsavedInfraction && !unsavedInfraction.saved
-            ? `❌ Infractions not logged (${unsavedInfraction.reason})`
-            : '✅ Infractions logged',
+            ? `Infractions: not logged (${unsavedInfraction.reason})`
+            : 'Infractions: logged',
     ];
 
     return makeEmbed({
@@ -117,18 +113,7 @@ const summaryEmbed = (message: Message<true>, honeypot: HoneypotConfig, outcome:
     });
 };
 
-/**
- * Timeout first (Discord keeps it when the user rejoins), then, unless the member is part of the support team, ban
- * to remove the user and purge their recent messages and unban so a genuine user can rejoin. Every step runs even
- * if a previous one failed, except the unban.
- */
-async function applyActions(
-    message: Message<true>,
-    member: GuildMember,
-    moderator: User,
-    honeypot: HoneypotConfig,
-    shouldBan: boolean,
-) {
+async function applyActions(message: Message<true>, moderator: User, honeypot: HoneypotConfig, shouldBan: boolean) {
     const { author, guild } = message;
     const logPrefix = `Honeypot - User ${author.id}`;
     Logger.info(
@@ -155,7 +140,7 @@ async function applyActions(
     // The DM has to go out before the ban: afterwards the bot and the user share no server anymore
     let dmSent = true;
     try {
-        await author.send({ embeds: [dmEmbed(guild, moderator, message.channel.name, honeypot, shouldBan)] });
+        await author.send({ embeds: [dmEmbed(guild, message.channel.name, honeypot, shouldBan)] });
     } catch (error) {
         dmSent = false;
         Logger.warn(`${logPrefix} - DM not sent: ${error}`);
@@ -181,9 +166,6 @@ async function applyActions(
     );
 }
 
-/**
- * Called by messageCreateHandler for every message posted in the honeypot channel.
- */
 export async function handleHoneypot(client: Client, message: Message) {
     const { honeypot } = constantsConfig;
     if (!honeypot || !message.inGuild()) {
@@ -216,7 +198,7 @@ export async function handleHoneypot(client: Client, message: Message) {
 
         inFlight.add(author.id);
         try {
-            await applyActions(message, member, moderator, honeypot, shouldBan);
+            await applyActions(message, moderator, honeypot, shouldBan);
         } finally {
             inFlight.delete(author.id);
         }
